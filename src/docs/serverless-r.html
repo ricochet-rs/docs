@@ -27,6 +27,8 @@
 <span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
 <span class="line"></span></code></pre>
 <p>will create two endpoints called <code>/add-2</code> and <code>/hello-world</code>.</p>
+<h2 id="sec:deploying">Deploying</h2>
+<p>To deploy a <code>serverless-r</code> item, create a new <code>_ricochet.toml</code> in your project using <code>ricochet::use_ricochet_toml()</code>. When selecting prompted to select the content type <code>"Serverless R"</code>. Then run <code>ricochet::deploy()</code>. Thats it!</p>
 <h2 id="sec:request-types">Request Types</h2>
 <p>The serverless R runtime supports only GET and POST requests. Function without any arguments are served as a <strong><code>GET</code></strong> request. If a function has aguments, it is accessible via <code>POST</code> request.</p>
 <p>By default all responses return (serialized) JSON. POST requests expect JSON in their bodies by default.</p>
@@ -97,7 +99,5 @@
 <span class="line"></span></code></pre>
 <pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> [1] 100</span></span>
 <span class="line"></span></code></pre>
-<h2 id="sec:deploying">Deploying</h2>
-<p>To deploy a <code>serverless-r</code> item, create a new <code>_ricochet.toml</code> in your project using <code>ricochet::use_ricochet_toml()</code>. When selecting prompted to select the content type <code>"Serverless R"</code>. Then run <code>ricochet::deploy()</code>. Thats it!</p>
 </div>
 </body>

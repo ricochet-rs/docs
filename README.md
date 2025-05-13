@@ -81,7 +81,7 @@ Set the following environment variables (updating for your project as needed):
 export LEPTOS_OUTPUT_NAME="ricochet-docs"
 export LEPTOS_SITE_ROOT="site"
 export LEPTOS_SITE_PKG_DIR="pkg"
-export LEPTOS_SITE_ADDR="127.0.0.1:3000"
+export LEPTOS_SITE_ADDR="127.0.0.1:8080"
 export LEPTOS_RELOAD_PORT="3001"
 ```
 Finally, run the server binary.

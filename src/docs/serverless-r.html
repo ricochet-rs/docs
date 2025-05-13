@@ -3,5 +3,101 @@
 <div class="title"><h1>Serverless functions</h1></div>
 </div>
 <div class="body">
+<p><code>ricochet</code> provides a serverless function runtime for R as the content type <code>serverless-r</code>.</p>
+<p>Serverless R enables users to create a simple R script with function definitions and deploy them as a RESTful API. The serverless function runtime abstracts away the hard work of converting R code into RESTful APIs so you can focus on deploying.</p>
+<h2 id="sec:usage">Usage</h2>
+<p>The <code>serverless-r</code> content type requires an R script as the entrypoint which defines a list object called <code>routes</code>. The <code>routes</code> object is used to define the REST API endpoints.</p>
+<p>Take an example <code>hello-world.R</code> file:</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#6F42C1;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic">hello_world</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> &#x3C;-</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> function</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span><span style="color:#24292E;--shiki-dark:#9399B2"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#A6E3A1">  "hello, world!"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic">add2</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> &#x3C;-</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> function</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">x</span><span style="color:#24292E;--shiki-dark:#9399B2">,</span><span style="color:#24292E;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic"> y</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span><span style="color:#24292E;--shiki-dark:#9399B2"> {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  x </span><span style="color:#D73A49;--shiki-dark:#94E2D5">+</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> y</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic"># alternatively specify per-route (de)serializers</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">routes </span><span style="color:#D73A49;--shiki-dark:#94E2D5">&#x3C;-</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> list</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">add2</span><span style="color:#24292E;--shiki-dark:#9399B2">,</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> hello_world</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span></code></pre>
+<p>That’s it! This will create a REST API with two routes: <code>/add2</code> and <code>hello_world</code>.</p>
+<p>You can change the name of the endpoints by providing a named list. For example the route</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">routes </span><span style="color:#D73A49;--shiki-dark:#94E2D5">&#x3C;-</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> list</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#A6E3A1">  "add-2"</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> add2</span><span style="color:#24292E;--shiki-dark:#9399B2">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#A6E3A1">  "hello-world"</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> hello_world</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span></code></pre>
+<p>will create two endpoints called <code>/add-2</code> and <code>/hello-world</code>.</p>
+<h2 id="sec:request-types">Request Types</h2>
+<p>The serverless R runtime supports only GET and POST requests. Function without any arguments are served as a <strong><code>GET</code></strong> request. If a function has aguments, it is accessible via <code>POST</code> request.</p>
+<p>By default all responses return (serialized) JSON. POST requests expect JSON in their bodies by default.</p>
+<h2 id="sec:using-de-serializers">Using (de)serializers</h2>
+<p>It is possible to customize the type that responses are serialized as and how bodies are deserialized. Below are the available serializers and deserializers.</p>
+<ul>
+<li>Serializers:
+<ul>
+<li>
+<code>csv</code>, <code>excel</code>, <code>feather</code>, <code>geojson</code>, <code>html</code>, <code>htmlwidget</code>, <code>jpeg</code>, <code>json</code>, <code>json-unboxed</code>, <code>octet</code>, <code>parquet</code>, <code>pdf</code>, <code>png</code>, <code>png</code>, <code>svg</code>, <code>svglite</code>, <code>text</code>, <code>tiff</code>, <code>tsv</code>, <code>yaml</code>.</li>
+</ul>
+</li>
+<li>Deserializers:
+<ul>
+<li>
+<code>csv</code>, <code>excel</code>, <code>feather</code>, <code>form</code>, <code>geojson</code>, <code>json</code>, <code>multi</code>, <code>none</code>, <code>octet</code>, <code>parquet</code>, <code>rds</code>, <code>text</code>, <code>tsv</code>, <code>yaml</code>
+</li>
+</ul>
+</li>
+</ul>
+<p>To customize the serialization and deserialization method, the <code>routes</code> list uses a named list with structure:</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#CBA6F7">list</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">  fn</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> fn_object</span><span style="color:#24292E;--shiki-dark:#9399B2">,</span><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">             # required</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">  serialize</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "json-unboxed"</span><span style="color:#24292E;--shiki-dark:#9399B2">,</span><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic"> # optional</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">  deserialize</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "json"</span><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">        # optional</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span></code></pre>
+<h3 id="sec:example">Example</h3>
+<p>You can return a csv file from your serverless functions by specifying the <code>serialize = "csv"</code> or you can also expect a csv file as your input by setting <code>deserialize = "csv"</code> as well.</p>
+<p>The below example creates two endpoints. <code>/penguins</code> returns the first 5 rows of the <code>penguins</code> data frame as a csv file and <code>/nrow</code> returns the number of rows sent in a csv file request.</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">routes </span><span style="color:#D73A49;--shiki-dark:#94E2D5">&#x3C;-</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> list</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">  penguins</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> list</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">    fn</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> \</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> penguins</span><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#005CC5;--shiki-dark:#FAB387">1</span><span style="color:#D73A49;--shiki-dark:#CBA6F7">:</span><span style="color:#005CC5;--shiki-dark:#FAB387">5</span><span style="color:#24292E;--shiki-dark:#CDD6F4">,</span><span style="color:#24292E;--shiki-dark:#9399B2">],</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">    serialize</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "csv"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">  ),</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">  nrow</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#D73A49;--shiki-dark:#CBA6F7"> list</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">    fn</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> \</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">.df</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic"> nrow</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">.df</span><span style="color:#24292E;--shiki-dark:#9399B2">),</span></span>
+<span class="line"><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">    deserialize</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "csv"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">  )</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span></code></pre>
+<p>The deployed serverless functions can be called using httr2. To read the csv file:</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic">library</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">httr2</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">request</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"https://ricochet.rs/{ID}/penguins"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  req_perform</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  resp_body_string</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  readr</span><span style="color:#24292E;--shiki-dark:#94E2D5">::</span><span style="color:#24292E;--shiki-dark:#CDD6F4">read_csv</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span></span>
+<span class="line"></span></code></pre>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> # A tibble: 5 × 8</span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#>   species island    bill_len bill_dep flipper_len body_mass sex     year</span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#>   &#x3C;chr>   &#x3C;chr>        &#x3C;dbl>    &#x3C;dbl>       &#x3C;dbl>     &#x3C;dbl> &#x3C;chr>  &#x3C;dbl></span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> 1 Adelie  Torgersen     39.1     18.7         181      3750 male    2007</span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> 2 Adelie  Torgersen     39.5     17.4         186      3800 female  2007</span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> 3 Adelie  Torgersen     40.3     18           195      3250 female  2007</span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> 4 Adelie  Torgersen     NA       NA            NA        NA NA      2007</span></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> 5 Adelie  Torgersen     36.7     19.3         193      3450 female  2007</span></span>
+<span class="line"></span></code></pre>
+<p>To send a csv file and count the number of rows:</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">tmp </span><span style="color:#D73A49;--shiki-dark:#94E2D5">&#x3C;-</span><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic"> tempfile</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#E36209;font-style:inherit;--shiki-dark:#EBA0AC;--shiki-dark-font-style:italic">fileext</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> ".csv"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">readr</span><span style="color:#24292E;--shiki-dark:#94E2D5">::</span><span style="color:#24292E;--shiki-dark:#CDD6F4">write_csv</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">penguins</span><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#005CC5;--shiki-dark:#FAB387">1</span><span style="color:#D73A49;--shiki-dark:#CBA6F7">:</span><span style="color:#005CC5;--shiki-dark:#FAB387">100</span><span style="color:#24292E;--shiki-dark:#CDD6F4">,</span><span style="color:#24292E;--shiki-dark:#9399B2">],</span><span style="color:#24292E;--shiki-dark:#CDD6F4"> tmp</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">request</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"https://ricochet.rs/{ID}/nrow"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  req_body_raw</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">brio</span><span style="color:#24292E;--shiki-dark:#94E2D5">::</span><span style="color:#24292E;--shiki-dark:#CDD6F4">read_file</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">tmp</span><span style="color:#24292E;--shiki-dark:#9399B2">))</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  req_headers</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"Content-Type"</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> =</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "text/csv"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  req_perform</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span><span style="color:#D73A49;--shiki-dark:#94E2D5"> |></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">  resp_body_json</span><span style="color:#24292E;--shiki-dark:#9399B2">()</span></span>
+<span class="line"></span></code></pre>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic">#> [1] 100</span></span>
+<span class="line"></span></code></pre>
+<h2 id="sec:deploying">Deploying</h2>
+<p>To deploy a <code>serverless-r</code> item, create a new <code>_ricochet.toml</code> in your project using <code>ricochet::use_ricochet_toml()</code>. When selecting prompted to select the content type <code>"Serverless R"</code>. Then run <code>ricochet::deploy()</code>. Thats it!</p>
 </div>
 </body>

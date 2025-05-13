@@ -44,12 +44,14 @@ Restart your R session for the new environment variable to be registered.
 
 The `{ricochet}` R package is designed to make it easy to manage your deployments.
 
-Install the R package via:
+Install the R package with
 
 ```r
-# note this is not on CRAN
-# email contact@ricochet.rs for assistance
-install.packages("ricochet")
+# install remotes if not present
+if (!requireNamespace("remotes")) install.packages("remotes")
+
+# install ricochet
+remotes::install_url("https://docs.ricochet.rs/pkgs/ricochet_0.0.0.9000.tar.gz")
 ```
 
 The `{ricochet}` package automatically fetches your API key from the `RICOCHET_API_KEY` environment variable to simplify the deployment process.

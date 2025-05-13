@@ -1,3 +1,126 @@
 ---
 title: "Serverless functions"
 ---
+
+`ricochet` provides a serverless function runtime for R as the content type `serverless-r`.
+
+Serverless R enables users to create a simple R script with function definitions and deploy them as a RESTful API. The serverless function runtime abstracts away the hard work of converting R code into RESTful APIs so you can focus on deploying.
+
+## Usage
+
+The `serverless-r` content type requires an R script as the entrypoint which defines a list object called `routes`. The `routes` object is used to define the REST API endpoints.
+
+Take an example `hello-world.R` file:
+
+```r
+hello_world <- function() {
+  "hello, world!"
+}
+
+add2 <- function(x, y) {
+  x + y
+}
+
+# alternatively specify per-route (de)serializers
+routes <- list(add2, hello_world)
+```
+
+That's it! This will create a REST API with two routes: `/add2` and `hello_world`.
+
+You can change the name of the endpoints by providing a named list. For example the route
+
+```r
+routes <- list(
+  "add-2" = add2,
+  "hello-world" = hello_world
+)
+```
+
+will create two endpoints called `/add-2` and `/hello-world`.
+
+
+
+## Request Types
+
+The serverless R runtime supports only GET and POST requests. Function without any arguments are served as a **`GET`** request. If a function has aguments, it is accessible via `POST` request.
+
+By default all responses return (serialized) JSON. POST requests expect JSON in their bodies by default.
+
+## Using (de)serializers
+
+It is possible to customize the type that responses are serialized as and how bodies are deserialized. Below are the available serializers and deserializers.
+
+- Serializers:
+  - `csv`, `excel`, `feather`, `geojson`, `html`, `htmlwidget`, `jpeg`, `json`, `json-unboxed`, `octet`, `parquet`, `pdf`, `png`, `png`, `svg`, `svglite`, `text`, `tiff`, `tsv`, `yaml`.
+- Deserializers:
+  - `csv`, `excel`, `feather`, `form`, `geojson`, `json`, `multi`, `none`, `octet`, `parquet`, `rds`, `text`, `tsv`, `yaml`
+
+To customize the serialization and deserialization method, the `routes` list uses a named list with structure:
+
+```r
+list(
+  fn = fn_object,             # required
+  serialize = "json-unboxed", # optional
+  deserialize = "json"        # optional
+)
+```
+
+### Example
+
+You can return a csv file from your serverless functions by specifying the `serialize = "csv"` or you can also expect a csv file as your input by setting `deserialize = "csv"` as well.
+
+The below example creates two endpoints. `/penguins` returns the first 5 rows of the `penguins` data frame as a csv file and `/nrow` returns the number of rows sent in a csv file request.
+
+```r
+routes <- list(
+  penguins = list(
+    fn = \() penguins[1:5,],
+    serialize = "csv"
+  ),
+  nrow = list(
+    fn = \(.df) nrow(.df),
+    deserialize = "csv"
+  )
+)
+```
+
+The deployed serverless functions can be called using httr2. To read the csv file:
+
+```r
+library(httr2)
+
+request("https://ricochet.rs/{ID}/penguins") |>
+  req_perform() |>
+  resp_body_string() |>
+  readr::read_csv()
+```
+```r
+#> # A tibble: 5 × 8
+#>   species island    bill_len bill_dep flipper_len body_mass sex     year
+#>   <chr>   <chr>        <dbl>    <dbl>       <dbl>     <dbl> <chr>  <dbl>
+#> 1 Adelie  Torgersen     39.1     18.7         181      3750 male    2007
+#> 2 Adelie  Torgersen     39.5     17.4         186      3800 female  2007
+#> 3 Adelie  Torgersen     40.3     18           195      3250 female  2007
+#> 4 Adelie  Torgersen     NA       NA            NA        NA NA      2007
+#> 5 Adelie  Torgersen     36.7     19.3         193      3450 female  2007
+```
+
+To send a csv file and count the number of rows:
+
+```r
+tmp <- tempfile(fileext = ".csv")
+readr::write_csv(penguins[1:100,], tmp)
+
+request("https://ricochet.rs/{ID}/nrow") |>
+  req_body_raw(brio::read_file(tmp)) |>
+  req_headers("Content-Type" = "text/csv") |>
+  req_perform() |>
+  resp_body_json()
+```
+```r
+#> [1] 100
+```
+
+## Deploying
+
+To deploy a `serverless-r` item, create a new `_ricochet.toml` in your project using `ricochet::use_ricochet_toml()`. When selecting prompted to select the content type `"Serverless R"`. Then run `ricochet::deploy()`. Thats it!

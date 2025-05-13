@@ -32,10 +32,12 @@
 <h2 id="sec:install-ricochet">Install <code>{ricochet}</code>
 </h2>
 <p>The <code>{ricochet}</code> R package is designed to make it easy to manage your deployments.</p>
-<p>Install the R package via:</p>
-<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic"># note this is not on CRAN</span></span>
-<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic"># email contact@ricochet.rs for assistance</span></span>
-<span class="line"><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic">install.packages</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"ricochet"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<p>Install the R package with</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic"># install remotes if not present</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#CBA6F7">if</span><span style="color:#24292E;--shiki-dark:#9399B2"> (</span><span style="color:#D73A49;--shiki-dark:#94E2D5">!</span><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic">requireNamespace</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"remotes"</span><span style="color:#24292E;--shiki-dark:#9399B2">))</span><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic"> install.packages</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"remotes"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;font-style:inherit;--shiki-dark:#9399B2;--shiki-dark-font-style:italic"># install ricochet</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">remotes</span><span style="color:#24292E;--shiki-dark:#94E2D5">::</span><span style="color:#24292E;--shiki-dark:#CDD6F4">install_url</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"https://docs.ricochet.rs/pkgs/ricochet_0.0.0.9000.tar.gz"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
 <span class="line"></span></code></pre>
 <p>The <code>{ricochet}</code> package automatically fetches your API key from the <code>RICOCHET_API_KEY</code> environment variable to simplify the deployment process.</p>
 <h2 id="sec:create-an-api">Create an API</h2>

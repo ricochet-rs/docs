@@ -8,7 +8,7 @@ A **service** is one that requires an active runtime such as plumber or shiny.
 
 An **invokable item** is one that runs to completion such as R/Julia scripts and Quarto documents.
 
-All invokable items can be [scheduled](scheduling)( or [invoked via API](/invocation). A subset of invokable items can be served as a [**static html** website](/static)—for example R Markdown and Quarto documents or websites.
+All invokable items can be [scheduled](/scheduling) (or [invoked via API](/invocation)). A subset of invokable items can be served as a [**static html** website](/static)—for example R Markdown and Quarto documents or websites.
 
 ## R content types
 

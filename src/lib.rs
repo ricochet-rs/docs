@@ -69,6 +69,7 @@ pub fn Layout(
                             <div class="h-full mx-auto !max-w-none prose prose-zinc dark:prose-invert w-full prose-code:before:hidden prose-code:after:hidden prose-code:rounded-none prose-pre:rounded-none
                             prose-li:my-0 prose-ul:my-1
                             prose-pre:dark:ring-1 prose-pre:dark:ring-white/10 prose-pre:dark:ring-inset prose-pre:shadow-md
+                            prose-a:decoration-violet-500 prose-a:decoration-dotted prose-a:dark:hover:bg-violet-500 prose-a:hover:bg-violet-600 prose-a:hover:text-white prose-a:hover:decoration-violet-600 prose-a:dark:hover:decoration-violet-500
                             ">
                                 <div class="h-full w-full max-w-2xl lg:max-w-5xl mx-auto">
                                     <article

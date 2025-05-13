@@ -3,5 +3,11 @@
 <div class="title"><h1>Environment variables</h1></div>
 </div>
 <div class="body">
+<p>Environment variables are key-value pairs that can be used to customize behavior at runtime.</p>
+<p>During development you may use a <code>.Renviron</code> or <code>.env</code> file to keep track of secrets. These files <strong>should not</strong> be deployed alongside your content item. Instead, set environment in the <code>ricochet</code> UI. Note that environment variables are encrypted at rest and only decrypted before starting an R or Julia process.</p>
+<p>To add environment variables navigate to your content item’s setting page at <code>https://ricochet.rs/content/{ID}/settings/env</code>. The <code>Key</code> is the name of the environment variable. <code>Value</code> is the value of the environment variable. Press save after adding new environment variables.</p>
+<p>The new environment variables will be available to any new processes.</p>
+<h2 id="sec:accessing-environment-variables">Accessing environment variables</h2>
+<p>To access environment variables in R, use <code>Sys.getenv("KEY_NAME")</code>. Or in Julia, access them via the built in dictionary <code>ENV["KEY_NAME"]</code></p>
 </div>
 </body>

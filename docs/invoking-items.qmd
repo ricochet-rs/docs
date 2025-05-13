@@ -1,0 +1,23 @@
+---
+title: "Ivoking items"
+---
+
+All items that are not a service—e.g. R / Julia scripts, R Markdown, or Quarto documents—can be **invoked**. 
+
+Invoking a content item causes it to run. If the content item is scheduled, you can invoke the item outside of its schedule for one-off execution. 
+
+You can use the `{ricochet}` R package to invoke a content item:
+
+```r
+library(ricochet)
+invoke("01JSZAXZ3TSTAYXP56ARDVFJCJ")
+```
+
+Or, you can invoke the item using the REST API endpoint.
+
+```shell
+curl -X POST \
+  "https://ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/invoke" \
+  -H "Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k" 
+```
+

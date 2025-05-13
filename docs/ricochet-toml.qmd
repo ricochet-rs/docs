@@ -1,0 +1,119 @@
+---
+title: Using `_ricochet.toml`
+engine: knitr
+---
+
+Each deployment to ricochet is accompanied by a `_ricochet.toml` file. The `_ricochet.toml` file is used to set and keep track of metadata about your content item.
+
+
+
+```toml
+[content]
+name = "Ambiorix API"
+entrypoint = "app.R"
+access_type = "external"
+content_type = "ambiorix"
+id = "01JSSAQA559K7AS1M1X3WCJFV5"
+
+[language]
+name = "r"
+packages = "renv.lock"
+
+[serve]
+min_instances = 0
+max_instances = 5
+spawn_threshold = 80
+max_connections = 10
+```
+
+A `_ricochet.toml` has two required sections
+
+- `content`
+- `language`
+
+and the following optional settings (depending on the content type):
+
+- `schedule`
+- `serve`
+- `static`
+
+## `content` settings
+
+
+The `[content]` section of the `_ricochet.toml` is required. It has the following required fields:
+
+- `name`: the display name of your content item.
+- `entrypoint`: the file that starts your content item for example `"app.R"`.
+- `access_type`: determines the visibility of the content item. It must be one of `private`, `internal`, or `external`. Defaults to `private`.
+- `content_type`: specifies the content type to be deployed. The following are valid content types:
+
+    - R script `"r"`
+    - R Markdown `"rmd"`
+    - Plumber `"plumber"`
+    - Ambiorix `"ambiorix"`
+    - R Markdown (Shiny) `"rmd-shiny"`
+    - R service `"r-service"`
+    - Serverless R `"serverless-r"`
+    - Quarto R `"quarto-r"`
+    - Quarto R (Shiny) `"quarto-r-shiny"`
+    - Quartio Julia `"quarto-jl"`
+    - Julia script `"julia"`
+    - Julia service `"julia-service"`
+
+Upon your first successful deployment, a unique content ID is created. The content ID is tracked in the `id` field.
+
+Additional metadata can be specified in the following fields:
+
+- `slug`: a unique suffix to view your content item from. It must contain only numbers, letters, or the characters `-` or `_`. For example `slug: "my-shiny-app"` will be accessible via `https://ricochet.rs/my-shiny-app`
+- `summary`: a text summary for the content item. This is visible under the content item's card.
+- `thumbnail`: the relative path to an image to use as a thumbnail. Must be a png, jpg, or gif and 5mb or smaller.
+- `tags`: an array of tags to be associated with the content item.
+
+## `static` settings
+
+Some items such as R Markdown or Quarto may create static html websites. The `[static]` content settings can be used to specify which directory should be served from your content item.
+
+- `output_dir`: which directory to serve
+- `index`: which file to server from `ouput_dir`. Default of `index.html`.
+
+```toml
+[static]
+index = "index.html"
+output_dir = "_site"
+```
+
+## `serve` settings
+
+Content items that require a running background process such as shiny or plumber are considered services. Use the `[serve]` settings to determine how the content scales.
+
+The following settings can be set:
+
+- `min_instances`: the minimum number instances to always be available for a service.
+- `max_instances`: the maximum number of instances that a content item can spawn.
+- `spawn_threshold`: the percent of the number of active connections divided by the maxinum number of instances. When this number is reached, a new instance is spawned.
+- `max_connections`: this is the maximum number of connections that a single service can handle. When this number is reached, a new instance is spawned. However, if `max_instances` is reached an all instances are at `max_connections`, then this field is ignored.
+- `max_connection_age`: the maximum age (in seconds) of a connection before it is closed. If not set, instances will be terminated when there are no more connections to instance.
+
+
+```toml
+[serve]
+min_instances = 0
+max_instances = 5
+spawn_threshold = 80
+max_connections = 10
+```
+
+## `language` settings
+
+The language section of the `_ricochet.toml` is required. It contains two fields: `name` and `packages`. These specify which language the content item is using as well as how the dependencies are specified.
+
+For R, these are set to `r` and `renv.lock` and Julia these are set to `julia` and `Manifest.toml`. No other dependency alternatives are supported at the moment.
+
+## `schedule` settings
+
+Content items can be broadly characterized as either "ivokable" or a "service." All invokable content items can be scheduled by specifying the `cron` field.
+
+```toml
+[schedule]
+cron = "0 0 * * *"
+```

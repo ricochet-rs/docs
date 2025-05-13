@@ -1,0 +1,138 @@
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Using <code>_ricochet.toml</code>
+</h1></div>
+</div>
+<div class="body">
+<p>Each deployment to ricochet is accompanied by a <code>_ricochet.toml</code> file. The <code>_ricochet.toml</code> file is used to set and keep track of metadata about your content item.</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#6F42C1;--shiki-dark:#CDD6F4">content</span><span style="color:#24292E;--shiki-dark:#9399B2">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">name </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "Ambiorix API"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">entrypoint </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "app.R"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">access_type </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "external"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">content_type </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "ambiorix"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">id </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "01JSSAQA559K7AS1M1X3WCJFV5"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#6F42C1;--shiki-dark:#CDD6F4">language</span><span style="color:#24292E;--shiki-dark:#9399B2">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">name </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "r"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">packages </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "renv.lock"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#6F42C1;--shiki-dark:#CDD6F4">serve</span><span style="color:#24292E;--shiki-dark:#9399B2">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">min_instances </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">max_instances </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 5</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">spawn_threshold </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 80</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">max_connections </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 10</span></span>
+<span class="line"></span></code></pre>
+<p>A <code>_ricochet.toml</code> has two required sections</p>
+<ul>
+<li><code>content</code></li>
+<li><code>language</code></li>
+</ul>
+<p>and the following optional settings (depending on the content type):</p>
+<ul>
+<li><code>schedule</code></li>
+<li><code>serve</code></li>
+<li><code>static</code></li>
+</ul>
+<h2 id="sec:content-settings">
+<code>content</code> settings</h2>
+<p>The <code>[content]</code> section of the <code>_ricochet.toml</code> is required. It has the following required fields:</p>
+<ul>
+<li>
+<p><code>name</code>: the display name of your content item.</p>
+</li>
+<li>
+<p><code>entrypoint</code>: the file that starts your content item for example <code>"app.R"</code>.</p>
+</li>
+<li>
+<p><code>access_type</code>: determines the visibility of the content item. It must be one of <code>private</code>, <code>internal</code>, or <code>external</code>. Defaults to <code>private</code>.</p>
+</li>
+<li>
+<p><code>content_type</code>: specifies the content type to be deployed. The following are valid content types:</p>
+<ul>
+<li>R script <code>"r"</code>
+</li>
+<li>R Markdown <code>"rmd"</code>
+</li>
+<li>Plumber <code>"plumber"</code>
+</li>
+<li>Ambiorix <code>"ambiorix"</code>
+</li>
+<li>R Markdown (Shiny) <code>"rmd-shiny"</code>
+</li>
+<li>R service <code>"r-service"</code>
+</li>
+<li>Serverless R <code>"serverless-r"</code>
+</li>
+<li>Quarto R <code>"quarto-r"</code>
+</li>
+<li>Quarto R (Shiny) <code>"quarto-r-shiny"</code>
+</li>
+<li>Quartio Julia <code>"quarto-jl"</code>
+</li>
+<li>Julia script <code>"julia"</code>
+</li>
+<li>Julia service <code>"julia-service"</code>
+</li>
+</ul>
+</li>
+</ul>
+<p>Upon your first successful deployment, a unique content ID is created. The content ID is tracked in the <code>id</code> field.</p>
+<p>Additional metadata can be specified in the following fields:</p>
+<ul>
+<li>
+<code>slug</code>: a unique suffix to view your content item from. It must contain only numbers, letters, or the characters <code>-</code> or <code>_</code>. For example <code>slug: "my-shiny-app"</code> will be accessible via <code>https://ricochet.rs/my-shiny-app</code>
+</li>
+<li>
+<code>summary</code>: a text summary for the content item. This is visible under the content item’s card.</li>
+<li>
+<code>thumbnail</code>: the relative path to an image to use as a thumbnail. Must be a png, jpg, or gif and 5mb or smaller.</li>
+<li>
+<code>tags</code>: an array of tags to be associated with the content item.</li>
+</ul>
+<h2 id="sec:static-settings">
+<code>static</code> settings</h2>
+<p>Some items such as R Markdown or Quarto may create static html websites. The <code>[static]</code> content settings can be used to specify which directory should be served from your content item.</p>
+<ul>
+<li>
+<code>output_dir</code>: which directory to serve</li>
+<li>
+<code>index</code>: which file to server from <code>ouput_dir</code>. Default of <code>index.html</code>.</li>
+</ul>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#6F42C1;--shiki-dark:#CDD6F4">static</span><span style="color:#24292E;--shiki-dark:#9399B2">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">index </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "index.html"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">output_dir </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "_site"</span></span>
+<span class="line"></span></code></pre>
+<h2 id="sec:serve-settings">
+<code>serve</code> settings</h2>
+<p>Content items that require a running background process such as shiny or plumber are considered services. Use the <code>[serve]</code> settings to determine how the content scales.</p>
+<p>The following settings can be set:</p>
+<ul>
+<li>
+<code>min_instances</code>: the minimum number instances to always be available for a service.</li>
+<li>
+<code>max_instances</code>: the maximum number of instances that a content item can spawn.</li>
+<li>
+<code>spawn_threshold</code>: the percent of the number of active connections divided by the maxinum number of instances. When this number is reached, a new instance is spawned.</li>
+<li>
+<code>max_connections</code>: this is the maximum number of connections that a single service can handle. When this number is reached, a new instance is spawned. However, if <code>max_instances</code> is reached an all instances are at <code>max_connections</code>, then this field is ignored.</li>
+<li>
+<code>max_connection_age</code>: the maximum age (in seconds) of a connection before it is closed. If not set, instances will be terminated when there are no more connections to instance.</li>
+</ul>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#6F42C1;--shiki-dark:#CDD6F4">serve</span><span style="color:#24292E;--shiki-dark:#9399B2">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">min_instances </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">max_instances </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 5</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">spawn_threshold </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 80</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">max_connections </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#005CC5;--shiki-dark:#FAB387"> 10</span></span>
+<span class="line"></span></code></pre>
+<h2 id="sec:language-settings">
+<code>language</code> settings</h2>
+<p>The language section of the <code>_ricochet.toml</code> is required. It contains two fields: <code>name</code> and <code>packages</code>. These specify which language the content item is using as well as how the dependencies are specified.</p>
+<p>For R, these are set to <code>r</code> and <code>renv.lock</code> and Julia these are set to <code>julia</code> and <code>Manifest.toml</code>. No other dependency alternatives are supported at the moment.</p>
+<h2 id="sec:schedule-settings">
+<code>schedule</code> settings</h2>
+<p>Content items can be broadly characterized as either “ivokable” or a “service.” All invokable content items can be scheduled by specifying the <code>cron</code> field.</p>
+<pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#9399B2">[</span><span style="color:#6F42C1;--shiki-dark:#CDD6F4">schedule</span><span style="color:#24292E;--shiki-dark:#9399B2">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">cron </span><span style="color:#24292E;--shiki-dark:#94E2D5">=</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "0 0 * * *"</span></span>
+<span class="line"></span></code></pre>
+</div>
+</body>

@@ -1,0 +1,54 @@
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Content items</h1></div>
+</div>
+<div class="body">
+<p><code>ricochet</code> supports deploying R and Julia based content. Content items are categorize as either a <strong>service</strong> or an <strong>invokable</strong> item.</p>
+<p>A <strong>service</strong> is one that requires an active runtime such as plumber or shiny.</p>
+<p>An <strong>invokable item</strong> is one that runs to completion such as R/Julia scripts and Quarto documents.</p>
+<p>All invokable items can be <a href="scheduling">scheduled</a>( or <a href="/invocation">invoked via API</a>. A subset of invokable items can be served as a <a href="/static"><strong>static html</strong> website</a>—for example R Markdown and Quarto documents or websites.</p>
+<h2 id="sec:r-content-types">R content types</h2>
+<p>The below are R-based content types supported by ricochet.</p>
+<h3 id="sec:services">Services</h3>
+<ul>
+<li>
+<code>plumber</code>: an API developed using <a href="https://rplumber.io"><code>{plumber}</code></a>
+</li>
+<li>
+<code>ambiorix</code>: an API or web app developed using <a href="https://ambiorix.dev"><code>{ambiorix}</code></a>
+</li>
+<li>
+<code>shiny</code>: a web app developed using <a href="https://shiny.posit.co/r/"><code>{shiny}</code></a>
+</li>
+<li>
+<code>rmd-shiny</code>: an R Markdown document using a shiny runtime</li>
+<li>
+<code>quarto-r-shiny</code>: a Quarto document using a shiny runtime</li>
+<li>
+<code>serverless-r</code>: R functions deployed as a service (see <a href="/serverless-r">Serverless R</a>)</li>
+<li>
+<code>r-service</code>: a web app or API served using an R runtime</li>
+</ul>
+<h3 id="sec:invokable-items">Invokable Items</h3>
+<ul>
+<li>
+<code>r</code>: an R script with the extension <code>.R</code> or <code>.r</code>
+</li>
+<li>
+<code>rmd</code>: an R Markdown document with the extension <code>.Rmd</code> or <code>.r</code>
+</li>
+<li>
+<code>quarto-r</code>: a Quarto document using an R runtime</li>
+</ul>
+<h2 id="sec:julia-content-types">Julia content types</h2>
+<p>The below are Julia-based content types supported by ricochet.</p>
+<ul>
+<li>
+<code>julia</code>: a Julia script</li>
+<li>
+<code>quarto-jl</code>: a Quarto document using a Julia runtime</li>
+<li>
+<code>julia-service</code>: a web app or API served using a Julia runtime</li>
+</ul>
+</div>
+</body>

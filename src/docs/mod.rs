@@ -97,19 +97,19 @@ pub const DOC_PAGES: [DocPage; 15] = [
         section: DocSection::Admin,
         title: "Installing ricochet",
         href: "/install",
-        body: "",
+        body: include_str!("install.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Bootstrap dependencies",
         href: "/bootstrap",
-        body: "",
+        body: include_str!("bootstrap.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "ricochet cli",
         href: "/ricochet-cli",
-        body: "",
+        body: include_str!("cli.html"),
     },
     DocPage {
         section: DocSection::Admin,

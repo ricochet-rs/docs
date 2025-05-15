@@ -66,7 +66,10 @@ pub fn Layout(
                     // Main content area
                     <div class="relative flex h-full flex-col px-4 pt-14 sm:px-6 lg:px-8">
                         <main class="flex-auto py-16">
-                            <div class="h-full mx-auto !max-w-none prose prose-zinc dark:prose-invert w-full prose-code:before:hidden prose-code:after:hidden prose-code:rounded-none prose-pre:rounded-none
+                            <div class="h-full mx-auto !max-w-none prose lg:prose-lg prose-zinc dark:prose-invert w-full
+                            prose-code:before:hidden prose-code:after:hidden prose-code:rounded-none
+                            prose-h1:text-3xl lg:prose-h1:text-4xl
+                            prose-pre:rounded-none
                             prose-li:my-0 prose-ul:my-1
                             prose-pre:dark:ring-1 prose-pre:dark:ring-white/10 prose-pre:dark:ring-inset prose-pre:shadow-md
                             prose-a:decoration-violet-500 prose-a:decoration-dotted prose-a:dark:hover:bg-violet-500 prose-a:hover:bg-violet-600 prose-a:hover:text-white prose-a:hover:decoration-violet-600 prose-a:dark:hover:decoration-violet-500

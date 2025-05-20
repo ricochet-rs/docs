@@ -98,6 +98,26 @@ pub fn DiscordIcon(#[prop(optional)] class: Option<String>) -> impl IntoView {
 }
 
 #[component]
+pub fn BlueSkyIcon(#[prop(optional)] class: Option<String>) -> AnyView {
+    let class = class.unwrap_or("size-4".to_string());
+    view! {
+        <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 600 530"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            class=class
+        >
+            <path
+                d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z"
+                fill="currentColor"
+            ></path>
+        </svg>
+    }.into_any()
+}
+
+#[component]
 pub fn SocialLink(href: &'static str, icon: impl IntoView, children: Children) -> AnyView {
     view! {
         <a href=href class="group">
@@ -112,7 +132,7 @@ pub fn SocialLink(href: &'static str, icon: impl IntoView, children: Children) -
 #[component]
 pub fn SmallPrint() -> AnyView {
     let icon_class = String::from(
-        "h-5 w-5 fill-zinc-700 transition group-hover:fill-zinc-900 dark:group-hover:fill-zinc-500",
+        "h-5 w-5 text-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-500 fill-zinc-700 transition group-hover:fill-zinc-900 dark:group-hover:fill-zinc-500",
     );
 
     view! {
@@ -128,12 +148,26 @@ pub fn SmallPrint() -> AnyView {
                     "Follow us on GitHub"
                 </SocialLink>
                 <SocialLink
-                    href="https://discord.gg/5fKJZSxmna"
-                    icon=view! { <DiscordIcon class=icon_class/> }
+                    href="https://discord.gg/hgdXEm8xuT"
+                    icon=view! { <DiscordIcon class=icon_class.clone()/> }
                 >
                     "Join our Discord server"
                 </SocialLink>
+                <SocialLink
+                    href="https://bsky.app/profile/ricochet.rs"
+                    icon=view! { <BlueSkyIcon class=icon_class/> }
+                >
+                    "Follow us on Bluesky"
+                </SocialLink>
             </div>
+        </div>
+        <div class="flex w-full gap-5 mx-auto">
+            <p class="mx-auto items-center text-xs text-zinc-600 dark:text-zinc-400">
+                "Made with 🤍 by "
+                <a href="https://ricochet.rs" class="font-semibold dark:text-white">
+                    "ricochet.rs"
+                </a> " 🐇"
+            </p>
         </div>
     }.into_any()
 }

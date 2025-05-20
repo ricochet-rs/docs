@@ -58,7 +58,7 @@
 <p>This will be the API that is deployed to <strong><code>ricochet</code></strong>.</p>
 <h2 id="sec:creating-a-ricochet-toml">Creating a <code>_ricochet.toml</code>
 </h2>
-<p>Each item that is deployed to <strong><code>ricochet</code></strong> requires an <a href="https://rstudio.github.io/renv/"><code>renv.lock</code></a> and a <a href="/ricochet-toml"><code>_ricochet.toml</code></a> file. The <code>renv.lock</code> file is used to track dependencies for your deployment item. The <code>_ricochet.toml</code> defines the type of deployment as well as associated metadata.</p>
+<p>Each R-based item that is deployed to <strong><code>ricochet</code></strong> requires an <a href="https://rstudio.github.io/renv/"><code>renv.lock</code></a> and a <a href="/ricochet-toml"><code>_ricochet.toml</code></a> file. The <code>renv.lock</code> file is used to track dependencies for your deployment item. The <code>_ricochet.toml</code> defines the type of deployment as well as associated metadata.</p>
 <p>Run <code>ricochet::use_ricochet_toml()</code> to create a new <code>_ricochet.toml</code>. The function will give you a number of prompts.</p>
 <ul>
 <li>Name your item <code>"Plumber API"</code>. The itemâs name will be user facing.</li>

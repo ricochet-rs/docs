@@ -128,7 +128,7 @@ pub fn SearchButton(show_search: RwSignal<bool>) -> AnyView {
     view! {
         <button
             type="button"
-            class="hover:cursor-pointer hidden h-8 w-full items-center gap-2  bg-zinc-50 pl-2 pr-3 text-sm text-zinc-500 ring-1 ring-zinc-900/10 transition hover:ring-zinc-900/20 dark:bg-white/5 dark:text-zinc-400 dark:ring-inset dark:ring-white/10 dark:hover:ring-white/20 lg:flex focus:[&amp;:not(:focus-visible)]:outline-none"
+            class="hover:cursor-pointer hidden h-8 w-full items-center gap-2  bg-zinc-50/10 pl-2 pr-3 text-sm text-zinc-500 ring-1 ring-zinc-900/10 transition hover:ring-zinc-900/20 dark:bg-white/5 dark:text-zinc-400 dark:ring-inset dark:ring-white/10 dark:hover:ring-white/20 lg:flex focus:[&amp;:not(:focus-visible)]:outline-none"
             on:click=move |_| {
                 show_search.set(true);
             }

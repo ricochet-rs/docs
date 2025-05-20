@@ -145,7 +145,7 @@ The language section of the `_ricochet.toml` is required. It contains two fields
 
 ## `schedule` settings
 
-All invokable content items can be scheduled by specifying the `cron` field.
+All tasks items can be scheduled by specifying the `cron` field.
 
 ```toml
 [schedule]

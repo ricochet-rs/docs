@@ -2,28 +2,26 @@
 title: "Scheduling content"
 ---
 
-All **invokable** items can be scheduled. This includes, R / Julia scripts, R Markdown or Quarto documents. 
+All tasks can be scheduled. This includes, R / Julia scripts, R Markdown, or Quarto documents.
 
-Items can be scheduled using a cron syntax. ricochet utilizes [croner](https://github.com/hexagon/croner-rust) for cron schedule parsing. 
+Items can be scheduled using cron syntax. ricochet utilizes [croner](https://github.com/hexagon/croner-rust) for cron schedule parsing.
 
 ::: callout-tip
-
 All cron schedules are in UTC at present.
-
 :::
 
-## Scheduling 
+## Scheduling
 
-Items can be scheduled using the ricochet UI, R package, or the REST API. 
+Tasks can be scheduled using the ricochet UI, R package, or the REST API.
 
-To schedule an item using the R package: 
+To schedule an item using the R package:
 
 ```r
 library(ricochet)
 schedule("01JT1AAJY0EVDE4C0277XX148R", "@hourly")
 ```
 
-Or using the REST API: 
+Or using the REST API:
 
 
 ```shell
@@ -60,7 +58,7 @@ cron expressions can also take advantage of the modifiers: `L`, `#`, and `W`.
 
 `L` is used to denote the last day of the week or month. This can be used in the "Day of Month" or "Day of Week" fields.
 
-For example, `"0 0 L * *"` will schedule the item to be invoked every last day of the month. The `*` in the day of week field is ignored. 
+For example, `"0 0 L * *"` will schedule the item to be invoked every last day of the month. The `*` in the day of week field is ignored.
 
 
 ### nth modifier
@@ -71,13 +69,13 @@ For example, using `0 0 * * FRI#2` would specify the item to be invoked every se
 
 ### Closest `W`eekday modifier
 
-The `W` modifier can be used to specify the closes weekday to a day of the month. This can only be utilized in the "Day of Month" field. 
+The `W` modifier can be used to specify the closes weekday to a day of the month. This can only be utilized in the "Day of Month" field.
 
 Using `10W` will find the closest weekday to the 10th of the month. If the 10th falls on a Saturday, it will match to the 9th (Friday). Or if the 10th is a Sunday, it will be matched to the 11th (Monday).
 
-## Shorthands 
+## Shorthands
 
-Additionally, shorthand patterns can be specified: 
+Additionally, shorthand patterns can be specified:
 
 ```
 @yearly	  Run once a year, ie. "0 0 1 1 *".

@@ -107,7 +107,7 @@ pub fn Header(mode: Signal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyV
             <MobileTray show_tray=show_tray node_ref=noder/>
         </div>
 
-        <div class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80 backdrop-blur-sm bg-zinc-50 dark:bg-zinc-900">
+        <div class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80 backdrop-blur-sm ">
             // divider
             <div class="absolute inset-x-0 top-full h-px transition bg-zinc-900/7.5 dark:bg-white/7.5"></div>
             <div class="hidden lg:block lg:max-w-md lg:flex-auto">
@@ -454,7 +454,7 @@ pub fn MobileTray(show_tray: RwSignal<bool>, node_ref: NodeRef<Div>) -> AnyView 
             <div class="fixed inset-0 bg-zinc-400/25 backdrop-blur-sm dark:bg-black/40"></div>
             <div
                 node_ref=node_ref
-                class="fixed bottom-0 left-0 top-14 w-full overflow-y-auto bg-zinc-50 px-4 pb-4 pt-6 shadow-lg shadow-zinc-900/10 ring-1 ring-zinc-900/7.5 dark:bg-zinc-900 dark:ring-zinc-800 min-[416px]:max-w-sm sm:px-6 sm:pb-10"
+                class="fixed bottom-0 left-0 top-14 w-full overflow-y-auto bg-zinc-50/10 px-4 pb-4 pt-6 shadow-lg shadow-zinc-900/10 ring-1 ring-zinc-900/7.5 dark:bg-zinc-900 dark:ring-zinc-800 min-[416px]:max-w-sm sm:px-6 sm:pb-10"
             >
                 <Navigation/>
             </div>
@@ -518,9 +518,9 @@ pub fn Navigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoVie
                         }
                     })
                     .collect::<Vec<_>>()} // <Button
-                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden">// href="#".to_string()
+                // href="#".to_string()
                 // variant=ButtonVariant::Filled
-                // class="w-full".to_string()
+                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden">// class="w-full".to_string()
                 // >
                 // "Sign in"
                 // </Button>

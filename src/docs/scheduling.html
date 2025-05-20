@@ -3,13 +3,13 @@
 <div class="title"><h1>Scheduling content</h1></div>
 </div>
 <div class="body">
-<p>All <strong>invokable</strong> items can be scheduled. This includes, R / Julia scripts, R Markdown or Quarto documents.</p>
-<p>Items can be scheduled using a cron syntax. ricochet utilizes <a href="https://github.com/hexagon/croner-rust">croner</a> for cron schedule parsing.</p>
+<p>All tasks can be scheduled. This includes, R / Julia scripts, R Markdown, or Quarto documents.</p>
+<p>Items can be scheduled using cron syntax. ricochet utilizes <a href="https://github.com/hexagon/croner-rust">croner</a> for cron schedule parsing.</p>
 <div class="callout-tip">
 <p>All cron schedules are in UTC at present.</p>
 </div>
 <h2 id="sec:scheduling">Scheduling</h2>
-<p>Items can be scheduled using the ricochet UI, R package, or the REST API.</p>
+<p>Tasks can be scheduled using the ricochet UI, R package, or the REST API.</p>
 <p>To schedule an item using the R package:</p>
 <pre class="shiki shiki-themes github-light catppuccin-mocha" style="background-color:#fff;--shiki-dark-bg:#1e1e2e;color:#24292e;--shiki-dark:#cdd6f4" tabindex="0"><code><span class="line"><span style="color:#005CC5;font-style:inherit;--shiki-dark:#89B4FA;--shiki-dark-font-style:italic">library</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#24292E;--shiki-dark:#CDD6F4">ricochet</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>
 <span class="line"><span style="color:#24292E;--shiki-dark:#CDD6F4">schedule</span><span style="color:#24292E;--shiki-dark:#9399B2">(</span><span style="color:#032F62;--shiki-dark:#A6E3A1">"01JT1AAJY0EVDE4C0277XX148R"</span><span style="color:#24292E;--shiki-dark:#9399B2">,</span><span style="color:#032F62;--shiki-dark:#A6E3A1"> "@hourly"</span><span style="color:#24292E;--shiki-dark:#9399B2">)</span></span>

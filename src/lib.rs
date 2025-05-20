@@ -9,13 +9,13 @@ use components::{
 };
 use docs::{get_doc, DocNavItem};
 use leptos::prelude::*;
-use leptos_meta::*;
-use leptos_router::{components::*, hooks::use_location, path};
+use leptos_router::{components::*, hooks::use_location};
 use leptos_use::{use_color_mode, ColorMode, UseColorModeReturn};
 
 // Modules
 pub mod components;
 pub mod docs;
+pub mod landing;
 pub mod search_engine;
 
 #[component]

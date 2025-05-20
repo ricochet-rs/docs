@@ -80,7 +80,7 @@ This will be the API that is deployed to **`ricochet`**.
 
 ## Creating a `_ricochet.toml`
 
-Each item that is deployed to **`ricochet`** requires an [`renv.lock`](https://rstudio.github.io/renv/) and a [`_ricochet.toml`](/ricochet-toml) file. The `renv.lock` file is used to track dependencies for your deployment item. The `_ricochet.toml` defines the type of deployment as well as associated metadata.
+Each R-based item that is deployed to **`ricochet`** requires an [`renv.lock`](https://rstudio.github.io/renv/) and a [`_ricochet.toml`](/ricochet-toml) file. The `renv.lock` file is used to track dependencies for your deployment item. The `_ricochet.toml` defines the type of deployment as well as associated metadata.
 
 Run `ricochet::use_ricochet_toml()` to create a new `_ricochet.toml`. The function will give you a number of prompts.
 

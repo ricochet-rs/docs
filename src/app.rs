@@ -1,3 +1,4 @@
+use crate::{landing::LandingPage, DocPage, Index, Layout};
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
@@ -5,8 +6,6 @@ use leptos_router::{
     path, StaticSegment,
 };
 use leptos_use::ColorMode;
-
-use crate::{DocPage, Index, Layout};
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -44,6 +43,10 @@ pub fn App() -> impl IntoView {
                 <Route
                     path=StaticSegment("/")
                     view=move || view! { <Index mode=mode set_mode=set_mode/> }
+                />
+                <Route
+                    path=path!("/landing")
+                    view=move || view! { <LandingPage mode=mode set_mode=set_mode/> }
                 />
                 <Route
                     path=path!("/:path")

@@ -2,17 +2,15 @@
 title: Content items
 ---
 
-`ricochet` supports deploying R and Julia based content. Content items are categorize as either a **service** or an **invokable** item.
+`ricochet` supports deploying R and Julia based content. Content items are categorize as either a **service** or as a **task** item.
 
 A **service** is one that requires an active runtime such as plumber or shiny.
 
-An **invokable item** is one that runs to completion such as R/Julia scripts and Quarto documents.
+A **task** is one that runs to completion such as R/Julia scripts and Quarto documents.
 
-All invokable items can be [scheduled](/scheduling) (or [invoked via API](/invocation)). A subset of invokable items can be served as a [**static html** website](/static)—for example R Markdown and Quarto documents or websites.
+All tasks can be [scheduled](/scheduling) (or [invoked via API](/invocation)). A subset of tasks can be served as a [**static html** website](/static)—for example R Markdown and Quarto documents or websites.
 
-## R content types
-
-The below are R-based content types supported by ricochet.
+The below are content types supported by ricochet.
 
 ### Services
 
@@ -23,17 +21,12 @@ The below are R-based content types supported by ricochet.
 - `quarto-r-shiny`: a Quarto document using a shiny runtime
 - `serverless-r`: R functions deployed as a service (see [Serverless R](/serverless-r))
 - `r-service`: a web app or API served using an R runtime
+- `julia-service`: a web app or API served using a Julia runtime
 
-### Invokable Items
+### Tasks
 
 - `r`: an R script with the extension `.R` or `.r`
 - `rmd`: an R Markdown document with the extension `.Rmd` or `.r`
 - `quarto-r`: a Quarto document using an R runtime
-
-## Julia content types
-
-The below are Julia-based content types supported by ricochet.
-
 - `julia`: a Julia script
 - `quarto-jl`: a Quarto document using a Julia runtime
-- `julia-service`: a web app or API served using a Julia runtime

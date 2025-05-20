@@ -17,8 +17,9 @@ tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 wasm-bindgen = { version = "=0.2.100", optional = true }
 leptos-use = "0.16.0-beta"
 bm25 = "2.2.1"
-rkyv = "0.8.10"
 tower-http = { version = "0.6.4", features = ["fs"], optional = true }
+reqwest = { version = "0.12.15", features = ["json"], optional = true }
+serde = { version = ">=1.0.0", features = ["derive"], optional = true }
 
 
 [features]
@@ -32,8 +33,9 @@ ssr = [
     "leptos_router/ssr",
     "leptos-use/ssr",
     "leptos-use/axum",
-    # for serving ricochet tar file
     "dep:tower-http",
+    "dep:reqwest",
+    "dep:serde",
 ]
 tower-http = ["dep:tower-http"]
 

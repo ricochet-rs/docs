@@ -19,6 +19,7 @@ async fn insert_email(email: String, interview: bool) -> Result<(), ServerFnErro
     }
 
     let supabase_url = "https://zmgzxezvboqmvioqtrze.supabase.co/rest/v1/ricochet-waitlist";
+    // FIXME lol
     let supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InptZ3p4ZXp2Ym9xbXZpb3F0cnplIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzYwODU5OCwiZXhwIjoyMDYzMTg0NTk4fQ.xaFozu3Y4o_ZV3YG2qpEPOPUX335XBKN724488CtrUw";
 
     let client = Client::new();
@@ -36,7 +37,7 @@ async fn insert_email(email: String, interview: bool) -> Result<(), ServerFnErro
         .unwrap();
 
     // leptos::logging::log!("Request is {req:?}");
-    &client.execute(req).await?;
+    let _ = &client.execute(req).await?;
 
     Ok(())
 }
@@ -97,7 +98,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
                                     </h1>
 
                                     <p class="max-w-2xl mx-auto text-balance text-lg dark:text-zinc-300 text-zinc-500">
-                                        "Elastic scaling of Shiny, Plumber, and Ambiorix, a serverless R runtime, to scheduled tasks, is all a line of code away."
+                                        "Elastic scaling of Shiny, Plumber, and Ambiorix, a serverless R runtime, scheduled tasks—they're all a line of code away."
                                     </p>
                                 </div>
                             </div>

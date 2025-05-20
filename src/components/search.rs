@@ -206,7 +206,6 @@ pub fn SearchDialog(show_search: RwSignal<bool>, node_ref: NodeRef<Input>) -> An
 
                         <SearchInput query=search_query show_search=show_search node_ref=node_ref/>
                         <div class=move || {
-                            leptos::logging::log!("Search query is: {:?}", search_query.get());
                             if search_query.get().is_empty() { "hidden" } else { "" }
                         }>
                             <div class="border-t border-zinc-200 bg-white empty:hidden dark:border-zinc-100/5 dark:bg-white/2.5">

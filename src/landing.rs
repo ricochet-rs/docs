@@ -25,7 +25,7 @@ async fn insert_email(email: String, interview: bool) -> Result<(), ServerFnErro
 
     let body = EntryBody { email, interview };
 
-    leptos::logging::log!("Body is {body:?}");
+    // leptos::logging::log!("Body is {body:?}");
     let req = client
         .post(supabase_url)
         .json(&body)
@@ -35,8 +35,8 @@ async fn insert_email(email: String, interview: bool) -> Result<(), ServerFnErro
         .build()
         .unwrap();
 
-    leptos::logging::log!("Request is {req:?}");
-    dbg!(&client.execute(req).await?);
+    // leptos::logging::log!("Request is {req:?}");
+    &client.execute(req).await?;
 
     Ok(())
 }

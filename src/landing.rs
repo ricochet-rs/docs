@@ -7,6 +7,7 @@ use crate::{
     HomeButton,
 };
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_use::ColorMode;
 
 #[server]
@@ -57,7 +58,9 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
         "h-5 w-5 text-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-500 fill-zinc-700 transition group-hover:fill-zinc-900 dark:group-hover:fill-zinc-500",
     );
 
+
     view! {
+        <Title text="ricochet 🐇"/>
         <div class=move || dark_mode_class()>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full">

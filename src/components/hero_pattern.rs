@@ -65,7 +65,7 @@ pub fn HeroPattern() -> AnyView {
     view! {
         <div id="hero-pattern" class="absolute inset-0 mx-0 max-w-none overflow-hidden">
             <div class="absolute left-1/2 top-0 ml-[-38rem] h-[30rem] w-[81.25rem] dark:[mask-image:linear-gradient(white,transparent)]">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#ba8cbf] to-[#615391] opacity-40 [mask-image:radial-gradient(farthest-side_at_top,white,transparent)] dark:from-[#ba8cbf]/30 dark:to-[#615391]/30 dark:opacity-100">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#dedede] to-[#524a54] opacity-40 [mask-image:radial-gradient(farthest-side_at_top,white,transparent)] dark:from-[#ba8cbf]/30 dark:to-[#615391]/30 dark:opacity-100">
                     <GridPattern
                         width=72.0
                         height=23.0

@@ -71,7 +71,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
                                 // Main navigation
                                 <nav>
                                     <ul role="list" class="flex items-center gap-8">
-                                        <TopLevelNavItem href="https://docs.ricochet.rs"
+                                        <TopLevelNavItem href="/overview"
                                             .to_string()>"Documentation"</TopLevelNavItem>
                                     </ul>
                                 </nav>

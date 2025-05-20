@@ -140,6 +140,7 @@ pub fn doc_sections() -> BTreeMap<DocSection, Vec<&'static DocPage>> {
 }
 
 pub struct DocNavItem {
+    pub title: &'static str,
     pub body: &'static str,
     pub prev_slug: Option<usize>,
     pub next_slug: Option<usize>,
@@ -149,6 +150,7 @@ impl Default for DocNavItem {
     fn default() -> Self {
         let body = r#"<div class="not-prose mx-auto flex h-full max-w-xl flex-col items-center justify-center text-center"><p class="text-sm font-semibold text-zinc-900 dark:text-white">404</p><h1 class="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">Page not found</h1><p class="mt-2 text-base text-zinc-600 dark:text-zinc-400">These are not the docs you're looking for.</p><a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-1 dark:ring-inset dark:ring-emerald-400/20 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-300 dark:hover:ring-emerald-300 mt-8" href="/">Back to docs<svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 -mr-1"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path></svg></a></div>"#;
         Self {
+            title: "Not Found",
             body,
             prev_slug: None,
             next_slug: None,
@@ -165,6 +167,7 @@ pub fn get_doc(slug: &str) -> Option<DocNavItem> {
     match idx {
         Some(idx) => {
             let body = DOC_PAGES[idx].body;
+            let title = DOC_PAGES[idx].title;
             let next_slug = DOC_PAGES.get(idx + 1).map(|_| idx + 1);
 
             let prev_slug = if idx == 0 {
@@ -174,6 +177,7 @@ pub fn get_doc(slug: &str) -> Option<DocNavItem> {
             };
 
             let res = DocNavItem {
+                title,
                 body,
                 prev_slug,
                 next_slug,

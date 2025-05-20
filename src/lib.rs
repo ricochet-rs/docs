@@ -9,6 +9,7 @@ use components::{
 };
 use docs::{get_doc, DocNavItem};
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_router::{components::*, hooks::use_location};
 use leptos_use::{use_color_mode, ColorMode, UseColorModeReturn};
 
@@ -35,6 +36,7 @@ pub fn Layout(
     #[prop(optional)] doc: Option<DocNavItem>,
 ) -> impl IntoView {
     let DocNavItem {
+        title,
         body,
         prev_slug,
         next_slug,
@@ -47,7 +49,9 @@ pub fn Layout(
         _ => "w-full",
     };
 
+    let title = format!("{title} | ricochet 🐇");
     view! {
+        <Title text=title/>
         <div class=move || dark_mode_class()>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full lg:ml-72 xl:ml-80">
@@ -111,6 +115,7 @@ fn DocPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> Any
 #[component]
 fn Index(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
     let item = DocNavItem {
+        title: "Overview",
         body: include_str!("docs/home.html"),
         prev_slug: None,
         next_slug: Some(0),

@@ -12,21 +12,25 @@ All tasks can be [scheduled](/scheduling) (or [invoked via API](/invocation)). A
 
 The below are content types supported by ricochet.
 
-### Services
+## Services
 
-- `plumber`: an API developed using [`{plumber}`](https://rplumber.io)
-- `ambiorix`: an API or web app developed using [`{ambiorix}`](https://ambiorix.dev)
-- `shiny`: a web app developed using [`{shiny}`](https://shiny.posit.co/r/)
-- `rmd-shiny`: an R Markdown document using a shiny runtime
-- `quarto-r-shiny`: a Quarto document using a shiny runtime
-- `serverless-r`: R functions deployed as a service (see [Serverless R](/serverless-r))
-- `r-service`: a web app or API served using an R runtime
-- `julia-service`: a web app or API served using a Julia runtime
+| `Content Type` | `Description` |
+| ------------ | --------------- |
+| `plumber` | An API developed using [`{plumber}`](https://rplumber.io) |
+| `ambiorix`| An API or web app developed using [`{ambiorix}`](https://ambiorix.dev) |
+| `shiny` | A web app developed using [`{shiny}`](https://shiny.posit.co/r/) |
+| `rmd-shiny` | an R Markdown document using a shiny runtime |
+| `quarto-r-shiny` | a Quarto document using a shiny runtime |
+| `serverless-r` | R functions deployed as a service (see [Serverless R](/serverless-r)) |
+| `r-service`: a web app or API served using an R runtime |
+| `julia-service` | a web app or API served using a Julia runtime such as Dash |
 
-### Tasks
+## Tasks
 
-- `r`: an R script with the extension `.R` or `.r`
-- `rmd`: an R Markdown document with the extension `.Rmd` or `.r`
-- `quarto-r`: a Quarto document using an R runtime
-- `julia`: a Julia script
-- `quarto-jl`: a Quarto document using a Julia runtime
+| `Content Type` | `Description` |
+| ------------ | --------------- |
+| `r` | An R script with the extension `.R` or `.r`. |
+| `rmd` | An R Markdown document with the extension `.Rmd` or `.r`. |
+| `quarto-r` | A Quarto document using an R runtime. |
+| `julia` | A Julia script. |
+| `quarto-jl` | A Quarto document using a Julia runtime. |

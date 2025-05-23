@@ -8,42 +8,79 @@
 <p>A <strong>task</strong> is one that runs to completion such as R/Julia scripts and Quarto documents.</p>
 <p>All tasks can be <a href="/scheduling">scheduled</a> (or <a href="/invocation">invoked via API</a>). A subset of tasks can be served as a <a href="/static"><strong>static html</strong> website</a>—for example R Markdown and Quarto documents or websites.</p>
 <p>The below are content types supported by ricochet.</p>
-<h3 id="sec:services">Services</h3>
-<ul>
-<li>
-<code>plumber</code>: an API developed using <a href="https://rplumber.io"><code>{plumber}</code></a>
-</li>
-<li>
-<code>ambiorix</code>: an API or web app developed using <a href="https://ambiorix.dev"><code>{ambiorix}</code></a>
-</li>
-<li>
-<code>shiny</code>: a web app developed using <a href="https://shiny.posit.co/r/"><code>{shiny}</code></a>
-</li>
-<li>
-<code>rmd-shiny</code>: an R Markdown document using a shiny runtime</li>
-<li>
-<code>quarto-r-shiny</code>: a Quarto document using a shiny runtime</li>
-<li>
-<code>serverless-r</code>: R functions deployed as a service (see <a href="/serverless-r">Serverless R</a>)</li>
-<li>
-<code>r-service</code>: a web app or API served using an R runtime</li>
-<li>
-<code>julia-service</code>: a web app or API served using a Julia runtime</li>
-</ul>
-<h3 id="sec:tasks">Tasks</h3>
-<ul>
-<li>
-<code>r</code>: an R script with the extension <code>.R</code> or <code>.r</code>
-</li>
-<li>
-<code>rmd</code>: an R Markdown document with the extension <code>.Rmd</code> or <code>.r</code>
-</li>
-<li>
-<code>quarto-r</code>: a Quarto document using an R runtime</li>
-<li>
-<code>julia</code>: a Julia script</li>
-<li>
-<code>quarto-jl</code>: a Quarto document using a Julia runtime</li>
-</ul>
+<h2 id="sec:services">Services</h2>
+<table>
+<thead><tr>
+<th><code>Content Type</code></th>
+<th><code>Description</code></th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>plumber</code></td>
+<td>An API developed using <a href="https://rplumber.io"><code>{plumber}</code></a>
+</td>
+</tr>
+<tr>
+<td><code>ambiorix</code></td>
+<td>An API or web app developed using <a href="https://ambiorix.dev"><code>{ambiorix}</code></a>
+</td>
+</tr>
+<tr>
+<td><code>shiny</code></td>
+<td>A web app developed using <a href="https://shiny.posit.co/r/"><code>{shiny}</code></a>
+</td>
+</tr>
+<tr>
+<td><code>rmd-shiny</code></td>
+<td>an R Markdown document using a shiny runtime</td>
+</tr>
+<tr>
+<td><code>quarto-r-shiny</code></td>
+<td>a Quarto document using a shiny runtime</td>
+</tr>
+<tr>
+<td><code>serverless-r</code></td>
+<td>R functions deployed as a service (see <a href="/serverless-r">Serverless R</a>)</td>
+</tr>
+<tr>
+<td>
+<code>r-service</code>: a web app or API served using an R runtime</td>
+<td></td>
+</tr>
+<tr>
+<td><code>julia-service</code></td>
+<td>a web app or API served using a Julia runtime such as Dash</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sec:tasks">Tasks</h2>
+<table>
+<thead><tr>
+<th><code>Content Type</code></th>
+<th><code>Description</code></th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>r</code></td>
+<td>An R script with the extension <code>.R</code> or <code>.r</code>.</td>
+</tr>
+<tr>
+<td><code>rmd</code></td>
+<td>An R Markdown document with the extension <code>.Rmd</code> or <code>.r</code>.</td>
+</tr>
+<tr>
+<td><code>quarto-r</code></td>
+<td>A Quarto document using an R runtime.</td>
+</tr>
+<tr>
+<td><code>julia</code></td>
+<td>A Julia script.</td>
+</tr>
+<tr>
+<td><code>quarto-jl</code></td>
+<td>A Quarto document using a Julia runtime.</td>
+</tr>
+</tbody>
+</table>
 </div>
 </body>

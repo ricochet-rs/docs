@@ -41,7 +41,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <Routes fallback=move || view! { <Layout mode=mode set_mode=set_mode/> }>
                 <Route
-                    path=StaticSegment("/overview")
+                    path=StaticSegment("/hello")
                     view=move || view! { <Index mode=mode set_mode=set_mode/> }
                 />
                 <Route

@@ -1,4 +1,8 @@
-use crate::{landing::LandingPage, DocPage, Index, Layout};
+use crate::{
+    api::{ApiEndpoint, ApiRefLayout, ApiRefPage},
+    landing::LandingPage,
+    DocPage, Index, Layout,
+};
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
@@ -30,7 +34,6 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
     let (mode, set_mode) = signal(ColorMode::Dark);
-
     view! {
         <Stylesheet id="leptos" href="/pkg/ricochet-docs.css"/>
 
@@ -52,6 +55,23 @@ pub fn App() -> impl IntoView {
                     path=path!("/:path")
                     view=move || view! { <DocPage mode=mode set_mode=set_mode/> }
                 />
+                <Route
+                    path=path!("/docs/:path")
+                    view=move || view! { <DocPage mode=mode set_mode=set_mode/> }
+                />
+                <Route
+                    path=path!("/api/:path")
+                    view=move || {
+                        view! {
+                            <ApiRefPage
+                                mode=mode
+                                set_mode=set_mode
+                                endpoint=ApiEndpoint::example()
+                            />
+                        }
+                    }
+                />
+
             </Routes>
         </Router>
     }

@@ -1,0 +1,63 @@
+---
+title: "API Reference"
+---
+
+## Using the REST API
+
+## Content
+
+
+### Deploy an item
+
+- POST `/api/v0/upload`
+
+
+### Schedule Tasks
+
+- PATCH `/content/{ulid}/settings`
+- GET `/api/v0/content/{ulid}/toml`
+- GET `/api/v0/content/{ulid}/deployments`
+- DELETE `/api/v0/admin/delete/{ulid} `
+
+## Tasks
+
+
+- PATCH `/content/{ulid}/schedule`
+- POST `/api/v0/content/{ulid}/invoke`
+- GET `/api/v0/content/{ulid}/invocations/active`
+- POST `/api/v0/content/{ulid}/invocations/{id}/stop`
+
+## Services
+
+- GET `/api/v0/content/{ulid}/instances`
+- POST `/api/v0/content/{ulid}/instances/{pid}/stop`
+
+## User
+
+- GET `/api/v0/user/items`
+
+
+-----
+
+General structure for each endpoint:
+
+## Short Endpoint Description
+
+A one to two sentence summary of the endpoint.
+
+A nicely styled badge here:
+
+GET /api/v0/content/{styledparam}
+
+### Path Parameters
+
+
+### Body
+
+
+The example and response are in a column to the right
+
+### Example
+
+
+### Response

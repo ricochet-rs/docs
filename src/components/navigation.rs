@@ -364,7 +364,7 @@ pub fn NavigationGroup(
                                 let href = di.href.to_string();
                                 let hr = href.clone();
                                 let title = di.title.to_string();
-                                let is_active = location.pathname.get().split_off(1) == hr;
+                                let is_active = location.pathname.get() == hr;
                                 view! {
                                     {move || {
                                         if is_active {
@@ -520,10 +520,10 @@ pub fn Navigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoVie
                     .collect::<Vec<_>>()} // <Button
                 // href="#".to_string()
                 // variant=ButtonVariant::Filled
-                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden">// class="w-full".to_string()
+                // class="w-full".to_string()
                 // >
                 // "Sign in"
-                // </Button>
+                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden">// </Button>
                 </li>
             </ul>
         </nav>

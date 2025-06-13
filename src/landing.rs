@@ -93,16 +93,33 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
                         <main class="flex-auto py-16">
                             <div class="mx-auto w-full">
                                 <div class="h-full w-full max-w-3xl dark:text-white lg:max-w-4xl mx-auto text-center relative space-y-12">
+                                    <a
+                                        href="/serverless-r"
+                                        class="group cursor-pointer py-1 px-3 text-xs
+                                        ring
+                                        dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-300 dark:hover:bg-violet-500 dark:hover:text-white dark:hover:ring-violet-400
+                                        rounded-full inline-flex items-center mx-auto mb-6
+                                        
+                                        bg-violet-200 text-violet-600 ring-violet-400 hover:bg-zinc-800 hover:text-white hover:ring-zinc-700
+                                        "
+                                    >
+                                        <LightningIcon class="size-4 me-2 group-hover:dark:text-yellow-400 group-hover:text-yellow-500"
+                                            .to_string()/>
+                                        "Serverless R has landed"
+                                    </a>
                                     <h1 class="max-w-3xl mx-auto text-title text-balance text-4xl font-bold sm:text-6xl text-zinc-800 dark:text-zinc-100">
-                                        "Data Scientists are "
+                                        // "Data Scientists are Developers"
+                                        "Deploy "
                                         <span class="dark:text-violet-500 text-violet-600">
-                                            "Developers"
-                                        </span>
+                                            "R & Julia"
+                                        </span> " Like Never Before"
                                     </h1>
 
-                                    <p class="max-w-2xl mx-auto text-balance text-lg dark:text-zinc-300 text-zinc-500">
-                                        "Elastic scaling of Shiny, Plumber, and Ambiorix, a serverless R runtime, scheduled tasks—they're all a line of code away."
+                                    <p class="max-w-2xl mx-auto text-balance text-xl dark:text-zinc-300 text-zinc-500">
+                                        // "Elastic scaling of Shiny, Plumber, and Ambiorix, a serverless R runtime, scheduled tasks—they're all a line of code away."
+                                        "Revolutionize how you deploy, auto-scale, and schedule R and Julia applications and tasks."
                                     </p>
+
                                 </div>
                             </div>
                             <div class="relative mx-auto max-w-3xl lg:max-w-5xl block lg:flex items-center justify-between w-full space-x-14 space-y-10 py-42 px-8 lg:px-0">

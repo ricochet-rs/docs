@@ -14,6 +14,7 @@ use leptos_router::{components::*, hooks::use_location};
 use leptos_use::{use_color_mode, ColorMode, UseColorModeReturn};
 
 // Modules
+pub mod api;
 pub mod components;
 pub mod docs;
 pub mod landing;

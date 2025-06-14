@@ -123,7 +123,7 @@ pub fn Header(mode: Signal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyV
                 // Main navigation
                 <nav class="hidden md:block">
                     <ul role="list" class="flex items-center gap-8">
-                        <TopLevelNavItem href="/".to_string()>"API"</TopLevelNavItem>
+                        <TopLevelNavItem href="/api".to_string()>"API"</TopLevelNavItem>
                         <TopLevelNavItem href="/".to_string()>"Documentation"</TopLevelNavItem>
                     </ul>
                 </nav>
@@ -523,8 +523,8 @@ pub fn Navigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoVie
                 // class="w-full".to_string()
                 // >
                 // "Sign in"
-                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden">// </Button>
-                </li>
+                // </Button>
+                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden"></li>
             </ul>
         </nav>
     }

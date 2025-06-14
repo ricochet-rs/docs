@@ -124,15 +124,6 @@ pub fn ApiRefLayout(
         _ => "w-full",
     };
 
-    let example_code = r#"deployment <- ricochet::deploy()
-url <- sprintf(
-    "%s/content/%s/deployment/%s",
-    ricochet::ricochet_host(),
-    deployment$id,
-    deployment$deployment_id
-)
-    "#;
-
     let title = format!("{title} | ricochet 🐇");
     view! {
         <Title text=title/>
@@ -224,12 +215,30 @@ pub fn ApiRefPage(
 #[component]
 pub fn CodeTab() -> AnyView {
     let active_class ="text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500";
-
+    let inactive_class =
+        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-600 hover:border-zinc-300 cursor-pointer";
     let curl_code = r#"curl -X
     POST \
     "https://ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/invoke" \
     -H "Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k"
     "#;
+    let example_code = r#"deployment <- ricochet::deploy()
+url <- sprintf(
+    "%s/content/%s/deployment/%s",
+    ricochet::ricochet_host(),
+    deployment$id,
+    deployment$deployment_id
+)
+    "#;
+
+    #[derive(Clone, Copy)]
+    enum CodeTab {
+        Curl,
+        R,
+    }
+
+    let code_tab = RwSignal::new(CodeTab::Curl);
+
     view! {
         <div class="border border-zinc-900/10 dark:border-white/10 dark:bg-zinc-800/50 not-prose shadow-sm">
             <div class="mb-2 dark:bg-zinc-900">
@@ -242,57 +251,98 @@ pub fn CodeTab() -> AnyView {
                 >
                     <li class="me-2" role="presentation">
                         <button
-                            class=format!(
-                                "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
-                            )
+                            class=move || {
+                                if let CodeTab::Curl = code_tab.get() {
+                                    format!(
+                                        "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
+                                    )
+                                } else {
+                                    inactive_class.to_string()
+                                }
+                            }
 
-                            id="profile-styled-tab"
-                            data-tabs-target="#styled-profile"
+                            id="curl-example-code"
                             type="button"
                             role="tab"
-                            aria-controls="profile"
-                            aria-selected="false"
+                            aria-selected=move || {
+                                match code_tab.get() {
+                                    CodeTab::Curl => true,
+                                    _ => false,
+                                }
+                            }
+
+                            on:click=move |_| {
+                                code_tab.set(CodeTab::Curl);
+                            }
                         >
+
                             "cURL"
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
                         <button
-                            class="font-mono inline-block p-2 border-b-2 dark:border-zinc-500 dark:hover:border-white
-                            text-zinc-500
-                            dark:hover:text-white
-                            hover:text-zinc-600 hover:border-zinc-300 cursor-pointer"
+                            class=move || {
+                                if let CodeTab::R = code_tab.get() {
+                                    format!(
+                                        "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
+                                    )
+                                } else {
+                                    inactive_class.to_string()
+                                }
+                            }
 
-                            id="dashboard-styled-tab"
                             type="button"
                             role="tab"
-                            aria-selected="false"
+                            on:click=move |_| {
+                                code_tab.set(CodeTab::R);
+                            }
+
+                            aria-selected=move || {
+                                match code_tab.get() {
+                                    CodeTab::R => true,
+                                    _ => false,
+                                }
+                            }
                         >
+
                             "R"
                         </button>
                     </li>
                 </ul>
             </div>
-            <div id="default-styled-tab-content not-prose">
+            <div class="not-prose">
                 <div class="leading-[1.35rem] not-prose" role="tabpanel">
-                    <pre class=format!("not-prose overflow-x-scroll px-2 {SCROLLBAR_X}")>
-                        <code class="not-prose overflow-x-scroll text-xs">{curl_code}</code>
-                    </pre>
+                    {move || {
+                        match code_tab.get() {
+                            CodeTab::R => {
+                                view! {
+                                    <pre class=format!(
+                                        "not-prose overflow-x-scroll px-2 {SCROLLBAR_X}",
+                                    )>
+                                        <code class="not-prose overflow-x-scroll text-xs">
+                                            {example_code}
+                                        </code>
+                                    </pre>
+                                }
+                                    .into_any()
+                            }
+                            CodeTab::Curl => {
+                                view! {
+                                    <pre class=format!(
+                                        "not-prose overflow-x-scroll px-2 {SCROLLBAR_X}",
+                                    )>
+                                        <code class="not-prose overflow-x-scroll text-xs">
+                                            {curl_code}
+                                        </code>
+                                    </pre>
+                                }
+                                    .into_any()
+                            }
+                        }
+                    }}
+
                 </div>
-                <div
-                    class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-                    id="styled-dashboard"
-                    role="tabpanel"
-                    aria-labelledby="dashboard-tab"
-                >
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                        This is some placeholder content the
-                        <strong class="font-medium text-gray-800 dark:text-white">
-                            "Dashboard tab's associated content"
-                        </strong>
-                        . Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.
-                    </p>
-                </div>
+
             </div>
         </div>
     }.into_any()

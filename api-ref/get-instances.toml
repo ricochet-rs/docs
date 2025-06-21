@@ -1,0 +1,24 @@
+title = "List service instances"
+method = "get"
+path = "/api/v0/content/{ulid}/instances"
+description = "Returns running instances for a service item."
+path_params = [{ name = "ulid", desc = "The ID of the content item" }]
+response = """
+Returns an array of json object service instances with the fields:
+
+- `instance_id`: The ULID assigned to the instance
+- `connections`: The number of active connections to the instance
+- `created_at`: The timestamp of when the instance was started
+- `last_connection`: The timestamp of the last time a connection wass made to the instance
+"""
+
+[examples]
+r = """
+library(ricochet)
+list_instances("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+"""
+
+curl = """
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/instances \
+    -H "Authorization: Key YOUR_API_KEY"
+"""

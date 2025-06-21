@@ -1,31 +1,7 @@
----
-title: "API Reference"
----
-
-## Using the REST API
-
-## Content
 
 
-### Deploy an item
-
-- POST `/api/v0/upload`
-
-
-### Schedule Tasks
-
-- PATCH `/content/{ulid}/settings`
-- GET `/api/v0/content/{ulid}/toml`
-- GET `/api/v0/content/{ulid}/deployments`
 - DELETE `/api/v0/admin/delete/{ulid} `
 
-## Tasks
-
-
-- PATCH `/content/{ulid}/schedule`
-- POST `/api/v0/content/{ulid}/invoke`
-- GET `/api/v0/content/{ulid}/invocations/active`
-- POST `/api/v0/content/{ulid}/invocations/{id}/stop`
 
 ## Services
 

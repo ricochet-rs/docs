@@ -1,0 +1,26 @@
+title = "List item deployments"
+method = "get"
+path = "/api/v0/content/{ulid}/deployments"
+description = "Returns all deployments for a given content item."
+path_params = [{ name = "ulid", desc = "The ID of the content item" }]
+response = """
+Returns an array of deployments. Each deployment returns:
+
+- `id`: The ULID string of a deployment's ID
+- `content_id`: The ULID of the content ID
+- `deployed_at`: When the deployment was started in seconds from the UNIX epoch
+- `status`: The status of the deployment. One of `success`, `failure`, or `pending`.
+- `deployed_by`: The user ID of who initiated the deployment
+- `ip_address`: The IP address of where the request was made
+"""
+
+[examples]
+r = """
+library(ricochet)
+list_deployments("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+"""
+
+curl = """
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/deployments \
+    -H "Authorization: Key YOUR_API_KEY"
+"""

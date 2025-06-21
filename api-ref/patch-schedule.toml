@@ -1,0 +1,29 @@
+title = "Schedule a task"
+method = "patch"
+path = "/api/v0/content/{ulid}/schedule"
+description = "Schedules a task to run on a recurring schedule. Tasks are schedule using cron syntax. See the [scheduling content](/scheduling) documentation for more on the supported cron syntax."
+path_params = [{ name = "ulid", desc = "The ID of the content item" }]
+body_params = [{ name = "schedule", desci = "A cron schedule." }]
+response = """
+Returns a json object e.g.
+
+```json
+{
+    "message": "Schedule updated successfully",
+    "schedule": "@daily"
+}
+```
+"""
+
+[examples]
+r = """
+library(ricochet)
+schedule("01ARZ3NDEKTSV4RRFFQ69G5FAV", "@daily")
+"""
+
+curl = """
+curl -X PATCH https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/deployments \
+    -H "Authorization: Key YOUR_API_KEY"
+    -H "Content-Type: application/json" \
+    -d '{"schedule": "@daily" }'
+"""

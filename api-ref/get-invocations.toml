@@ -1,0 +1,19 @@
+title = "List active invocations"
+method = "get"
+path = "/api/v0/content/{ulid}/invocations/active"
+description = "Identify all active invocations for a given content item. "
+path_params = [{ name = "ulid", desc = "The ID of the content item" }]
+response = """
+Returns an array of active invocations. Each item in the array contains the `id` of the invocation and the time it started (`started_at`).
+"""
+
+[examples]
+r = """
+library(ricochet)
+get_active_invocations("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+"""
+
+curl = """
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/invocations/active \
+    -H "Authorization: Key YOUR_API_KEY"
+"""

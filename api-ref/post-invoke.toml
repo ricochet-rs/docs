@@ -1,0 +1,19 @@
+title = "Invoke a task"
+method = "post"
+path = "/api/v0/content/{ulid}/invoke"
+description = "Invokes a deployed task for one-off execution. The task will start immediately. Invoking a task will not affect any scheduled invocations. "
+path_params = [{ name = "ulid", desc = "The ID of the content item" }]
+response = """
+Returns a json object with the invocation ID and content ID.
+"""
+
+[examples]
+r = """
+library(ricochet)
+invoke("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+"""
+
+curl = """
+curl -X POST https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/deployments \
+    -H "Authorization: Key YOUR_API_KEY"
+"""

@@ -1,0 +1,16 @@
+title = "Get item settings"
+method = "get"
+path = "/api/v0/content/{ulid}/toml"
+description = "Returns the current settings for a given content item as a `_ricochet.toml`. Use this endpoint to sync your local settings with the remote ones."
+path_params = [{ name = "ulid", desc = "The ID of the content item." }]
+
+[examples]
+r = """
+library(ricochet)
+get_ricochet_toml("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+"""
+
+curl = """
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/toml \
+    -H "Authorization: Key YOUR_API_KEY"
+"""

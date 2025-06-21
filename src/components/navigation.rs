@@ -6,10 +6,9 @@ use crate::{
 use leptos::{
     ev::keydown,
     html::{Div, Input},
-    logging,
     prelude::*,
 };
-use leptos_use::{on_click_outside, use_document, use_event_listener, ColorMode};
+use leptos_use::{use_document, use_event_listener, ColorMode};
 
 #[component]
 pub fn SunIcon(#[prop(optional)] class: Option<String>) -> AnyView {
@@ -442,6 +441,8 @@ pub fn MobileTray(show_tray: RwSignal<bool>, node_ref: NodeRef<Div>) -> AnyView 
     //     show_tray.set(false);
     // });
 
+    let location = leptos_router::hooks::use_location();
+
     let _ = use_event_listener(use_document(), keydown, move |evt| {
         if evt.key() == "Escape" {
             leptos::logging::log!("Close mobile modal");
@@ -451,12 +452,20 @@ pub fn MobileTray(show_tray: RwSignal<bool>, node_ref: NodeRef<Div>) -> AnyView 
 
     view! {
         <dialog class="fixed inset-0 z-50 block lg:hidden" aria-modal="true">
-            <div class="fixed inset-0 bg-zinc-400/25 backdrop-blur-sm dark:bg-black/40"></div>
+            <div class="fixed inset-0 backdrop-blur-sm dark:bg-black/40"></div>
             <div
                 node_ref=node_ref
-                class="fixed bottom-0 left-0 top-14 w-full overflow-y-auto bg-zinc-50/10 px-4 pb-4 pt-6 shadow-lg shadow-zinc-900/10 ring-1 ring-zinc-900/7.5 dark:bg-zinc-900 dark:ring-zinc-800 min-[416px]:max-w-sm sm:px-6 sm:pb-10"
+                class="fixed bottom-0 left-0 top-14 w-full overflow-y-auto bg-zinc-50 px-4 pb-4 pt-6 shadow-lg shadow-zinc-900/10 ring-1 ring-zinc-900/7.5 dark:bg-zinc-900 dark:ring-zinc-800 min-[416px]:max-w-sm sm:px-6 sm:pb-10"
             >
-                <Navigation/>
+                {move || {
+                    let is_api = location.pathname.get().starts_with("/api");
+                    if is_api {
+                        view! { <crate::api::ApiNavigation></crate::api::ApiNavigation> }.into_any()
+                    } else {
+                        view! { <Navigation/> }.into_any()
+                    }
+                }}
+
             </div>
         </dialog>
     }
@@ -517,13 +526,7 @@ pub fn Navigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoVie
                             <NavigationGroup group=group class=if i == 0 { "md:mt-0" } else { "" }/>
                         }
                     })
-                    .collect::<Vec<_>>()} // <Button
-                // href="#".to_string()
-                // variant=ButtonVariant::Filled
-                // class="w-full".to_string()
-                // >
-                // "Sign in"
-                // </Button>
+                    .collect::<Vec<_>>()}
                 <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden"></li>
             </ul>
         </nav>

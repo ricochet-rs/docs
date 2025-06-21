@@ -1,9 +1,14 @@
+use std::sync::OnceLock;
+
 use leptos::prelude::*;
 use leptos_meta::Title;
-use leptos_use::ColorMode;
+use leptos_use::{use_clipboard, ColorMode, UseClipboardReturn};
 
 use crate::{
-    components::{footer::Footer, navigation::Header},
+    components::{
+        footer::Footer,
+        navigation::{Header, NavLink},
+    },
     HomeButton,
 };
 
@@ -124,7 +129,21 @@ pub fn ApiRefLayout(
         _ => "w-full",
     };
 
+    // this gets the location of the page we're on
+    let location = leptos_router::hooks::use_location();
+
+    let UseClipboardReturn { copied, copy, .. } = use_clipboard();
+
+    let clip_url = move |id: &'static str| {
+        let loc = location.pathname.get();
+        let url = leptos_router::hooks::use_url().get();
+        let url = url.origin();
+        format!("{url}{loc}#{id}")
+    };
+
     let title = format!("{title} | ricochet 🐇");
+
+    let h = r#"<p>Deploy an R or Julia content item to Ricochet as a service or task.</p><p>To create a new content item, both a <code>bundle</code> and a <code>config</code> file must be included. The <code>config</code> field corresponds to the <code>_ricochet.toml</code> file that defines how the content should be deployed. When deploying to an existing item, the <code>id</code> must be specified, and the <code>config</code> field—if present—is ignored.</p><p>This endpoint accepts a <code>multipart</code> request and requires an API key with the <code>content:deploy</code> scope. Returns the <code>id</code> of the content item and the <code>deployment_id</code> of the new deployment.</p>\n"#;
     view! {
         <Title text=title/>
         <div class=move || dark_mode_class()>
@@ -137,7 +156,7 @@ pub fn ApiRefLayout(
                                 <HomeButton/>
                             </div>
                             <Header mode=mode.into() set_mode=set_mode/>
-                        // <Navigation class="hidden lg:mt-10 lg:block".into()/>
+                            <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
                         </div>
                     </header>
 
@@ -156,36 +175,85 @@ pub fn ApiRefLayout(
                                 // <article
                                 // inner_html=body
                                 <div class="h-full w-full max-w-2xl lg:max-w-5xl mx-auto">
-                                    <h2 class="mt-0! mb-4!">"Deploy an item"</h2>
-                                    <p>{description}</p>
-                                    <div class="inline-flex items-center p-2 border border-zinc-900/10 dark:border-white/10 m-0!">
-                                        {method.as_badge()}
-                                        <p class="ms-2 font-mono text-base my-0!">{endpoint}</p>
+
+                                    <div id="endpoint-header">
+                                        <h2 class="mt-0! mb-4!">"Deploy an item"</h2>
+                                        <div class="inline-flex items-center p-2 border border-zinc-900/10 dark:border-white/10 m-0!">
+                                            {method.as_badge()}
+                                            <p class="ms-2 font-mono text-base my-0!">{endpoint}</p>
+                                        </div>
+                                        <p>{description}</p>
+                                        <div inner_html=h></div>
                                     </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 border-t border-zinc-900/5 pt-8 dark:border-white/5">
-                                        {if let Some(body) = body_params {
-                                            let v = body
-                                                .into_iter()
-                                                .map(|i| i.as_view())
-                                                .collect_view()
-                                                .into_any();
-                                            view! {
-                                                <div id="body-param-section" class="">
-                                                    <div id="body-params" class="inline-flex items-center mb-4">
-                                                        <h3 class="my-0!">"Body Parameters"</h3>
-                                                        <ChainLink class="size-5 ms-2 dark:hover:text-white hover:cursor-pointer"
-                                                            .to_string()/>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8 border-t border-zinc-900/5 pt-8 dark:border-white/5">
+                                        <div id="params" class="space-y-12">
+                                            {if let Some(body) = body_params {
+                                                let v = body
+                                                    .into_iter()
+                                                    .map(|i| i.as_view())
+                                                    .collect_view()
+                                                    .into_any();
+                                                view! {
+                                                    <div id="body-param-section" class="">
+                                                        <div id="body-params" class="inline-flex items-center mb-4">
+                                                            <h3 class="my-0!">"Body Parameters"</h3>
+                                                            <button on:click=move |_| {
+                                                                let copy = copy.clone();
+                                                                copy(&clip_url("body-params"));
+                                                            }>
+                                                                {move || {
+                                                                    if copied.get() {
+                                                                        view! {
+                                                                            <CheckMark class="size-5 ms-2 dark:text-emerald-400 text-emerald-500"
+                                                                                .to_string()/>
+                                                                        }
+                                                                            .into_any()
+                                                                    } else {
+                                                                        view! {
+                                                                            <ChainLink class="size-5 ms-2 dark:text-zinc-400 dark:hover:text-white hover:cursor-pointer"
+                                                                                .to_string()/>
+                                                                        }
+                                                                            .into_any()
+                                                                    }
+                                                                }}
+
+                                                            </button>
+                                                        </div>
+                                                        <div class="divide-y divide-zinc-900/10 dark:divide-white/10">
+                                                            {v}
+                                                        </div>
                                                     </div>
-                                                    <div class="divide-y divide-zinc-900/10 dark:divide-white/10">
-                                                        {v}
+                                                }
+                                                    .into_any()
+                                            } else {
+                                                view! {}.into_any()
+                                            }}
+
+                                            {if let Some(body) = path_params {
+                                                let v = body
+                                                    .into_iter()
+                                                    .map(|i| i.as_view())
+                                                    .collect_view()
+                                                    .into_any();
+                                                view! {
+                                                    <div id="path-param-section" class="">
+                                                        <div id="path-params" class="inline-flex items-center mb-4">
+                                                            <h3 class="my-0!">"Path Parameters"</h3>
+                                                            <ChainLink class="size-5 ms-2 dark:hover:text-white hover:cursor-pointer"
+                                                                .to_string()/>
+                                                        </div>
+                                                        <div class="divide-y divide-zinc-900/10 dark:divide-white/10">
+                                                            {v}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            }
-                                                .into_any()
-                                        } else {
-                                            view! {}.into_any()
-                                        }}
+                                                }
+                                                    .into_any()
+                                            } else {
+                                                view! {}.into_any()
+                                            }}
+
+                                        </div>
                                         <div class="not-prose">
                                             <CodeTab/>
                                         </div>
@@ -216,12 +284,15 @@ pub fn ApiRefPage(
 pub fn CodeTab() -> AnyView {
     let active_class ="text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500";
     let inactive_class =
-        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-600 hover:border-zinc-300 cursor-pointer";
+        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer";
+
     let curl_code = r#"curl -X
     POST \
     "https://ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/invoke" \
     -H "Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k"
     "#;
+
+    let curl_code = r#"<pre class=\"curl\"><code># deploy a new itemcurl -X POST https://dev.ricochet.rs/api/v0/content/upload \\  -H &quot;Authorization: Key YOUR_API_KEY&quot; \\  -F &quot;bundle=@bundle.tar.gz;type=application/x-tar&quot; \\  -F &quot;config=@_ricochet.toml;type=application/toml&quot;# deploy an existing itemcurl -X POST https://dev.ricochet.rs/api/v0/content/upload \\  -H &quot;Authorization: Key YOUR_API_KEY&quot; \\  -F &quot;bundle=@bundle.tar.gz;type=application/x-tar&quot; \\  -F &quot;id=existing-content-id&quot;</code></pre>"#;
     let example_code = r#"deployment <- ricochet::deploy()
 url <- sprintf(
     "%s/content/%s/deployment/%s",
@@ -240,8 +311,11 @@ url <- sprintf(
     let code_tab = RwSignal::new(CodeTab::Curl);
 
     view! {
+        <h4 id="code-example" class="mb-2">
+            "Example"
+        </h4>
         <div class="border border-zinc-900/10 dark:border-white/10 dark:bg-zinc-800/50 not-prose shadow-sm">
-            <div class="mb-2 dark:bg-zinc-900">
+            <div class="mb-2 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-900/10 dark:border-white/10">
                 <ul
                     class="flex flex-wrap -mb-px text-sm font-medium text-center marker-none list-none px-4"
                     id="default-styled-tab"
@@ -331,9 +405,10 @@ url <- sprintf(
                                     <pre class=format!(
                                         "not-prose overflow-x-scroll px-2 {SCROLLBAR_X}",
                                     )>
-                                        <code class="not-prose overflow-x-scroll text-xs">
-                                            {curl_code}
-                                        </code>
+                                        <div inner_html=curl_code></div>
+                                    // <code class="not-prose overflow-x-scroll text-xs">
+                                    // {curl_code}
+                                    // </code>
                                     </pre>
                                 }
                                     .into_any()
@@ -345,6 +420,23 @@ url <- sprintf(
 
             </div>
         </div>
+    }.into_any()
+}
+
+#[component]
+pub fn CheckMark(#[prop(optional)] class: Option<String>) -> AnyView {
+    let class = class.unwrap_or("size-4".to_string());
+    view! {
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            fill="currentColor"
+            viewBox="0 0 256 256"
+            class=class
+        >
+            <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path>
+        </svg>
     }.into_any()
 }
 
@@ -363,4 +455,208 @@ pub fn ChainLink(#[prop(optional)] class: Option<String>) -> AnyView {
             <path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"></path>
         </svg>
     }.into_any()
+}
+
+#[derive(Clone)]
+pub struct ApiRefNavLink {
+    pub title: String,
+    pub slug: String,
+}
+
+#[derive(Copy, Clone)]
+pub enum ApiRefSection {
+    Overview,
+    Content,
+    Task,
+    Service,
+    User,
+}
+
+#[derive(Clone)]
+pub struct ApiRefGroup {
+    pub section: ApiRefSection,
+    pub links: Vec<ApiRefNavLink>,
+}
+
+impl ToString for ApiRefSection {
+    fn to_string(&self) -> String {
+        match self {
+            ApiRefSection::Overview => "Overview",
+            ApiRefSection::Content => "Content",
+            ApiRefSection::Task => "Tasks",
+            ApiRefSection::Service => "Services",
+            ApiRefSection::User => "User",
+        }
+        .to_string()
+    }
+}
+
+#[component]
+pub fn ApiNavGroup(
+    group: ApiRefSection,
+    links: Vec<ApiRefNavLink>,
+    #[prop(optional)] class: Option<&'static str>,
+) -> impl IntoView {
+    let location = leptos_router::hooks::use_location();
+    let title = group.to_string();
+
+    view! {
+        <li class=format!("relative mt-6 {}", class.unwrap_or(""))>
+            <h2 class="text-sm font-mono font-semibold text-zinc-900 dark:text-zinc-100">
+                {title.to_string()}
+            </h2>
+
+            <div class="relative mt-3 pl-2">
+
+                <div class="absolute inset-y-0 left-2 w-px bg-zinc-900/10 dark:bg-white/5"></div>
+
+                // FIXME this is where we add nested navigation
+                <ul role="list" class="border-l border-transparent">
+                    {move || {
+                        links
+                            .iter()
+                            .map(|di| {
+                                let is_active = location.pathname.get().contains(&di.slug);
+                                let href = di.slug.to_string();
+                                let title = di.title.to_string();
+                                view! {
+                                    {move || {
+                                        if is_active {
+                                            view! {
+                                                <div class="absolute left-2 h-6 w-px bg-violet-500"></div>
+                                            }
+                                                .into_any()
+                                        } else {
+                                            ().into_any()
+                                        }
+                                    }}
+
+                                    <li class="relative">
+                                        <NavLink href=href.into() active=is_active>
+                                            {title}
+                                        </NavLink>
+                                    </li>
+                                }
+                            })
+                            .collect::<Vec<_>>()
+                    }}
+
+                </ul>
+            </div>
+        </li>
+    }
+}
+
+pub static API_REF_PAGES: OnceLock<[ApiRefGroup; 5]> = OnceLock::new();
+
+pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
+    let res = API_REF_PAGES.get_or_init(|| {
+        [
+            ApiRefGroup {
+                section: ApiRefSection::Overview,
+                links: vec![
+                    ApiRefNavLink {
+                        title: String::from("Using the REST API"),
+                        slug: "hello".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Using the SDK".to_string(),
+                        slug: "sdk".to_string(),
+                    },
+                ],
+            },
+            ApiRefGroup {
+                section: ApiRefSection::Content,
+                links: vec![
+                    ApiRefNavLink {
+                        title: "Deploy an item".to_string(),
+                        slug: "deploy-item".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "List item deployments".to_string(),
+                        slug: "deployments".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Get current settings".to_string(),
+                        slug: "toml".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Update settings".to_string(),
+                        slug: "patch-settings".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Delete an item".to_string(),
+                        slug: "delete".to_string(),
+                    },
+                ],
+            },
+            ApiRefGroup {
+                section: ApiRefSection::Task,
+                links: vec![
+                    ApiRefNavLink {
+                        title: "Schedule a task".to_string(),
+                        slug: "schedule".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Invoke a task".to_string(),
+                        slug: "invoke".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "List active invocations".to_string(),
+                        slug: "invocations".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Stop an invocation".to_string(),
+                        slug: "stop-invocation".to_string(),
+                    },
+                ],
+            },
+            ApiRefGroup {
+                section: ApiRefSection::Service,
+                links: vec![
+                    ApiRefNavLink {
+                        title: "List active instances".to_string(),
+                        slug: "instances".to_string(),
+                    },
+                    ApiRefNavLink {
+                        title: "Stop an instance".to_string(),
+                        slug: "stop-instance".to_string(),
+                    },
+                ],
+            },
+            ApiRefGroup {
+                section: ApiRefSection::User,
+                links: vec![ApiRefNavLink {
+                    title: "List user items".to_string(),
+                    slug: "user-items".to_string(),
+                }],
+            },
+        ]
+    });
+    res
+}
+
+#[component]
+pub fn ApiNavigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoView {
+    view! {
+        <nav class=class>
+            <ul role="list">
+                // Map through navigation groups
+                {api_ref_navs()
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, group)| {
+                        view! {
+                            <ApiNavGroup
+                                group=group.section
+                                links=group.links.clone()
+                                class=if i == 0 { "md:mt-0" } else { "" }
+                            />
+                        }
+                    })
+                    .collect::<Vec<_>>()}
+                <li class="sticky bottom-0 z-10 mt-6 min-[416px]:hidden"></li>
+            </ul>
+        </nav>
+    }
 }

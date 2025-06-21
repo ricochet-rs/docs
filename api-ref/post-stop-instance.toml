@@ -1,0 +1,25 @@
+title = "Stop a service instance"
+method = "post"
+path = "/api/v0/content/{ulid}/instances/{instance_id}/stop"
+description = "Use this endpoint to stop a service instance. Use the `/instances` endpoint to list instance IDs."
+path_params = [
+    { name = "ulid", desc = "The ID of the content item" },
+    { name = "instance_id", desc = "The ID of the instance to stop." },
+]
+response = """
+Returns a json object with the field `success` which has a value of either `true` or `false`.
+"""
+
+[examples]
+r = """
+library(ricochet)
+stop_instance(
+  "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "01JY9N5GNVN7GMZB88D9FTPNKA"
+)
+"""
+
+curl = """
+curl -X POST https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/instances/01JY9N5GNVN7GMZB88D9FTPNKA/stop \
+    -H "Authorization: Key YOUR_API_KEY"
+"""

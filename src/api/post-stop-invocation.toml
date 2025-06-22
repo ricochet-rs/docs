@@ -12,14 +12,18 @@ Returns a json object with the field `success` which contains either `true` or `
 
 [examples]
 r = """
+```r
 library(ricochet)
 stop_invocation(
   "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "01JY9N5GNVN7GMZB88D9FTPNKA"
 )
+```
 """
 
 curl = """
-curl -X POST https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/invocations/01JY9N5GNVN7GMZB88D9FTPNKA/stop \
+```bash
+curl -X POST https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/invocations/01JY9N5GNVN7GMZB88D9FTPNKA/stop \\
     -H "Authorization: Key YOUR_API_KEY"
+```
 """

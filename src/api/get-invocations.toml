@@ -9,11 +9,15 @@ Returns an array of active invocations. Each item in the array contains the `id`
 
 [examples]
 r = """
+```r
 library(ricochet)
 get_active_invocations("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+```
 """
 
 curl = """
-curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/invocations/active \
+```bash
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/invocations/active \\
     -H "Authorization: Key YOUR_API_KEY"
+```
 """

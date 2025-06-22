@@ -10,8 +10,8 @@ use components::{
 use docs::{get_doc, DocNavItem};
 use leptos::prelude::*;
 use leptos_meta::Title;
-use leptos_router::{components::*, hooks::use_location};
-use leptos_use::{use_color_mode, ColorMode, UseColorModeReturn};
+use leptos_router::hooks::use_location;
+use leptos_use::ColorMode;
 
 // Modules
 pub mod api;

@@ -5,7 +5,7 @@
 
 @layer components {
     .callout-tip {
-        @apply my-6 flex gap-2.5 border border-emerald-500/20 bg-emerald-50/50 p-4 leading-6 text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200 dark:[--tw-prose-links-hover:theme(colors.emerald.300)] dark:[--tw-prose-links:theme(colors.white)];
+        @apply my-2 flex gap-2.5 border border-emerald-500/20 bg-emerald-50/50 p-0 px-4  text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200 dark:[--tw-prose-links-hover:theme(colors.emerald.300)] dark:[--tw-prose-links:theme(colors.white)];
     }
 }
 

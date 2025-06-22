@@ -14,11 +14,15 @@ Returns an array of json object service instances with the fields:
 
 [examples]
 r = """
+```r
 library(ricochet)
 list_instances("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+```
 """
 
 curl = """
-curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/instances \
+```bash
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/instances \\
     -H "Authorization: Key YOUR_API_KEY"
+```
 """

@@ -2,7 +2,7 @@ title = "Deploy an item"
 method = "post"
 path = "/api/v0/content/upload"
 
-desc = """
+description = """
 Deploy an R or Julia content item to Ricochet as a service or task.
 
 To create a new content item, both a `bundle` and a `config` file must be included. The `config` field corresponds to the `_ricochet.toml` file that defines how the content should be deployed. When deploying to an existing item, the `id` must be specified, and the `config` field—if present—is ignored.
@@ -16,22 +16,28 @@ body_params = [
     { name = "id", desc = "The ID of an existing content item. If provided, a new deployment is created for this item." },
 ]
 
+response = "Returns the deployment ID and the content ID."
+
 [examples]
 curl = """
+```bash
 # deploy a new item
-curl -X POST https://dev.ricochet.rs/api/v0/content/upload \
-  -H "Authorization: Key YOUR_API_KEY" \
-  -F "bundle=@bundle.tar.gz;type=application/x-tar" \
+curl -X POST https://dev.ricochet.rs/api/v0/content/upload \\
+  -H "Authorization: Key YOUR_API_KEY" \\
+  -F "bundle=@bundle.tar.gz;type=application/x-tar" \\
   -F "config=@_ricochet.toml;type=application/toml"
 
 # deploy an existing item
-curl -X POST https://dev.ricochet.rs/api/v0/content/upload \
-  -H "Authorization: Key YOUR_API_KEY" \
-  -F "bundle=@bundle.tar.gz;type=application/x-tar" \
+curl -X POST https://dev.ricochet.rs/api/v0/content/upload \\
+  -H "Authorization: Key YOUR_API_KEY" \\
+  -F "bundle=@bundle.tar.gz;type=application/x-tar" \\
   -F "id=existing-content-id"
+```
 """
 
 r = """
+```r
 library(ricochet)
 deploy("path/to/project")
+```
 """

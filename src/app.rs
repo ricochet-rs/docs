@@ -1,5 +1,5 @@
 use crate::{
-    api::{ApiEndpoint, ApiRefLayout, ApiRefPage},
+    api::{ApiEndpoint, ApiRefPage},
     landing::LandingPage,
     DocPage, Index, Layout,
 };
@@ -62,13 +62,7 @@ pub fn App() -> impl IntoView {
                 <Route
                     path=path!("/api/:path")
                     view=move || {
-                        view! {
-                            <ApiRefPage
-                                mode=mode
-                                set_mode=set_mode
-                                endpoint=ApiEndpoint::example()
-                            />
-                        }
+                        view! { <ApiRefPage mode=mode set_mode=set_mode/> }
                     }
                 />
 

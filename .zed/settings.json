@@ -6,6 +6,9 @@
   "lsp": {
     "rust-analyzer": {
       "initialization_options": {
+        "cargo": {
+          "allFeatures": true
+        },
         "rustfmt": {
           "overrideCommand": ["leptosfmt", "--stdin", "--rustfmt"]
         }

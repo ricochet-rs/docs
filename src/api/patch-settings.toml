@@ -40,6 +40,7 @@ Returns the updated `_ricochet.toml` file associated with the deployed content i
 
 [examples]
 r = """
+```r
 library(ricochet)
 update_settings(
   "01JV7KJPREMT1JKC1PBNF0GGVP",
@@ -48,32 +49,38 @@ update_settings(
     slug = "my-new-slug"
   )
 )
+```
 """
 
 curl = """
-curl -X PATCH https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/settings \
-    -H "Authorization: Key YOUR_API_KEY" \
-    -H "Content-Type: application/json" \
+```bash
+curl -X PATCH https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/settings \\
+    -H "Authorization: Key YOUR_API_KEY" \\
+    -H "Content-Type: application/json" \\
     -d '{
-    "content": {
+      "content": {
         "name": "New App Name",
         "slug": "new-app-name",
         "entrypoint": "app.R",
         "access_type": "public",
         "content_type": "shiny",
         "summary": "A brief description of the app",
-        "tags": ["demo", "shiny"]
-    },
-    "serve": {
+        "tags": [
+          "demo",
+          "shiny"
+        ]
+      },
+      "serve": {
         "min_instances": 1,
         "max_instances": 5,
         "spawn_threshold": 50,
         "max_connections": 100,
-        "max_connection_age": 3600,
-    },
-    "static": {
+        "max_connection_age": 3600
+      },
+      "static": {
         "index": "index.html",
         "output_dir": "dist/"
-    }
+      }
     }'
+```
 """

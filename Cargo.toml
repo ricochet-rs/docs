@@ -15,11 +15,13 @@ leptos_axum = { version = "0.8.2", optional = true }
 leptos_meta = { version = "0.8.2" }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 wasm-bindgen = { version = "=0.2.100", optional = true }
-leptos-use = "0.16.0-beta"
+leptos-use = "0.16.2"
 bm25 = "2.2.1"
 tower-http = { version = "0.6.4", features = ["fs"], optional = true }
 reqwest = { version = "0.12.15", features = ["json"], optional = true }
-serde = { version = ">=1.0.0", features = ["derive"], optional = true }
+serde = { version = ">=1.0.0", features = ["derive"] }
+toml_edit = { version = "0.22", optional = true }
+pulldown-cmark = { version = "0.13", optional = true }
 
 
 [features]
@@ -35,7 +37,8 @@ ssr = [
     "leptos-use/axum",
     "dep:tower-http",
     "dep:reqwest",
-    "dep:serde",
+    "dep:toml_edit",
+    "dep:pulldown-cmark",
 ]
 tower-http = ["dep:tower-http"]
 

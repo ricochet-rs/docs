@@ -34,7 +34,7 @@ pub fn MoonIcon(#[prop(optional)] class: Option<String>) -> AnyView {
 }
 
 #[component]
-pub fn ModeToggle(mode: Signal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+pub fn ModeToggle(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
     view! {
         <button
             type="button"
@@ -70,7 +70,7 @@ pub fn TopLevelNavItem(href: String, children: Children) -> AnyView {
 }
 
 #[component]
-pub fn Header(mode: Signal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
     let show_search = RwSignal::new(false);
     let nr = NodeRef::<Input>::new();
     let _ = use_event_listener(use_document(), keydown, move |evt| {

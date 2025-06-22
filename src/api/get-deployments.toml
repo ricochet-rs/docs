@@ -16,11 +16,15 @@ Returns an array of deployments. Each deployment returns:
 
 [examples]
 r = """
+```r
 library(ricochet)
 list_deployments("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+```
 """
 
 curl = """
-curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/deployments \
+```bash
+curl -X GET https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/deployments \\
     -H "Authorization: Key YOUR_API_KEY"
+```
 """

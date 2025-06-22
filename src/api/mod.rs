@@ -1,18 +1,20 @@
-use std::sync::OnceLock;
-
-use leptos::prelude::*;
-use leptos_meta::Title;
-use leptos_use::{use_clipboard, ColorMode, UseClipboardReturn};
-
 use crate::{
+    api::parse::read_api_ref,
     components::{
         footer::Footer,
         navigation::{Header, NavLink},
     },
     HomeButton,
 };
+use leptos::prelude::*;
+use leptos_meta::Title;
+use leptos_use::{use_clipboard, ColorMode, UseClipboardReturn};
+use std::sync::OnceLock;
 
-#[derive(Debug, Clone, Copy)]
+pub mod parse;
+
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum HttpMethod {
     Get,
     Post,
@@ -40,34 +42,42 @@ impl HttpMethod {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct ParamInfo {
     pub name: String,
-    pub description: String,
+    pub desc: String,
 }
 
 impl ParamInfo {
     pub fn as_view(&self) -> AnyView {
         view! {
-            <div class="not-prose space-y-2 mb-4">
-                <p class="font-mono text-base font-semibold dark:text-white text-black">
+            <div class="space-y-0 mb-4">
+                <p class="font-mono text-base font-semibold dark:text-white text-black mb-0!">
                     {self.name.clone()}
                 </p>
-                <p class="text-sm mb-4">{self.description.clone()}</p>
+                <p class="text-sm mt-2! mb-4" inner_html=self.desc.clone()></p>
             </div>
         }
         .into_any()
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+pub struct Examples {
+    r: String,
+    curl: String,
+}
+
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct ApiEndpoint {
     pub title: String,
     pub description: String,
     pub method: HttpMethod,
-    pub endpoint: String,
+    pub path: String,
+    pub response: String,
     pub path_params: Option<Vec<ParamInfo>>,
     pub body_params: Option<Vec<ParamInfo>>,
+    pub examples: Examples,
 }
 
 const SCROLLBAR_Y: &str = "  [&::-webkit-scrollbar]:w-2
@@ -88,19 +98,27 @@ impl ApiEndpoint {
             title: "Deploy an item".to_string(),
             method: HttpMethod::Post,
             description: "Deploy new tasks and services or update an existing one.".to_string(),
-            endpoint: "/api/v0/content/upload".to_string(),
+            path: "/api/v0/content/upload".to_string(),
             path_params: None,
             body_params: Some(vec![
                 ParamInfo {
                     name: "bundle".to_string(),
-                    description: "a tar.gz file with content-type of application/x-tar".to_string(),
+                    desc: "a tar.gz file with content-type of application/x-tar".to_string(),
                 },
                 ParamInfo {
                     name: "config".to_string(),
-                    description: "The _ricochet.toml file with content-type application/toml"
-                        .to_string(),
+                    desc: "The _ricochet.toml file with content-type application/toml".to_string(),
                 },
             ]),
+            response: "Returns a json object with the field `success` which has a value of either `true` or `false`.".to_string(),
+            examples: Examples { r: r#"library(ricochet)
+            stop_instance(
+              "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+              "01JY9N5GNVN7GMZB88D9FTPNKA"
+            )"#.to_string(),
+            curl: r#"curl -X POST https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/instances/01JY9N5GNVN7GMZB88D9FTPNKA/stop \
+                -H "Authorization: Key YOUR_API_KEY""#.to_string() },
+
         }
     }
 }
@@ -114,15 +132,15 @@ pub fn ApiRefLayout(
     let ApiEndpoint {
         title,
         method,
-        endpoint,
+        path,
         description,
         path_params,
         body_params,
+        examples,
+        response,
     } = endpoint;
     let next_slug = Some(0);
     let prev_slug = Some(0);
-
-    // let UseColorModeReturn { mode, set_mode, .. } = use_color_mode();
 
     let dark_mode_class = move || match mode.get() {
         ColorMode::Dark => "dark w-full",
@@ -143,7 +161,6 @@ pub fn ApiRefLayout(
 
     let title = format!("{title} | ricochet 🐇");
 
-    let h = r#"<p>Deploy an R or Julia content item to Ricochet as a service or task.</p><p>To create a new content item, both a <code>bundle</code> and a <code>config</code> file must be included. The <code>config</code> field corresponds to the <code>_ricochet.toml</code> file that defines how the content should be deployed. When deploying to an existing item, the <code>id</code> must be specified, and the <code>config</code> field—if present—is ignored.</p><p>This endpoint accepts a <code>multipart</code> request and requires an API key with the <code>content:deploy</code> scope. Returns the <code>id</code> of the content item and the <code>deployment_id</code> of the new deployment.</p>\n"#;
     view! {
         <Title text=title/>
         <div class=move || dark_mode_class()>
@@ -172,22 +189,25 @@ pub fn ApiRefLayout(
                             prose-pre:dark:ring-1 prose-pre:dark:ring-white/10 prose-pre:dark:ring-inset prose-pre:shadow-md
                             prose-a:decoration-violet-500 prose-a:decoration-dotted prose-a:dark:hover:bg-violet-500 prose-a:hover:bg-violet-600 prose-a:hover:text-white prose-a:hover:decoration-violet-600 prose-a:dark:hover:decoration-violet-500
                             ">
-                                // <article
-                                // inner_html=body
                                 <div class="h-full w-full max-w-2xl lg:max-w-5xl mx-auto">
 
                                     <div id="endpoint-header">
                                         <h2 class="mt-0! mb-4!">"Deploy an item"</h2>
                                         <div class="inline-flex items-center p-2 border border-zinc-900/10 dark:border-white/10 m-0!">
                                             {method.as_badge()}
-                                            <p class="ms-2 font-mono text-base my-0!">{endpoint}</p>
+                                            <p class="ms-2 font-mono text-base my-0!">{path}</p>
                                         </div>
-                                        <p>{description}</p>
-                                        <div inner_html=h></div>
+                                        <div class="flex-row gap-4">
+                                            <div class="w-full" inner_html=description></div>
+                                            <div class="w-full overflow-x-auto">
+                                                <CodeTab examples=examples.clone()/>
+                                            </div>
+                                        </div>
+
                                     </div>
 
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8 border-t border-zinc-900/5 pt-8 dark:border-white/5">
-                                        <div id="params" class="space-y-12">
+                                    <div class="mt-8 border-t border-zinc-900/5 pt-8 dark:border-white/5">
+                                        <div id="params" class="">
                                             {if let Some(body) = body_params {
                                                 let v = body
                                                     .into_iter()
@@ -254,9 +274,7 @@ pub fn ApiRefLayout(
                                             }}
 
                                         </div>
-                                        <div class="not-prose">
-                                            <CodeTab/>
-                                        </div>
+
                                     </div>
                                 // class="w-full h-full max-w-3xl"
                                 // ></article>
@@ -272,35 +290,39 @@ pub fn ApiRefLayout(
 }
 
 #[component]
-pub fn ApiRefPage(
-    mode: ReadSignal<ColorMode>,
-    set_mode: WriteSignal<ColorMode>,
-    endpoint: ApiEndpoint,
-) -> AnyView {
-    view! { <ApiRefLayout set_mode=set_mode mode=mode endpoint=endpoint/> }.into_any()
+pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+    let location = leptos_router::hooks::use_location();
+
+    let doc = Resource::new(
+        move || location.pathname.get(),
+        |pp| {
+            let path = format!("./src/{}.toml", pp);
+            read_api_ref(path)
+        },
+    );
+
+    view! {
+        <Transition>
+            {move || Suspend::new(async move {
+                if let Some(Ok(page)) = doc.get() {
+                    view! { <ApiRefLayout mode=mode set_mode=set_mode endpoint=page/> }.into_any()
+                } else {
+                    view! { <p>"Tis didn't work"</p> }.into_any()
+                }
+            })}
+
+        </Transition>
+    }
+    .into_any()
 }
 
 #[component]
-pub fn CodeTab() -> AnyView {
-    let active_class ="text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500";
+pub fn CodeTab(examples: Examples) -> AnyView {
+    let active_class ="text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500 font-medium text-base";
     let inactive_class =
-        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer";
+        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer text-base";
 
-    let curl_code = r#"curl -X
-    POST \
-    "https://ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/invoke" \
-    -H "Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k"
-    "#;
-
-    let curl_code = r#"<pre class=\"curl\"><code># deploy a new itemcurl -X POST https://dev.ricochet.rs/api/v0/content/upload \\  -H &quot;Authorization: Key YOUR_API_KEY&quot; \\  -F &quot;bundle=@bundle.tar.gz;type=application/x-tar&quot; \\  -F &quot;config=@_ricochet.toml;type=application/toml&quot;# deploy an existing itemcurl -X POST https://dev.ricochet.rs/api/v0/content/upload \\  -H &quot;Authorization: Key YOUR_API_KEY&quot; \\  -F &quot;bundle=@bundle.tar.gz;type=application/x-tar&quot; \\  -F &quot;id=existing-content-id&quot;</code></pre>"#;
-    let example_code = r#"deployment <- ricochet::deploy()
-url <- sprintf(
-    "%s/content/%s/deployment/%s",
-    ricochet::ricochet_host(),
-    deployment$id,
-    deployment$deployment_id
-)
-    "#;
+    let Examples { r, curl } = examples;
 
     #[derive(Clone, Copy)]
     enum CodeTab {
@@ -311,113 +333,116 @@ url <- sprintf(
     let code_tab = RwSignal::new(CodeTab::Curl);
 
     view! {
-        <h4 id="code-example" class="mb-2">
-            "Example"
-        </h4>
-        <div class="border border-zinc-900/10 dark:border-white/10 dark:bg-zinc-800/50 not-prose shadow-sm">
-            <div class="mb-2 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-900/10 dark:border-white/10">
-                <ul
-                    class="flex flex-wrap -mb-px text-sm font-medium text-center marker-none list-none px-4"
-                    id="default-styled-tab"
-                    data-tabs-toggle="#default-styled-tab-content"
+        <div class="not-prose">
+            <h4 id="code-example" class="mb-2">
+                "Example"
+            </h4>
+            <div class="border border-zinc-900/10 dark:border-white/10 dark:bg-zinc-800/50 not-prose shadow-sm">
+                <div class="mb-2 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-900/10 dark:border-white/10">
+                    <ul
+                        class="flex flex-wrap -mb-px text-sm font-medium text-center marker-none list-none px-4"
+                        id="default-styled-tab"
+                        data-tabs-toggle="#default-styled-tab-content"
 
-                    role="tablist"
-                >
-                    <li class="me-2" role="presentation">
-                        <button
-                            class=move || {
-                                if let CodeTab::Curl = code_tab.get() {
-                                    format!(
-                                        "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
-                                    )
-                                } else {
-                                    inactive_class.to_string()
+                        role="tablist"
+                    >
+                        <li class="me-2" role="presentation">
+                            <button
+                                class=move || {
+                                    if let CodeTab::Curl = code_tab.get() {
+                                        format!(
+                                            "font-mono inline-block p-2 border-b-2 {active_class} cursor-pointer",
+                                        )
+                                    } else {
+                                        inactive_class.to_string()
+                                    }
+                                }
+
+                                id="curl-example-code"
+                                type="button"
+                                role="tab"
+                                aria-selected=move || {
+                                    match code_tab.get() {
+                                        CodeTab::Curl => true,
+                                        _ => false,
+                                    }
+                                }
+
+                                on:click=move |_| {
+                                    code_tab.set(CodeTab::Curl);
+                                }
+                            >
+
+                                "cURL"
+                            </button>
+                        </li>
+                        <li class="me-2" role="presentation">
+                            <button
+                                class=move || {
+                                    if let CodeTab::R = code_tab.get() {
+                                        format!(
+                                            "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
+                                        )
+                                    } else {
+                                        inactive_class.to_string()
+                                    }
+                                }
+
+                                type="button"
+                                role="tab"
+                                on:click=move |_| {
+                                    code_tab.set(CodeTab::R);
+                                }
+
+                                aria-selected=move || {
+                                    match code_tab.get() {
+                                        CodeTab::R => true,
+                                        _ => false,
+                                    }
+                                }
+                            >
+
+                                "R"
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="not-prose">
+                    <div class="leading-[1.35rem] not-prose" role="tabpanel">
+                        {move || {
+                            match code_tab.get() {
+                                CodeTab::R => {
+                                    view! {
+                                        <pre class=format!(
+                                            "not-prose overflow-x-scroll px-4 {SCROLLBAR_X}",
+                                        )>
+                                            <code
+                                                class="not-prose overflow-x-scroll text-base/7"
+                                                inner_html=r.clone()
+                                            ></code>
+                                        </pre>
+                                    }
+                                        .into_any()
+                                }
+                                CodeTab::Curl => {
+                                    view! {
+                                        <pre class=format!(
+                                            "not-prose overflow-x-scroll px-4 {SCROLLBAR_X}",
+                                        )>
+                                            <code
+                                                class="not-prose overflow-x-scroll text-base/7"
+                                                inner_html=curl.clone()
+                                            ></code>
+                                        </pre>
+                                    }
+                                        .into_any()
                                 }
                             }
+                        }}
 
-                            id="curl-example-code"
-                            type="button"
-                            role="tab"
-                            aria-selected=move || {
-                                match code_tab.get() {
-                                    CodeTab::Curl => true,
-                                    _ => false,
-                                }
-                            }
-
-                            on:click=move |_| {
-                                code_tab.set(CodeTab::Curl);
-                            }
-                        >
-
-                            "cURL"
-                        </button>
-                    </li>
-                    <li class="me-2" role="presentation">
-                        <button
-                            class=move || {
-                                if let CodeTab::R = code_tab.get() {
-                                    format!(
-                                        "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
-                                    )
-                                } else {
-                                    inactive_class.to_string()
-                                }
-                            }
-
-                            type="button"
-                            role="tab"
-                            on:click=move |_| {
-                                code_tab.set(CodeTab::R);
-                            }
-
-                            aria-selected=move || {
-                                match code_tab.get() {
-                                    CodeTab::R => true,
-                                    _ => false,
-                                }
-                            }
-                        >
-
-                            "R"
-                        </button>
-                    </li>
-                </ul>
-            </div>
-            <div class="not-prose">
-                <div class="leading-[1.35rem] not-prose" role="tabpanel">
-                    {move || {
-                        match code_tab.get() {
-                            CodeTab::R => {
-                                view! {
-                                    <pre class=format!(
-                                        "not-prose overflow-x-scroll px-2 {SCROLLBAR_X}",
-                                    )>
-                                        <code class="not-prose overflow-x-scroll text-xs">
-                                            {example_code}
-                                        </code>
-                                    </pre>
-                                }
-                                    .into_any()
-                            }
-                            CodeTab::Curl => {
-                                view! {
-                                    <pre class=format!(
-                                        "not-prose overflow-x-scroll px-2 {SCROLLBAR_X}",
-                                    )>
-                                        <div inner_html=curl_code></div>
-                                    // <code class="not-prose overflow-x-scroll text-xs">
-                                    // {curl_code}
-                                    // </code>
-                                    </pre>
-                                }
-                                    .into_any()
-                            }
-                        }
-                    }}
+                    </div>
 
                 </div>
-
             </div>
         </div>
     }.into_any()
@@ -570,15 +595,15 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
                 links: vec![
                     ApiRefNavLink {
                         title: "Deploy an item".to_string(),
-                        slug: "deploy-item".to_string(),
+                        slug: "post-deploy".to_string(),
                     },
                     ApiRefNavLink {
                         title: "List item deployments".to_string(),
-                        slug: "deployments".to_string(),
+                        slug: "get-deployments".to_string(),
                     },
                     ApiRefNavLink {
                         title: "Get current settings".to_string(),
-                        slug: "toml".to_string(),
+                        slug: "get-toml".to_string(),
                     },
                     ApiRefNavLink {
                         title: "Update settings".to_string(),
@@ -595,19 +620,19 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
                 links: vec![
                     ApiRefNavLink {
                         title: "Schedule a task".to_string(),
-                        slug: "schedule".to_string(),
+                        slug: "patch-schedule".to_string(),
                     },
                     ApiRefNavLink {
                         title: "Invoke a task".to_string(),
-                        slug: "invoke".to_string(),
+                        slug: "post-invoke".to_string(),
                     },
                     ApiRefNavLink {
                         title: "List active invocations".to_string(),
-                        slug: "invocations".to_string(),
+                        slug: "get-invocations".to_string(),
                     },
                     ApiRefNavLink {
                         title: "Stop an invocation".to_string(),
-                        slug: "stop-invocation".to_string(),
+                        slug: "post-stop-invocation".to_string(),
                     },
                 ],
             },
@@ -616,11 +641,11 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
                 links: vec![
                     ApiRefNavLink {
                         title: "List active instances".to_string(),
-                        slug: "instances".to_string(),
+                        slug: "get-instances".to_string(),
                     },
                     ApiRefNavLink {
                         title: "Stop an instance".to_string(),
-                        slug: "stop-instance".to_string(),
+                        slug: "post-stop-instance".to_string(),
                     },
                 ],
             },

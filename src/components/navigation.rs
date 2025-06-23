@@ -119,7 +119,7 @@ pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> 
                 <nav class="hidden md:block">
                     <ul role="list" class="flex items-center gap-8">
                         <TopLevelNavItem href="/api".to_string()>"API"</TopLevelNavItem>
-                        <TopLevelNavItem href="/".to_string()>"Documentation"</TopLevelNavItem>
+                        <TopLevelNavItem href="/hello".to_string()>"Documentation"</TopLevelNavItem>
                     </ul>
                 </nav>
 

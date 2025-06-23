@@ -629,8 +629,8 @@ pub fn ApiNavGroup(
                         links
                             .iter()
                             .map(|di| {
-                                let is_active = location.pathname.get().contains(&di.slug);
-                                let href = di.slug.to_string();
+                                let href = format!("/api/{}", di.slug);
+                                let is_active = location.pathname.get().eq(&href);
                                 let title = di.title.to_string();
                                 view! {
                                     {move || {
@@ -669,7 +669,7 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
                 section: ApiRefSection::Overview,
                 links: vec![ApiRefNavLink {
                     title: String::from("Introduction"),
-                    slug: "/".to_string(),
+                    slug: "".to_string(),
                 }],
             },
             ApiRefGroup {

@@ -90,7 +90,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
 
                     // Main content area
                     <div class="relative flex h-full flex-col  pt-14 z-10">
-                        <main class="flex-auto py-16">
+                        <main class="flex-auto py-42">
                             <div class="mx-auto w-full">
                                 <div class="h-full w-full max-w-3xl dark:text-white lg:max-w-4xl mx-auto text-center relative space-y-12">
                                     <a
@@ -122,7 +122,61 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
 
                                 </div>
                             </div>
-                            <div class="relative mx-auto max-w-3xl lg:max-w-5xl block lg:flex items-center justify-between w-full space-x-14 space-y-10 py-42 px-8 lg:px-0">
+                            <div class="relative mx-auto max-w-3xl lg:max-w-5xl justify-between w-full space-x-8 py-42 px-8 lg:px-0">
+                                <div class="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12 dark:text-white mb-18">
+                                    <h2 class="dark:text-white text-balance text-4xl font-medium lg:text-5xl">
+                                        "Built for data scientists"
+                                    </h2>
+                                    <p class="text-lg dark:text-zinc-300 text-zinc-500">
+                                        "Deploy and scale R and Julia code, schedule tasks, and run long-lived services with confidence."
+                                    </p>
+                                </div>
+                                <div class="w-full grid grid-col-2 lg:grid-cols-3 divide-x divide-y divide-zinc-900/7.5 dark:divide-zinc-100/10 border border-zinc-900/7.5 dark:border-zinc-100/10">
+                                    <FeatureCard
+                                        title=String::from("Deploy Anything")
+                                        desc=String::from(
+                                            "Shiny, Ambiorix, Plumber, or any long-running service—if it speaks HTTP, it runs on ricochet. No artificial limits. No container boilerplate.",
+                                        )
+
+                                        icon=view! { <RocketIcon/> }.into_any()
+                                    />
+
+                                    <FeatureCard
+                                        title="Security".to_string()
+                                        desc="Bring your own identity provider with OpenID Connect. Control access to every deployed app, API, and task with fine-grained permissions."
+                                            .to_string()
+                                        icon=view! { <ShieldIcon/> }.into_any()
+                                    />
+                                    <FeatureCard
+                                        title="Serverless R Functions".to_string()
+                                        // desc="Deploy R functions as RESTful services—instantly callable, autoscaling, and production-ready. The first serverless runtime built for R."
+                                        desc="Serverless execution for R workloads. Turn your R functions into autoscaling and production-ready APIs."
+                                            .to_string()
+                                        icon=view! { <CloudCheck/> }.into_any()
+                                    />
+
+                                    <FeatureCard
+                                        title="Elastic Scaling".to_string()
+                                        desc="Deploy once and scale automatically based on demand."
+                                            .to_string()
+                                        icon=view! { <LightningIcon/> }.into_any()
+                                    />
+                                    <FeatureCard
+                                        title="Scheduled Tasks".to_string()
+                                        desc="Deploy R and Julia scripts or Quarto documents as tasks. Run them on a schedule, or invoke them on demand."
+                                            .to_string()
+                                        icon=view! { <ClockUserIcon/> }.into_any()
+                                    />
+                                    <FeatureCard
+                                        title="Persistent Storage".to_string()
+                                        desc="
+                                        Each app, API, or task has access to persistent storage. Data written there is preserved across versions—no extra setup required."
+                                            .to_string()
+                                        icon=view! { <HardDrivesIcon/> }.into_any()
+                                    />
+                                </div>
+                            </div>
+                            <div class="relative mx-auto max-w-3xl lg:max-w-5xl block lg:flex items-center justify-between w-full space-x-14 space-y-10 py-24 px-8 lg:px-0">
 
                                 <div class="w-full space-y-6">
                                     <h2 class="dark:text-white text-4xl font-bold text-balance">
@@ -224,59 +278,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
                                     </form>
                                 </div>
                             </div>
-                            <div class="relative mx-auto max-w-3xl lg:max-w-5xl justify-between w-full space-x-8 pb-42 px-8 lg:px-0">
-                                <div class="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12 dark:text-white mb-18">
-                                    <h2 class="dark:text-white text-balance text-4xl font-medium lg:text-5xl">
-                                        "Built for data scientists deploying real code"
-                                    </h2>
-                                    <p class="text-body dark:text-zinc-300 text-zinc-500">
-                                        "Built from the ground up in Rust for speed and efficiency—deploy and scale R and Julia code, schedule tasks, and run long-lived services with confidence."
-                                    </p>
-                                </div>
-                                <div class="w-full grid grid-col-2 lg:grid-cols-3 divide-x divide-y divide-zinc-900/7.5 dark:divide-zinc-100/10 border border-zinc-900/7.5 dark:border-zinc-100/10">
-                                    <FeatureCard
-                                        title=String::from("Deploy Anything")
-                                        desc=String::from(
-                                            "Shiny, Ambiorix, Plumber, or any long-running service—if it speaks HTTP, it runs on ricochet. No artificial limits. No container boilerplate.",
-                                        )
 
-                                        icon=view! { <RocketIcon/> }.into_any()
-                                    />
-
-                                    <FeatureCard
-                                        title="Security".to_string()
-                                        desc="Bring your own identity provider with OpenID Connect. Control access to every deployed app, API, and task with fine-grained permissions."
-                                            .to_string()
-                                        icon=view! { <ShieldIcon/> }.into_any()
-                                    />
-                                    <FeatureCard
-                                        title="Serverless R Functions".to_string()
-                                        desc="Deploy R functions as RESTful services—instantly callable, autoscaling, and production-ready. The first serverless runtime built for R."
-                                            .to_string()
-                                        icon=view! { <CloudCheck/> }.into_any()
-                                    />
-
-                                    <FeatureCard
-                                        title="Elastic Scaling".to_string()
-                                        desc="Deploy once and scale automatically based on demand."
-                                            .to_string()
-                                        icon=view! { <LightningIcon/> }.into_any()
-                                    />
-                                    <FeatureCard
-                                        title="Scheduled Tasks".to_string()
-                                        desc="Deploy R and Julia scripts or Quarto documents as tasks. Run them on a schedule, or invoke them on demand via our REST API or client SDKs."
-                                            .to_string()
-                                        icon=view! { <ClockUserIcon/> }.into_any()
-                                    />
-                                    <FeatureCard
-                                        title="Persistent Storage".to_string()
-                                        desc="
-                                        Each app, API, or task has access to persistent storage. Data written there is preserved across versions—no extra setup required."
-                                            .to_string()
-                                        icon=view! { <HardDrivesIcon/> }.into_any()
-                                    />
-                                </div>
-                            </div>
                             <div class="relative mx-auto max-w-3xl lg:max-w-5xl justify-between w-full space-x-8 pb-20 px-8 lg:px-0">
                                 <div class="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-6 dark:text-white mb-18">
                                     <h2 class="dark:text-white text-balance text-4xl font-medium lg:text-5xl mb-6">

@@ -111,7 +111,6 @@ pub fn SearchResults(query: RwSignal<String>) -> AnyView {
                         .into_iter()
                         .enumerate()
                         .map(|(idx, i)| {
-                            leptos::logging::log!("{i:?}");
                             view! { <SearchResult idx=i.document.id as usize res_idx=idx/> }
                         })
                         .collect_view();
@@ -182,7 +181,6 @@ pub fn SearchInput(
 pub fn SearchDialog(show_search: RwSignal<bool>, node_ref: NodeRef<Input>) -> AnyView {
     let _ = use_event_listener(use_document(), keydown, move |evt| {
         if evt.key() == "Escape" {
-            leptos::logging::log!("Close search");
             show_search.set(false);
         }
     });

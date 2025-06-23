@@ -1,8 +1,8 @@
 use crate::{
-    api::parse::read_api_ref,
+    api::parse::{read_api_ref, read_md},
     components::{
-        footer::Footer,
-        navigation::{Header, NavLink},
+        footer::{PageLink, PageNav, SmallPrint},
+        navigation::{ArrowDirection, Header, NavLink},
     },
     HomeButton,
 };
@@ -92,37 +92,6 @@ const SCROLLBAR_X: &str = "  [&::-webkit-scrollbar]:h-2
 dark:[&::-webkit-scrollbar-track]:bg-zinc-700
 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-500";
 
-impl ApiEndpoint {
-    pub fn example() -> Self {
-        Self {
-            title: "Deploy an item".to_string(),
-            method: HttpMethod::Post,
-            description: "Deploy new tasks and services or update an existing one.".to_string(),
-            path: "/api/v0/content/upload".to_string(),
-            path_params: None,
-            body_params: Some(vec![
-                ParamInfo {
-                    name: "bundle".to_string(),
-                    desc: "a tar.gz file with content-type of application/x-tar".to_string(),
-                },
-                ParamInfo {
-                    name: "config".to_string(),
-                    desc: "The _ricochet.toml file with content-type application/toml".to_string(),
-                },
-            ]),
-            response: "Returns a json object with the field `success` which has a value of either `true` or `false`.".to_string(),
-            examples: Examples { r: r#"library(ricochet)
-            stop_instance(
-              "01ARZ3NDEKTSV4RRFFQ69G5FAV",
-              "01JY9N5GNVN7GMZB88D9FTPNKA"
-            )"#.to_string(),
-            curl: r#"curl -X POST https://ricochet.rs/api/v0/content/01ARZ3NDEKTSV4RRFFQ69G5FAV/instances/01JY9N5GNVN7GMZB88D9FTPNKA/stop \
-                -H "Authorization: Key YOUR_API_KEY""#.to_string() },
-
-        }
-    }
-}
-
 #[component]
 pub fn ApiRefLayout(
     mode: ReadSignal<ColorMode>,
@@ -139,19 +108,15 @@ pub fn ApiRefLayout(
         examples,
         response,
     } = endpoint;
-    let next_slug = Some(0);
-    let prev_slug = Some(0);
-
+    let location = leptos_router::hooks::use_location();
     let dark_mode_class = move || match mode.get() {
         ColorMode::Dark => "dark w-full",
         _ => "w-full",
     };
 
-    // this gets the location of the page we're on
-    let location = leptos_router::hooks::use_location();
-
     let UseClipboardReturn { copied, copy, .. } = use_clipboard();
-
+    let slg = location.pathname.get_untracked();
+    let (prev_slug, next_slug) = find_prev_next(&slg);
     let clip_url = move |id: &'static str| {
         let loc = location.pathname.get();
         let url = leptos_router::hooks::use_url().get();
@@ -159,10 +124,10 @@ pub fn ApiRefLayout(
         format!("{url}{loc}#{id}")
     };
 
-    let title = format!("{title} | ricochet 🐇");
+    let meta_title = format!("{title} | ricochet 🐇");
 
     view! {
-        <Title text=title/>
+        <Title text=meta_title/>
         <div class=move || dark_mode_class()>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full lg:ml-72 xl:ml-80">
@@ -176,10 +141,10 @@ pub fn ApiRefLayout(
                             <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
                         </div>
                     </header>
-
-                    // <HeroPattern/>
                     // Main content area
                     <div class="relative flex h-full flex-col px-4 pt-14 sm:px-6 lg:px-8">
+
+                        // this gets the location of the page we're on
                         <main class="flex-auto py-16">
                             <div class="h-full mx-auto !max-w-none prose lg:prose-lg prose-zinc dark:prose-invert w-full
                             prose-code:before:hidden prose-code:after:hidden prose-code:rounded-none
@@ -192,18 +157,21 @@ pub fn ApiRefLayout(
                                 <div class="h-full w-full max-w-2xl lg:max-w-5xl mx-auto">
 
                                     <div id="endpoint-header">
-                                        <h2 class="mt-0! mb-4!">"Deploy an item"</h2>
+                                        <h2 class="mt-0! mb-4!">{title}</h2>
                                         <div class="inline-flex items-center p-2 border border-zinc-900/10 dark:border-white/10 m-0!">
                                             {method.as_badge()}
                                             <p class="ms-2 font-mono text-base my-0!">{path}</p>
                                         </div>
                                         <div class="flex-row gap-4">
                                             <div class="w-full" inner_html=description></div>
+                                            <div id="response" class="mb-6">
+                                                <h3 class="mt-0!">"Response"</h3>
+                                                <div inner_html=response></div>
+                                            </div>
                                             <div class="w-full overflow-x-auto">
                                                 <CodeTab examples=examples.clone()/>
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div class="mt-8 border-t border-zinc-900/5 pt-8 dark:border-white/5">
@@ -281,12 +249,77 @@ pub fn ApiRefLayout(
                                 </div>
                             </div>
                         </main>
-                        <Footer prev=prev_slug next=next_slug/>
+                        <ApiFooter prev=prev_slug next=next_slug/>
                     </div>
                 </div>
             </div>
         </div>
     }
+}
+
+const OV: &str = include_str!("overview.md");
+#[component]
+pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+    let dark_mode_class = move || match mode.get() {
+        ColorMode::Dark => "dark w-full",
+        _ => "w-full",
+    };
+
+    let contents = OV.to_string();
+    let overview = OnceResource::new(read_md(contents));
+
+    view! {
+        <Title text="Introduction"/>
+        <div class=move || dark_mode_class()>
+            <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
+                <div class="h-full lg:ml-72 xl:ml-80">
+                    // Header section
+                    <header class="contents lg:pointer-events-none lg:fixed lg:inset-0 lg:z-40 lg:flex">
+                        <div class="contents lg:pointer-events-auto lg:block lg:w-72 lg:overflow-y-auto lg:border-r lg:border-zinc-900/10 lg:px-6 lg:pb-8 lg:pt-4 lg:dark:border-white/10 xl:w-80">
+                            <div class="hidden lg:flex">
+                                <HomeButton/>
+                            </div>
+                            <Header mode=mode.into() set_mode=set_mode/>
+                            <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
+                        </div>
+                    </header>
+                    // Main content area
+                    <div class="relative flex h-full flex-col px-4 pt-14 sm:px-6 lg:px-8">
+
+                        // this gets the location of the page we're on
+                        <main class="flex-auto py-16">
+                            <div class="h-full mx-auto !max-w-none prose lg:prose-lg prose-zinc dark:prose-invert w-full
+                            prose-code:before:hidden prose-code:after:hidden prose-code:rounded-none
+                            prose-h1:text-3xl lg:prose-h1:text-4xl
+                            prose-pre:rounded-none
+                            prose-li:my-0 prose-ul:my-1
+                            prose-pre:dark:ring-1 prose-pre:dark:ring-white/10 prose-pre:dark:ring-inset prose-pre:shadow-md
+                            prose-a:decoration-violet-500 prose-a:decoration-dotted prose-a:dark:hover:bg-violet-500 prose-a:hover:bg-violet-600 prose-a:hover:text-white prose-a:hover:decoration-violet-600 prose-a:dark:hover:decoration-violet-500
+                            ">
+                                <div class="h-full w-full max-w-2xl lg:max-w-5xl mx-auto">
+
+                                    <h2 class="mt-0! mb-4!">"Introduction"</h2>
+                                    <Transition>
+                                        {move || Suspend::new(async move {
+                                            if let Some(Ok(ov)) = overview.get() {
+                                                view! { <div inner_html=ov></div> }.into_any()
+                                            } else {
+                                                leptos::logging::log!("{:?}", overview.get());
+                                                view! {}.into_any()
+                                            }
+                                        })}
+
+                                    </Transition>
+
+                                </div>
+                            </div>
+                        </main>
+                        <ApiFooter prev=None next=Some((1, 0))/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }.into_any()
 }
 
 #[component]
@@ -301,13 +334,67 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
         },
     );
 
+    let dark_mode_class = move || match mode.get() {
+        ColorMode::Dark => "dark w-full",
+        _ => "w-full",
+    };
+
     view! {
         <Transition>
             {move || Suspend::new(async move {
                 if let Some(Ok(page)) = doc.get() {
                     view! { <ApiRefLayout mode=mode set_mode=set_mode endpoint=page/> }.into_any()
                 } else {
-                    view! { <p>"Tis didn't work"</p> }.into_any()
+                    view! {
+                        <Title text="Not found!"/>
+                        <div class=move || dark_mode_class()>
+                            <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
+                                <div class="h-full lg:ml-72 xl:ml-80">
+                                    // Header section
+                                    <header class="contents lg:pointer-events-none lg:fixed lg:inset-0 lg:z-40 lg:flex">
+                                        <div class="contents lg:pointer-events-auto lg:block lg:w-72 lg:overflow-y-auto lg:border-r lg:border-zinc-900/10 lg:px-6 lg:pb-8 lg:pt-4 lg:dark:border-white/10 xl:w-80">
+                                            <div class="hidden lg:flex">
+                                                <HomeButton/>
+                                            </div>
+                                            <Header mode=mode.into() set_mode=set_mode/>
+                                            <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
+                                        </div>
+                                    </header>
+                                    <div class="not-prose mx-auto flex h-full max-w-xl flex-col items-center justify-center text-center">
+                                        <p class="text-sm font-semibold text-zinc-900 dark:text-white">
+                                            "404"
+                                        </p>
+                                        <h1 class="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">
+                                            "Page not found"
+                                        </h1>
+                                        <p class="mt-2 text-base text-zinc-600 dark:text-zinc-400">
+                                            "These are not the docs you're looking for."
+                                        </p>
+                                        <a
+                                            class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-1 dark:ring-inset dark:ring-emerald-400/20 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-300 dark:hover:ring-emerald-300 mt-8"
+                                            href="/api/overview"
+                                        >
+                                            "Back to docs"
+                                            <svg
+                                                viewBox="0 0 20 20"
+                                                fill="none"
+                                                aria-hidden="true"
+                                                class="mt-0.5 h-5 w-5 -mr-1"
+                                            >
+                                                <path
+                                                    stroke="currentColor"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"
+                                                ></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                        .into_any()
                 }
             })}
 
@@ -330,7 +417,7 @@ pub fn CodeTab(examples: Examples) -> AnyView {
         R,
     }
 
-    let code_tab = RwSignal::new(CodeTab::Curl);
+    let code_tab = RwSignal::new(CodeTab::R);
 
     view! {
         <div class="not-prose">
@@ -346,6 +433,35 @@ pub fn CodeTab(examples: Examples) -> AnyView {
 
                         role="tablist"
                     >
+                        <li class="me-2" role="presentation">
+                            <button
+                                class=move || {
+                                    if let CodeTab::R = code_tab.get() {
+                                        format!(
+                                            "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
+                                        )
+                                    } else {
+                                        inactive_class.to_string()
+                                    }
+                                }
+
+                                type="button"
+                                role="tab"
+                                on:click=move |_| {
+                                    code_tab.set(CodeTab::R);
+                                }
+
+                                aria-selected=move || {
+                                    match code_tab.get() {
+                                        CodeTab::R => true,
+                                        _ => false,
+                                    }
+                                }
+                            >
+
+                                "R"
+                            </button>
+                        </li>
                         <li class="me-2" role="presentation">
                             <button
                                 class=move || {
@@ -376,35 +492,7 @@ pub fn CodeTab(examples: Examples) -> AnyView {
                                 "cURL"
                             </button>
                         </li>
-                        <li class="me-2" role="presentation">
-                            <button
-                                class=move || {
-                                    if let CodeTab::R = code_tab.get() {
-                                        format!(
-                                            "font-mono inline-block p-2 border-b-2 rounded-t-lg {active_class} cursor-pointer",
-                                        )
-                                    } else {
-                                        inactive_class.to_string()
-                                    }
-                                }
 
-                                type="button"
-                                role="tab"
-                                on:click=move |_| {
-                                    code_tab.set(CodeTab::R);
-                                }
-
-                                aria-selected=move || {
-                                    match code_tab.get() {
-                                        CodeTab::R => true,
-                                        _ => false,
-                                    }
-                                }
-                            >
-
-                                "R"
-                            </button>
-                        </li>
                     </ul>
                 </div>
                 <div class="not-prose">
@@ -414,7 +502,7 @@ pub fn CodeTab(examples: Examples) -> AnyView {
                                 CodeTab::R => {
                                     view! {
                                         <pre class=format!(
-                                            "not-prose overflow-x-scroll px-4 {SCROLLBAR_X}",
+                                            "not-prose overflow-x-scroll px-4 {SCROLLBAR_X} max-h-[500px] {SCROLLBAR_Y}",
                                         )>
                                             <code
                                                 class="not-prose overflow-x-scroll text-base/7"
@@ -427,7 +515,7 @@ pub fn CodeTab(examples: Examples) -> AnyView {
                                 CodeTab::Curl => {
                                     view! {
                                         <pre class=format!(
-                                            "not-prose overflow-x-scroll px-4 {SCROLLBAR_X}",
+                                            "not-prose overflow-x-scroll px-4 {SCROLLBAR_X} max-h-[500px] {SCROLLBAR_Y}",
                                         )>
                                             <code
                                                 class="not-prose overflow-x-scroll text-base/7"
@@ -579,16 +667,10 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
         [
             ApiRefGroup {
                 section: ApiRefSection::Overview,
-                links: vec![
-                    ApiRefNavLink {
-                        title: String::from("Using the REST API"),
-                        slug: "hello".to_string(),
-                    },
-                    ApiRefNavLink {
-                        title: "Using the SDK".to_string(),
-                        slug: "sdk".to_string(),
-                    },
-                ],
+                links: vec![ApiRefNavLink {
+                    title: String::from("Introduction"),
+                    slug: "/".to_string(),
+                }],
             },
             ApiRefGroup {
                 section: ApiRefSection::Content,
@@ -609,10 +691,10 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
                         title: "Update settings".to_string(),
                         slug: "patch-settings".to_string(),
                     },
-                    ApiRefNavLink {
-                        title: "Delete an item".to_string(),
-                        slug: "delete".to_string(),
-                    },
+                    // ApiRefNavLink {
+                    //     title: "Delete an item".to_string(),
+                    //     slug: "delete".to_string(),
+                    // },
                 ],
             },
             ApiRefGroup {
@@ -661,6 +743,39 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
     res
 }
 
+fn find_prev_next(path: &str) -> (Option<(usize, usize)>, Option<(usize, usize)>) {
+    let slug = path.trim_start_matches("/api/");
+
+    let navs = api_ref_navs();
+
+    // Flattened vector of (group_index, link_index, slug)
+    let mut flat: Vec<(usize, usize, &str)> = vec![];
+
+    for (gi, group) in navs.iter().enumerate() {
+        for (li, link) in group.links.iter().enumerate() {
+            flat.push((gi, li, link.slug.as_str()));
+        }
+    }
+
+    // Find current index in flat list
+    let pos = flat.iter().position(|&(_, _, s)| s == slug);
+
+    match pos {
+        Some(i) => {
+            let prev = if i > 0 {
+                Some((flat[i - 1].0, flat[i - 1].1))
+            } else {
+                None
+            };
+
+            let next = flat.get(i + 1).map(|&(g, l, _)| (g, l));
+
+            (prev, next)
+        }
+        None => (None, None),
+    }
+}
+
 #[component]
 pub fn ApiNavigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoView {
     view! {
@@ -684,4 +799,65 @@ pub fn ApiNavigation(#[prop(optional)] class: Option<&'static str>) -> impl Into
             </ul>
         </nav>
     }
+}
+
+#[component]
+pub fn ApiFooter(next: Option<(usize, usize)>, prev: Option<(usize, usize)>) -> AnyView {
+    view! {
+        <footer class="mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl">
+            <PageNavigation prev=prev next=next/>
+            <SmallPrint/>
+        </footer>
+    }
+    .into_any()
+}
+
+#[component]
+pub fn PageNavigation(prev: Option<(usize, usize)>, next: Option<(usize, usize)>) -> AnyView {
+    // FIXME figure out how to get previous and next pages
+    // into this
+    let navs = api_ref_navs();
+    let prev_page = prev.map(|(i, j)| {
+        let ApiRefNavLink { title, slug } = navs[i].links[j].clone();
+        PageNav {
+            title: title.into(),
+            href: format!("/api/{slug}"),
+        }
+    });
+
+    let next_page = next.map(|(i, j)| {
+        let ApiRefNavLink { title, slug } = navs[i].links[j].clone();
+        PageNav {
+            title: title.into(),
+            href: format!("/api/{slug}"),
+        }
+    });
+
+    view! {
+        <div class="flex">
+            <div class="flex flex-col items-start gap-3">
+
+                {match prev_page {
+                    Some(pp) => {
+                        view! { <PageLink label="Previous" page=pp arrow=ArrowDirection::Left/> }
+                            .into_any()
+                    }
+                    None => ().into_any(),
+                }}
+
+            </div>
+            <div class="ml-auto flex flex-col items-end gap-3">
+
+                {match next_page {
+                    Some(np) => {
+                        view! { <PageLink label="Next" page=np arrow=ArrowDirection::Right/> }
+                            .into_any()
+                    }
+                    None => ().into_any(),
+                }}
+
+            </div>
+        </div>
+    }
+    .into_any()
 }

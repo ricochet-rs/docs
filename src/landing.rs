@@ -141,7 +141,6 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
                                             let c = contact.get();
                                             if !submitted.get() {
                                                 leptos::task::spawn_local(async move {
-                                                    leptos::logging::log!("Email is {e} and contact is {c}");
                                                     let _ = insert_email(e, c).await;
                                                 });
                                                 submitted.set(true);

@@ -57,16 +57,15 @@ pub fn ModeToggle(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
 
 #[component]
 pub fn TopLevelNavItem(href: String, children: Children) -> AnyView {
+    let default_class= "text-sm leading-5 text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white";
     view! {
         <li>
-            <a
-                href=href
-                class="text-sm leading-5 text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
-            >
+            <a href=href class=default_class>
                 {children()}
             </a>
         </li>
-    }.into_any()
+    }
+    .into_any()
 }
 
 #[component]
@@ -78,7 +77,6 @@ pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> 
         let is_meta = evt.meta_key();
         let is_k = evt.key() == "k";
         if (is_ctrl | is_meta) & is_k {
-            leptos::logging::log!("Open search");
             show_search.set(true);
         }
     });
@@ -86,10 +84,8 @@ pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> 
     Effect::new(move |_| {
         if show_search.get() {
             if let Some(inner) = nr.get() {
-                leptos::logging::log!("focusing search input");
                 let _ = inner.focus();
             } else {
-                leptos::logging::log!("Failed to find input node ref")
             }
         }
     });
@@ -363,7 +359,11 @@ pub fn NavigationGroup(
                                 let href = di.href.to_string();
                                 let hr = href.clone();
                                 let title = di.title.to_string();
-                                let is_active = location.pathname.get() == hr;
+                                let mut p = location.pathname.get();
+                                if p.starts_with("/docs") {
+                                    p = p.split_off(5);
+                                }
+                                let is_active = p == hr;
                                 view! {
                                     {move || {
                                         if is_active {
@@ -404,9 +404,7 @@ pub fn MobileNavigation(show_tray: RwSignal<bool>) -> AnyView {
                 aria-label="Toggle navigation"
                 on:click=move |_| {
                     let cur = show_tray.get();
-                    leptos::logging::log!("show_tray = {cur:?}");
                     show_tray.set(!cur);
-                    leptos::logging::log!("show_tray updated to {}", show_tray.get());
                 }
             >
 
@@ -445,7 +443,6 @@ pub fn MobileTray(show_tray: RwSignal<bool>, node_ref: NodeRef<Div>) -> AnyView 
 
     let _ = use_event_listener(use_document(), keydown, move |evt| {
         if evt.key() == "Escape" {
-            leptos::logging::log!("Close mobile modal");
             show_tray.set(false);
         }
     });

@@ -21,7 +21,6 @@ fn read_toml(slug: String) -> Result<ApiEndpoint, Box<dyn std::error::Error>> {
         }
     }
 
-    leptos::logging::log!("examples: curl: {}\nr: {}", res.examples.curl, res.examples.r);
     Ok(res)
 }
 
@@ -34,10 +33,15 @@ pub async fn read_api_ref(slug: String) -> Result<ApiEndpoint, ServerFnError> {
 }
 
 #[cfg(feature = "ssr")]
-pub(crate) fn md_to_html(content: &str) -> String {
+pub fn md_to_html(content: &str) -> String {
     let parser = pulldown_cmark::Parser::new(content);
     // Write to a new String buffer.
     let mut html_output = String::new();
     pulldown_cmark::html::push_html(&mut html_output, parser);
     html_output
+}
+
+#[server]
+pub async fn read_md(content: String) -> Result<String, ServerFnError> {
+    Ok(md_to_html(&content))
 }

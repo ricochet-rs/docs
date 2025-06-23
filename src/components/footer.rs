@@ -6,8 +6,8 @@ use leptos::prelude::*;
 
 #[derive(Debug, Clone)]
 pub struct PageNav {
-    title: String,
-    href: String,
+    pub title: String,
+    pub href: String,
 }
 
 #[component]

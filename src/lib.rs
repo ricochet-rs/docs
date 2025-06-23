@@ -99,11 +99,14 @@ pub fn Layout(
 fn DocPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
     let loc = use_location();
     let path = move || loc.pathname.get();
-    leptos::logging::log!("path is {:?}", path());
 
     view! {
         {move || {
-            let item = get_doc(&path());
+            let mut p = path();
+            if p.starts_with("/docs") {
+                p = p.split_off(5);
+            }
+            let item = get_doc(&p);
             match item {
                 Some(doc) => view! { <Layout doc=doc mode=mode set_mode=set_mode/> }.into_any(),
                 None => view! { <Layout mode=mode set_mode=set_mode/> }.into_any(),

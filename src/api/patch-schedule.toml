@@ -5,14 +5,7 @@ description = "Schedules a task to run on a recurring schedule. Tasks are schedu
 path_params = [{ name = "ulid", desc = "The ID of the content item" }]
 body_params = [{ name = "schedule", desc = "A cron schedule." }]
 response = """
-Returns a json object e.g.
-
-```json
-{
-    "message": "Schedule updated successfully",
-    "schedule": "@daily"
-}
-```
+Returns a json object with the the updated `schedule`.
 """
 
 [examples]

@@ -1,5 +1,5 @@
 use crate::{
-    api::{ApiEndpoint, ApiRefPage},
+    api::{ApiLandingPage, ApiRefPage},
     landing::LandingPage,
     DocPage, Index, Layout,
 };
@@ -44,6 +44,13 @@ pub fn App() -> impl IntoView {
         <Router>
             <Routes fallback=move || view! { <Layout mode=mode set_mode=set_mode/> }>
                 <Route
+                    path=path!("/api")
+                    view=move || {
+                        view! { <ApiLandingPage mode=mode set_mode=set_mode/> }
+                    }
+                />
+
+                <Route
                     path=StaticSegment("/hello")
                     view=move || view! { <Index mode=mode set_mode=set_mode/> }
                 />
@@ -51,6 +58,7 @@ pub fn App() -> impl IntoView {
                     path=path!("/")
                     view=move || view! { <LandingPage mode=mode set_mode=set_mode/> }
                 />
+
                 <Route
                     path=path!("/:path")
                     view=move || view! { <DocPage mode=mode set_mode=set_mode/> }

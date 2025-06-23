@@ -51,7 +51,7 @@ Install the R package with
 if (!requireNamespace("remotes")) install.packages("remotes")
 
 # install ricochet
-remotes::install_url("https://docs.ricochet.rs/pkgs/ricochet_0.0.0.9000.tar.gz")
+remotes::install_url("https://docs.ricochet.rs/pkgs/ricochet-r.tar.gz")
 ```
 
 The `{ricochet}` package automatically fetches your API key from the `RICOCHET_API_KEY` environment variable to simplify the deployment process.

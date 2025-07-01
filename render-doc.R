@@ -9,7 +9,7 @@ all_docs <- list.files(
 )
 
 for (doc in all_docs) {
-  out <- litedown::mark(doc)
+  out <- litedown::mark(doc, options = list(smart = FALSE))
 
   read_html(out) |>
     html_node("body") |>

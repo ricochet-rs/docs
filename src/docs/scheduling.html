@@ -38,13 +38,13 @@
 <p>cron expressions can also take advantage of the modifiers: <code>L</code>, <code>#</code>, and <code>W</code>.</p>
 <h3 id="sec:last-modifiers">
 <code>L</code>ast modifiers</h3>
-<p><code>L</code> is used to denote the last day of the week or month. This can be used in the “Day of Month” or “Day of Week” fields.</p>
+<p><code>L</code> is used to denote the last day of the week or month. This can be used in the "Day of Month" or "Day of Week" fields.</p>
 <p>For example, <code>"0 0 L * *"</code> will schedule the item to be invoked every last day of the month. The <code>*</code> in the day of week field is ignored.</p>
 <h3 id="sec:nth-modifier">nth modifier</h3>
-<p>The <code>#</code> modifier can be used to specify which occurence of a particular day in a month. This can only be used in the “Day of Week” field.</p>
+<p>The <code>#</code> modifier can be used to specify which occurence of a particular day in a month. This can only be used in the "Day of Week" field.</p>
 <p>For example, using <code>0 0 * * FRI#2</code> would specify the item to be invoked every second Friday of a month.</p>
 <h3 id="sec:closest-weekday-modifier">Closest <code>W</code>eekday modifier</h3>
-<p>The <code>W</code> modifier can be used to specify the closes weekday to a day of the month. This can only be utilized in the “Day of Month” field.</p>
+<p>The <code>W</code> modifier can be used to specify the closes weekday to a day of the month. This can only be utilized in the "Day of Month" field.</p>
 <p>Using <code>10W</code> will find the closest weekday to the 10th of the month. If the 10th falls on a Saturday, it will match to the 9th (Friday). Or if the 10th is a Sunday, it will be matched to the 11th (Monday).</p>
 <h2 id="sec:shorthands">Shorthands</h2>
 <p>Additionally, shorthand patterns can be specified:</p>

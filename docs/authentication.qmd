@@ -1,0 +1,7 @@
+ricochet uses open ID connect for authentication. This allows you to bring your own identity provider to ricochet.
+
+ricochet requires that your OIDC provider is able to provide the `email` and `profile` claim.
+
+- ricochet uses the subject identifier from your OIDC IDP as the user ID.
+-
+- At present the `email` is unused but is collected for future integrations with an SMTP server.

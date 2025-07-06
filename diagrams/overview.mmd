@@ -1,0 +1,36 @@
+flowchart TD
+ subgraph s1["Axum localhost:3000/3001"]
+        n3["ricochet-ui (leptos)"]
+        n4["Content REST API"]
+  end
+ subgraph s2["Content Trackers"]
+        n7["Static Content Items"]
+        n6["Service Tracker"]
+  end
+    n2["Pingora Proxy localhost:6188"] --> n10["Extract slug /slug"]
+    n9["User request"] --> n2
+    n10 -- /api --> s1
+    n10 -- "/content, /profile, etc." --> s1
+    n10 -- check if tracked --> s2
+    s1 <--> n1["Database"]
+    s2 -- if not tracked --> n12["Check database for item"]
+    n12 <-.-> n1
+    n6 --> n14["R / JL app on random port"]
+    n7 --> n15["Static HTML directory service"]
+    n15 --> s1
+    n1 -- all items with a schedule --> n5(["Job scheduler"])
+    n12 -- if found, insert --> s2
+    n2 <== proxy to :3000 (static) or live port ==> s2
+
+    n7@{ shape: stored-data}
+    n6@{ shape: stored-data}
+    n2@{ shape: rounded}
+    n10@{ shape: proc}
+    n9@{ shape: event}
+    n1@{ shape: db}
+    n12@{ shape: event}
+    n14@{ shape: procs}
+    n15@{ shape: procs}
+    linkStyle 13 stroke:#FF6D00,fill:none
+
+

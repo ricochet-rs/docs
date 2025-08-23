@@ -10,13 +10,13 @@ fn read_toml(slug: String) -> Result<ApiEndpoint, Box<dyn std::error::Error>> {
     res.examples.r = md_to_html(&res.examples.r);
     res.examples.curl = md_to_html(&res.examples.curl);
     if let Some(ref mut params) = res.body_params {
-        for param in params.iter_mut() {
+        for param in params {
             param.desc = md_to_html(&param.desc);
         }
     }
 
     if let Some(ref mut params) = res.path_params {
-        for param in params.iter_mut() {
+        for param in params {
             param.desc = md_to_html(&param.desc);
         }
     }
@@ -26,10 +26,10 @@ fn read_toml(slug: String) -> Result<ApiEndpoint, Box<dyn std::error::Error>> {
 
 #[server]
 pub async fn read_api_ref(slug: String) -> Result<ApiEndpoint, ServerFnError> {
-    Ok(read_toml(slug).map_err(|e| {
+    read_toml(slug).map_err(|e| {
         leptos::logging::log!("{e:?}");
         ServerFnError::new(e)
-    })?)
+    })
 }
 
 #[cfg(feature = "ssr")]

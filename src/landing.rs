@@ -60,7 +60,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
 
     view! {
         <Title text="ricochet 🐇"/>
-        <div class=move || dark_mode_class()>
+        <div class=dark_mode_class>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full">
                     // Header section
@@ -81,7 +81,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
 
                                 // Divider
                                 <div class="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15"></div>
-                                <ModeToggle mode=mode.into() set_mode=set_mode/>
+                                <ModeToggle mode=mode set_mode=set_mode/>
 
                             </div>
                         </div>

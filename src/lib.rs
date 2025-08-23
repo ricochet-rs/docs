@@ -53,7 +53,7 @@ pub fn Layout(
     let title = format!("{title} | ricochet 🐇");
     view! {
         <Title text=title/>
-        <div class=move || dark_mode_class()>
+        <div class=dark_mode_class>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full lg:ml-72 xl:ml-80">
                     // Header section
@@ -62,8 +62,8 @@ pub fn Layout(
                             <div class="hidden lg:flex">
                                 <HomeButton/>
                             </div>
-                            <Header mode=mode.into() set_mode=set_mode/>
-                            <Navigation class="hidden lg:mt-10 lg:block".into()/>
+                            <Header mode=mode set_mode=set_mode/>
+                            <Navigation class="hidden lg:mt-10 lg:block"/>
                         </div>
                     </header>
 

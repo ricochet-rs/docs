@@ -7,14 +7,14 @@ pub enum DocSection {
     Admin,
 }
 
-impl ToString for DocSection {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for DocSection {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
             DocSection::QuickStart => "Quickstart",
             DocSection::Content => "Content Items",
             DocSection::Admin => "Server Administration",
-        }
-        .to_string()
+        };
+        write!(f, "{}", s)
     }
 }
 

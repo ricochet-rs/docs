@@ -2,7 +2,7 @@ use leptos::prelude::*;
 
 #[component]
 pub fn CodePanel() -> impl IntoView {
-    view! {}
+    
 }
 
 #[component]

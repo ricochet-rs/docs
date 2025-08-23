@@ -82,12 +82,10 @@ pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> 
     });
 
     Effect::new(move |_| {
-        if show_search.get() {
-            if let Some(inner) = nr.get() {
+        if show_search.get()
+            && let Some(inner) = nr.get() {
                 let _ = inner.focus();
-            } else {
             }
-        }
     });
 
     let noder = NodeRef::<Div>::new();
@@ -377,7 +375,7 @@ pub fn NavigationGroup(
                                     }}
 
                                     <li class="relative">
-                                        <NavLink href=href.into() active=is_active>
+                                        <NavLink href=href active=is_active>
 
                                             {title}
                                         </NavLink>

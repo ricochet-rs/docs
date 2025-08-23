@@ -1,14 +1,14 @@
 use super::search::{MobileSearch, SearchButton, SearchDialog};
 use crate::{
-    docs::{doc_sections, DocPage, DocSection},
     HomeButton,
+    docs::{DocPage, DocSection, doc_sections},
 };
 use leptos::{
     ev::keydown,
     html::{Div, Input},
     prelude::*,
 };
-use leptos_use::{use_document, use_event_listener, ColorMode};
+use leptos_use::{ColorMode, use_document, use_event_listener};
 
 #[component]
 pub fn SunIcon(#[prop(optional)] class: Option<String>) -> AnyView {
@@ -57,7 +57,7 @@ pub fn ModeToggle(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
 
 #[component]
 pub fn TopLevelNavItem(href: String, children: Children) -> AnyView {
-    let default_class= "text-sm leading-5 text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white";
+    let default_class = "text-sm leading-5 text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white";
     view! {
         <li>
             <a href=href class=default_class>
@@ -83,9 +83,10 @@ pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> 
 
     Effect::new(move |_| {
         if show_search.get()
-            && let Some(inner) = nr.get() {
-                let _ = inner.focus();
-            }
+            && let Some(inner) = nr.get()
+        {
+            let _ = inner.focus();
+        }
     });
 
     let noder = NodeRef::<Div>::new();
@@ -153,11 +154,26 @@ fn ArrowIcon(#[prop(optional)] class: Option<String>) -> impl IntoView {
 
 // Define variant styles as a constant
 const VARIANT_STYLES: [(&str, &str); 5] = [
-    ("primary", " bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-1 dark:ring-inset dark:ring-emerald-400/20 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-300 dark:hover:ring-emerald-300"),
-    ("secondary", " bg-zinc-100 py-1 px-3 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800/40 dark:text-zinc-400 dark:ring-1 dark:ring-inset dark:ring-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"),
-    ("filled", " bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-400"),
-    ("outline", " py-1 px-3 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-400 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white"),
-    ("text", "text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500"),
+    (
+        "primary",
+        " bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-1 dark:ring-inset dark:ring-emerald-400/20 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-300 dark:hover:ring-emerald-300",
+    ),
+    (
+        "secondary",
+        " bg-zinc-100 py-1 px-3 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800/40 dark:text-zinc-400 dark:ring-1 dark:ring-inset dark:ring-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-300",
+    ),
+    (
+        "filled",
+        " bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-400",
+    ),
+    (
+        "outline",
+        " py-1 px-3 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-400 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white",
+    ),
+    (
+        "text",
+        "text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500",
+    ),
 ];
 
 #[derive(Clone, PartialEq)]

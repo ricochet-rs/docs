@@ -1,4 +1,4 @@
-use crate::docs::{DocPage, DOC_PAGES};
+use crate::docs::{DOC_PAGES, DocPage};
 use bm25::{
     DefaultTokenizer, Document, Language, LanguageMode, SearchEngine, SearchEngineBuilder,
     SearchResult,

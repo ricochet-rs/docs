@@ -7,7 +7,7 @@ use components::{
     // hero_pattern::HeroPattern,
     navigation::{Header, Navigation},
 };
-use docs::{get_doc, DocNavItem};
+use docs::{DocNavItem, get_doc};
 use leptos::prelude::*;
 use leptos_meta::Title;
 use leptos_router::hooks::use_location;

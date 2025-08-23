@@ -1,10 +1,10 @@
 use crate::{
+    HomeButton,
     components::{
         footer::{BlueSkyIcon, DiscordIcon, GitHubIcon, SmallPrint, SocialLink},
         hero_pattern::HeroPattern,
         navigation::{ModeToggle, TopLevelNavItem},
     },
-    HomeButton,
 };
 use leptos::prelude::*;
 use leptos_meta::Title;

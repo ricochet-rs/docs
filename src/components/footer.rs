@@ -1,6 +1,6 @@
 use crate::{
     components::navigation::{ArrowDirection, Button, ButtonVariant},
-    docs::{DocPage, DOC_PAGES},
+    docs::{DOC_PAGES, DocPage},
 };
 use leptos::prelude::*;
 

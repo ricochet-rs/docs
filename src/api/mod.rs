@@ -1,14 +1,14 @@
 use crate::{
+    HomeButton,
     api::parse::{read_api_ref, read_md},
     components::{
         footer::{PageLink, PageNav, SmallPrint},
         navigation::{ArrowDirection, Header, NavLink},
     },
-    HomeButton,
 };
 use leptos::prelude::*;
 use leptos_meta::Title;
-use leptos_use::{use_clipboard, ColorMode, UseClipboardReturn};
+use leptos_use::{ColorMode, UseClipboardReturn, use_clipboard};
 use std::sync::OnceLock;
 
 pub mod parse;
@@ -25,10 +25,18 @@ pub enum HttpMethod {
 impl HttpMethod {
     pub fn as_badge(&self) -> AnyView {
         let badge_class = match self {
-            HttpMethod::Get => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400",
-            HttpMethod::Post => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-indigo-300 bg-indigo-400/10 text-indigo-500 dark:ring-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-400",
-            HttpMethod::Patch => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-violet-300 bg-violet-400/10 text-violet-500 dark:ring-violet-400/30 dark:bg-violet-400/10 dark:text-violet-400",
-            HttpMethod::Delete => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-rose-200 bg-rose-50 text-red-500 dark:ring-rose-500/20 dark:bg-rose-400/10 dark:text-rose-400",
+            HttpMethod::Get => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400"
+            }
+            HttpMethod::Post => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-indigo-300 bg-indigo-400/10 text-indigo-500 dark:ring-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-400"
+            }
+            HttpMethod::Patch => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-violet-300 bg-violet-400/10 text-violet-500 dark:ring-violet-400/30 dark:bg-violet-400/10 dark:text-violet-400"
+            }
+            HttpMethod::Delete => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-rose-200 bg-rose-50 text-red-500 dark:ring-rose-500/20 dark:bg-rose-400/10 dark:text-rose-400"
+            }
         };
 
         let method = match self {
@@ -405,9 +413,8 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
 
 #[component]
 pub fn CodeTab(examples: Examples) -> AnyView {
-    let active_class ="text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500 font-medium text-base";
-    let inactive_class =
-        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer text-base";
+    let active_class = "text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500 font-medium text-base";
+    let inactive_class = "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer text-base";
 
     let Examples { r, curl } = examples;
 
@@ -657,7 +664,6 @@ pub fn ApiNavGroup(
 pub static API_REF_PAGES: OnceLock<[ApiRefGroup; 5]> = OnceLock::new();
 
 pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
-    
     (API_REF_PAGES.get_or_init(|| {
         [
             ApiRefGroup {

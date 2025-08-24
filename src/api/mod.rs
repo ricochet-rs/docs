@@ -1,14 +1,14 @@
 use crate::{
+    HomeButton,
     api::parse::{read_api_ref, read_md},
     components::{
         footer::{PageLink, PageNav, SmallPrint},
         navigation::{ArrowDirection, Header, NavLink},
     },
-    HomeButton,
 };
 use leptos::prelude::*;
 use leptos_meta::Title;
-use leptos_use::{use_clipboard, ColorMode, UseClipboardReturn};
+use leptos_use::{ColorMode, UseClipboardReturn, use_clipboard};
 use std::sync::OnceLock;
 
 pub mod parse;
@@ -25,10 +25,18 @@ pub enum HttpMethod {
 impl HttpMethod {
     pub fn as_badge(&self) -> AnyView {
         let badge_class = match self {
-            HttpMethod::Get => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400",
-            HttpMethod::Post => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-indigo-300 bg-indigo-400/10 text-indigo-500 dark:ring-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-400",
-            HttpMethod::Patch => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-violet-300 bg-violet-400/10 text-violet-500 dark:ring-violet-400/30 dark:bg-violet-400/10 dark:text-violet-400",
-            HttpMethod::Delete => "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-rose-200 bg-rose-50 text-red-500 dark:ring-rose-500/20 dark:bg-rose-400/10 dark:text-rose-400",
+            HttpMethod::Get => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400"
+            }
+            HttpMethod::Post => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-indigo-300 bg-indigo-400/10 text-indigo-500 dark:ring-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-400"
+            }
+            HttpMethod::Patch => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-violet-300 bg-violet-400/10 text-violet-500 dark:ring-violet-400/30 dark:bg-violet-400/10 dark:text-violet-400"
+            }
+            HttpMethod::Delete => {
+                "font-mono text-sm font-medium  px-1.5 py-1 ring-1 ring-inset ring-rose-200 bg-rose-50 text-red-500 dark:ring-rose-500/20 dark:bg-rose-400/10 dark:text-rose-400"
+            }
         };
 
         let method = match self {
@@ -128,7 +136,7 @@ pub fn ApiRefLayout(
 
     view! {
         <Title text=meta_title/>
-        <div class=move || dark_mode_class()>
+        <div class=dark_mode_class>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full lg:ml-72 xl:ml-80">
                     // Header section
@@ -137,8 +145,8 @@ pub fn ApiRefLayout(
                             <div class="hidden lg:flex">
                                 <HomeButton/>
                             </div>
-                            <Header mode=mode.into() set_mode=set_mode/>
-                            <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
+                            <Header mode=mode set_mode=set_mode/>
+                            <ApiNavigation class="hidden lg:mt-10 lg:block"/>
                         </div>
                     </header>
                     // Main content area
@@ -215,7 +223,7 @@ pub fn ApiRefLayout(
                                                 }
                                                     .into_any()
                                             } else {
-                                                view! {}.into_any()
+                                                ().into_any()
                                             }}
 
                                             {if let Some(body) = path_params {
@@ -238,7 +246,7 @@ pub fn ApiRefLayout(
                                                 }
                                                     .into_any()
                                             } else {
-                                                view! {}.into_any()
+                                                ().into_any()
                                             }}
 
                                         </div>
@@ -270,7 +278,7 @@ pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMo
 
     view! {
         <Title text="Introduction"/>
-        <div class=move || dark_mode_class()>
+        <div class=dark_mode_class>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full lg:ml-72 xl:ml-80">
                     // Header section
@@ -279,8 +287,8 @@ pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMo
                             <div class="hidden lg:flex">
                                 <HomeButton/>
                             </div>
-                            <Header mode=mode.into() set_mode=set_mode/>
-                            <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
+                            <Header mode=mode set_mode=set_mode/>
+                            <ApiNavigation class="hidden lg:mt-10 lg:block"/>
                         </div>
                     </header>
                     // Main content area
@@ -305,7 +313,7 @@ pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMo
                                                 view! { <div inner_html=ov></div> }.into_any()
                                             } else {
                                                 leptos::logging::log!("{:?}", overview.get());
-                                                view! {}.into_any()
+                                                ().into_any()
                                             }
                                         })}
 
@@ -347,7 +355,7 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
                 } else {
                     view! {
                         <Title text="Not found!"/>
-                        <div class=move || dark_mode_class()>
+                        <div class=dark_mode_class>
                             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                                 <div class="h-full lg:ml-72 xl:ml-80">
                                     // Header section
@@ -356,8 +364,8 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
                                             <div class="hidden lg:flex">
                                                 <HomeButton/>
                                             </div>
-                                            <Header mode=mode.into() set_mode=set_mode/>
-                                            <ApiNavigation class="hidden lg:mt-10 lg:block".into()/>
+                                            <Header mode=mode set_mode=set_mode/>
+                                            <ApiNavigation class="hidden lg:mt-10 lg:block"/>
                                         </div>
                                     </header>
                                     <div class="not-prose mx-auto flex h-full max-w-xl flex-col items-center justify-center text-center">
@@ -405,9 +413,8 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
 
 #[component]
 pub fn CodeTab(examples: Examples) -> AnyView {
-    let active_class ="text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500 font-medium text-base";
-    let inactive_class =
-        "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer text-base";
+    let active_class = "text-violet-600 hover:text-violet-600 dark:text-violet-500 dark:hover:text-violet-500 border-violet-600 dark:border-violet-500 font-medium text-base";
+    let inactive_class = "font-mono inline-block p-2 border-b-2 dark:border-zinc-400 dark:hover:border-white text-zinc-500 dark:text-zinc-400 dark:hover:text-white hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-300 cursor-pointer text-base";
 
     let Examples { r, curl } = examples;
 
@@ -452,10 +459,7 @@ pub fn CodeTab(examples: Examples) -> AnyView {
                                 }
 
                                 aria-selected=move || {
-                                    match code_tab.get() {
-                                        CodeTab::R => true,
-                                        _ => false,
-                                    }
+                                    matches!(code_tab.get(), CodeTab::R)
                                 }
                             >
 
@@ -478,10 +482,7 @@ pub fn CodeTab(examples: Examples) -> AnyView {
                                 type="button"
                                 role="tab"
                                 aria-selected=move || {
-                                    match code_tab.get() {
-                                        CodeTab::Curl => true,
-                                        _ => false,
-                                    }
+                                    matches!(code_tab.get(), CodeTab::Curl)
                                 }
 
                                 on:click=move |_| {
@@ -591,16 +592,16 @@ pub struct ApiRefGroup {
     pub links: Vec<ApiRefNavLink>,
 }
 
-impl ToString for ApiRefSection {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for ApiRefSection {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
             ApiRefSection::Overview => "Overview",
             ApiRefSection::Content => "Content",
             ApiRefSection::Task => "Tasks",
             ApiRefSection::Service => "Services",
             ApiRefSection::User => "User",
-        }
-        .to_string()
+        };
+        write!(f, "{}", s)
     }
 }
 
@@ -645,7 +646,7 @@ pub fn ApiNavGroup(
                                     }}
 
                                     <li class="relative">
-                                        <NavLink href=href.into() active=is_active>
+                                        <NavLink href=href active=is_active>
                                             {title}
                                         </NavLink>
                                     </li>
@@ -663,7 +664,7 @@ pub fn ApiNavGroup(
 pub static API_REF_PAGES: OnceLock<[ApiRefGroup; 5]> = OnceLock::new();
 
 pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
-    let res = API_REF_PAGES.get_or_init(|| {
+    (API_REF_PAGES.get_or_init(|| {
         [
             ApiRefGroup {
                 section: ApiRefSection::Overview,
@@ -739,11 +740,12 @@ pub fn api_ref_navs() -> &'static [ApiRefGroup; 5] {
                 }],
             },
         ]
-    });
-    res
+    })) as _
 }
 
-fn find_prev_next(path: &str) -> (Option<(usize, usize)>, Option<(usize, usize)>) {
+type PageNavigation = (Option<(usize, usize)>, Option<(usize, usize)>);
+
+fn find_prev_next(path: &str) -> PageNavigation {
     let slug = path.trim_start_matches("/api/");
 
     let navs = api_ref_navs();
@@ -783,7 +785,7 @@ pub fn ApiNavigation(#[prop(optional)] class: Option<&'static str>) -> impl Into
             <ul role="list">
                 // Map through navigation groups
                 {api_ref_navs()
-                    .into_iter()
+                    .iter()
                     .enumerate()
                     .map(|(i, group)| {
                         view! {
@@ -820,7 +822,7 @@ pub fn PageNavigation(prev: Option<(usize, usize)>, next: Option<(usize, usize)>
     let prev_page = prev.map(|(i, j)| {
         let ApiRefNavLink { title, slug } = navs[i].links[j].clone();
         PageNav {
-            title: title.into(),
+            title,
             href: format!("/api/{slug}"),
         }
     });
@@ -828,7 +830,7 @@ pub fn PageNavigation(prev: Option<(usize, usize)>, next: Option<(usize, usize)>
     let next_page = next.map(|(i, j)| {
         let ApiRefNavLink { title, slug } = navs[i].links[j].clone();
         PageNav {
-            title: title.into(),
+            title,
             href: format!("/api/{slug}"),
         }
     });

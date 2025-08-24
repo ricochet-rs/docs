@@ -1,10 +1,10 @@
 use crate::{
+    HomeButton,
     components::{
         footer::{BlueSkyIcon, DiscordIcon, GitHubIcon, SmallPrint, SocialLink},
         hero_pattern::HeroPattern,
         navigation::{ModeToggle, TopLevelNavItem},
     },
-    HomeButton,
 };
 use leptos::prelude::*;
 use leptos_meta::Title;
@@ -58,10 +58,9 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
         "h-5 w-5 text-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-500 fill-zinc-700 transition group-hover:fill-zinc-900 dark:group-hover:fill-zinc-500",
     );
 
-
     view! {
         <Title text="ricochet 🐇"/>
-        <div class=move || dark_mode_class()>
+        <div class=dark_mode_class>
             <div class="flex-auto h-full w-full bg-zinc-100/50 antialiased dark:bg-zinc-900">
                 <div class="h-full">
                     // Header section
@@ -82,7 +81,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
 
                                 // Divider
                                 <div class="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15"></div>
-                                <ModeToggle mode=mode.into() set_mode=set_mode/>
+                                <ModeToggle mode=mode set_mode=set_mode/>
 
                             </div>
                         </div>
@@ -353,7 +352,6 @@ fn FeatureCard(title: String, desc: String, #[prop(optional)] icon: Option<AnyVi
     }
     .into_any()
 }
-
 
 #[component]
 fn LightningIcon(#[prop(optional)] class: Option<String>) -> AnyView {

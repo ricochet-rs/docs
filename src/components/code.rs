@@ -1,9 +1,7 @@
 use leptos::prelude::*;
 
 #[component]
-pub fn CodePanel() -> impl IntoView {
-    view! {}
-}
+pub fn CodePanel() -> impl IntoView {}
 
 #[component]
 pub fn CodeGroupHeader() -> impl IntoView {

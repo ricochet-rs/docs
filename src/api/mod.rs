@@ -102,8 +102,9 @@ dark:[&::-webkit-scrollbar-thumb]:bg-zinc-500";
 
 #[component]
 pub fn ApiRefLayout(
-    mode: ReadSignal<ColorMode>,
-    set_mode: WriteSignal<ColorMode>,
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
     endpoint: ApiEndpoint,
 ) -> impl IntoView {
     let ApiEndpoint {
@@ -145,7 +146,7 @@ pub fn ApiRefLayout(
                             <div class="hidden lg:flex">
                                 <HomeButton/>
                             </div>
-                            <Header mode=mode set_mode=set_mode/>
+                            <Header mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
                             <ApiNavigation class="hidden lg:mt-10 lg:block"/>
                         </div>
                     </header>
@@ -267,7 +268,11 @@ pub fn ApiRefLayout(
 
 const OV: &str = include_str!("overview.md");
 #[component]
-pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+pub fn ApiLandingPage(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
     let dark_mode_class = move || match mode.get() {
         ColorMode::Dark => "dark w-full",
         _ => "w-full",
@@ -287,7 +292,7 @@ pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMo
                             <div class="hidden lg:flex">
                                 <HomeButton/>
                             </div>
-                            <Header mode=mode set_mode=set_mode/>
+                            <Header mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
                             <ApiNavigation class="hidden lg:mt-10 lg:block"/>
                         </div>
                     </header>
@@ -331,7 +336,11 @@ pub fn ApiLandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMo
 }
 
 #[component]
-pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+pub fn ApiRefPage(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
     let location = leptos_router::hooks::use_location();
 
     let doc = Resource::new(
@@ -351,7 +360,7 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
         <Transition>
             {move || Suspend::new(async move {
                 if let Some(Ok(page)) = doc.get() {
-                    view! { <ApiRefLayout mode=mode set_mode=set_mode endpoint=page/> }.into_any()
+                    view! { <ApiRefLayout mode=mode theme_override=theme_override set_theme_override=set_theme_override endpoint=page/> }.into_any()
                 } else {
                     view! {
                         <Title text="Not found!"/>
@@ -364,7 +373,7 @@ pub fn ApiRefPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>)
                                             <div class="hidden lg:flex">
                                                 <HomeButton/>
                                             </div>
-                                            <Header mode=mode set_mode=set_mode/>
+                                            <Header mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
                                             <ApiNavigation class="hidden lg:mt-10 lg:block"/>
                                         </div>
                                     </header>

@@ -44,7 +44,11 @@ async fn insert_email(email: String, interview: bool) -> Result<(), ServerFnErro
 }
 
 #[component]
-pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+pub fn LandingPage(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
     let dark_mode_class = move || match mode.get() {
         ColorMode::Dark => "dark w-full",
         _ => "w-full",
@@ -81,7 +85,7 @@ pub fn LandingPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>
 
                                 // Divider
                                 <div class="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15"></div>
-                                <ModeToggle mode=mode set_mode=set_mode/>
+                                <ModeToggle mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
 
                             </div>
                         </div>

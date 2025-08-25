@@ -32,8 +32,9 @@ pub fn HomeButton() -> AnyView {
 
 #[component]
 pub fn Layout(
-    mode: ReadSignal<ColorMode>,
-    set_mode: WriteSignal<ColorMode>,
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
     #[prop(optional)] doc: Option<DocNavItem>,
 ) -> impl IntoView {
     let DocNavItem {
@@ -62,7 +63,7 @@ pub fn Layout(
                             <div class="hidden lg:flex">
                                 <HomeButton/>
                             </div>
-                            <Header mode=mode set_mode=set_mode/>
+                            <Header mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
                             <Navigation class="hidden lg:mt-10 lg:block"/>
                         </div>
                     </header>
@@ -96,7 +97,11 @@ pub fn Layout(
 }
 
 #[component]
-fn DocPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+fn DocPage(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
     let loc = use_location();
     let path = move || loc.pathname.get();
 
@@ -108,8 +113,8 @@ fn DocPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> Any
             }
             let item = get_doc(&p);
             match item {
-                Some(doc) => view! { <Layout doc=doc mode=mode set_mode=set_mode/> }.into_any(),
-                None => view! { <Layout mode=mode set_mode=set_mode/> }.into_any(),
+                Some(doc) => view! { <Layout doc=doc mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }.into_any(),
+                None => view! { <Layout mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }.into_any(),
             }
         }}
     }
@@ -117,7 +122,11 @@ fn DocPage(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> Any
 }
 
 #[component]
-fn Index(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+fn Index(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
     let item = DocNavItem {
         title: "Overview",
         body: include_str!("docs/home.html"),
@@ -125,7 +134,7 @@ fn Index(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyVi
         next_slug: Some(0),
     };
 
-    view! { <Layout doc=item mode=mode set_mode=set_mode/> }.into_any()
+    view! { <Layout doc=item mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }.into_any()
 }
 
 #[cfg(feature = "hydrate")]

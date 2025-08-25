@@ -10,47 +10,92 @@ use leptos::{
 };
 use leptos_use::{ColorMode, use_document, use_event_listener};
 
+// Lucide Sun icon (24x24 scaled to 20x20)
 #[component]
 pub fn SunIcon(#[prop(optional)] class: Option<String>) -> AnyView {
     view! {
-        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class=class>
-            <path d="M12.5 10a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"></path>
-            <path
-                strokeLinecap="round"
-                d="M10 5.5v-1M13.182 6.818l.707-.707M14.5 10h1M13.182 13.182l.707.707M10 15.5v-1M6.11 13.889l.708-.707M4.5 10h1M6.11 6.111l.708.707"
-            ></path>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+    }.into_any()
+}
+
+// Lucide Moon icon (24x24 scaled to 20x20)
+#[component]
+pub fn MoonIcon(#[prop(optional)] class: Option<String>) -> AnyView {
+    view! {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+    }.into_any()
+}
+
+// Lucide SunMoon icon (24x24 scaled to 20x20)
+#[component]
+pub fn SunMoonIcon(#[prop(optional)] class: Option<String>) -> AnyView {
+    view! {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+            <path d="M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4"></path>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
         </svg>
     }.into_any()
 }
 
 #[component]
-pub fn MoonIcon(#[prop(optional)] class: Option<String>) -> AnyView {
-    view! {
-        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class=class>
-            <path d="M15.224 11.724a5.5 5.5 0 0 1-6.949-6.949 5.5 5.5 0 1 0 6.949 6.949Z"></path>
-        </svg>
-    }
-    .into_any()
-}
+pub fn ModeToggle(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
+    let is_auto = move || theme_override.get().is_none();
 
-#[component]
-pub fn ModeToggle(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+    // Determine current theme state for cycling
+    let current_state = move || {
+        if is_auto() {
+            "auto"
+        } else if mode.get() == ColorMode::Light {
+            "light"
+        } else {
+            "dark"
+        }
+    };
+
+    // Cycle through states: auto -> light -> dark -> auto
+    let cycle_theme = move |_| match current_state() {
+        "auto" => set_theme_override.set(Some(ColorMode::Light)),
+        "light" => set_theme_override.set(Some(ColorMode::Dark)),
+        _ => set_theme_override.set(None),
+    };
+
+    // Get the appropriate icon and label
+    let icon_and_label = move || match current_state() {
+        "auto" => (
+            "Auto",
+            view! { <SunMoonIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-white".to_string()/> }
+                .into_any(),
+        ),
+        "light" => (
+            "Light",
+            view! { <SunIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-zinc-400".to_string()/> }
+                .into_any(),
+        ),
+        _ => (
+            "Dark",
+            view! { <MoonIcon class="h-5 w-5 stroke-zinc-400 dark:stroke-white".to_string()/> }
+                .into_any(),
+        ),
+    };
+
     view! {
         <button
             type="button"
-            class="flex h-6 w-6 items-center justify-center transition hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer"
-            aria-label="Toggle dark mode"
-            on:click=move |_| {
-                let which_mode = match mode.get() {
-                    ColorMode::Dark => ColorMode::Light,
-                    _ => ColorMode::Dark,
-                };
-                set_mode.set(which_mode);
-            }
+            class="flex h-6 w-6 items-center justify-center rounded transition hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer"
+            aria-label=move || format!("{} theme (click to cycle)", icon_and_label().0)
+            title=move || format!("{} (click to change)", icon_and_label().0)
+            on:click=cycle_theme
         >
-
-            <SunIcon class="h-5 w-5 stroke-zinc-900 dark:hidden".to_string()/>
-            <MoonIcon class="hidden h-5 w-5 stroke-white dark:block".to_string()/>
+            {move || icon_and_label().1}
         </button>
     }.into_any()
 }
@@ -69,7 +114,11 @@ pub fn TopLevelNavItem(href: String, children: Children) -> AnyView {
 }
 
 #[component]
-pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> AnyView {
+pub fn Header(
+    mode: Signal<ColorMode>,
+    theme_override: ReadSignal<Option<ColorMode>>,
+    set_theme_override: WriteSignal<Option<ColorMode>>,
+) -> AnyView {
     let show_search = RwSignal::new(false);
     let nr = NodeRef::<Input>::new();
     let _ = use_event_listener(use_document(), keydown, move |evt| {
@@ -126,7 +175,7 @@ pub fn Header(mode: ReadSignal<ColorMode>, set_mode: WriteSignal<ColorMode>) -> 
                 <div class="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15"></div>
 
                 <MobileSearch show_search=show_search/>
-                <ModeToggle mode=mode set_mode=set_mode/>
+                <ModeToggle mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
             // </div>
 
             // Sign in button

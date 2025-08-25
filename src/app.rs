@@ -10,7 +10,7 @@ use leptos_router::{
     components::{Route, Router, Routes},
     path,
 };
-use leptos_use::ColorMode;
+use leptos_use::{ColorMode, use_preferred_dark};
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -34,7 +34,24 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
-    let (mode, set_mode) = signal(ColorMode::Dark);
+
+    // Create auto mode state - None means auto, Some means manual override
+    let (theme_override, set_theme_override) = signal::<Option<ColorMode>>(None);
+
+    // Get system preference
+    let prefers_dark = use_preferred_dark();
+
+    // Compute the actual mode based on override or system preference
+    let mode = Signal::derive(move || {
+        theme_override.get().unwrap_or_else(|| {
+            if prefers_dark.get() {
+                ColorMode::Dark
+            } else {
+                ColorMode::Light
+            }
+        })
+    });
+
     view! {
         <Stylesheet id="leptos" href="/pkg/ricochet-docs.css"/>
 
@@ -43,35 +60,35 @@ pub fn App() -> impl IntoView {
 
         // content for this welcome page
         <Router>
-            <Routes fallback=move || view! { <Layout mode=mode set_mode=set_mode/> }>
+            <Routes fallback=move || view! { <Layout mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }>
                 <Route
                     path=path!("/api")
                     view=move || {
-                        view! { <ApiLandingPage mode=mode set_mode=set_mode/> }
+                        view! { <ApiLandingPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                     }
                 />
 
                 <Route
                     path=StaticSegment("/hello")
-                    view=move || view! { <Index mode=mode set_mode=set_mode/> }
+                    view=move || view! { <Index mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route
                     path=path!("/")
-                    view=move || view! { <LandingPage mode=mode set_mode=set_mode/> }
+                    view=move || view! { <LandingPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
 
                 <Route
                     path=path!("/:path")
-                    view=move || view! { <DocPage mode=mode set_mode=set_mode/> }
+                    view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route
                     path=path!("/docs/:path")
-                    view=move || view! { <DocPage mode=mode set_mode=set_mode/> }
+                    view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route
                     path=path!("/api/:path")
                     view=move || {
-                        view! { <ApiRefPage mode=mode set_mode=set_mode/> }
+                        view! { <ApiRefPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                     }
                 />
 

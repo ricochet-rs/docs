@@ -65,7 +65,7 @@ site-pkg-dir = "pkg"
 # The assets-dir cannot have a sub directory with the same name/path as site-pkg-dir.
 # style-file = "style/output.css"
 tailwind-input-file = "style/input.css"
-tailwind-config-file = "tailwind.config.js"
+# tailwind-config-file is no longer needed in Tailwind CSS v4
 # Optional. Env: LEPTOS_ASSETS_DIR.
 assets-dir = "public"
 

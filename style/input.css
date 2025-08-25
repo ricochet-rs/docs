@@ -1,4 +1,8 @@
-@import "tailwindcss";
+@import "tailwindcss" {
+  --content: "*.html";
+  --content: "./src/**/*.rs";
+  --content: ".src/docs/*.html";
+}
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where(.dark, .dark *));

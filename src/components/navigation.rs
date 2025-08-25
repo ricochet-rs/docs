@@ -65,7 +65,7 @@ pub fn ModeToggle(
     let cycle_theme = move |_| match current_state() {
         "auto" => set_theme_override.set(Some(ColorMode::Light)),
         "light" => set_theme_override.set(Some(ColorMode::Dark)),
-        "dark" | _ => set_theme_override.set(None),
+        _ => set_theme_override.set(None),
     };
 
     // Get the appropriate icon and label
@@ -80,7 +80,7 @@ pub fn ModeToggle(
             view! { <SunIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-zinc-400".to_string()/> }
                 .into_any(),
         ),
-        "dark" | _ => (
+        _ => (
             "Dark",
             view! { <MoonIcon class="h-5 w-5 stroke-zinc-400 dark:stroke-white".to_string()/> }
                 .into_any(),

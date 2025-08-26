@@ -1,8 +1,14 @@
-use std::collections::BTreeMap;
+use crate::versioning::Version;
 
-pub mod versioned;
+#[derive(Debug, Clone)]
+pub struct DocPage {
+    pub section: DocSection,
+    pub title: &'static str,
+    pub href: &'static str,
+    pub body: &'static str,
+}
 
-#[derive(Hash, PartialEq, Eq, Ord, PartialOrd, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DocSection {
     QuickStart,
     Content,
@@ -11,107 +17,113 @@ pub enum DocSection {
 
 impl std::fmt::Display for DocSection {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = match self {
-            DocSection::QuickStart => "Quickstart",
-            DocSection::Content => "Content Items",
-            DocSection::Admin => "Server Administration",
-        };
-        write!(f, "{}", s)
+        match self {
+            DocSection::QuickStart => write!(f, "Quick Start"),
+            DocSection::Content => write!(f, "Content"),
+            DocSection::Admin => write!(f, "Admin"),
+        }
     }
 }
 
-#[derive(Clone)]
-pub struct DocPage {
-    pub section: DocSection,
+#[derive(Debug, Clone, Default)]
+pub struct DocNavItem {
     pub title: &'static str,
-    pub href: &'static str,
     pub body: &'static str,
+    pub prev_slug: Option<usize>,
+    pub next_slug: Option<usize>,
 }
 
-pub const DOC_PAGES: [DocPage; 15] = [
+// Version-specific doc pages
+pub const DOC_PAGES_V0_1: [DocPage; 16] = [
+    DocPage {
+        section: DocSection::QuickStart,
+        title: "Overview",
+        href: "/",
+        body: include_str!("../generated/v0.1/home.html"),
+    },
     DocPage {
         section: DocSection::QuickStart,
         title: "Get started",
         href: "/quickstart",
-        body: include_str!("quickstart.html"),
+        body: include_str!("../generated/v0.1/quickstart.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Overview",
         href: "/overview",
-        body: include_str!("content-items.html"),
+        body: include_str!("../generated/v0.1/content-items.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Access & permissions",
         href: "/access",
-        body: include_str!("content-access.html"),
+        body: include_str!("../generated/v0.1/content-access.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Invoking items",
         href: "/invocation",
-        body: include_str!("invoking-items.html"),
+        body: include_str!("../generated/v0.1/invoking-items.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Environment variables",
         href: "/env-vars",
-        body: include_str!("environment-variables.html"),
+        body: include_str!("../generated/v0.1/environment-variables.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Persistent storage",
         href: "/persistence",
-        body: include_str!("persistence.html"),
+        body: include_str!("../generated/v0.1/persistence.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Using _ricochet.toml",
         href: "/ricochet-toml",
-        body: include_str!("ricochet-toml.html"),
+        body: include_str!("../generated/v0.1/ricochet-toml.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Scheduling items",
         href: "/scheduling",
-        body: include_str!("scheduling.html"),
+        body: include_str!("../generated/v0.1/scheduling.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Scaling performance",
         href: "/scaling",
-        body: include_str!("servable-settings.html"),
+        body: include_str!("../generated/v0.1/servable-settings.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Serverless R",
         href: "/serverless-r",
-        body: include_str!("serverless-r.html"),
+        body: include_str!("../generated/v0.1/serverless-r.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Static HTML Sites",
         href: "/static",
-        body: include_str!("static-settings.html"),
+        body: include_str!("../generated/v0.1/static-settings.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Installing ricochet",
         href: "/install",
-        body: include_str!("install.html"),
+        body: include_str!("../generated/v0.1/install.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Bootstrap dependencies",
         href: "/bootstrap",
-        body: include_str!("bootstrap.html"),
+        body: include_str!("../generated/v0.1/bootstrap.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "ricochet cli",
         href: "/ricochet-cli",
-        body: include_str!("cli.html"),
+        body: include_str!("../generated/v0.1/cli.html"),
     },
     DocPage {
         section: DocSection::Admin,
@@ -121,79 +133,171 @@ pub const DOC_PAGES: [DocPage; 15] = [
     },
 ];
 
-pub fn doc_sections() -> BTreeMap<DocSection, Vec<&'static DocPage>> {
-    doc_sections_for_version(crate::versioning::get_current_version())
-}
+pub const DOC_PAGES_DEV: [DocPage; 16] = [
+    DocPage {
+        section: DocSection::QuickStart,
+        title: "Overview",
+        href: "/",
+        body: include_str!("../generated/dev/home.html"),
+    },
+    DocPage {
+        section: DocSection::QuickStart,
+        title: "Get started",
+        href: "/quickstart",
+        body: include_str!("../generated/dev/quickstart.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Overview",
+        href: "/overview",
+        body: include_str!("../generated/dev/content-items.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Access & permissions",
+        href: "/access",
+        body: include_str!("../generated/dev/content-access.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Invoking items",
+        href: "/invocation",
+        body: include_str!("../generated/dev/invoking-items.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Environment variables",
+        href: "/env-vars",
+        body: include_str!("../generated/dev/environment-variables.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Persistent storage",
+        href: "/persistence",
+        body: include_str!("../generated/dev/persistence.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Using _ricochet.toml",
+        href: "/ricochet-toml",
+        body: include_str!("../generated/dev/ricochet-toml.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Scheduling items",
+        href: "/scheduling",
+        body: include_str!("../generated/dev/scheduling.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Scaling performance",
+        href: "/scaling",
+        body: include_str!("../generated/dev/servable-settings.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Serverless R",
+        href: "/serverless-r",
+        body: include_str!("../generated/dev/serverless-r.html"),
+    },
+    DocPage {
+        section: DocSection::Content,
+        title: "Static HTML Sites",
+        href: "/static",
+        body: include_str!("../generated/dev/static-settings.html"),
+    },
+    DocPage {
+        section: DocSection::Admin,
+        title: "Installing ricochet",
+        href: "/install",
+        body: include_str!("../generated/dev/install.html"),
+    },
+    DocPage {
+        section: DocSection::Admin,
+        title: "Bootstrap dependencies",
+        href: "/bootstrap",
+        body: include_str!("../generated/dev/bootstrap.html"),
+    },
+    DocPage {
+        section: DocSection::Admin,
+        title: "ricochet cli",
+        href: "/ricochet-cli",
+        body: include_str!("../generated/dev/cli.html"),
+    },
+    DocPage {
+        section: DocSection::Admin,
+        title: "Environment restoration",
+        href: "/env-restore",
+        body: "",
+    },
+];
 
-pub fn doc_sections_for_version(
-    version: &crate::versioning::Version,
-) -> BTreeMap<DocSection, Vec<&'static DocPage>> {
-    versioned::get_doc_sections_for_version(version)
-}
+// Default to latest version pages for backward compatibility
+pub const DOC_PAGES: &[DocPage] = &DOC_PAGES_V0_1;
 
-pub struct DocNavItem {
-    pub title: &'static str,
-    pub body: &'static str,
-    pub prev_slug: Option<usize>,
-    pub next_slug: Option<usize>,
-}
+pub fn get_doc(path: &str) -> Option<DocNavItem> {
+    // Find the doc by href
+    let doc_index = DOC_PAGES.iter().position(|doc| doc.href == path)?;
+    let doc = &DOC_PAGES[doc_index];
 
-impl Default for DocNavItem {
-    fn default() -> Self {
-        let body = r#"<div class="not-prose mx-auto flex h-full max-w-xl flex-col items-center justify-center text-center"><p class="text-sm font-semibold text-zinc-900 dark:text-white">404</p><h1 class="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">Page not found</h1><p class="mt-2 text-base text-zinc-600 dark:text-zinc-400">These are not the docs you're looking for.</p><a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-1 dark:ring-inset dark:ring-emerald-400/20 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-300 dark:hover:ring-emerald-300 mt-8" href="/">Back to docs<svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 -mr-1"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path></svg></a></div>"#;
-        Self {
-            title: "Not Found",
-            body,
-            prev_slug: None,
-            next_slug: None,
-        }
-    }
-}
-
-pub fn get_doc(slug: &str) -> Option<DocNavItem> {
-    get_doc_for_version(slug, crate::versioning::get_current_version())
-}
-
-pub fn get_doc_for_version(slug: &str, version: &crate::versioning::Version) -> Option<DocNavItem> {
-    // Extract the actual doc path, removing version prefix if present
-    let doc_path = if slug.contains("/v") {
-        // Handle versioned paths like /docs/v1.0/quickstart or /v1.0/quickstart
-        let parts: Vec<&str> = slug.split('/').collect();
-        if parts.len() > 1 {
-            format!("/{}", parts.last().copied().unwrap_or(""))
+    Some(DocNavItem {
+        title: doc.title,
+        body: doc.body,
+        prev_slug: if doc_index > 0 {
+            Some(doc_index - 1)
         } else {
-            slug.to_string()
-        }
-    } else {
-        slug.to_string()
+            None
+        },
+        next_slug: if doc_index < DOC_PAGES.len() - 1 {
+            Some(doc_index + 1)
+        } else {
+            None
+        },
+    })
+}
+
+pub fn get_doc_for_version(path: &str, version: &Version) -> Option<DocNavItem> {
+    let pages = match version.path {
+        "v0.1" => &DOC_PAGES_V0_1,
+        "dev" => &DOC_PAGES_DEV,
+        _ => &DOC_PAGES_V0_1, // Default to latest stable
     };
 
-    let doc_pages = versioned::get_doc_pages_for_version(version);
-    let idx = doc_pages
-        .iter()
-        .enumerate()
-        .position(|(_, d)| d.href == doc_path);
+    // Find the doc by href
+    let doc_index = pages.iter().position(|doc| doc.href == path)?;
+    let doc = &pages[doc_index];
 
-    match idx {
-        Some(idx) => {
-            let body = doc_pages[idx].body;
-            let title = doc_pages[idx].title;
-            let next_slug = doc_pages.get(idx + 1).map(|_| idx + 1);
+    Some(DocNavItem {
+        title: doc.title,
+        body: doc.body,
+        prev_slug: if doc_index > 0 {
+            Some(doc_index - 1)
+        } else {
+            None
+        },
+        next_slug: if doc_index < pages.len() - 1 {
+            Some(doc_index + 1)
+        } else {
+            None
+        },
+    })
+}
 
-            let prev_slug = if idx == 0 {
-                None
-            } else {
-                doc_pages.get(idx - 1).map(|_| idx - 1)
-            };
+pub fn doc_sections() -> std::collections::BTreeMap<DocSection, Vec<&'static DocPage>> {
+    let mut map = std::collections::BTreeMap::new();
+    let mut quick = Vec::new();
+    let mut content = Vec::new();
+    let mut admin = Vec::new();
 
-            let res = DocNavItem {
-                title,
-                body,
-                prev_slug,
-                next_slug,
-            };
-            Some(res)
+    for doc in DOC_PAGES.iter() {
+        match &doc.section {
+            DocSection::QuickStart => quick.push(doc),
+            DocSection::Content => content.push(doc),
+            DocSection::Admin => admin.push(doc),
         }
-        None => None,
     }
+    map.insert(DocSection::QuickStart, quick);
+    map.insert(DocSection::Content, content);
+    map.insert(DocSection::Admin, admin);
+    map
 }

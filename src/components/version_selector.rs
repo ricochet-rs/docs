@@ -19,7 +19,37 @@ pub fn VersionSelector() -> impl IntoView {
 
     let current_version = match version_ctx {
         Some(ref ctx) => ctx.current,
-        None => Signal::derive(|| crate::versioning::get_current_version().clone()),
+        None => {
+            // Try to get version from route params first, then fall back to URL parsing
+            use leptos_router::hooks::use_params_map;
+            let params = use_params_map();
+            let location = leptos_router::hooks::use_location();
+
+            Signal::derive(move || {
+                // First try route parameters
+                let params = params.get();
+                if let Some(version_param) = params.get("version")
+                    && let Some(version) = crate::versioning::get_version_by_path(&version_param) {
+                        return version.clone();
+                    }
+
+                // Fall back to URL parsing for direct navigation
+                let current_path = location.pathname.get();
+                if current_path.contains("/docs/dev") {
+                    if let Some(version) = crate::versioning::get_version_by_path("dev") {
+                        return version.clone();
+                    }
+                } else if current_path.contains("/docs/v") {
+                    let parts: Vec<&str> = current_path.split('/').collect();
+                    if parts.len() >= 3 && parts[2].starts_with("v")
+                        && let Some(version) = crate::versioning::get_version_by_path(parts[2]) {
+                            return version.clone();
+                        }
+                }
+
+                crate::versioning::get_current_version().clone()
+            })
+        }
     };
 
     // Close dropdown when clicking outside

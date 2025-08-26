@@ -154,7 +154,7 @@ fn Index(
 ) -> AnyView {
     let item = DocNavItem {
         title: "Overview",
-        body: include_str!("docs/home.html"),
+        body: include_str!("generated/home.html"),
         prev_slug: None,
         next_slug: Some(0),
     };

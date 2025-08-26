@@ -17,7 +17,7 @@ pub fn search_engine() -> &'static SearchEngine<u32> {
     SEARCH_ENGINE.get_or_init(|| {
         SearchEngineBuilder::<u32>::with_tokenizer_and_corpus(
             DefaultTokenizer::new(LanguageMode::Fixed(Language::English)),
-            DOC_PAGES.map(|i| i.body),
+            DOC_PAGES.iter().map(|i| i.body),
         )
         .build()
     })

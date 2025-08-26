@@ -29,7 +29,7 @@ process_docs <- function(input_dir, output_dir) {
 
 # Process root docs (for backwards compatibility)
 root_docs <- list.files(
-  "docs",
+  "src/content",
   full.names = TRUE,
   pattern = "*.qmd"
 )
@@ -40,7 +40,7 @@ if (length(root_docs) > 0) {
 
     read_html(out) |>
       html_node("body") |>
-      xml2::write_html(file.path("src/docs", basename(out)))
+      xml2::write_html(file.path("src/generated", basename(out)))
 
     # delete the initially rendered html file
     file.remove(out)
@@ -51,8 +51,8 @@ if (length(root_docs) > 0) {
 version_dirs <- c("v0.1", "dev")
 
 for (version in version_dirs) {
-  input_dir <- file.path("docs", version)
-  output_dir <- file.path("src/docs", version)
+  input_dir <- file.path("src/content", version)
+  output_dir <- file.path("src/generated", version)
   
   if (dir.exists(input_dir)) {
     cat("Processing version:", version, "\n")

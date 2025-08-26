@@ -18,37 +18,39 @@ pub fn VersionSelector() -> impl IntoView {
     let navigate = use_navigate();
 
     let current_version = match version_ctx {
-        Some(ref ctx) => ctx.current,
-        None => {
-            // Try to get version from route params first, then fall back to URL parsing
-            use leptos_router::hooks::use_params_map;
-            let params = use_params_map();
+        Some(ref ctx) => {
+            // Sync context with URL only once on mount
             let location = leptos_router::hooks::use_location();
+            let ctx_clone = ctx.clone();
 
-            Signal::derive(move || {
-                // First try route parameters
-                let params = params.get();
-                if let Some(version_param) = params.get("version")
-                    && let Some(version) = crate::versioning::get_version_by_path(&version_param) {
-                        return version.clone();
-                    }
-
-                // Fall back to URL parsing for direct navigation
-                let current_path = location.pathname.get();
-                if current_path.contains("/docs/dev") {
-                    if let Some(version) = crate::versioning::get_version_by_path("dev") {
-                        return version.clone();
-                    }
-                } else if current_path.contains("/docs/v") {
-                    let parts: Vec<&str> = current_path.split('/').collect();
-                    if parts.len() >= 3 && parts[2].starts_with("v")
-                        && let Some(version) = crate::versioning::get_version_by_path(parts[2]) {
-                            return version.clone();
-                        }
+            // Run once to sync URL with context
+            let current_path = location.pathname.get_untracked();
+            let url_version = if current_path.contains("/docs/dev") {
+                crate::versioning::get_version_by_path("dev")
+            } else if current_path.contains("/docs/v") {
+                let parts: Vec<&str> = current_path.split('/').collect();
+                if parts.len() >= 3 && parts[2].starts_with("v") {
+                    crate::versioning::get_version_by_path(parts[2])
+                } else {
+                    None
                 }
+            } else {
+                None
+            };
 
-                crate::versioning::get_current_version().clone()
-            })
+            // Update context if URL has a different version (only on mount)
+            if let Some(url_ver) = url_version {
+                let current_ver = ctx_clone.current.get_untracked();
+                if current_ver.path != url_ver.path {
+                    ctx_clone.set_version.set(url_ver.clone());
+                }
+            }
+
+            ctx.current
+        }
+        None => {
+            // Fallback if no version context (shouldn't happen since we provide it at app level)
+            Signal::derive(move || crate::versioning::get_current_version().clone())
         }
     };
 

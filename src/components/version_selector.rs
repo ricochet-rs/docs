@@ -5,7 +5,16 @@ use leptos_router::hooks::use_navigate;
 #[component]
 pub fn ChevronDownIcon(#[prop(optional)] class: Option<String>) -> impl IntoView {
     view! {
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class=class
+        >
             <path d="m6 9 6 6 6-6"></path>
         </svg>
     }
@@ -64,18 +73,16 @@ pub fn VersionSelector() -> impl IntoView {
         <div class="relative inline-block text-left" node_ref=dropdown_ref>
             <button
                 type="button"
-                class="inline-flex items-center justify-between gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-medium text-zinc-900 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700 dark:hover:bg-zinc-700"
+                class="inline-flex items-center justify-between gap-x-1.5 px-3 h-8 text-sm font-medium dark:text-zinc-100 text-zinc-700 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 dark:bg-zinc-800  dark:ring-zinc-700 dark:hover:bg-zinc-700"
                 on:click=move |_| set_show_dropdown.update(|v| *v = !*v)
             >
-                <span>
-                    {move || current_version.get().label}
-                </span>
-                <ChevronDownIcon class="h-5 w-5 text-zinc-400".to_string()/>
+                <span>{move || current_version.get().label}</span>
+                <ChevronDownIcon class="h-5 w-5 text-zinc-400".to_string() />
             </button>
 
             <Show when=move || show_dropdown.get()>
-                <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-zinc-800 dark:ring-zinc-700">
-                    <div class="py-1" role="menu">
+                <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right shadow-lg ring-1 ring-zinc-300 ring-opacity-5 focus:outline-none bg-white dark:bg-zinc-800 dark:ring-zinc-700">
+                    <div role="menu">
                         <For
                             each=|| VERSIONS.iter()
                             key=|version| version.path
@@ -90,32 +97,37 @@ pub fn VersionSelector() -> impl IntoView {
                                     let navigate = navigate.clone();
                                     let version_ctx = version_ctx.clone();
 
-                                view! {
-                                    <button
-                                        class=move || format!(
-                                            "block w-full px-4 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 {}",
-                                            if is_current() {
-                                                "bg-zinc-50 text-zinc-900 font-medium dark:bg-zinc-700 dark:text-zinc-100"
-                                            } else {
-                                                "text-zinc-700 dark:text-zinc-300"
+                                    view! {
+                                        <button
+                                            class=move || {
+                                                format!(
+                                                    "cursor-pointer block w-full px-4 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 {}",
+                                                    if is_current() {
+                                                        "bg-zinc-50 text-zinc-900 font-medium dark:bg-zinc-700/90 dark:text-zinc-100"
+                                                    } else {
+                                                        "text-zinc-700 dark:text-zinc-300"
+                                                    },
+                                                )
                                             }
-                                        )
-                                        role="menuitem"
-                                        on:click=move |_| {
-                                            if let Some(ref ctx) = version_ctx
-                                                && let Some(version) = VERSIONS.iter().find(|v| v.path == path) {
+                                            role="menuitem"
+                                            on:click=move |_| {
+                                                if let Some(ref ctx) = version_ctx
+                                                    && let Some(version) = VERSIONS
+                                                        .iter()
+                                                        .find(|v| v.path == path)
+                                                {
                                                     ctx.set_version.set(version.clone());
                                                     set_show_dropdown.set(false);
-
-                                                    // Navigate to the new version's docs
-                                                    let current_path = leptos_router::hooks::use_location().pathname.get();
+                                                    let current_path = leptos_router::hooks::use_location()
+                                                        .pathname
+                                                        .get();
                                                     let new_path = if current_path.contains("/docs/") {
-                                                        let path_parts: Vec<&str> = current_path.split('/').collect();
+                                                        let path_parts: Vec<&str> = current_path
+                                                            .split('/')
+                                                            .collect();
                                                         if path_parts.len() > 3 {
-                                                            // Has a page after version: /docs/v0.1/quickstart
                                                             format!("/docs/{}/{}", path, path_parts[3..].join("/"))
                                                         } else {
-                                                            // Just version root: /docs/v0.1
                                                             format!("/docs/{}", path)
                                                         }
                                                     } else {
@@ -123,19 +135,20 @@ pub fn VersionSelector() -> impl IntoView {
                                                     };
                                                     navigate(&new_path, Default::default());
                                                 }
-                                        }
-                                    >
-                                        <span class="flex items-center justify-between">
-                                            <span>{label}</span>
-                                            <Show when=move || is_latest>
-                                                <span class="ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/30">
-                                                    "latest"
-                                                </span>
-                                            </Show>
-                                        </span>
-                                    </button>
+                                            }
+                                        >
+                                            <span class="flex items-center justify-between">
+                                                <span>{label}</span>
+                                                <Show when=move || is_latest>
+                                                    <span class="ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/30">
+                                                        "latest"
+                                                    </span>
+                                                </Show>
+                                            </span>
+                                        </button>
+                                    }
                                 }
-                            }}
+                            }
                         />
                     </div>
                 </div>

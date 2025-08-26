@@ -169,7 +169,7 @@ pub fn Header(
                         "BETA"
                     </span>
                 </div>
-                
+
                 // Main navigation
                 <nav class="hidden md:block">
                     <ul role="list" class="flex items-center gap-8">

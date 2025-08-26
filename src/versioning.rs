@@ -24,7 +24,7 @@ pub const VERSIONS: [Version; 2] = [
     Version {
         label: "v0.1",
         path: "v0.1",
-        is_latest: true,
+        is_latest: false,
     },
     Version {
         label: "dev",

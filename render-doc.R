@@ -47,8 +47,9 @@ if (length(root_docs) > 0) {
   }
 }
 
-# Process versioned docs
-version_dirs <- c("v0.1", "dev")
+# Process versioned docs - automatically detect all version directories
+version_dirs <- list.dirs("src/content", full.names = FALSE, recursive = FALSE)
+version_dirs <- version_dirs[version_dirs != ""]  # Remove empty entries
 
 for (version in version_dirs) {
   input_dir <- file.path("src/content", version)

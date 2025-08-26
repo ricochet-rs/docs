@@ -2,18 +2,25 @@ import { codeToHtml } from "shiki";
 import fs from "fs/promises";
 import path from "path";
 
-const dir = "./src/docs";
-const files = await fs.readdir(dir);
+const dir = "./src/generated";
 
-for (const file of files) {
-  if (!file.endsWith(".html")) continue;
-
-  const fullPath = path.join(dir, file);
-  const html = await fs.readFile(fullPath, "utf8");
-
-  const updated = await replaceCodeBlocks(html);
-  await fs.writeFile(fullPath, updated);
+async function processDirectory(dirPath) {
+  const entries = await fs.readdir(dirPath, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    
+    if (entry.isDirectory()) {
+      await processDirectory(fullPath);
+    } else if (entry.name.endsWith(".html")) {
+      const html = await fs.readFile(fullPath, "utf8");
+      const updated = await replaceCodeBlocks(html);
+      await fs.writeFile(fullPath, updated);
+    }
+  }
 }
+
+await processDirectory(dir);
 
 async function replaceCodeBlocks(html) {
   const matches = [

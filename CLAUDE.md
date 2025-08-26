@@ -51,10 +51,11 @@ This is a Leptos-based documentation website for Ricochet. It uses server-side r
 - `src/app.rs` - Main application component with routing
 - `src/lib.rs` - Core layout and page components
 - `src/components/` - Reusable UI components (navigation, footer, search, code blocks)
-- `src/docs/` - HTML documentation content and navigation logic
+- `src/docs/` - Documentation Rust module with embedded HTML content
+- `generated/` - Generated HTML files from Quarto markdown (gitignored)
 - `src/api/` - API reference documentation with TOML endpoints
 - `src/landing.rs` - Landing page implementation
-- `docs/*.qmd` - Quarto markdown source files for documentation
+- `src/content/*.qmd` - Quarto markdown source files for documentation
 
 ### Key Features
 - **Dark Mode**: Automatic theme switching with manual override via `ColorMode` signals

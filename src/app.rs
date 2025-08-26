@@ -2,6 +2,7 @@ use crate::{
     DocPage, Index, Layout,
     api::{ApiLandingPage, ApiRefPage},
     landing::LandingPage,
+    versioning::provide_version_context,
 };
 use leptos::prelude::*;
 use leptos_meta::{MetaTags, Stylesheet, Title, provide_meta_context};
@@ -34,6 +35,9 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
+
+    // Provide version context
+    provide_version_context();
 
     // Create auto mode state - None means auto, Some means manual override
     let (theme_override, set_theme_override) = signal::<Option<ColorMode>>(None);
@@ -79,6 +83,10 @@ pub fn App() -> impl IntoView {
 
                 <Route
                     path=path!("/:path")
+                    view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
+                />
+                <Route
+                    path=path!("/docs/:version/:path")
                     view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route

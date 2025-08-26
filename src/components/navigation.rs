@@ -1,7 +1,9 @@
 use super::search::{MobileSearch, SearchButton, SearchDialog};
+use super::version_selector::VersionSelector;
 use crate::{
     HomeButton,
     docs::{DocPage, DocSection, doc_sections},
+    versioning::get_current_version,
 };
 use leptos::{
     ev::keydown,
@@ -14,7 +16,16 @@ use leptos_use::{ColorMode, use_document, use_event_listener};
 #[component]
 pub fn SunIcon(#[prop(optional)] class: Option<String>) -> AnyView {
     view! {
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class=class
+        >
             <circle cx="12" cy="12" r="4"></circle>
             <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
         </svg>
@@ -25,17 +36,36 @@ pub fn SunIcon(#[prop(optional)] class: Option<String>) -> AnyView {
 #[component]
 pub fn MoonIcon(#[prop(optional)] class: Option<String>) -> AnyView {
     view! {
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class=class
+        >
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
         </svg>
-    }.into_any()
+    }
+    .into_any()
 }
 
 // Lucide SunMoon icon (24x24 scaled to 20x20)
 #[component]
 pub fn SunMoonIcon(#[prop(optional)] class: Option<String>) -> AnyView {
     view! {
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=class>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class=class
+        >
             <path d="M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4"></path>
             <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
         </svg>
@@ -72,17 +102,17 @@ pub fn ModeToggle(
     let icon_and_label = move || match current_state() {
         "auto" => (
             "Auto",
-            view! { <SunMoonIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-white".to_string()/> }
+            view! { <SunMoonIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-white".to_string() /> }
                 .into_any(),
         ),
         "light" => (
             "Light",
-            view! { <SunIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-zinc-400".to_string()/> }
+            view! { <SunIcon class="h-5 w-5 stroke-zinc-900 dark:stroke-zinc-400".to_string() /> }
                 .into_any(),
         ),
         _ => (
             "Dark",
-            view! { <MoonIcon class="h-5 w-5 stroke-zinc-400 dark:stroke-white".to_string()/> }
+            view! { <MoonIcon class="h-5 w-5 stroke-zinc-400 dark:stroke-white".to_string() /> }
                 .into_any(),
         ),
     };
@@ -90,7 +120,7 @@ pub fn ModeToggle(
     view! {
         <button
             type="button"
-            class="flex h-6 w-6 items-center justify-center rounded transition hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer"
+            class="flex h-6 w-6 items-center justify-center transition hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer"
             aria-label=move || format!("{} theme (click to cycle)", icon_and_label().0)
             title=move || format!("{} (click to change)", icon_and_label().0)
             on:click=cycle_theme
@@ -143,23 +173,27 @@ pub fn Header(
 
     view! {
         <div class=move || { if !show_search.get() { "hidden" } else { "" } }>
-            <SearchDialog show_search=show_search node_ref=nr/>
+            <SearchDialog show_search=show_search node_ref=nr />
         </div>
 
         <div class=move || { if show_tray.get() { "" } else { "hidden" } }>
-            <MobileTray show_tray=show_tray node_ref=noder/>
+            <MobileTray show_tray=show_tray node_ref=noder />
         </div>
 
         <div class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80 backdrop-blur-sm ">
             // divider
             <div class="absolute inset-x-0 top-full h-px transition bg-zinc-900/7.5 dark:bg-white/7.5"></div>
-            <div class="hidden lg:block lg:max-w-md lg:flex-auto">
-                <SearchButton show_search=show_search/>
+            <div class="hidden lg:flex lg:items-center lg:gap-4 lg:max-w-md lg:flex-auto">
+                <SearchButton show_search=show_search />
+                <VersionSelector />
+                <span class="inline-flex items-center bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
+                    "BETA"
+                </span>
             </div>
 
             // Mobile Navigation
             <nav class="block lg:hidden">
-                <MobileNavigation show_tray=show_tray/>
+                <MobileNavigation show_tray=show_tray />
             </nav>
 
             <div class="flex items-center gap-5">
@@ -167,15 +201,22 @@ pub fn Header(
                 <nav class="hidden md:block">
                     <ul role="list" class="flex items-center gap-8">
                         <TopLevelNavItem href="/api".to_string()>"API"</TopLevelNavItem>
-                        <TopLevelNavItem href="/hello".to_string()>"Documentation"</TopLevelNavItem>
+                        <TopLevelNavItem href=format!(
+                            "/docs/{}",
+                            get_current_version().path,
+                        )>"Documentation"</TopLevelNavItem>
                     </ul>
                 </nav>
 
                 // Divider
                 <div class="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15"></div>
 
-                <MobileSearch show_search=show_search/>
-                <ModeToggle mode=mode theme_override=theme_override set_theme_override=set_theme_override/>
+                <MobileSearch show_search=show_search />
+                <ModeToggle
+                    mode=mode
+                    theme_override=theme_override
+                    set_theme_override=set_theme_override
+                />
             // </div>
 
             // Sign in button
@@ -292,19 +333,19 @@ pub fn Button(
         Some(href_value) => view! {
             <a href=href_value class=combined_class>
                 {matches!(arrow, ArrowDirection::Left)
-                    .then(|| view! { <ArrowIcon class=arrow_classes.clone()/> })}
+                    .then(|| view! { <ArrowIcon class=arrow_classes.clone() /> })}
                 {children()}
                 {matches!(arrow, ArrowDirection::Right)
-                    .then(|| view! { <ArrowIcon class=arrow_classes.clone()/> })}
+                    .then(|| view! { <ArrowIcon class=arrow_classes.clone() /> })}
             </a>
         }
         .into_any(),
         None => view! {
             <button class=combined_class>
                 {matches!(arrow, ArrowDirection::Left)
-                    .then(|| view! { <ArrowIcon class=arrow_classes.clone()/> })} {children()}
+                    .then(|| view! { <ArrowIcon class=arrow_classes.clone() /> })} {children()}
                 {matches!(arrow, ArrowDirection::Right)
-                    .then(|| view! { <ArrowIcon class=arrow_classes.clone()/> })}
+                    .then(|| view! { <ArrowIcon class=arrow_classes.clone() /> })}
             </button>
         }
         .into_any(),
@@ -419,14 +460,45 @@ pub fn NavigationGroup(
                         links
                             .iter()
                             .map(|di| {
-                                let href = di.href.to_string();
-                                let hr = href.clone();
+                                let base_href = di.href.to_string();
                                 let title = di.title.to_string();
-                                let mut p = location.pathname.get();
+                                let current_path = location.pathname.get();
+                                let (current_version, _) = if current_path.contains("/docs/v")
+                                    || current_path.contains("/docs/dev")
+                                {
+                                    let parts: Vec<&str> = current_path.split('/').collect();
+                                    if parts.len() >= 3
+                                        && (parts[2].starts_with("v") || parts[2] == "dev")
+                                    {
+                                        (Some(parts[2]), parts[3..].join("/"))
+                                    } else {
+                                        (None, String::new())
+                                    }
+                                } else {
+                                    (None, String::new())
+                                };
+                                let href = match current_version {
+                                    Some(version) => format!("/docs/{}{}", version, base_href),
+                                    None => format!("/docs{}", base_href),
+                                };
+                                let mut p = current_path.clone();
                                 if p.starts_with("/docs") {
                                     p = p.split_off(5);
+                                    if p.starts_with("/v") || p.starts_with("/dev") {
+                                        let parts: Vec<&str> = p.splitn(3, '/').collect();
+                                        if parts.len() > 2 {
+                                            p = format!("/{}", parts[2]);
+                                        }
+                                    }
                                 }
-                                let is_active = p == hr;
+                                let is_active = p == base_href;
+
+                                // Extract version from current path if present
+
+                                // Generate version-aware href
+
+                                // Check if this link is active
+                                // Remove version prefix if present
                                 view! {
                                     {move || {
                                         if is_active {
@@ -474,19 +546,19 @@ pub fn MobileNavigation(show_tray: RwSignal<bool>) -> AnyView {
                 {move || {
                     if show_tray.get() {
                         view! {
-                            <CloseIcon class="w-4 stroke-zinc-900 dark:stroke-white ".to_string()/>
+                            <CloseIcon class="w-4 stroke-zinc-900 dark:stroke-white ".to_string() />
                         }
                             .into_any()
                     } else {
                         view! {
-                            <MenuIcon class="w-4 stroke-zinc-900 dark:stroke-white ".to_string()/>
+                            <MenuIcon class="w-4 stroke-zinc-900 dark:stroke-white ".to_string() />
                         }
                             .into_any()
                     }
                 }}
 
             </button>
-            <HomeButton/>
+            <HomeButton />
         </div>
     }.into_any()
 }
@@ -522,7 +594,7 @@ pub fn MobileTray(show_tray: RwSignal<bool>, node_ref: NodeRef<Div>) -> AnyView 
                     if is_api {
                         view! { <crate::api::ApiNavigation></crate::api::ApiNavigation> }.into_any()
                     } else {
-                        view! { <Navigation/> }.into_any()
+                        view! { <Navigation /> }.into_any()
                     }
                 }}
 
@@ -583,7 +655,10 @@ pub fn Navigation(#[prop(optional)] class: Option<&'static str>) -> impl IntoVie
                     .enumerate()
                     .map(|(i, group)| {
                         view! {
-                            <NavigationGroup group=group class=if i == 0 { "md:mt-0" } else { "" }/>
+                            <NavigationGroup
+                                group=group
+                                class=if i == 0 { "md:mt-0" } else { "" }
+                            />
                         }
                     })
                     .collect::<Vec<_>>()}

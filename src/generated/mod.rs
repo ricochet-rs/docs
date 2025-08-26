@@ -39,91 +39,91 @@ pub const DOC_PAGES_V0_1: [DocPage; 16] = [
         section: DocSection::QuickStart,
         title: "Overview",
         href: "/",
-        body: include_str!("../generated/v0.1/home.html"),
+        body: include_str!("v0.1/home.html"),
     },
     DocPage {
         section: DocSection::QuickStart,
         title: "Get started",
         href: "/quickstart",
-        body: include_str!("../generated/v0.1/quickstart.html"),
+        body: include_str!("v0.1/quickstart.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Overview",
         href: "/overview",
-        body: include_str!("../generated/v0.1/content-items.html"),
+        body: include_str!("v0.1/content-items.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Access & permissions",
         href: "/access",
-        body: include_str!("../generated/v0.1/content-access.html"),
+        body: include_str!("v0.1/content-access.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Invoking items",
         href: "/invocation",
-        body: include_str!("../generated/v0.1/invoking-items.html"),
+        body: include_str!("v0.1/invoking-items.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Environment variables",
         href: "/env-vars",
-        body: include_str!("../generated/v0.1/environment-variables.html"),
+        body: include_str!("v0.1/environment-variables.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Persistent storage",
         href: "/persistence",
-        body: include_str!("../generated/v0.1/persistence.html"),
+        body: include_str!("v0.1/persistence.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Using _ricochet.toml",
         href: "/ricochet-toml",
-        body: include_str!("../generated/v0.1/ricochet-toml.html"),
+        body: include_str!("v0.1/ricochet-toml.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Scheduling items",
         href: "/scheduling",
-        body: include_str!("../generated/v0.1/scheduling.html"),
+        body: include_str!("v0.1/scheduling.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Scaling performance",
         href: "/scaling",
-        body: include_str!("../generated/v0.1/servable-settings.html"),
+        body: include_str!("v0.1/servable-settings.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Serverless R",
         href: "/serverless-r",
-        body: include_str!("../generated/v0.1/serverless-r.html"),
+        body: include_str!("v0.1/serverless-r.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Static HTML Sites",
         href: "/static",
-        body: include_str!("../generated/v0.1/static-settings.html"),
+        body: include_str!("v0.1/static-settings.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Installing ricochet",
         href: "/install",
-        body: include_str!("../generated/v0.1/install.html"),
+        body: include_str!("v0.1/install.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Bootstrap dependencies",
         href: "/bootstrap",
-        body: include_str!("../generated/v0.1/bootstrap.html"),
+        body: include_str!("v0.1/bootstrap.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "ricochet cli",
         href: "/ricochet-cli",
-        body: include_str!("../generated/v0.1/cli.html"),
+        body: include_str!("v0.1/cli.html"),
     },
     DocPage {
         section: DocSection::Admin,
@@ -138,91 +138,91 @@ pub const DOC_PAGES_DEV: [DocPage; 16] = [
         section: DocSection::QuickStart,
         title: "Overview",
         href: "/",
-        body: include_str!("../generated/dev/home.html"),
+        body: include_str!("dev/home.html"),
     },
     DocPage {
         section: DocSection::QuickStart,
         title: "Get started",
         href: "/quickstart",
-        body: include_str!("../generated/dev/quickstart.html"),
+        body: include_str!("dev/quickstart.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Overview",
         href: "/overview",
-        body: include_str!("../generated/dev/content-items.html"),
+        body: include_str!("dev/content-items.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Access & permissions",
         href: "/access",
-        body: include_str!("../generated/dev/content-access.html"),
+        body: include_str!("dev/content-access.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Invoking items",
         href: "/invocation",
-        body: include_str!("../generated/dev/invoking-items.html"),
+        body: include_str!("dev/invoking-items.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Environment variables",
         href: "/env-vars",
-        body: include_str!("../generated/dev/environment-variables.html"),
+        body: include_str!("dev/environment-variables.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Persistent storage",
         href: "/persistence",
-        body: include_str!("../generated/dev/persistence.html"),
+        body: include_str!("dev/persistence.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Using _ricochet.toml",
         href: "/ricochet-toml",
-        body: include_str!("../generated/dev/ricochet-toml.html"),
+        body: include_str!("dev/ricochet-toml.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Scheduling items",
         href: "/scheduling",
-        body: include_str!("../generated/dev/scheduling.html"),
+        body: include_str!("dev/scheduling.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Scaling performance",
         href: "/scaling",
-        body: include_str!("../generated/dev/servable-settings.html"),
+        body: include_str!("dev/servable-settings.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Serverless R",
         href: "/serverless-r",
-        body: include_str!("../generated/dev/serverless-r.html"),
+        body: include_str!("dev/serverless-r.html"),
     },
     DocPage {
         section: DocSection::Content,
         title: "Static HTML Sites",
         href: "/static",
-        body: include_str!("../generated/dev/static-settings.html"),
+        body: include_str!("dev/static-settings.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Installing ricochet",
         href: "/install",
-        body: include_str!("../generated/dev/install.html"),
+        body: include_str!("dev/install.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "Bootstrap dependencies",
         href: "/bootstrap",
-        body: include_str!("../generated/dev/bootstrap.html"),
+        body: include_str!("dev/bootstrap.html"),
     },
     DocPage {
         section: DocSection::Admin,
         title: "ricochet cli",
         href: "/ricochet-cli",
-        body: include_str!("../generated/dev/cli.html"),
+        body: include_str!("dev/cli.html"),
     },
     DocPage {
         section: DocSection::Admin,
@@ -239,20 +239,12 @@ pub fn get_doc(path: &str) -> Option<DocNavItem> {
     // Find the doc by href
     let doc_index = DOC_PAGES.iter().position(|doc| doc.href == path)?;
     let doc = &DOC_PAGES[doc_index];
-
+    
     Some(DocNavItem {
         title: doc.title,
         body: doc.body,
-        prev_slug: if doc_index > 0 {
-            Some(doc_index - 1)
-        } else {
-            None
-        },
-        next_slug: if doc_index < DOC_PAGES.len() - 1 {
-            Some(doc_index + 1)
-        } else {
-            None
-        },
+        prev_slug: if doc_index > 0 { Some(doc_index - 1) } else { None },
+        next_slug: if doc_index < DOC_PAGES.len() - 1 { Some(doc_index + 1) } else { None },
     })
 }
 
@@ -262,24 +254,16 @@ pub fn get_doc_for_version(path: &str, version: &Version) -> Option<DocNavItem> 
         "dev" => &DOC_PAGES_DEV,
         _ => &DOC_PAGES_V0_1, // Default to latest stable
     };
-
+    
     // Find the doc by href
     let doc_index = pages.iter().position(|doc| doc.href == path)?;
     let doc = &pages[doc_index];
-
+    
     Some(DocNavItem {
         title: doc.title,
         body: doc.body,
-        prev_slug: if doc_index > 0 {
-            Some(doc_index - 1)
-        } else {
-            None
-        },
-        next_slug: if doc_index < pages.len() - 1 {
-            Some(doc_index + 1)
-        } else {
-            None
-        },
+        prev_slug: if doc_index > 0 { Some(doc_index - 1) } else { None },
+        next_slug: if doc_index < pages.len() - 1 { Some(doc_index + 1) } else { None },
     })
 }
 

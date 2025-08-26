@@ -7,11 +7,12 @@ use components::{
     // hero_pattern::HeroPattern,
     navigation::{Header, Navigation},
 };
-use docs::{DocNavItem, get_doc};
+use docs::{DocNavItem, get_doc, get_doc_for_version};
 use leptos::prelude::*;
 use leptos_meta::Title;
 use leptos_router::hooks::use_location;
 use leptos_use::ColorMode;
+use versioning::get_version_by_path;
 
 // Modules
 pub mod api;
@@ -19,6 +20,7 @@ pub mod components;
 pub mod docs;
 pub mod landing;
 pub mod search_engine;
+pub mod versioning;
 
 #[component]
 pub fn HomeButton() -> AnyView {
@@ -111,7 +113,30 @@ fn DocPage(
             if p.starts_with("/docs") {
                 p = p.split_off(5);
             }
-            let item = get_doc(&p);
+
+            // Extract version from path if present
+            let (version, doc_path) = if p.starts_with("/v") || p.starts_with("/dev") {
+                let parts: Vec<&str> = p.splitn(3, '/').collect();
+                if parts.len() >= 2 {
+                    let version_str = parts[1]; // e.g., "v0.1" or "dev"
+                    let doc_path = if parts.len() > 2 {
+                        format!("/{}", parts[2])
+                    } else {
+                        "/".to_string()
+                    };
+                    (get_version_by_path(version_str), doc_path)
+                } else {
+                    (None, p.to_string())
+                }
+            } else {
+                (None, p.to_string())
+            };
+
+            let item = match version {
+                Some(v) => get_doc_for_version(&doc_path, v),
+                None => get_doc(&doc_path),
+            };
+
             match item {
                 Some(doc) => view! { <Layout doc=doc mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }.into_any(),
                 None => view! { <Layout mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }.into_any(),
@@ -129,7 +154,7 @@ fn Index(
 ) -> AnyView {
     let item = DocNavItem {
         title: "Overview",
-        body: include_str!("docs/home.html"),
+        body: include_str!("generated/home.html"),
         prev_slug: None,
         next_slug: Some(0),
     };

@@ -2,19 +2,61 @@
 library(rvest)
 library(litedown)
 
-all_docs <- list.files(
-  "docs",
+# Function to process documents in a directory
+process_docs <- function(input_dir, output_dir) {
+  # Create output directory if it doesn't exist
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir, recursive = TRUE)
+  }
+  
+  all_docs <- list.files(
+    input_dir,
+    full.names = TRUE,
+    pattern = "*.qmd"
+  )
+
+  for (doc in all_docs) {
+    out <- litedown::mark(doc, options = list(smart = FALSE))
+
+    read_html(out) |>
+      html_node("body") |>
+      xml2::write_html(file.path(output_dir, basename(out)))
+
+    # delete the initially rendered html file
+    file.remove(out)
+  }
+}
+
+# Process root docs (for backwards compatibility)
+root_docs <- list.files(
+  "src/content",
   full.names = TRUE,
   pattern = "*.qmd"
 )
 
-for (doc in all_docs) {
-  out <- litedown::mark(doc, options = list(smart = FALSE))
+if (length(root_docs) > 0) {
+  for (doc in root_docs) {
+    out <- litedown::mark(doc, options = list(smart = FALSE))
 
-  read_html(out) |>
-    html_node("body") |>
-    xml2::write_html(file.path("src/docs", basename(out)))
+    read_html(out) |>
+      html_node("body") |>
+      xml2::write_html(file.path("src/generated", basename(out)))
 
-  # delete the initially rendered html file
-  file.remove(out)
+    # delete the initially rendered html file
+    file.remove(out)
+  }
+}
+
+# Process versioned docs - automatically detect all version directories
+version_dirs <- list.dirs("src/content", full.names = FALSE, recursive = FALSE)
+version_dirs <- version_dirs[version_dirs != ""]  # Remove empty entries
+
+for (version in version_dirs) {
+  input_dir <- file.path("src/content", version)
+  output_dir <- file.path("src/generated", version)
+  
+  if (dir.exists(input_dir)) {
+    cat("Processing version:", version, "\n")
+    process_docs(input_dir, output_dir)
+  }
 }

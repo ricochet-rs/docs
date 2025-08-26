@@ -2,9 +2,9 @@
 title: "Persistent artifacts"
 ---
 
-It is often desirable to be able to modify files across deployments. To accomplish this, ricochet provides a directory for each content item called `persistent`. The `peristent` directory persists across multiple deployments. 
+It is often desirable to be able to modify files across deployments. To accomplish this, ricochet provides a directory for each content item called `persistent`. The `peristent` directory persists across multiple deployments.
 
-For example, you may have a [DuckDB](https://duckdb.org/) or [SQLite](https://www.sqlite.org/) database that powers your shiny application. If you perform writes to the database and want to persist the storage, it is recommended to store it in `persistent`. 
+For example, you may have a [DuckDB](https://duckdb.org/) or [SQLite](https://www.sqlite.org/) database that powers your shiny application. If you perform writes to the database and want to persist the storage, it is recommended to store it in `persistent`.
 
 ## Example application
 
@@ -70,5 +70,3 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-
-

@@ -1,0 +1,37 @@
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Content Permissions</h1></div>
+</div>
+<div class="body">
+<p>After a content item has been deployed, you can manage who can view or modify the item.</p>
+<h2 id="sec:access-type">Access Type</h2>
+<p>The access type of the content determines who can access your items. The access type can be controlled by the <code>access_type</code> of the <code>[content]</code> section of an item's <code>_ricochet.toml</code> file.</p>
+<p>There are three types of access you can provide:</p>
+<ul>
+<li>
+<code>private</code>: only specified users can access this item</li>
+<li>
+<code>internal</code>: all authenticated users can access this item</li>
+<li>
+<code>external</code>: anyone can access this item</li>
+</ul>
+<h3 id="sec:private-access">Private access</h3>
+<p>Unless otherwise specified, the first deployment of an item has an <code>access_type</code> set to <code>private</code> in the <code>_ricochet.toml</code>. Private items can only be accessed by the owner of the item, collaborators, or server admins.</p>
+<h3 id="sec:internal-access">Internal access</h3>
+<p>Internal content items can be viewed by everyone who has authenticated into your ricochet server. These items are not accessible without first authenticating and logging into the ricochet server.</p>
+<h2 id="sec:public-access">Public access</h2>
+<p>Public content items can be viewed by anone with access to your ricochet server. Visitors to the ricochet server will be able to view the item without needing to authenticate.</p>
+<h2 id="sec:collaborators">Collaborators</h2>
+<p>By default, only users who own an item can view, modify, or invoke a content item. Additional collaborators can be added through the ricochet web UI. Collaborators can have the following roles:</p>
+<ul>
+<li>
+<code>consumer</code>: can view or invoke the content item</li>
+<li>
+<code>contributor</code>: can create new deployments</li>
+<li>
+<code>editor</code>: can deploy new bundles, manage access, and modify settings</li>
+<li>
+<code>admin</code>: can deploy new bundles, add viewers &amp; collaborators, and delete the item</li>
+</ul>
+</div>
+</body>

@@ -1,0 +1,28 @@
+# Bootstrapping dependencies
+
+`ricochet` uses system installations of R, Julia, and Quarto. The cli tool provides a utility to install dependencies with little fuss.
+
+## Opinionated dependency management
+
+We _strongly_ recommend using [`rig`](https://github.com/r-lib/rig/) for installing R and [`juliaup`](https://github.com/JuliaLang/juliaup) to install Julia. Both `rig` and `juliaup` provide consistent and standardized approaches to installing and configuring versions of R and Julia respectively.
+
+## Bootstrapping
+
+Use the `ricochet bootstrap` command to install suggested system dependecies. These include rig, juliaup, [Quarto](http://quarto.org/), [TinyTex](https://yihui.org/tinytex/), and R along with suggested packages.
+
+For a fresh server install, run `ricochet bootstrap all` to install all suggested system dependencies. To install multiple versions of R specify the versions like so `ricochet bootstrap all --versions 4.5.0 4.1.3` flag.
+
+```
+$ ricochet bootstrap -h
+Install R, Julia, or Quarto
+
+Usage: ricochet bootstrap [OPTIONS] <TOOL>
+
+Arguments:
+  <TOOL>  Which tool to install. Must be [possible values: rig, juliaup, quarto, tinytex, serverless-r, r, all]
+
+Options:
+      --versions [<VERSIONS>...]  Optional versions to install (e.g., 4.4.1 4.1.3)
+  -h, --help                      Print help
+
+```

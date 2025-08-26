@@ -3,6 +3,7 @@ use crate::{
     docs::{DOC_PAGES, DocPage},
 };
 use leptos::prelude::*;
+use leptos_router::hooks::use_location;
 
 #[derive(Debug, Clone)]
 pub struct PageNav {
@@ -12,30 +13,56 @@ pub struct PageNav {
 
 #[component]
 pub fn PageNavigation(prev: Option<usize>, next: Option<usize>) -> AnyView {
-    // FIXME figure out how to get previous and next pages
-    // into this
+    let location = use_location();
 
-    let prev_page = prev.map(|idx| {
-        let DocPage { title, href, .. } = DOC_PAGES[idx];
-        PageNav {
-            title: title.into(),
-            href: href.into(),
+    // Extract current version from path
+    let current_version = Signal::derive(move || {
+        let current_path = location.pathname.get();
+        if current_path.contains("/docs/v") || current_path.contains("/docs/dev") {
+            let parts: Vec<&str> = current_path.split('/').collect();
+            if parts.len() >= 3 && (parts[2].starts_with("v") || parts[2] == "dev") {
+                Some(parts[2].to_string())
+            } else {
+                None
+            }
+        } else {
+            None
         }
     });
 
-    let next_page = next.map(|idx| {
-        let DocPage { title, href, .. } = DOC_PAGES[idx];
-        PageNav {
-            title: title.into(),
-            href: href.into(),
-        }
-    });
+    let prev_page = move || {
+        prev.map(|idx| {
+            let DocPage { title, href, .. } = DOC_PAGES[idx];
+            let versioned_href = match current_version.get() {
+                Some(ref version) => format!("/docs/{}{}", version, href),
+                None => format!("/docs{}", href),
+            };
+            PageNav {
+                title: title.into(),
+                href: versioned_href,
+            }
+        })
+    };
+
+    let next_page = move || {
+        next.map(|idx| {
+            let DocPage { title, href, .. } = DOC_PAGES[idx];
+            let versioned_href = match current_version.get() {
+                Some(ref version) => format!("/docs/{}{}", version, href),
+                None => format!("/docs{}", href),
+            };
+            PageNav {
+                title: title.into(),
+                href: versioned_href,
+            }
+        })
+    };
 
     view! {
         <div class="flex">
             <div class="flex flex-col items-start gap-3">
 
-                {match prev_page {
+                {move || match prev_page() {
                     Some(pp) => {
                         view! { <PageLink label="Previous" page=pp arrow=ArrowDirection::Left/> }
                             .into_any()
@@ -46,7 +73,7 @@ pub fn PageNavigation(prev: Option<usize>, next: Option<usize>) -> AnyView {
             </div>
             <div class="ml-auto flex flex-col items-end gap-3">
 
-                {match next_page {
+                {move || match next_page() {
                     Some(np) => {
                         view! { <PageLink label="Next" page=np arrow=ArrowDirection::Right/> }
                             .into_any()

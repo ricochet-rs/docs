@@ -5,6 +5,7 @@ use crate::{
         hero_pattern::HeroPattern,
         navigation::{ModeToggle, TopLevelNavItem},
     },
+    versioning::get_current_version,
 };
 use leptos::prelude::*;
 use leptos_meta::Title;
@@ -78,8 +79,7 @@ pub fn LandingPage(
                                 // Main navigation
                                 <nav>
                                     <ul role="list" class="flex items-center gap-8">
-                                        <TopLevelNavItem href="/hello"
-                                            .to_string()>"Documentation"</TopLevelNavItem>
+                                        <TopLevelNavItem href=format!("/docs/{}", get_current_version().path)>"Documentation"</TopLevelNavItem>
                                     </ul>
                                 </nav>
 

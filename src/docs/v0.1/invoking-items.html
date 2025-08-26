@@ -1,0 +1,18 @@
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Ivoking items</h1></div>
+</div>
+<div class="body">
+<p>All tasks—e.g. R / Julia scripts, R Markdown, or Quarto documents—can be <strong>invoked</strong>.</p>
+<p>Invoking a task causes it to run. If the task is scheduled, you can invoke the item outside of its schedule for one-off execution.</p>
+<p>You can use the <code>{ricochet}</code> R package to invoke a task:</p>
+<pre><code class="language-r">library(ricochet)
+invoke("01JSZAXZ3TSTAYXP56ARDVFJCJ")
+</code></pre>
+<p>Or, you can invoke the task using the REST API endpoint.</p>
+<pre><code class="language-shell">curl -X POST \
+  "https://ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/invoke" \
+  -H "Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k"
+</code></pre>
+</div>
+</body>

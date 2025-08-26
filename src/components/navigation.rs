@@ -1,7 +1,9 @@
 use super::search::{MobileSearch, SearchButton, SearchDialog};
+use super::version_selector::VersionSelector;
 use crate::{
     HomeButton,
     docs::{DocPage, DocSection, doc_sections},
+    versioning::get_current_version,
 };
 use leptos::{
     ev::keydown,
@@ -153,8 +155,12 @@ pub fn Header(
         <div class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80 backdrop-blur-sm ">
             // divider
             <div class="absolute inset-x-0 top-full h-px transition bg-zinc-900/7.5 dark:bg-white/7.5"></div>
-            <div class="hidden lg:block lg:max-w-md lg:flex-auto">
+            <div class="hidden lg:flex lg:items-center lg:gap-4 lg:max-w-md lg:flex-auto">
                 <SearchButton show_search=show_search/>
+                <VersionSelector/>
+                <span class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
+                    "BETA"
+                </span>
             </div>
 
             // Mobile Navigation
@@ -167,7 +173,7 @@ pub fn Header(
                 <nav class="hidden md:block">
                     <ul role="list" class="flex items-center gap-8">
                         <TopLevelNavItem href="/api".to_string()>"API"</TopLevelNavItem>
-                        <TopLevelNavItem href="/hello".to_string()>"Documentation"</TopLevelNavItem>
+                        <TopLevelNavItem href=format!("/docs/{}", get_current_version().path)>"Documentation"</TopLevelNavItem>
                     </ul>
                 </nav>
 
@@ -419,14 +425,41 @@ pub fn NavigationGroup(
                         links
                             .iter()
                             .map(|di| {
-                                let href = di.href.to_string();
-                                let hr = href.clone();
+                                let base_href = di.href.to_string();
                                 let title = di.title.to_string();
-                                let mut p = location.pathname.get();
+                                let current_path = location.pathname.get();
+
+                                // Extract version from current path if present
+                                let (current_version, _) = if current_path.contains("/docs/v") || current_path.contains("/docs/dev") {
+                                    let parts: Vec<&str> = current_path.split('/').collect();
+                                    if parts.len() >= 3 && (parts[2].starts_with("v") || parts[2] == "dev") {
+                                        (Some(parts[2]), parts[3..].join("/"))
+                                    } else {
+                                        (None, String::new())
+                                    }
+                                } else {
+                                    (None, String::new())
+                                };
+
+                                // Generate version-aware href
+                                let href = match current_version {
+                                    Some(version) => format!("/docs/{}{}", version, base_href),
+                                    None => format!("/docs{}", base_href),
+                                };
+
+                                // Check if this link is active
+                                let mut p = current_path.clone();
                                 if p.starts_with("/docs") {
                                     p = p.split_off(5);
+                                    // Remove version prefix if present
+                                    if p.starts_with("/v") || p.starts_with("/dev") {
+                                        let parts: Vec<&str> = p.splitn(3, '/').collect();
+                                        if parts.len() > 2 {
+                                            p = format!("/{}", parts[2]);
+                                        }
+                                    }
                                 }
-                                let is_active = p == hr;
+                                let is_active = p == base_href;
                                 view! {
                                     {move || {
                                         if is_active {

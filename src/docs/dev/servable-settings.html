@@ -1,0 +1,37 @@
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Scaling services</h1></div>
+</div>
+<div class="body">
+<p>Services that are deployed to ricochet such as <a href="http://rplumber.io/"><code>{plumber}</code></a> APIs, <a href="https://shiny.posit.co/r/">Shiny</a> apps, or <a href="https://ambiorix.dev/docs/getting-started/">Ambiorix</a> apps, dynamically auto-scale.</p>
+<p>You can control how the application scales via the scaling settings in the ricochet web UI, or via the <code>[serve]</code> settings in the <code>_ricochet.toml</code> file. The following settings are made available:</p>
+<ul>
+<li><code>min_instances</code></li>
+<li><code>max_instances</code></li>
+<li><code>spawn_threshold</code></li>
+<li><code>max_connections</code></li>
+<li><code>max_connection_age</code></li>
+</ul>
+<p>See the section in <code>_ricochet.toml</code> for how to set these values. See the example:</p>
+<pre><code class="language-toml">[serve]
+min_instances = 0
+max_instances = 5
+spawn_threshold = 80
+max_connections = 10
+</code></pre>
+<h2 id="sec:minimum-instances">Minimum instances</h2>
+<p>By default, the minimum number of instances for all services is 0. This means that an instance will be started only when someone attempts to connect to the service (either via browser or http request).</p>
+<p>To prevent a cold start, you can specify a minimum number of instances to be running at all times. This can be particularly useful for applications with slow start ups.</p>
+<p>Note that this can also negatively impact the ricochet server by increasing resource strain.</p>
+<h2 id="sec:maximum-instances">Maximum instances</h2>
+<p>By default, each service can spawn up to 5 instances. The ceiling can be raised by specifying the maximum instances in the ricochet web UI or in the <code>_ricochet.toml</code>.</p>
+<p>Increasing the maximum number if instances can be useful if the service can experience large spikes in usage or the services are computationally intensive and easily strained.</p>
+<h2 id="sec:maximum-number-of-connections">Maximum number of connections</h2>
+<p>Having many users using the same service can result in resource strain. The maximum number of connections to a service can be limited or increased via the <code>max_connections</code> setting in the <code>[serve]</code> section of the <code>_ricochet.toml</code>.</p>
+<p>When the maximum number of instances is reached, a new instance will be spawned and subsequence connections will be directed to that instance.</p>
+<h2 id="sec:spawn-threshold">Spawn threshold</h2>
+<p>The spawn threshold is used to <strong>determine when a new instance of a service should be spawned</strong>. It can be set by the <code>spawn_threshold</code> in the <code>[serve]</code> section of the <code>_ricochet.toml</code> file or in the ricochet web UI.</p>
+<p>The spawn threshold is an integer between 1 and 100. It is the ratio of the number of active connections to the maximum number of connections <code>active_connections / max_connections</code>. When the spawn threshold is reached, <strong>a new instance is spawned</strong>.</p>
+<p>However, if the maximum number of instances has been reached, new connections are delegated to the application with the least number of active connections. Additionally, if all instances are at capacity, the spawn threshold is ignored.</p>
+</div>
+</body>

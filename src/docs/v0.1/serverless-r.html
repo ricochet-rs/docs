@@ -1,0 +1,103 @@
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Serverless functions</h1></div>
+</div>
+<div class="body">
+<p><code>ricochet</code> provides a serverless function runtime for R as the content type <code>serverless-r</code>.</p>
+<p>Serverless R enables users to create a simple R script with function definitions and deploy them as a RESTful API. The serverless function runtime abstracts away the hard work of converting R code into RESTful APIs so you can focus on deploying.</p>
+<h2 id="sec:usage">Usage</h2>
+<p>The <code>serverless-r</code> content type requires an R script as the entrypoint which defines a list object called <code>routes</code>. The <code>routes</code> object is used to define the REST API endpoints.</p>
+<p>Take an example <code>hello-world.R</code> file:</p>
+<pre><code class="language-r">hello_world &lt;- function() {
+  "hello, world!"
+}
+
+add2 &lt;- function(x, y) {
+  x + y
+}
+
+# alternatively specify per-route (de)serializers
+routes &lt;- list(add2, hello_world)
+</code></pre>
+<p>That's it! This will create a REST API with two routes: <code>/add2</code> and <code>hello_world</code>.</p>
+<p>You can change the name of the endpoints by providing a named list. For example the route</p>
+<pre><code class="language-r">routes &lt;- list(
+  "add-2" = add2,
+  "hello-world" = hello_world
+)
+</code></pre>
+<p>will create two endpoints called <code>/add-2</code> and <code>/hello-world</code>.</p>
+<h2 id="sec:deploying">Deploying</h2>
+<p>To deploy a <code>serverless-r</code> item, create a new <code>_ricochet.toml</code> in your project using <code>ricochet::use_ricochet_toml()</code>. When selecting prompted to select the content type <code>"Serverless R"</code>. Then run <code>ricochet::deploy()</code>. Thats it!</p>
+<h2 id="sec:request-types">Request Types</h2>
+<p>The serverless R runtime supports only GET and POST requests. Function without any arguments are served as a <strong><code>GET</code></strong> request. If a function has aguments, it is accessible via <code>POST</code> request.</p>
+<p>By default all responses return (serialized) JSON. POST requests expect JSON in their bodies by default.</p>
+<h2 id="sec:using-de-serializers">Using (de)serializers</h2>
+<p>It is possible to customize the type that responses are serialized as and how bodies are deserialized. Below are the available serializers and deserializers.</p>
+<ul>
+<li>Serializers:
+<ul>
+<li>
+<code>csv</code>, <code>excel</code>, <code>feather</code>, <code>geojson</code>, <code>html</code>, <code>htmlwidget</code>, <code>jpeg</code>, <code>json</code>, <code>json-unboxed</code>, <code>octet</code>, <code>parquet</code>, <code>pdf</code>, <code>png</code>, <code>png</code>, <code>svg</code>, <code>svglite</code>, <code>text</code>, <code>tiff</code>, <code>tsv</code>, <code>yaml</code>.</li>
+</ul>
+</li>
+<li>Deserializers:
+<ul>
+<li>
+<code>csv</code>, <code>excel</code>, <code>feather</code>, <code>form</code>, <code>geojson</code>, <code>json</code>, <code>multi</code>, <code>none</code>, <code>octet</code>, <code>parquet</code>, <code>rds</code>, <code>text</code>, <code>tsv</code>, <code>yaml</code>
+</li>
+</ul>
+</li>
+</ul>
+<p>To customize the serialization and deserialization method, the <code>routes</code> list uses a named list with structure:</p>
+<pre><code class="language-r">list(
+  fn = fn_object,             # required
+  serialize = "json-unboxed", # optional
+  deserialize = "json"        # optional
+)
+</code></pre>
+<h3 id="sec:example">Example</h3>
+<p>You can return a csv file from your serverless functions by specifying the <code>serialize = "csv"</code> or you can also expect a csv file as your input by setting <code>deserialize = "csv"</code> as well.</p>
+<p>The below example creates two endpoints. <code>/penguins</code> returns the first 5 rows of the <code>penguins</code> data frame as a csv file and <code>/nrow</code> returns the number of rows sent in a csv file request.</p>
+<pre><code class="language-r">routes &lt;- list(
+  penguins = list(
+    fn = \() penguins[1:5,],
+    serialize = "csv"
+  ),
+  nrow = list(
+    fn = \(.df) nrow(.df),
+    deserialize = "csv"
+  )
+)
+</code></pre>
+<p>The deployed serverless functions can be called using httr2. To read the csv file:</p>
+<pre><code class="language-r">library(httr2)
+
+request("https://ricochet.rs/{ID}/penguins") |&gt;
+  req_perform() |&gt;
+  resp_body_string() |&gt;
+  readr::read_csv()
+</code></pre>
+<pre><code class="language-r">#&gt; # A tibble: 5 × 8
+#&gt;   species island    bill_len bill_dep flipper_len body_mass sex     year
+#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+#&gt; 1 Adelie  Torgersen     39.1     18.7         181      3750 male    2007
+#&gt; 2 Adelie  Torgersen     39.5     17.4         186      3800 female  2007
+#&gt; 3 Adelie  Torgersen     40.3     18           195      3250 female  2007
+#&gt; 4 Adelie  Torgersen     NA       NA            NA        NA NA      2007
+#&gt; 5 Adelie  Torgersen     36.7     19.3         193      3450 female  2007
+</code></pre>
+<p>To send a csv file and count the number of rows:</p>
+<pre><code class="language-r">tmp &lt;- tempfile(fileext = ".csv")
+readr::write_csv(penguins[1:100,], tmp)
+
+request("https://ricochet.rs/{ID}/nrow") |&gt;
+  req_body_raw(brio::read_file(tmp)) |&gt;
+  req_headers("Content-Type" = "text/csv") |&gt;
+  req_perform() |&gt;
+  resp_body_json()
+</code></pre>
+<pre><code class="language-r">#&gt; [1] 100
+</code></pre>
+</div>
+</body>

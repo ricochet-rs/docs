@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+pub mod versioned;
+
 #[derive(Hash, PartialEq, Eq, Ord, PartialOrd, Clone)]
 pub enum DocSection {
     QuickStart,
@@ -120,23 +122,13 @@ pub const DOC_PAGES: [DocPage; 15] = [
 ];
 
 pub fn doc_sections() -> BTreeMap<DocSection, Vec<&'static DocPage>> {
-    let mut map = BTreeMap::new();
+    doc_sections_for_version(crate::versioning::get_current_version())
+}
 
-    let mut quick = Vec::new();
-    let mut content = Vec::new();
-    let mut admin = Vec::new();
-
-    for doc in DOC_PAGES.iter() {
-        match &doc.section {
-            DocSection::QuickStart => quick.push(doc),
-            DocSection::Content => content.push(doc),
-            DocSection::Admin => admin.push(doc),
-        }
-    }
-    map.insert(DocSection::QuickStart, quick);
-    map.insert(DocSection::Content, content);
-    map.insert(DocSection::Admin, admin);
-    map
+pub fn doc_sections_for_version(
+    version: &crate::versioning::Version,
+) -> BTreeMap<DocSection, Vec<&'static DocPage>> {
+    versioned::get_doc_sections_for_version(version)
 }
 
 pub struct DocNavItem {
@@ -159,21 +151,39 @@ impl Default for DocNavItem {
 }
 
 pub fn get_doc(slug: &str) -> Option<DocNavItem> {
-    let idx = DOC_PAGES
+    get_doc_for_version(slug, crate::versioning::get_current_version())
+}
+
+pub fn get_doc_for_version(slug: &str, version: &crate::versioning::Version) -> Option<DocNavItem> {
+    // Extract the actual doc path, removing version prefix if present
+    let doc_path = if slug.contains("/v") {
+        // Handle versioned paths like /docs/v1.0/quickstart or /v1.0/quickstart
+        let parts: Vec<&str> = slug.split('/').collect();
+        if parts.len() > 1 {
+            format!("/{}", parts.last().copied().unwrap_or(""))
+        } else {
+            slug.to_string()
+        }
+    } else {
+        slug.to_string()
+    };
+
+    let doc_pages = versioned::get_doc_pages_for_version(version);
+    let idx = doc_pages
         .iter()
         .enumerate()
-        .position(|(_, d)| d.href == slug);
+        .position(|(_, d)| d.href == doc_path);
 
     match idx {
         Some(idx) => {
-            let body = DOC_PAGES[idx].body;
-            let title = DOC_PAGES[idx].title;
-            let next_slug = DOC_PAGES.get(idx + 1).map(|_| idx + 1);
+            let body = doc_pages[idx].body;
+            let title = doc_pages[idx].title;
+            let next_slug = doc_pages.get(idx + 1).map(|_| idx + 1);
 
             let prev_slug = if idx == 0 {
                 None
             } else {
-                DOC_PAGES.get(idx - 1).map(|_| idx - 1)
+                doc_pages.get(idx - 1).map(|_| idx - 1)
             };
 
             let res = DocNavItem {

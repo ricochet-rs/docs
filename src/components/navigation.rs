@@ -197,12 +197,6 @@ pub fn Header(
             </nav>
 
             <div class="flex items-center gap-5">
-                // Beta badge
-                <div class="hidden md:block">
-                    <span class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
-                        "BETA"
-                    </span>
-                </div>
 
                 // Main navigation
                 <nav class="hidden md:block">

@@ -134,7 +134,7 @@ pub fn SearchButton(show_search: RwSignal<bool>) -> AnyView {
         >
 
             <SearchIcon/>
-            "Start deploying..."
+            "Search"
             <kbd class="ml-auto text-2xs text-zinc-400 dark:text-zinc-500">
                 <kbd class="font-sans">"⌘"</kbd>
                 <kbd class="font-sans">K</kbd>

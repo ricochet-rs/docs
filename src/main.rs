@@ -14,12 +14,15 @@ async fn main() {
     let routes = generate_route_list(App);
 
     let public_dir = tower_http::services::ServeDir::new("public");
+    let pkg_path = format!("{}/{}", leptos_options.site_root, leptos_options.site_pkg_dir);
+    let pkg_dir = tower_http::services::ServeDir::new(&pkg_path);
     let app = Router::new()
         .leptos_routes(&leptos_options, routes, {
             let leptos_options = leptos_options.clone();
             move || shell(leptos_options.clone())
         })
         .nest_service("/pkgs", public_dir)
+        .nest_service("/pkg", pkg_dir)
         .fallback(leptos_axum::file_and_error_handler(shell))
         .with_state(leptos_options);
 

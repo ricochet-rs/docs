@@ -75,27 +75,27 @@ add-version VERSION:
     # Create DOC_PAGES array for the new version
     LATEST_PAGES_NAME="DOC_PAGES_$(echo "$LATEST_VERSION" | tr '.' '_' | tr '[:lower:]' '[:upper:]')"
     NEW_PAGES_NAME="DOC_PAGES_$(echo "{{VERSION}}" | tr '.' '_' | tr '[:lower:]' '[:upper:]')"
-    
+
     # Find and copy the latest version's DOC_PAGES array
     sed -n "/^pub const $LATEST_PAGES_NAME:/,/^];$/p" src/docs/mod.rs > /tmp/latest_pages.txt
-    
+
     # Replace the array name and update paths in the copied content
     sed "s/$LATEST_PAGES_NAME/$NEW_PAGES_NAME/g" /tmp/latest_pages.txt | \
     sed "s|include_str!(\"../generated/$LATEST_VERSION/|include_str!(\"../generated/{{VERSION}}/|g" > /tmp/new_pages.txt
-    
+
     # Insert the new DOC_PAGES array before the first pub fn get_doc (only if it doesn't already exist)
     if ! grep -q "$NEW_PAGES_NAME" src/docs/mod.rs; then
         awk '/^pub fn get_doc\(/ && !inserted {system("cat /tmp/new_pages.txt"); inserted=1} {print}' src/docs/mod.rs > /tmp/docs_updated.rs
         mv /tmp/docs_updated.rs src/docs/mod.rs
     fi
-    
+
     # Add match arm to get_doc_for_version function before the default case
     sed -i.bak "/_ => &DOC_PAGES_V0_1/i\\
         \"{{VERSION}}\" => &$NEW_PAGES_NAME," src/docs/mod.rs
-    
+
     # Update the default case to point to the new latest version
     sed -i.bak "s/_ => &DOC_PAGES_V0_1, \/\/ Default to latest stable/_ => \&$NEW_PAGES_NAME, \/\/ Default to latest stable/" src/docs/mod.rs
-    
+
     # Clean up temp files and backup file
     rm -f /tmp/latest_pages.txt /tmp/new_pages.txt src/docs/mod.rs.bak
 
@@ -148,6 +148,41 @@ serve:
 
     # Start leptos watch (this blocks)
     cargo leptos watch --hot-reload --precompress
+
+build TARGET="":
+    #!/usr/bin/env bash
+    if [ -n "{{TARGET}}" ]; then
+        CARGO_BUILD_TARGET={{TARGET}} cargo leptos build --release
+    else
+        cargo leptos build --release
+    fi
+
+# Build binary in Docker and extract to local filesystem
+build-docker PLATFORM="linux/amd64":
+    #!/usr/bin/env bash
+    mkdir -p target/docker-build
+    docker run --rm \
+        --platform {{PLATFORM}} \
+        -v "$(pwd):/workspace" \
+        -v "$(pwd)/target/docker-build:/output" \
+        -w /workspace \
+        reg.devxy.io/docker.io/library/rust:1.89 \
+        bash -c "
+            rustup target add wasm32-unknown-unknown && \
+            cargo install cargo-leptos && \
+            curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+            apt-get install -y nodejs && \
+            npm install -g pnpm && \
+            CI=true pnpm install --frozen-lockfile && \
+            cargo leptos build --release && \
+            cp target/release/ricochet-docs /output/
+        "
+
+docker-build PLATFORM="linux/amd64":
+    docker build --platform {{PLATFORM}} -t ricochet-docs .
+
+docker-build-multi:
+    docker buildx build --platform linux/amd64,linux/arm64 -t ricochet-docs .
 
 prod:
     cargo leptos serve --precompress --release

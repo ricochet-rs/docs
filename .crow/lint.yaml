@@ -9,7 +9,7 @@ when:
 
 steps:
   editor-config:
-    image: reg.devxy.io/proxy_cache/mstruebing/editorconfig-checker:v3.3.0
+    image: reg.devxy.io/proxy_cache/mstruebing/editorconfig-checker:v3.4.0
     depends_on: []
 
   cache:

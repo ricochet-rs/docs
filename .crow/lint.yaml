@@ -1,0 +1,48 @@
+when:
+  - event: pull_request
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+  - event: cron
+    cron: nightly
+  - event: push
+    branch:
+      - ${CI_REPO_DEFAULT_BRANCH}
+
+steps:
+  editor-config:
+    image: reg.devxy.io/proxy_cache/mstruebing/editorconfig-checker:v3.3.0
+    depends_on: []
+
+  cache:
+    image: codeberg.org/crow-plugins/sccache:0.1.0
+    settings:
+      s3-endpoint: https://hel1.your-objectstorage.com
+      s3-bucket: ricochet-sccache
+      s3-region: hel1
+      s3-key-prefix: ${CI_REPO_NAME}
+      s3-access-key:
+        from_secret: s3_access_key
+      s3-secret-key:
+        from_secret: s3_secret_key
+
+  rust-fmt:
+    image: reg.devxy.io/proxy_cache/library/rust:1.89
+    depends_on: cache
+    commands:
+      - export PATH=".sccache-cache:$PATH"
+      - . ./.sccache
+      - rustup component add rustfmt
+      - cargo install -q leptosfmt
+      - leptosfmt ricochet-ui/src/**/*.rs
+      - leptosfmt ricochet-ui/src/*.rs
+      - cargo fmt -q --all
+      - sccache --show-stats
+
+  rust-lint:
+    image: reg.devxy.io/proxy_cache/library/rust:1.89
+    depends_on: cache
+    commands:
+      - export PATH=".sccache-cache:$PATH"
+      - . ./.sccache
+      - rustup component add clippy
+      - cargo clippy -q --no-deps
+      - sccache --show-stats

@@ -20,6 +20,10 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <link rel="icon" type="image/svg+xml" href="/pkgs/favicon.svg"/>
+                <link rel="icon" type="image/png" sizes="32x32" href="/pkgs/favicon-32x32.png"/>
+                <link rel="icon" type="image/png" sizes="16x16" href="/pkgs/favicon-16x16.png"/>
+                <link rel="alternate icon" href="/pkgs/favicon.ico"/>
                 <AutoReload options=options.clone()/>
                 <HydrationScripts options/>
                 <MetaTags/>

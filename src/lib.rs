@@ -24,8 +24,26 @@ pub mod versioning;
 
 #[component]
 pub fn HomeButton() -> AnyView {
+    use leptos_router::hooks::use_location;
+    
+    let location = use_location();
+    let href = Signal::derive(move || {
+        let current_path = location.pathname.get();
+        if current_path.starts_with("/v") || current_path.starts_with("/dev") {
+            let trimmed = current_path.trim_start_matches('/');
+            let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+            if !parts.is_empty() && (parts[0].starts_with("v") || parts[0] == "dev") {
+                format!("/{}/", parts[0])
+            } else {
+                format!("/{}/", versioning::get_current_version().path)
+            }
+        } else {
+            format!("/{}/", versioning::get_current_version().path)
+        }
+    });
+    
     view! {
-        <a href="/" aria-label="Home">
+        <a href=move || href.get() aria-label="Home">
             <p class="font-mono font-bold text-zinc-900 dark:text-zinc-100">ricochet</p>
         </a>
     }
@@ -109,18 +127,18 @@ fn DocPage(
 
     view! {
         {move || {
-            let mut p = path();
-            if p.starts_with("/docs") {
-                p = p.split_off(5);
-            }
+            let p = path();
 
             // Extract version from path if present
             let (version, doc_path) = if p.starts_with("/v") || p.starts_with("/dev") {
-                let parts: Vec<&str> = p.splitn(3, '/').collect();
-                if parts.len() >= 2 {
-                    let version_str = parts[1]; // e.g., "v0.1" or "dev"
-                    let doc_path = if parts.len() > 2 {
-                        format!("/{}", parts[2])
+                // Remove leading slash for easier parsing
+                let trimmed = p.trim_start_matches('/');
+                let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+                
+                if !parts.is_empty() {
+                    let version_str = parts[0]; // e.g., "v0.1" or "dev"
+                    let doc_path = if parts.len() > 1 {
+                        format!("/{}", parts[1])
                     } else {
                         "/".to_string()
                     };
@@ -146,21 +164,6 @@ fn DocPage(
     .into_any()
 }
 
-#[component]
-fn Index(
-    mode: Signal<ColorMode>,
-    theme_override: ReadSignal<Option<ColorMode>>,
-    set_theme_override: WriteSignal<Option<ColorMode>>,
-) -> AnyView {
-    let item = DocNavItem {
-        title: "Overview",
-        body: include_str!("generated/home.html"),
-        prev_slug: None,
-        next_slug: Some(0),
-    };
-
-    view! { <Layout doc=item mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }.into_any()
-}
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

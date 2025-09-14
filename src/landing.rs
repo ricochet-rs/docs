@@ -79,7 +79,7 @@ pub fn LandingPage(
                                 // Main navigation
                                 <nav>
                                     <ul role="list" class="flex items-center gap-8">
-                                        <TopLevelNavItem href=format!("/docs/{}", get_current_version().path)>"Documentation"</TopLevelNavItem>
+                                        <TopLevelNavItem href=format!("/{}", get_current_version().path)>"Documentation"</TopLevelNavItem>
                                     </ul>
                                 </nav>
 

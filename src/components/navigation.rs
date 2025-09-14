@@ -202,10 +202,21 @@ pub fn Header(
                 <nav class="hidden md:block">
                     <ul role="list" class="flex items-center gap-8">
                         <TopLevelNavItem href="/api".to_string()>"API"</TopLevelNavItem>
-                        <TopLevelNavItem href=format!(
-                            "/docs/{}",
-                            get_current_version().path,
-                        )>"Documentation"</TopLevelNavItem>
+                        <TopLevelNavItem href={
+                            let location = leptos_router::hooks::use_location();
+                            let current_path = location.pathname.get();
+                            if current_path.starts_with("/v") || current_path.starts_with("/dev") {
+                                let trimmed = current_path.trim_start_matches('/');
+                                let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+                                if !parts.is_empty() && (parts[0].starts_with("v") || parts[0] == "dev") {
+                                    format!("/{}", parts[0])
+                                } else {
+                                    format!("/{}", get_current_version().path)
+                                }
+                            } else {
+                                format!("/{}", get_current_version().path)
+                            }
+                        }>"Documentation"</TopLevelNavItem>
                     </ul>
                 </nav>
 
@@ -464,14 +475,13 @@ pub fn NavigationGroup(
                                 let base_href = di.href.to_string();
                                 let title = di.title.to_string();
                                 let current_path = location.pathname.get();
-                                let (current_version, _) = if current_path.contains("/docs/v")
-                                    || current_path.contains("/docs/dev")
+                                let (current_version, _) = if current_path.starts_with("/v")
+                                    || current_path.starts_with("/dev")
                                 {
-                                    let parts: Vec<&str> = current_path.split('/').collect();
-                                    if parts.len() >= 3
-                                        && (parts[2].starts_with("v") || parts[2] == "dev")
-                                    {
-                                        (Some(parts[2]), parts[3..].join("/"))
+                                    let trimmed = current_path.trim_start_matches('/');
+                                    let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+                                    if !parts.is_empty() && (parts[0].starts_with("v") || parts[0] == "dev") {
+                                        (Some(parts[0]), parts.get(1).map(|s| s.to_string()).unwrap_or_default())
                                     } else {
                                         (None, String::new())
                                     }
@@ -479,17 +489,17 @@ pub fn NavigationGroup(
                                     (None, String::new())
                                 };
                                 let href = match current_version {
-                                    Some(version) => format!("/docs/{}{}", version, base_href),
-                                    None => format!("/docs{}", base_href),
+                                    Some(version) => format!("/{}{}", version, base_href),
+                                    None => base_href.clone(),
                                 };
                                 let mut p = current_path.clone();
-                                if p.starts_with("/docs") {
-                                    p = p.split_off(5);
-                                    if p.starts_with("/v") || p.starts_with("/dev") {
-                                        let parts: Vec<&str> = p.splitn(3, '/').collect();
-                                        if parts.len() > 2 {
-                                            p = format!("/{}", parts[2]);
-                                        }
+                                if p.starts_with("/v") || p.starts_with("/dev") {
+                                    let trimmed = p.trim_start_matches('/');
+                                    let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+                                    if parts.len() > 1 {
+                                        p = format!("/{}", parts[1]);
+                                    } else {
+                                        p = "/".to_string();
                                     }
                                 }
                                 let is_active = p == base_href;

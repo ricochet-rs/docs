@@ -1,12 +1,12 @@
 use crate::{
     DocPage, Layout,
     api::{ApiLandingPage, ApiRefPage},
-    versioning::{provide_version_context, get_current_version},
+    versioning::{get_current_version, provide_version_context},
 };
 use leptos::prelude::*;
 use leptos_meta::{MetaTags, Stylesheet, Title, provide_meta_context};
 use leptos_router::{
-    components::{Route, Router, Routes, Redirect},
+    components::{Redirect, Route, Router, Routes},
     path,
 };
 use leptos_use::{ColorMode, use_preferred_dark};

@@ -25,7 +25,7 @@ pub mod versioning;
 #[component]
 pub fn HomeButton() -> AnyView {
     use leptos_router::hooks::use_location;
-    
+
     let location = use_location();
     let href = Signal::derive(move || {
         let current_path = location.pathname.get();
@@ -41,7 +41,7 @@ pub fn HomeButton() -> AnyView {
             format!("/{}/", versioning::get_current_version().path)
         }
     });
-    
+
     view! {
         <a href=move || href.get() aria-label="Home">
             <p class="font-mono font-bold text-zinc-900 dark:text-zinc-100">ricochet</p>
@@ -163,7 +163,6 @@ fn DocPage(
     }
     .into_any()
 }
-
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

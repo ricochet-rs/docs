@@ -18,10 +18,11 @@ pub fn PageNavigation(prev: Option<usize>, next: Option<usize>) -> AnyView {
     // Extract current version from path
     let current_version = Signal::derive(move || {
         let current_path = location.pathname.get();
-        if current_path.contains("/docs/v") || current_path.contains("/docs/dev") {
-            let parts: Vec<&str> = current_path.split('/').collect();
-            if parts.len() >= 3 && (parts[2].starts_with("v") || parts[2] == "dev") {
-                Some(parts[2].to_string())
+        if current_path.starts_with("/v") || current_path.starts_with("/dev") {
+            let trimmed = current_path.trim_start_matches('/');
+            let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+            if !parts.is_empty() && (parts[0].starts_with("v") || parts[0] == "dev") {
+                Some(parts[0].to_string())
             } else {
                 None
             }
@@ -34,8 +35,8 @@ pub fn PageNavigation(prev: Option<usize>, next: Option<usize>) -> AnyView {
         prev.map(|idx| {
             let DocPage { title, href, .. } = DOC_PAGES[idx];
             let versioned_href = match current_version.get() {
-                Some(ref version) => format!("/docs/{}{}", version, href),
-                None => format!("/docs{}", href),
+                Some(ref version) => format!("/{}{}", version, href),
+                None => href.to_string(),
             };
             PageNav {
                 title: title.into(),
@@ -48,8 +49,8 @@ pub fn PageNavigation(prev: Option<usize>, next: Option<usize>) -> AnyView {
         next.map(|idx| {
             let DocPage { title, href, .. } = DOC_PAGES[idx];
             let versioned_href = match current_version.get() {
-                Some(ref version) => format!("/docs/{}{}", version, href),
-                None => format!("/docs{}", href),
+                Some(ref version) => format!("/{}{}", version, href),
+                None => href.to_string(),
             };
             PageNav {
                 title: title.into(),

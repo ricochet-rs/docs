@@ -1,14 +1,12 @@
 use crate::{
-    DocPage, Index, Layout,
+    DocPage, Layout,
     api::{ApiLandingPage, ApiRefPage},
-    landing::LandingPage,
-    versioning::provide_version_context,
+    versioning::{get_current_version, provide_version_context},
 };
 use leptos::prelude::*;
 use leptos_meta::{MetaTags, Stylesheet, Title, provide_meta_context};
 use leptos_router::{
-    StaticSegment,
-    components::{Route, Router, Routes},
+    components::{Redirect, Route, Router, Routes},
     path,
 };
 use leptos_use::{ColorMode, use_preferred_dark};
@@ -76,25 +74,32 @@ pub fn App() -> impl IntoView {
                     }
                 />
 
-                <Route
-                    path=StaticSegment("/hello")
-                    view=move || view! { <Index mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
-                />
+
                 <Route
                     path=path!("/")
-                    view=move || view! { <LandingPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
+                    view=move || {
+                        let default_path = format!("/{}", get_current_version().path);
+                        view! { <Redirect path=default_path/> }
+                    }
                 />
-
                 <Route
                     path=path!("/:path")
                     view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route
-                    path=path!("/docs/:version/:path")
+                    path=path!("/v0.1")
                     view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route
-                    path=path!("/docs/:path")
+                    path=path!("/v0.1/:path")
+                    view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
+                />
+                <Route
+                    path=path!("/dev")
+                    view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
+                />
+                <Route
+                    path=path!("/dev/:path")
                     view=move || view! { <DocPage mode=mode theme_override=theme_override set_theme_override=set_theme_override/> }
                 />
                 <Route

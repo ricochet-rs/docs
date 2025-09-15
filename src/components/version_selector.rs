@@ -34,12 +34,13 @@ pub fn VersionSelector() -> impl IntoView {
 
             // Run once to sync URL with context
             let current_path = location.pathname.get_untracked();
-            let url_version = if current_path.contains("/docs/dev") {
+            let url_version = if current_path.starts_with("/dev") {
                 crate::versioning::get_version_by_path("dev")
-            } else if current_path.contains("/docs/v") {
-                let parts: Vec<&str> = current_path.split('/').collect();
-                if parts.len() >= 3 && parts[2].starts_with("v") {
-                    crate::versioning::get_version_by_path(parts[2])
+            } else if current_path.starts_with("/v") {
+                let trimmed = current_path.trim_start_matches('/');
+                let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+                if !parts.is_empty() && parts[0].starts_with("v") {
+                    crate::versioning::get_version_by_path(parts[0])
                 } else {
                     None
                 }
@@ -121,17 +122,16 @@ pub fn VersionSelector() -> impl IntoView {
                                                     let current_path = leptos_router::hooks::use_location()
                                                         .pathname
                                                         .get();
-                                                    let new_path = if current_path.contains("/docs/") {
-                                                        let path_parts: Vec<&str> = current_path
-                                                            .split('/')
-                                                            .collect();
-                                                        if path_parts.len() > 3 {
-                                                            format!("/docs/{}/{}", path, path_parts[3..].join("/"))
+                                                    let new_path = if current_path.starts_with("/v") || current_path.starts_with("/dev") {
+                                                        let trimmed = current_path.trim_start_matches('/');
+                                                        let path_parts: Vec<&str> = trimmed.splitn(2, '/').collect();
+                                                        if path_parts.len() > 1 {
+                                                            format!("/{}/{}", path, path_parts[1])
                                                         } else {
-                                                            format!("/docs/{}", path)
+                                                            format!("/{}", path)
                                                         }
                                                     } else {
-                                                        format!("/docs/{}", path)
+                                                        format!("/{}", path)
                                                     };
                                                     navigate(&new_path, Default::default());
                                                 }

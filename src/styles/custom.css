@@ -1,0 +1,58 @@
+:root {
+  /* default 18.75rem; */
+  --sl-content-width: 75%;
+  --sl-sidebar-width: 21rem;
+  --sl-color-text-accent: #c2410c;
+}
+
+.dark {
+  --sl-color-text-accent: #ff9b00;
+}
+
+/* default is --sl-sidebar-width, but when increasing left, it should be possible to reduce right */
+.right-sidebar-container .astro-wxn7k47k {
+  width: 15rem !important;
+}
+
+.right-sidebar-container:where(.astro-wxn7k47k) {
+  width: 15rem !important;
+}
+
+:where(.astro-3ii7xxms)[aria-current="page"],
+:where(.astro-3ii7xxms)[aria-current="page"]:hover,
+:where(.astro-3ii7xxms)[aria-current="page"]:focus {
+  color: var(--sl-color-text);
+  border: 1px solid var(--sl-color-text-accent);
+  background-color: var(--sl-color-background);
+}
+
+/* avoids flackering when switching between items */
+:where(.astro-3ii7xxms) {
+  border: 1px solid transparent;
+}
+
+/* keep top level sidebar items formatted in  bold */
+ul:not(.large) :where(.astro-3ii7xxms)[aria-current="page"],
+ul:not(.large) :where(.astro-3ii7xxms)[aria-current="page"]:hover,
+ul:not(.large) :where(.astro-3ii7xxms)[aria-current="page"]:focus {
+  font-weight: 400;
+}
+
+a.large[aria-current="page"] > :where(.astro-3ii7xxms),
+a.large[aria-current="page"]:hover > :where(.astro-3ii7xxms),
+a.large[aria-current="page"]:focus > :where(.astro-3ii7xxms) {
+  font-weight: 600;
+}
+
+.scroll-to-top-button {
+  width: 35px !important;
+  height: 35px !important;
+  border-radius: 16px !important;
+}
+
+@media (max-width: 768px) {
+  .sl-container:where(.astro-7nkwcw3z) {
+    max-width: 95%;
+    margin: auto;
+  }
+}

@@ -1,7 +1,27 @@
 {
-  "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16",
-    "shiki": "^3.4.0",
-    "tailwindcss": "^4.1.11"
+  "name": "astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdoc": "0.15.6",
+    "@astrojs/starlight": "0.35.3",
+    "@astrojs/starlight-markdoc": "^0.5.0",
+    "@astrojs/starlight-tailwind": "^4.0.1",
+    "@lorenzo_lewis/starlight-utils": "^0.3.2",
+    "@tailwindcss/vite": "^4.1.13",
+    "add": "^2.0.6",
+    "astro": "5.13.7",
+    "sharp": "^0.34.3",
+    "starlight-links-validator": "^0.17.2",
+    "starlight-scroll-to-top": "^0.4.0",
+    "starlight-theme-nova": "^0.9.4",
+    "tailwindcss": "^4.1.13"
   }
 }

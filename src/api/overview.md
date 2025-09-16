@@ -5,4 +5,5 @@ Install the R SDK:
 ```r
 remotes::install_url("https://docs.ricochet.rs/pkgs/ricochet-r.tar.gz")
 ```
+
 The API reference explains each endpoint with examples using curl and R. For broader context—like content types, deployment models, and configuration—see the [general documentation](/overview).

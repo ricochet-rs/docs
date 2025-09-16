@@ -6,10 +6,10 @@ const dir = "./src/generated";
 
 async function processDirectory(dirPath) {
   const entries = await fs.readdir(dirPath, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     const fullPath = path.join(dirPath, entry.name);
-    
+
     if (entry.isDirectory()) {
       await processDirectory(fullPath);
     } else if (entry.name.endsWith(".html")) {

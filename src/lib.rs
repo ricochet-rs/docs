@@ -134,7 +134,7 @@ fn DocPage(
                 // Remove leading slash for easier parsing
                 let trimmed = p.trim_start_matches('/');
                 let parts: Vec<&str> = trimmed.splitn(2, '/').collect();
-                
+
                 if !parts.is_empty() {
                     let version_str = parts[0]; // e.g., "v0.1" or "dev"
                     let doc_path = if parts.len() > 1 {

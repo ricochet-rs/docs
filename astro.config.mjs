@@ -117,23 +117,39 @@ export default defineConfig({
           label: "Admin",
           items: [
             {
-              label: "Configuration",
-              autogenerate: { directory: "/configuration" },
+              label: "Installation",
+              autogenerate: { directory: "/admin/installation" },
             },
             {
-              label: "Installation",
-              items: [
-                { label: "Prerequisites", slug: "installation/prerequisites" },
-                { label: "Container", slug: "installation/container" },
-                { label: "Binary", slug: "installation/binary" },
-              ],
+              label: "Configuration",
+              autogenerate: { directory: "/admin/configuration" },
+            },
+            {
+              label: "Pricing",
+              autogenerate: { directory: "/admin/pricing" },
+            },
+            {
+              label: "Technical Details",
+              autogenerate: { directory: "/admin/technical/" },
             },
           ],
         },
         {
           label: "User",
           items: [
-            { label: "Deployment", autogenerate: { directory: "deployment" } },
+            {
+              label: "Content Items",
+              autogenerate: { directory: "user/content-items" },
+            },
+            {
+              label: "Deployment",
+              autogenerate: { directory: "user/deployment" },
+            },
+            {
+              label: "Managing Content",
+              autogenerate: { directory: "user/managing-content" },
+            },
+            { label: "Tasks", autogenerate: { directory: "user/tasks" } },
           ],
         },
       ],

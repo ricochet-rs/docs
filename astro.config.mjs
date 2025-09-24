@@ -107,11 +107,11 @@ export default defineConfig({
       },
       sidebar: [
         // {
-          // label: "leading",
-          // items: [
-            // { label: "Docs", link: "/docs" },
-            // { label: "Demos", link: "/demos/1" },
-          // ],
+        // label: "leading",
+        // items: [
+        // { label: "Docs", link: "/docs" },
+        // { label: "Demos", link: "/demos/1" },
+        // ],
         // },
         {
           label: "Admin",

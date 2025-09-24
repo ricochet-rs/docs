@@ -101,9 +101,21 @@ export default defineConfig({
         }),
         starlightScrollToTop(),
       ],
+      social: [
+        {
+          icon: "github",
+          label: "GitHub",
+          href: "https://github.com/ricochet-rs/ricochet-docs",
+        },
+        {
+          icon: "discord",
+          label: "Discord",
+          href: "https://discord.gg/tAsn8GbR",
+        },
+      ],
       editLink: {
         baseUrl:
-          "https://github.com/ricochet-rs/ricochet-docs/_edit/main/astro/src/content/docs/",
+          "https://github.com/ricochet-rs/ricochet-docs/edit/main/src/content/docs/",
       },
       sidebar: [
         // {

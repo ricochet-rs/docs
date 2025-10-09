@@ -1,83 +1,65 @@
-lockfileVersion: "9.0"
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
 importers:
+
   .:
     devDependencies:
-      "@playwright/test":
+      '@playwright/test':
         specifier: ^1.44.1
         version: 1.55.0
-      "@types/node":
-        specifier: ^24.0.0
-        version: 24.4.0
+      '@types/node':
+        specifier: ^24.6.2
+        version: 24.6.2
       typescript:
         specifier: ^5.4.5
         version: 5.9.2
 
 packages:
-  "@playwright/test@1.55.0":
-    resolution:
-      {
-        integrity: sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==,
-      }
-    engines: { node: ">=18" }
+
+  '@playwright/test@1.55.0':
+    resolution: {integrity: sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==}
+    engines: {node: '>=18'}
     hasBin: true
 
-  "@types/node@24.4.0":
-    resolution:
-      {
-        integrity: sha512-gUuVEAK4/u6F9wRLznPUU4WGUacSEBDPoC2TrBkw3GAnOLHBL45QdfHOXp1kJ4ypBGLxTOB+t7NJLpKoC3gznQ==,
-      }
+  '@types/node@24.6.2':
+    resolution: {integrity: sha512-d2L25Y4j+W3ZlNAeMKcy7yDsK425ibcAOO2t7aPTz6gNMH0z2GThtwENCDc0d/Pw9wgyRqE5Px1wkV7naz8ang==}
 
   fsevents@2.3.2:
-    resolution:
-      {
-        integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==,
-      }
-    engines: { node: ^8.16.0 || ^10.6.0 || >=11.0.0 }
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
   playwright-core@1.55.0:
-    resolution:
-      {
-        integrity: sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==,
-      }
-    engines: { node: ">=18" }
+    resolution: {integrity: sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==}
+    engines: {node: '>=18'}
     hasBin: true
 
   playwright@1.55.0:
-    resolution:
-      {
-        integrity: sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==,
-      }
-    engines: { node: ">=18" }
+    resolution: {integrity: sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==}
+    engines: {node: '>=18'}
     hasBin: true
 
   typescript@5.9.2:
-    resolution:
-      {
-        integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==,
-      }
-    engines: { node: ">=14.17" }
+    resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
-  undici-types@7.11.0:
-    resolution:
-      {
-        integrity: sha512-kt1ZriHTi7MU+Z/r9DOdAI3ONdaR3M3csEaRc6ewa4f4dTvX4cQCbJ4NkEn0ohE4hHtq85+PhPSTY+pO/1PwgA==,
-      }
+  undici-types@7.13.0:
+    resolution: {integrity: sha512-Ov2Rr9Sx+fRgagJ5AX0qvItZG/JKKoBRAVITs1zk7IqZGTJUwgUr7qoYBpWwakpWilTZFM98rG/AFRocu10iIQ==}
 
 snapshots:
-  "@playwright/test@1.55.0":
+
+  '@playwright/test@1.55.0':
     dependencies:
       playwright: 1.55.0
 
-  "@types/node@24.4.0":
+  '@types/node@24.6.2':
     dependencies:
-      undici-types: 7.11.0
+      undici-types: 7.13.0
 
   fsevents@2.3.2:
     optional: true
@@ -92,4 +74,4 @@ snapshots:
 
   typescript@5.9.2: {}
 
-  undici-types@7.11.0: {}
+  undici-types@7.13.0: {}

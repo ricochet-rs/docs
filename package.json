@@ -15,13 +15,13 @@
     "@astrojs/starlight-markdoc": "^0.5.0",
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
-    "@tailwindcss/vite": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.14",
     "add": "^2.0.6",
     "astro": "5.14.3",
-    "sharp": "^0.34.3",
+    "sharp": "^0.34.4",
     "starlight-links-validator": "^0.18.0",
     "starlight-scroll-to-top": "^0.4.0",
-    "starlight-theme-nova": "^0.9.4",
-    "tailwindcss": "^4.1.13"
+    "starlight-theme-nova": "^0.9.5",
+    "tailwindcss": "^4.1.14"
   }
 }

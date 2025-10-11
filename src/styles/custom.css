@@ -343,10 +343,18 @@ ul:not(.large) :where(.astro-3ii7xxms)[aria-current="page"]:focus {
   font-weight: 400;
 }
 
-a.large[aria-current="page"] > :where(.astro-3ii7xxms),
-a.large[aria-current="page"]:hover > :where(.astro-3ii7xxms),
-a.large[aria-current="page"]:focus > :where(.astro-3ii7xxms) {
-  font-weight: 600;
+a[role="tab"],
+a[role="tab"]:hover,
+a[role="tab"]:focus {
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+/* Active state - only change bottom border color */
+a[role="tab"][aria-selected="true"],
+a[role="tab"][aria-selected="true"]:hover,
+a[role="tab"][aria-selected="true"]:focus {
+  border-bottom-color: var(--sl-color-text-accent) !important;
 }
 
 /* Back to top button styling */

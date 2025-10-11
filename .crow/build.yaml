@@ -14,7 +14,7 @@ steps:
   - name: PR docs preview
     image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.0
     settings:
-      path: "./"
+      path: "./dist"
       surge_token:
         from_secret: surge_token
       forge_repo_token:

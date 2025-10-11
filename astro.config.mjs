@@ -77,7 +77,7 @@ export default defineConfig({
       customCss: ["./src/styles/global.css", "./src/styles/custom.css"],
       components: {
         // Override the `ThemeSelect` component from the Nova theme
-        ThemeSelect: "./src/components/ThemeSelect.astro",
+        // ThemeSelect: "./src/components/ThemeSelect.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {

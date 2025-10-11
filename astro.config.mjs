@@ -81,6 +81,7 @@ export default defineConfig({
       components: {
         // Override the `ThemeSelect` component from the Nova theme
         ThemeSelect: "./src/components/ThemeSelect.astro",
+        ThemeProvider: "./src/components/ThemeProvider.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
       },
       // https://expressive-code.com/reference/configuration/

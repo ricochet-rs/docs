@@ -19,7 +19,7 @@
     "add": "^2.0.6",
     "astro": "5.14.3",
     "sharp": "^0.34.3",
-    "starlight-links-validator": "^0.17.2",
+    "starlight-links-validator": "^0.18.0",
     "starlight-scroll-to-top": "^0.4.0",
     "starlight-theme-nova": "^0.9.4",
     "tailwindcss": "^4.1.13"

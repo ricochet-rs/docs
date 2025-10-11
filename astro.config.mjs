@@ -18,6 +18,8 @@ export default defineConfig({
     markdoc(),
     starlight({
       title: "ricochet",
+      customCss: ["./src/styles/global.css", "./src/styles/custom.css"],
+      // customCss: ["./src/styles/global.css"],
       head: [
         {
           tag: "link",
@@ -76,10 +78,9 @@ export default defineConfig({
         // },
         // },
       ],
-      customCss: ["./src/styles/global.css", "./src/styles/custom.css"],
       components: {
         // Override the `ThemeSelect` component from the Nova theme
-        // ThemeSelect: "./src/components/ThemeSelect.astro",
+        ThemeSelect: "./src/components/ThemeSelect.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
       },
       // https://expressive-code.com/reference/configuration/

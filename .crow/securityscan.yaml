@@ -1,0 +1,29 @@
+when:
+  - event: cron
+    cron: securityscan
+
+steps:
+  - name: scan
+    image: reg.ricochet.rs/docker.io/aquasec/trivy:0.66.0
+    environment:
+      TRIVY_DISABLE_VEX_NOTICE: true
+    commands:
+      - trivy fs --format template --template @assets/trivy-markdown.tpl --skip-dirs vendor,node_modules/,extras . > scan.md
+
+  - name: Update issue
+    image: reg.ricochet.rs/docker.io/library/alpine:3.22
+    environment:
+      GH_TOKEN:
+        from_secret: ricochet_issue_token
+    commands:
+      - apk add -q --no-cache jq curl github-cli
+      - |
+        BODY_CONTENT=$(cat scan.md)
+        
+        ISSUE_NUMBER=$(gh issue list --json number --state open --search "Vulnerability dashboard" --jq '.[0].number')
+        
+        if [ -z "$ISSUE_NUMBER" ]; then
+          gh issue create --title "Vulnerability dashboard" --body "$BODY_CONTENT"
+        else
+          gh issue edit "$ISSUE_NUMBER" --body "$BODY_CONTENT"
+        fi

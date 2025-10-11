@@ -4,6 +4,9 @@ when:
   - event: push
     branch: ${CI_REPO_DEFAULT_BRANCH}
 
+labels:
+  type: static
+
 steps:
   - name: Build
     image: oven/bun:1.2

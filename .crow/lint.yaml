@@ -7,6 +7,9 @@ when:
     branch:
       - ${CI_REPO_DEFAULT_BRANCH}
 
+labels:
+  type: static
+
 steps:
   editor-config:
     image: reg.ricochet.rs/docker.io/mstruebing/editorconfig-checker:v3.4.1

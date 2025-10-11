@@ -15,7 +15,7 @@ export default defineConfig({
   integrations: [
     markdoc(),
     starlight({
-      title: "ricochet - Documentation",
+      title: "ricochet",
       head: [
         {
           tag: "link",
@@ -78,14 +78,15 @@ export default defineConfig({
       components: {
         // Override the `ThemeSelect` component from the Nova theme
         // ThemeSelect: "./src/components/ThemeSelect.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {
-        // themes: ['dracula', 'github-light'],
+        themes: ["catppuccin-mocha", "github-light"],
         // https://expressive-code.com/reference/style-overrides/
         useStarlightDarkModeSwitch: true,
-        useStarlightUiThemeColors: true,
-        styleOverrides: { borderRadius: "0.5rem", codePaddingBlock: "0.8rem" },
+        useStarlightUiThemeColors: false,
+        styleOverrides: { borderRadius: "0", codePaddingBlock: "0.8rem" },
       },
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [

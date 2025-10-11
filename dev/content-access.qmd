@@ -34,5 +34,3 @@ By default, only users who own an item can view, modify, or invoke a content ite
 - `contributor`: can create new deployments
 - `editor`: can deploy new bundles, manage access, and modify settings
 - `admin`: can deploy new bundles, add viewers & collaborators, and delete the item
-
-

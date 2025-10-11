@@ -1,7 +1,7 @@
 set dotenv-load:=true
 
 build:
-    bunx --bun astro build
+    bun astro build
 
 preview:
     bunx --bun astro dev

@@ -49,4 +49,3 @@ The spawn threshold is used to **determine when a new instance of a service shou
 The spawn threshold is an integer between 1 and 100. It is the ratio of the number of active connections to the maximum number of connections `active_connections / max_connections`. When the spawn threshold is reached, **a new instance is spawned**. 
 
 However, if the maximum number of instances has been reached, new connections are delegated to the application with the least number of active connections. Additionally, if all instances are at capacity, the spawn threshold is ignored.
-

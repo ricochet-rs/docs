@@ -9,7 +9,3 @@ Learn how to start deploying with **`ricochet`**.
 
 - Want to start deploying? Head to the [Quickstart](/quickstart).
 - Managing a ricochet server? Start by [installing ricochet](/install)
-
-
-
-

@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build:astro": "astro build",
+    "build:pagefind": "pagefind --site dist",
+    "build": "bun run build:astro && bun run build:pagefind",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -18,6 +20,7 @@
     "@tailwindcss/vite": "^4.1.14",
     "add": "^2.0.6",
     "astro": "5.14.3",
+    "pagefind": "^1.4.0",
     "sharp": "^0.34.4",
     "starlight-links-validator": "^0.18.0",
     "starlight-scroll-to-top": "^0.4.0",

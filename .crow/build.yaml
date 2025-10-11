@@ -7,6 +7,9 @@ when:
 labels:
   type: static
 
+depends_on:
+  - lint
+
 steps:
   - name: Build
     image: oven/bun:1.2
@@ -25,3 +28,23 @@ steps:
       forge_type: github
     when:
       - event: [pull_request, pull_request_closed]
+
+  - name: "Upload to S3"
+    image: reg.ricochet.rs/docker.io/woodpeckerci/plugin-s3:1.5.2
+    settings:
+      bucket: ricochet-docs
+      region: fsn1
+      endpoint: https://fsn1.your-objectstorage.com
+      access_key:
+        from_secret: s3_access_key
+      secret_key:
+        from_secret: s3_secret_key
+      source: dist/**/*
+      strip_prefix: dist/
+      overwrite: true
+      retry_count: 3
+      path_style: true
+    when:
+      - event: manual
+      - event: push
+        branch: ${CI_REPO_DEFAULT_BRANCH}

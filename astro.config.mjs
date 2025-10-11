@@ -12,6 +12,8 @@ import starlightScrollToTop from "starlight-scroll-to-top";
 // https://astro.build/config
 export default defineConfig({
   site: "https://docs.ricochet.rs",
+  output: "static",
+  trailingSlash: "ignore",
   integrations: [
     markdoc(),
     starlight({

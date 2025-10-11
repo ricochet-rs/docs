@@ -7,121 +7,123 @@
 
 /* Ricochet theme variables */
 :root {
-    /* Light mode - Starlight uses inverted gray scale in light mode */
-    --sl-color-white: oklch(0.145 0 0); /* Dark text */
-    --sl-color-black: oklch(1 0 0); /* White background */
-    --sl-color-gray-1: oklch(0.205 0 0); /* Darkest */
-    --sl-color-gray-2: oklch(0.556 0 0);
-    --sl-color-gray-3: oklch(0.708 0 0);
-    --sl-color-gray-4: oklch(0.922 0 0);
-    --sl-color-gray-5: oklch(0.97 0 0);
-    --sl-color-gray-6: oklch(0.985 0 0);
-    --sl-color-gray-7: oklch(1 0 0); /* Lightest */
+  /* Light mode - Starlight uses inverted gray scale in light mode */
+  --sl-color-white: oklch(0.145 0 0); /* Dark text */
+  --sl-color-black: oklch(1 0 0); /* White background */
+  --sl-color-gray-1: oklch(0.205 0 0); /* Darkest */
+  --sl-color-gray-2: oklch(0.556 0 0);
+  --sl-color-gray-3: oklch(0.708 0 0);
+  --sl-color-gray-4: oklch(0.922 0 0);
+  --sl-color-gray-5: oklch(0.97 0 0);
+  --sl-color-gray-6: oklch(0.985 0 0);
+  --sl-color-gray-7: oklch(1 0 0); /* Lightest */
 
-    /* Backgrounds */
-    --sl-color-bg: oklch(1 0 0);
-    --sl-color-bg-nav: oklch(1 0 0);
-    --sl-color-bg-sidebar: oklch(1 0 0);
-    --sl-color-bg-inline-code: oklch(0.97 0 0);
+  /* Backgrounds */
+  --sl-color-bg: oklch(1 0 0);
+  --sl-color-bg-nav: oklch(1 0 0);
+  --sl-color-bg-sidebar: oklch(1 0 0);
+  --sl-color-bg-inline-code: oklch(0.97 0 0);
 
-    /* Text colors */
-    --sl-color-text: oklch(0.145 0 0);
-    --sl-color-text-accent: oklch(0.205 0 0);
+  /* Text colors */
+  --sl-color-text: oklch(0.145 0 0);
+  --sl-color-text-accent: oklch(0.205 0 0);
 
-    /* Borders */
-    --sl-color-hairline: oklch(0.922 0 0);
-    --sl-color-hairline-light: oklch(0.97 0 0);
-    --sl-color-hairline-shade: oklch(0.922 0 0);
+  /* Borders */
+  --sl-color-hairline: oklch(0.922 0 0);
+  --sl-color-hairline-light: oklch(0.97 0 0);
+  --sl-color-hairline-shade: oklch(0.922 0 0);
 }
 
 :root[data-theme="dark"] {
-    /* Dark mode - Starlight uses normal gray scale in dark mode */
-    --sl-color-white: oklch(0.985 0 0); /* Light text */
-    --sl-color-black: oklch(0.145 0 0); /* Dark background */
-    --sl-color-gray-1: oklch(0.205 0 0); /* Darkest */
-    --sl-color-gray-2: oklch(0.831 0 0); /* Sidebar text - much lighter */
-    --sl-color-gray-3: oklch(0.371 0 0);
-    --sl-color-gray-4: oklch(0.556 0 0);
-    --sl-color-gray-5: oklch(0.708 0 0);
-    --sl-color-gray-6: oklch(0.922 0 0); /* Lightest */
+  /* Dark mode - Starlight uses normal gray scale in dark mode */
+  --sl-color-white: oklch(0.985 0 0); /* Light text */
+  --sl-color-black: oklch(0.145 0 0); /* Dark background */
+  --sl-color-gray-1: oklch(0.205 0 0); /* Darkest */
+  --sl-color-gray-2: oklch(0.831 0 0); /* Sidebar text - much lighter */
+  --sl-color-gray-3: oklch(0.371 0 0);
+  --sl-color-gray-4: oklch(0.556 0 0);
+  --sl-color-gray-5: oklch(0.708 0 0);
+  --sl-color-gray-6: oklch(0.922 0 0); /* Lightest */
 
-    /* Backgrounds */
-    --sl-color-bg: oklch(0.145 0 0);
-    --sl-color-bg-nav: oklch(0.205 0 0);
-    --sl-color-bg-sidebar: lab(7.78201% -.0000149012 0); /* Match Ricochet sidebar */
-    --sl-color-bg-inline-code: oklch(0.269 0 0);
+  /* Backgrounds */
+  --sl-color-bg: oklch(0.145 0 0);
+  --sl-color-bg-nav: oklch(0.205 0 0);
+  --sl-color-bg-sidebar: lab(
+    7.78201% -0.0000149012 0
+  ); /* Match Ricochet sidebar */
+  --sl-color-bg-inline-code: oklch(0.269 0 0);
 
-    /* Text colors */
-    --sl-color-text: oklch(0.708 0 0);
-    --sl-color-text-accent: oklch(0.922 0 0);
+  /* Text colors */
+  --sl-color-text: oklch(0.708 0 0);
+  --sl-color-text-accent: oklch(0.922 0 0);
 
-    /* Borders */
-    --sl-color-hairline: oklch(0.275 0 0);
-    --sl-color-hairline-light: oklch(0.269 0 0);
-    --sl-color-hairline-shade: oklch(0.275 0 0);
+  /* Borders */
+  --sl-color-hairline: oklch(0.275 0 0);
+  --sl-color-hairline-light: oklch(0.269 0 0);
+  --sl-color-hairline-shade: oklch(0.275 0 0);
 }
 
 @layer theme {
-    * {
-        --radius-none: 0;
-        --radius-sm: 0;
-        --radius-md: 0;
-        --radius-lg: 0;
-        --radius-xl: 0;
-        --radius-2xl: 0;
-        --radius-3xl: 0;
-        --radius-full: 0;
-    }
+  * {
+    --radius-none: 0;
+    --radius-sm: 0;
+    --radius-md: 0;
+    --radius-lg: 0;
+    --radius-xl: 0;
+    --radius-2xl: 0;
+    --radius-3xl: 0;
+    --radius-full: 0;
+  }
 }
 
 /* Override Starlight component border-radius */
 @layer components {
-    * {
-        border-radius: 0 !important;
-    }
+  * {
+    border-radius: 0 !important;
+  }
 }
 
 /* Override sidebar tab styles */
 .tab > [role="tab"] {
-    border: none !important;
-    border-bottom: 2px solid transparent !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
 }
 
 .tab > [role="tab"][aria-selected="true"] {
-    border-bottom: 2px solid var(--sl-color-text-accent) !important;
+  border-bottom: 2px solid var(--sl-color-text-accent) !important;
 }
 
 /* Sidebar active/hover states to match Ricochet app */
 :root[data-theme="dark"] {
-    --sl-sidebar-item-bg-active: oklch(0.985 0 0);
-    --sl-sidebar-item-text-active: oklch(0.145 0 0);
+  --sl-sidebar-item-bg-active: oklch(0.985 0 0);
+  --sl-sidebar-item-text-active: oklch(0.145 0 0);
 }
 
 /* Dark mode sidebar background - match Ricochet app */
 :root[data-theme="dark"] .sidebar-content {
-    background: lab(7.78201% -.0000149012 0) !important;
+  background: lab(7.78201% -0.0000149012 0) !important;
 }
 
 /* Lighter borders in dark mode */
 :root[data-theme="dark"] {
-    /* Search bar border */
-    & .search-input,
-    & [role="search"] input {
-        border-color: oklch(0.325 0 0) !important;
-    }
+  /* Search bar border */
+  & .search-input,
+  & [role="search"] input {
+    border-color: oklch(0.325 0 0) !important;
+  }
 
-    /* "On this page" and other sidebar borders */
-    & .right-sidebar,
-    & .right-sidebar-panel {
-        border-color: oklch(0.325 0 0) !important;
-    }
+  /* "On this page" and other sidebar borders */
+  & .right-sidebar,
+  & .right-sidebar-panel {
+    border-color: oklch(0.325 0 0) !important;
+  }
 
-    /* Table borders - lighter in dark mode */
-    & table,
-    & th,
-    & td {
-        border-color: oklch(0.325 0 0) !important;
-    }
+  /* Table borders - lighter in dark mode */
+  & table,
+  & th,
+  & td {
+    border-color: oklch(0.325 0 0) !important;
+  }
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

@@ -1,0 +1,24 @@
+when:
+  - event: [pull_request, pull_request_closed]
+  - event: manual
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+
+steps:
+  - name: Build
+    image: oven/bun:1.2
+    commands:
+      - bun install
+      - bunx --bun astro build
+
+  - name: PR docs preview
+    image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.0
+    settings:
+      path: "./"
+      surge_token:
+        from_secret: surge_token
+      forge_repo_token:
+        from_secret: ricochet_issue_token
+      forge_type: github
+    when:
+      - event: [pull_request, pull_request_closed]

@@ -1,5 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>ricochet-rs/renovate-config"],
-  "separateMinorPatch": true
+  "extends": ["github>ricochet-rs/renovate-config"]
 }

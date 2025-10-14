@@ -4,7 +4,7 @@ title: Helm
 
 ## Installation
 
-You can install ricochet through our OCI helm chart via
+Install ricochet using the OCI Helm chart:
 
 ```sh
 helm install ricochet oci://reg.ricochet.rs/helm/ricochet
@@ -12,35 +12,38 @@ helm install ricochet oci://reg.ricochet.rs/helm/ricochet
 
 ## Architecture
 
-Each ricochet app is a Kubernetes Deployment.
-Each ricochet task is a Kubernetes Job.
+The ricochet server creates Kubernetes resources for your workloads:
 
-These resources are created by the ricochet server.
-The settings in `launcher.deployment` allow to configure the deployment spec for apps.
+- Each ricochet app runs as a Kubernetes Deployment
+- Each ricochet task runs as a Kubernetes Job
+
+Configure deployment specs for apps using the `launcher.deployment` settings.
 
 {% aside type="tip" %}
-To control more aspects of the deployment spec of an app, see [Customizing the Deployment Spec](#custom-deployment-config-per-app).
+For advanced deployment customization, see [Custom Deployment Config per App](#custom-deployment-config-per-app).
 {% /aside %}
 
 ### App Deployment Flow
 
-When a new app is deployed, a `deploy-<ulid>` job is being created which installs all required dependency packages.
+When you deploy a new app, ricochet creates a `deploy-<ulid>` job that installs all required dependency packages.
 
-Upon starting an app, a init-container (`check-dependencies`) is spawned which ensures that all app dependencies are installed.
-This is required because the initial dependency installation will only run on a specific node which has a dedicated architecture.
-If the app pod would start on a node with a different architecture, it would fail as the dependencies have not yet been installed for that architecture.
-In that case, the init-container will install the dependencies again, if needed.
+When an app starts, an init-container (`check-dependencies`) verifies that all dependencies are installed.
+This is necessary for every app start because the initial dependency installation runs on a node with a specific architecture.
+If the app pod starts on a node with a different architecture, the dependencies may not (yet) be available.
+In this case, the init-container installs the dependencies for that architecture.
 
 ## Persistence
 
-There are two important directories to preserve:
+Ricochet requires two persistent volumes:
 
-- the "data" dir at `/opt/ricochet/data`
-- the "cache" dir at `/opt/ricochet/cache`
+- "Data": `/opt/ricochet/data`
+- "Cache": `/opt/ricochet/cache`
 
-Both must be "ReadWriteMany" volumens as they must have the capability to be mounted into multiple pods.
+Both volumes must use "ReadWriteMany" access mode to be mounted across multiple pods.
 
-Here are some recommended PVC sizes depending on how (active) apps the instance will likely host*:
+### Recommended PVC Sizes
+
+Here are some recommendations for your volumes based on the expected number of active apps:
 
 | # of Apps  | Cache | Data |
 |---------|-------|-------|
@@ -48,58 +51,63 @@ Here are some recommended PVC sizes depending on how (active) apps the instance 
 | 5 - 20  | 25 Gi | 50 Gi |
 | 20+      | 30 Gi | 75Gi |
 
-\* `cache` storage need does not increase linearly as the more apps are deployed, the more dependencies are shared.
-Data (app) storage instead has a more linear growth but highly depends on the size of the individual bundles.
+The "cache" PVC does not scale linearly because apps share dependencies.
+The more apps deployed, the more overlap in packages.
 
-The reasoning behind these values is as follows: The
+The "data" PVC scales more linearly but depends on bundle sizes.
+Each bundle can be several megabytes, and a single app can accumulate many deployments during development.
 
-- The `cache` dir stores all R/Julia/Python packages across all apps and tasks.
-Over time, multiple interpreter versions will be used and the cache will grow.
+### Storage Details
 
-- The `data` dir stores all app and user content.
-  It's size highly depends on the size of the bundles for each app. Bundles can be multiple MB in size and a single deployment can grow quickly if many deployments are issued during development. One can also start smaller and extend the PVC size at any time, though doing so might come with avoidable friction.
+- The "cache" PVC stores all R, Julia, and Python packages across apps and tasks.
+It grows over time as different interpreter versions are used.
+
+- The "data" PVC stores all app and user content.
+Size depends on bundle sizes and deployment frequency.
+You can start with smaller volumes and expand as needed, though resizing may involve some operational overhead.
 
 {% aside type="caution" %}
-Ensure you have proper backups for your "data" PVC. Loosing access to it means loosing all app and user content.
+Ensure you have proper backups for your data PVC. Loss of this volume means loss of all app and user content.
 {% /aside %}
 
 ## App Scaling
 
-ricochet has a built-in scaling mechanism for each App deployment.
+Ricochet includes built-in horizontal scaling for app deployments.
 
-Because each app is a Kubernetes Deployment, apps can scale horizontally using multiple replicas.
-The scaling logic is making use of the following internal metrics:
+Each app deployment can scale across multiple replicas based on these parameters:
 
-- `min_instances`: The minimum number of replicas to keep running.
-- `max_instances`: The maximum number of replicas to run.
-- `spawn_threshold`: Occupied percentage of connections after which a scale up is triggered.
-- `max_connections`: The maximum number of connections per app replica.
-- `max_connection_age`: The maximum age of a connection before it is closed.
-- `inactive_timeout`: The maximum time a connection can be idle before it is closed.
+- `min_instances`: Minimum number of replicas to maintain
+- `max_instances`: Maximum number of replicas to run
+- `spawn_threshold`: Connection occupancy percentage that triggers scale-up
+- `max_connections`: Maximum connections per app replica
+- `max_connection_age`: Maximum duration before closing a connection
+- `inactive_timeout`: Maximum idle time before closing a connection
 
-All of the above influence when and how an app deployment is scaled.
+These parameters together determine scaling behavior.
 
 ## High Availability
 
 ### Server
 
-The ricochet server does not yet support high availability.
+The ricochet server does not currently support high availability.
 
 ### Apps
 
-Apps are Kubernetes deployments which support running multiple replicas.
-This effectively ensures High-availability, and can be hardened by enforcing a minimum number of replicas which are spread across multiple nodes.
+Apps run as Kubernetes deployments with support for multiple replicas, providing high availability.
+You can strengthen this by enforcing a minimum replica count distributed across multiple nodes.
 
 ## Custom Deployment Config per App
 
-It is possible to extend the Deployment spec on a per app basis with custom YAML configurations.
-This is considered an advanced feature and care must be taken to not add or overwrite config sections which already exist.
-The following ones are possible set instance-wide through the helm chart:
+You can extend the deployment spec per app with custom YAML configurations.
+This is an advanced feature.
+Care must be taken to avoid modifying sections that already exist through instance-wide configuration set via the Helm chart.
+
+The following fields can be set instance-wide through the Helm chart and should **not** be overwritten on a per-app basis:
 
 - imagePullPolicy
 - imagePullSecrets
 - strategy
 
 {% aside type="note" %}
-For security reasons, this feature is disabled by default and must be enabled explicitly through `allow_custom_k8s_config` in the helm chart values.
+This feature is disabled by default for security. Enable it by setting `allow_custom_k8s_config` to `true` in the Helm chart values.
 {% /aside %}

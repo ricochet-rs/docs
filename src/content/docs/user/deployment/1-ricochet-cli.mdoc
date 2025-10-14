@@ -1,8 +1,47 @@
 ---
-title: Using the ricochet CLI
+title: The ricochet CLI
 ---
 
+The ricochet CLI is a Rust-based command-line tool designed to facilitate the deployment and management of ricochet apps and tasks.
+It provides a user-friendly interface for interacting with the ricochet API, allowing users to easily create, manage, and monitor their ricochet instances.
+
 ## Installation
+
+### Manual Installation
+
+We provide pre-built binaries for macOS, Linux, and Windows.
+The binaries are available for download via S3 under the following URL (substitute an existing version):
+
+```
+https://hel1.your-objectstorage.com/ricochet-cli/$VERSION/ricochet-$VERSION-$OS_ARCH.tar.gz
+```
+
+The following `$OS_ARCH` combinations are available:
+
+- `aarch64` (Linux)
+- `x86_64` (Linux)
+- `windows.exe`
+
+After downloading the tarball, extract it and place the binary in your system's PATH:
+
+```sh
+tar -xzf ricochet-$VERSION-$OS_ARCH.tar.gz
+mv ricochet-$VERSION-$OS_ARCH/ricochet /usr/local/bin/
+```
+
+### Homebrew (macOS)
+
+For macOS, we also provide a Homebrew formula:
+
+```sh
+brew install ricochet
+```
+
+### Windows
+
+{% aside type="tip" %}
+A Scoop formula is planned but not yet available.
+{% /aside %}
 
 ## Authentication
 

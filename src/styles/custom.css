@@ -58,3 +58,13 @@
 .tab > [role="tab"][aria-selected="true"] {
   border-bottom: 2px solid var(--sl-color-text-accent) !important;
 }
+
+/* Theme-responsive logo */
+.theme-logo {
+  display: inline-block;
+}
+
+/* SVG defaults to black in light mode - invert for dark mode */
+[data-theme="light"] .theme-logo {
+  filter: invert(1);
+}

@@ -65,6 +65,6 @@
 }
 
 /* SVG defaults to black in light mode - invert for dark mode */
-[data-theme="dark"] .theme-logo {
+[data-theme="light"] .theme-logo {
   filter: invert(1);
 }

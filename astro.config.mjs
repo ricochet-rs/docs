@@ -95,9 +95,7 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightThemeNova(),
-        starlightLinksValidator({
-          errorOnInvalidHashes: false,
-        }),
+        starlightLinksValidator(),
         starlightUtils({
           multiSidebar: {
             switcherStyle: "horizontalList",

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.2"
+   viewBox="0 0 1372.1141 1421.171"
+   width="1372.1141"
+   height="1421.1709"
+   id="svg1"
+   sodipodi:docname="logo-25px-margin.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   inkscape:export-filename="logo-white-bg.png"
+   inkscape:export-xdpi="98.650002"
+   inkscape:export-ydpi="98.650002"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.28"
+     inkscape:cx="783.92857"
+     inkscape:cy="983.92857"
+     inkscape:window-width="1472"
+     inkscape:window-height="862"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1"
+     inkscape:export-bgcolor="#ffffffff">
+    <inkscape:page
+       x="0"
+       y="1.8111898e-06"
+       width="1372.1141"
+       height="1421.171"
+       id="page1"
+       margin="15 147.14285 15 193.57143"
+       bleed="0" />
+  </sodipodi:namedview>
+  <title
+     id="title1">ricochet</title>
+  <style
+     id="style1">
+    .s0 {
+      fill: #000000;
+    }
+    @media (prefers-color-scheme: dark) {
+      .s0 {
+        fill: #ffffff;
+      }
+    }
+  </style>
+  <path
+     id="Color Fill 1"
+     class="s0"
+     d="m 261.65197,665.11807 c 26.88951,-33.12231 39.8725,-76.91815 72.56202,-104.98964 36.01484,-18.18279 105.56093,-7.18006 94.46942,-68.07746 0.45825,-56.4786 -11.16584,-114.54439 11.37373,-168.65561 7.07789,-42.11772 62.14383,-39.80693 46.3812,7.67537 -1.70342,24.63621 8.72498,79.62652 31.99089,32.4004 15.23791,-32.13587 75.78802,-64.27319 66.47075,-2.91305 -1.82502,59.66754 -1.62463,128.79929 -44.98582,175.36271 -32.30129,34.87431 -15.51869,98.42356 10.52929,130.27547 46.21816,-13.45542 95.16661,1.59324 140.46575,-13.5405 64.7303,-18.57848 136.83149,-21.33954 201.20937,0.39477 50.80037,16.28742 89.51597,57.27139 118.79893,100.06517 29.7867,25.27571 6.5212,134.18181 62.2102,84.73714 37.0719,-25.5426 50.2629,51.98946 23.237,73.91103 0.7669,11.66344 -41.524,32.7988 -45.1586,36.63028 -38.4186,-3.58803 -76.40643,42.15636 -105.45749,41.66617 27.56129,40.84488 20.01651,104.38218 -40.41172,100.28288 -59.16291,4.0088 -117.91069,24.8214 -177.73575,13.2494 -15.39358,-18.509 36.60392,-65.6398 71.15981,-65.5006 22.94776,2.9383 89.49776,-1.4171 41.59766,-28.7096 -33.28876,-32.39286 -70.79728,-52.66925 -119.83962,-53.95922 -51.72572,-17.3891 -38.24979,57.37292 -63.56189,85.72072 5.83948,46.637 -24.67146,84.2176 -74.22981,77.4683 -25.73624,1.8362 -64.97502,4.8619 -28.87041,-22.4127 -26.05867,2.0875 -73.64174,6.7496 -40.60093,-30.2298 45.90429,-8.726 57.64576,-71.60992 36.90758,-105.36289 -56.52897,-18.95685 -104.75161,-62.45138 -125.33602,-119.03188 -18.48672,-36.6233 -15.31062,-101.20769 -71.96405,-98.63992 -45.7364,0.88026 -82.45172,-30.04864 -91.09097,-72.60738 z"
+     style="stroke-width:0.829384"
+     shape-rendering="geometricPrecision" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>ricochet</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

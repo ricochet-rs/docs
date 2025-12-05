@@ -1,3 +1,0 @@
-# Installing `ricochet`
-
-TODO — if interested in trialing ricochet please email <a href="mailto:contact@ricochet.rs">contact@ricochet.rs</a>

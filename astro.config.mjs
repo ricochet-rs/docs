@@ -123,13 +123,25 @@ export default defineConfig({
           "https://github.com/ricochet-rs/ricochet-docs/edit/main/src/content/docs/",
       },
       sidebar: [
-        // {
-        // label: "leading",
-        // items: [
-        // { label: "Docs", link: "/docs" },
-        // { label: "Demos", link: "/demos/1" },
-        // ],
-        // },
+        {
+          label: "User",
+          items: [
+            "user/quickstart",
+            {
+              label: "Content Items",
+              autogenerate: { directory: "user/content-items" },
+            },
+            {
+              label: "Deployment",
+              autogenerate: { directory: "user/deployment" },
+            },
+            {
+              label: "Managing Content",
+              autogenerate: { directory: "user/managing-content" },
+            },
+            { label: "Tasks", autogenerate: { directory: "user/tasks" } },
+          ],
+        },
         {
           label: "Admin",
           items: [
@@ -149,24 +161,6 @@ export default defineConfig({
               label: "Technical Details",
               autogenerate: { directory: "/admin/technical/" },
             },
-          ],
-        },
-        {
-          label: "User",
-          items: [
-            {
-              label: "Content Items",
-              autogenerate: { directory: "user/content-items" },
-            },
-            {
-              label: "Deployment",
-              autogenerate: { directory: "user/deployment" },
-            },
-            {
-              label: "Managing Content",
-              autogenerate: { directory: "user/managing-content" },
-            },
-            { label: "Tasks", autogenerate: { directory: "user/tasks" } },
           ],
         },
       ],

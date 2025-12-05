@@ -12,19 +12,19 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/markdoc": "0.15.8",
-    "@astrojs/starlight": "0.36.2",
-    "@astrojs/starlight-markdoc": "0.5.1",
-    "@astrojs/starlight-tailwind": "4.0.2",
+    "@astrojs/markdoc": "0.15.9",
+    "@astrojs/starlight": "0.36.3",
+    "@astrojs/starlight-markdoc": "^0.5.0",
+    "@astrojs/starlight-tailwind": "^4.0.1",
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
     "@tailwindcss/vite": "^4.1.14",
     "add": "^2.0.6",
-    "astro": "5.15.5",
+    "astro": "5.16.0",
     "pagefind": "^1.4.0",
     "sharp": "^0.34.4",
     "starlight-links-validator": "^0.19.1",
     "starlight-scroll-to-top": "^0.4.0",
-    "starlight-theme-nova": "^0.9.5",
+    "starlight-theme-nova": "^0.10.0",
     "tailwindcss": "^4.1.14"
   }
 }

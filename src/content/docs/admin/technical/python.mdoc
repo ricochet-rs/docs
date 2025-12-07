@@ -1,0 +1,48 @@
+---
+title: Python Support
+---
+
+ricochet requires [`uv`](https://docs.astral.sh/uv/) to run and manage python content. We require the use of uv managed python installations when deploying python content to ricochet. This ensures that no system installations are used and that there is predictable behavior across all deployments.
+
+## Version discovery
+
+ricochet uses the following command to discover available python interpreters for running python based items.
+
+```bash
+uv python list \
+  --only-installed \
+  --managed-python \
+  --no-python-downloads
+  --output-format json
+```
+
+We will only ever use pre-existing python installations that are managed by uv. To install versions of python see the [`uv python install` documentation](https://docs.astral.sh/uv/guides/install-python/).
+
+### Environment Restoration
+
+We use `uv` to manage python environments for each deployment. Virtual environments are created for each deployment by using the following command:
+
+```bash
+uv sync \
+  --python {matched-python-interpreter}
+  --cache-dir {RICOCHET_HOME}/.cache/uv
+  --no-python-downloads \
+  --frozen
+```
+
+We use a uv cache that is specific to ricochet and lives inside of the `RICOCHET_HOME` path.
+
+## Deployment requirements
+
+When deploying Python content to ricochet, you must provide both:
+
+1. **`uv.lock`**
+2. **`.python-version`**
+
+The `.python-version` file should be created with `uv`.
+
+```bash
+uv python pin
+```
+
+The `.python-version` is used to determine which version of python should be used for deployment of the python item. This must be compatible with the `requires-python` constraint from `uv.lock`

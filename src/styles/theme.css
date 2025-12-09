@@ -73,6 +73,7 @@
     --spacing: 0.25rem;
 }
 
+/* NOte that this is changed from .dark to :root[data-theme="dark"] for starlight compat */
 :root[data-theme="dark"] {
     /* Dark Theme - Revolver-tinted blacks with fog/purple accents */
     --background: oklch(0.1448 0.015 330.91); /* tinted black */

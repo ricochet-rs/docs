@@ -18,7 +18,12 @@ export default defineConfig({
     markdoc(),
     starlight({
       title: "ricochet",
-      customCss: ["./src/styles/global.css", "./src/styles/custom.css"],
+      customCss: [
+        "./src/styles/theme.css",
+        "./src/styles/starlight-mappings.css",
+        "./src/styles/global.css",
+        "./src/styles/custom.css",
+      ],
       // customCss: ["./src/styles/global.css"],
       head: [
         {

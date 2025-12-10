@@ -5,25 +5,6 @@
 
 @layer base, starlight, theme, components, utilities;
 
-.dark {
-  /* Dark mode sidebar background - match Ricochet app */
-  --sl-color-bg-sidebar: lab(7.78201% -0.0000149012 0);
-
-  --sl-sidebar-item-bg-active: oklch(0.985 0 0);
-  --sl-sidebar-item-text-active: oklch(0.145 0 0);
-}
-
-/* Light mode accent color */
-:root,
-:root[data-theme="light"] {
-  --sl-color-text-accent: #c833f2;
-}
-
-/* Dark mode accent color */
-:root[data-theme="dark"] {
-  --sl-color-text-accent: #e554ce;
-}
-
 @layer theme {
   * {
     --radius-none: 0;
@@ -67,4 +48,15 @@
 /* SVG defaults to black in light mode - invert for dark mode */
 [data-theme="light"] .theme-logo {
   filter: invert(1);
+}
+
+/* Sidebar styles using shadcn sidebar variables */
+.sidebar-content {
+  background-color: var(--sidebar);
+}
+
+.sidebar-content a:hover,
+.sidebar-content a:focus {
+  background-color: var(--sidebar-accent) !important;
+  color: var(--sidebar-accent-foreground) !important;
 }

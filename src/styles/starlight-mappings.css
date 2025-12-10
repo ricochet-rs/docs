@@ -1,58 +1,58 @@
 /* Starlight variable mappings - Light mode */
 :root {
-    /* Core colors - Starlight inverts white/black naming between modes */
-    --sl-color-white: var(--foreground);
-    --sl-color-black: var(--background);
+  /* Core colors - Starlight inverts white/black naming between modes */
+  --sl-color-white: var(--foreground);
+  --sl-color-black: var(--background);
 
-    /* Gray scale mapped from shadcn semantic colors */
-    --sl-color-gray-1: var(--foreground);
-    --sl-color-gray-2: var(--muted-foreground);
-    --sl-color-gray-3: var(--muted-foreground);
-    --sl-color-gray-4: var(--border);
-    --sl-color-gray-5: var(--border);
-    --sl-color-gray-6: var(--muted);
-    --sl-color-gray-7: var(--secondary);
+  /* Gray scale mapped from shadcn semantic colors */
+  --sl-color-gray-1: var(--foreground);
+  --sl-color-gray-2: var(--muted-foreground);
+  --sl-color-gray-3: var(--muted-foreground);
+  --sl-color-gray-4: var(--border);
+  --sl-color-gray-5: var(--border);
+  --sl-color-gray-6: var(--muted);
+  --sl-color-gray-7: var(--secondary);
 
-    /* Accent colors */
-    --sl-color-accent-low: var(--accent);
-    --sl-color-accent: var(--primary);
-    --sl-color-accent-high: var(--primary);
+  /* Accent colors */
+  --sl-color-accent-low: var(--accent);
+  --sl-color-accent: var(--primary);
+  --sl-color-accent-high: var(--primary);
 
-    /* Semantic mappings */
-    --sl-color-text: var(--foreground);
-    --sl-color-text-accent: var(--primary);
-    --sl-color-bg: var(--background);
-    --sl-color-bg-nav: var(--card);
-    --sl-color-bg-sidebar: var(--sidebar);
-    --sl-color-bg-inline-code: var(--muted);
-    --sl-color-hairline: var(--border);
-    --sl-color-hairline-light: var(--border);
-    --sl-color-hairline-shade: var(--border);
+  /* Semantic mappings */
+  --sl-color-text: var(--foreground);
+  --sl-color-text-accent: var(--primary);
+  --sl-color-bg: var(--background);
+  --sl-color-bg-nav: var(--card);
+  --sl-color-bg-sidebar: var(--sidebar);
+  --sl-color-bg-inline-code: var(--muted);
+  --sl-color-hairline: var(--border);
+  --sl-color-hairline-light: var(--border);
+  --sl-color-hairline-shade: var(--border);
 }
 
 /* Starlight variable mappings - Dark mode */
 :root[data-theme="dark"] {
-    --sl-color-white: var(--foreground);
-    --sl-color-black: var(--background);
+  --sl-color-white: var(--foreground);
+  --sl-color-black: var(--background);
 
-    --sl-color-gray-1: var(--foreground);
-    --sl-color-gray-2: var(--muted-foreground);
-    --sl-color-gray-3: var(--muted-foreground);
-    --sl-color-gray-4: var(--border);
-    --sl-color-gray-5: var(--border);
-    --sl-color-gray-6: var(--card);
+  --sl-color-gray-1: var(--foreground);
+  --sl-color-gray-2: var(--muted-foreground);
+  --sl-color-gray-3: var(--muted-foreground);
+  --sl-color-gray-4: var(--border);
+  --sl-color-gray-5: var(--border);
+  --sl-color-gray-6: var(--card);
 
-    --sl-color-accent-low: var(--accent);
-    --sl-color-accent: var(--primary);
-    --sl-color-accent-high: var(--primary);
+  --sl-color-accent-low: var(--accent);
+  --sl-color-accent: var(--primary);
+  --sl-color-accent-high: var(--primary);
 
-    --sl-color-text: var(--foreground);
-    --sl-color-text-accent: var(--primary);
-    --sl-color-bg: var(--background);
-    --sl-color-bg-nav: var(--card);
-    --sl-color-bg-sidebar: var(--sidebar);
-    --sl-color-bg-inline-code: var(--muted);
-    --sl-color-hairline: var(--border);
-    --sl-color-hairline-light: var(--border);
-    --sl-color-hairline-shade: var(--border);
+  --sl-color-text: var(--foreground);
+  --sl-color-text-accent: var(--primary);
+  --sl-color-bg: var(--background);
+  --sl-color-bg-nav: var(--card);
+  --sl-color-bg-sidebar: var(--sidebar);
+  --sl-color-bg-inline-code: var(--muted);
+  --sl-color-hairline: var(--border);
+  --sl-color-hairline-light: var(--border);
+  --sl-color-hairline-shade: var(--border);
 }

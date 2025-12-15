@@ -8,6 +8,7 @@ import markdoc from "@astrojs/markdoc";
 import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
+import starlightVersions from "starlight-versions";
 
 // https://astro.build/config
 export default defineConfig({
@@ -88,6 +89,9 @@ export default defineConfig({
         ThemeSelect: "./src/components/ThemeSelect.astro",
         ThemeProvider: "./src/components/ThemeProvider.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
+        // Override Banner and PageTitle to remove version outdated warnings
+        Banner: "./src/components/Banner.astro",
+        PageTitle: "./src/components/PageTitle.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {
@@ -99,6 +103,13 @@ export default defineConfig({
       },
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
+        starlightVersions({
+          current: { label: "1.0 (latest)", redirect: "root" },
+          versions: [
+            { slug: "v1-0", label: "1.0" },
+            { slug: "v0-1", label: "0.1" },
+          ],
+        }),
         starlightThemeNova(),
         starlightLinksValidator(),
         starlightUtils({
@@ -127,48 +138,9 @@ export default defineConfig({
         baseUrl:
           "https://github.com/ricochet-rs/ricochet-docs/edit/main/src/content/docs/",
       },
-      sidebar: [
-        {
-          label: "User",
-          items: [
-            "user/quickstart",
-            {
-              label: "Content Items",
-              autogenerate: { directory: "user/content-items" },
-            },
-            {
-              label: "Deployment",
-              autogenerate: { directory: "user/deployment" },
-            },
-            {
-              label: "Managing Content",
-              autogenerate: { directory: "user/managing-content" },
-            },
-            { label: "Tasks", autogenerate: { directory: "user/tasks" } },
-          ],
-        },
-        {
-          label: "Admin",
-          items: [
-            {
-              label: "Installation",
-              autogenerate: { directory: "/admin/installation" },
-            },
-            {
-              label: "Configuration",
-              autogenerate: { directory: "/admin/configuration" },
-            },
-            {
-              label: "Pricing",
-              autogenerate: { directory: "/admin/pricing" },
-            },
-            {
-              label: "Technical Details",
-              autogenerate: { directory: "/admin/technical/" },
-            },
-          ],
-        },
-      ],
+      // Sidebar for root (version selector page only)
+      // Versioned docs use their own sidebar configs in src/content/versions/
+      sidebar: [],
     }),
   ],
 

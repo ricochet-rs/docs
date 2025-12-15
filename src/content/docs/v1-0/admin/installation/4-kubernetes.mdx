@@ -1,0 +1,112 @@
+---
+title: Kubernetes
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Installation
+
+Install ricochet using the OCI Helm chart:
+
+```sh
+helm install ricochet oci://reg.ricochet.rs/helm/ricochet
+```
+
+## Architecture
+
+The ricochet server creates Kubernetes resources for your workloads:
+
+- Each ricochet app runs as a Kubernetes Deployment
+- Each ricochet task runs as a Kubernetes Job
+
+Configure deployment specs for apps using the `launcher.deployment` settings.
+
+<Aside type="tip">
+  For advanced deployment customization, see [Custom Deployment Config per
+  App](#custom-deployment-config-per-app).
+</Aside>
+
+### App Deployment Flow
+
+When you deploy a new app, ricochet creates a `deploy-<ulid>` job that installs all required dependency packages.
+
+When an app starts, an init-container (`check-dependencies`) verifies that all dependencies are installed.
+This is necessary for every app start because the initial dependency installation runs on a node with a specific architecture.
+If the app pod starts on a node with a different architecture, the dependencies may not (yet) be available.
+In this case, the init-container installs the dependencies for that architecture.
+
+## Persistence
+
+Ricochet requires two persistent volumes:
+
+- "Data": `/opt/ricochet/data`
+- "Cache": `/opt/ricochet/cache`
+
+Both volumes must use "ReadWriteMany" access mode to be mounted across multiple pods.
+
+### Recommended PVC Sizes
+
+Here are some recommendations for your volumes based on the expected number of active apps:
+
+| # of Apps | Cache | Data  |
+| --------- | ----- | ----- |
+| < 5       | 10 Gi | 20 Gi |
+| 5 - 20    | 25 Gi | 50 Gi |
+| 20+       | 30 Gi | 75Gi  |
+
+The "cache" PVC does not scale linearly because apps share dependencies.
+The more apps deployed, the more overlap in packages.
+
+The "data" PVC scales more linearly but depends on bundle sizes.
+Each bundle can be several megabytes, and a single app can accumulate many deployments during development.
+
+### Storage Details
+
+- The "cache" PVC stores all R, Julia, and Python packages across apps and tasks.
+  It grows over time as different interpreter versions are used.
+
+- The "data" PVC stores all app and user content.
+  Size depends on bundle sizes and deployment frequency.
+  You can start with smaller volumes and expand as needed, though resizing may involve some operational overhead.
+
+<Aside type="caution">
+  Ensure you have proper backups for your data PVC. Loss of this volume means
+  loss of all app and user content.
+</Aside>
+
+## App Scaling
+
+Ricochet includes built-in horizontal scaling for app deployments.
+
+Each app deployment can scale across multiple replicas based on these parameters:
+
+- `min_instances`: Minimum number of replicas to maintain
+- `max_instances`: Maximum number of replicas to run
+- `spawn_threshold`: Connection occupancy percentage that triggers scale-up
+- `max_connections`: Maximum connections per app replica
+- `max_connection_age`: Maximum duration before closing a connection
+- `inactive_timeout`: Maximum idle time before closing a connection
+
+These parameters together determine scaling behavior.
+
+### Apps
+
+Apps run as Kubernetes deployments with support for multiple replicas, providing high availability.
+You can strengthen this by enforcing a minimum replica count distributed across multiple nodes.
+
+## Custom Deployment Config per App
+
+You can extend the deployment spec per app with custom YAML configurations.
+This is an advanced feature.
+Care must be taken to avoid modifying sections that already exist through instance-wide configuration set via the Helm chart.
+
+The following fields can be set instance-wide through the Helm chart and should **not** be overwritten on a per-app basis:
+
+- imagePullPolicy
+- imagePullSecrets
+- strategy
+
+<Aside type="note">
+  This feature is disabled by default for security. Enable it by setting
+  `allow_custom_k8s_config` to `true` in the Helm chart values.
+</Aside>

@@ -1,0 +1,47 @@
+{
+  "sidebar": [
+    {
+      "label": "User",
+      "items": [
+        "user/quickstart",
+        {
+          "label": "Content Items",
+          "autogenerate": { "directory": "user/content-items" }
+        },
+        {
+          "label": "Deployment",
+          "autogenerate": { "directory": "user/deployment" }
+        },
+        {
+          "label": "Managing Content",
+          "autogenerate": { "directory": "user/managing-content" }
+        },
+        {
+          "label": "Tasks",
+          "autogenerate": { "directory": "user/tasks" }
+        }
+      ]
+    },
+    {
+      "label": "Admin",
+      "items": [
+        {
+          "label": "Installation",
+          "autogenerate": { "directory": "admin/installation" }
+        },
+        {
+          "label": "Configuration",
+          "autogenerate": { "directory": "admin/configuration" }
+        },
+        {
+          "label": "Pricing",
+          "autogenerate": { "directory": "admin/pricing" }
+        },
+        {
+          "label": "Technical Details",
+          "autogenerate": { "directory": "admin/technical" }
+        }
+      ]
+    }
+  ]
+}

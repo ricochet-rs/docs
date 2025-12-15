@@ -121,16 +121,11 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
   <label>
     <span class="sr-only">Select version</span>
     <Icon name="open-book" class="icon label-icon" />
-    <select value={pageVersion?.label ?? 'current'} autocomplete="off">
-      <option
-        selected={pageVersion === undefined}
-        value={getVersionURL(starlightVersionsConfig, starlightConfig, Astro.url, undefined).pathname}
-        >{starlightVersionsConfig.current.label}</option
-      >
+    <select value={pageVersion?.label ?? starlightVersionsConfig.versions[0]?.label} autocomplete="off">
       {
         starlightVersionsConfig.versions.map((version: Version) => (
           <option
-            selected={version.slug === pageVersion?.slug}
+            selected={version.slug === pageVersion?.slug || (pageVersion === undefined && version === starlightVersionsConfig.versions[0])}
             value={getVersionURL(starlightVersionsConfig, starlightConfig, Astro.url, version).pathname}
           >
             {version.label ?? version.slug}
@@ -185,7 +180,8 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
     padding-inline: calc(var(--sl-versions-label-icon-size) + 0.375rem)
       calc(var(--sl-versions-caret-icon-size) + 0.25rem);
     text-overflow: ellipsis;
-    width: auto;
+    /* Fixed width to prevent flickering - fits "1.0" and "0.1" */
+    width: 4rem;
   }
 
   option {
@@ -210,32 +206,7 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
         const select = this.querySelector('select')
         if (!select) return
 
-        // Resize select to fit selected option
-        const resizeSelect = () => {
-          const selectedOption = select.options[select.selectedIndex]
-          if (!selectedOption) return
-
-          // Create a temporary span to measure text width
-          const temp = document.createElement('span')
-          temp.style.visibility = 'hidden'
-          temp.style.position = 'absolute'
-          temp.style.whiteSpace = 'nowrap'
-          temp.style.font = getComputedStyle(select).font
-          temp.textContent = selectedOption.textContent
-          document.body.appendChild(temp)
-
-          // Add padding for icons (label + caret)
-          const labelIconSize = parseFloat(getComputedStyle(select).getPropertyValue('--sl-versions-label-icon-size') || '0.875rem') * 16
-          const caretIconSize = parseFloat(getComputedStyle(select).getPropertyValue('--sl-versions-caret-icon-size') || '1.25rem') * 16
-          const padding = labelIconSize + caretIconSize + 12 // extra spacing
-
-          select.style.width = `${temp.offsetWidth + padding}px`
-          document.body.removeChild(temp)
-        }
-
-        resizeSelect()
-
-        select?.addEventListener('change', (event) => {
+        select.addEventListener('change', (event) => {
           if (event.currentTarget instanceof HTMLSelectElement) {
             globalThis.location.pathname = event.currentTarget.value
           }
@@ -248,7 +219,6 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
           if (markupSelectedIndex !== select.selectedIndex) {
             select.selectedIndex = markupSelectedIndex ?? 0
           }
-          resizeSelect()
         })
       }
     },

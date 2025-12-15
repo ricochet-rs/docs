@@ -8,6 +8,7 @@ import markdoc from "@astrojs/markdoc";
 import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
+import starlightVersions from "starlight-versions";
 
 // https://astro.build/config
 export default defineConfig({
@@ -99,6 +100,10 @@ export default defineConfig({
       },
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
+        starlightVersions({
+          current: { label: "1.0 (latest)" },
+          versions: [{ slug: "v0-1", label: "0.1" }],
+        }),
         starlightThemeNova(),
         starlightLinksValidator(),
         starlightUtils({

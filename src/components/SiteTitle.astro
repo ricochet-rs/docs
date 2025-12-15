@@ -1,40 +1,49 @@
 ---
 import { logos } from 'virtual:starlight/user-images';
 import config from 'virtual:starlight/user-config';
+import VersionSelect from './VersionSelect.astro';
 const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 ---
 
-<a href={siteTitleHref} class="site-title sl-flex">
-	{
-		config.logo && logos.dark && (
-			<>
-				<img
-					class:list={{ 'light:sl-hidden print:hidden': !('src' in config.logo) }}
-					alt={config.logo.alt}
-					src={logos.dark.src}
-					width={logos.dark.width}
-					height={logos.dark.height}
-				/>
-				{/* Show light alternate if a user configure both light and dark logos. */}
-				{!('src' in config.logo) && (
+<div class="site-title-wrapper">
+	<a href={siteTitleHref} class="site-title sl-flex">
+		{
+			config.logo && logos.dark && (
+				<>
 					<img
-						class="dark:sl-hidden print:block"
+						class:list={{ 'light:sl-hidden print:hidden': !('src' in config.logo) }}
 						alt={config.logo.alt}
-						src={logos.light?.src}
-						width={logos.light?.width}
-						height={logos.light?.height}
+						src={logos.dark.src}
+						width={logos.dark.width}
+						height={logos.dark.height}
 					/>
-				)}
-			</>
-		)
-	}
-	<span class:list={['font-mono', 'font-bold', 'dark:text-white', 'mx-auto', 'sm:mx-0', { 'sr-only': config.logo?.replacesTitle }]} translate="no">
-		{siteTitle}
-	</span>
-</a>
+					{/* Show light alternate if a user configure both light and dark logos. */}
+					{!('src' in config.logo) && (
+						<img
+							class="dark:sl-hidden print:block"
+							alt={config.logo.alt}
+							src={logos.light?.src}
+							width={logos.light?.width}
+							height={logos.light?.height}
+						/>
+					)}
+				</>
+			)
+		}
+		<span class:list={['font-mono', 'font-bold', 'dark:text-white', 'mx-auto', 'sm:mx-0', { 'sr-only': config.logo?.replacesTitle }]} translate="no">
+			{siteTitle}
+		</span>
+	</a>
+	<VersionSelect />
+</div>
 
 <style>
 	@layer starlight.core {
+		.site-title-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 2rem;
+		}
 		.site-title {
 			align-items: center;
 			gap: var(--sl-nav-gap);

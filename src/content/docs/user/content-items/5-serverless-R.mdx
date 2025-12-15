@@ -42,7 +42,6 @@ will create two endpoints called `/add-2` and `/hello-world`.
 
 To deploy a `serverless-r` item, create a new `_ricochet.toml` in your project using `ricochet::use_ricochet_toml()`. When selecting prompted to select the content type `"Serverless R"`. Then run `ricochet::deploy()`. Thats it!
 
-
 ## Request Types
 
 The serverless R runtime supports only GET and POST requests. Function without any arguments are served as a **`GET`** request. If a function has aguments, it is accessible via `POST` request.
@@ -97,6 +96,7 @@ request("https://ricochet.rs/{ID}/penguins") |>
   resp_body_string() |>
   readr::read_csv()
 ```
+
 ```r
 #> # A tibble: 5 × 8
 #>   species island    bill_len bill_dep flipper_len body_mass sex     year
@@ -120,6 +120,7 @@ request("https://ricochet.rs/{ID}/nrow") |>
   req_perform() |>
   resp_body_json()
 ```
+
 ```r
 #> [1] 100
 ```

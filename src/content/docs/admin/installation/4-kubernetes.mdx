@@ -45,11 +45,11 @@ Both volumes must use "ReadWriteMany" access mode to be mounted across multiple 
 
 Here are some recommendations for your volumes based on the expected number of active apps:
 
-| # of Apps  | Cache | Data |
-|---------|-------|-------|
-| < 5     | 10 Gi  | 20 Gi |
-| 5 - 20  | 25 Gi | 50 Gi |
-| 20+      | 30 Gi | 75Gi |
+| # of Apps | Cache | Data  |
+| --------- | ----- | ----- |
+| < 5       | 10 Gi | 20 Gi |
+| 5 - 20    | 25 Gi | 50 Gi |
+| 20+       | 30 Gi | 75Gi  |
 
 The "cache" PVC does not scale linearly because apps share dependencies.
 The more apps deployed, the more overlap in packages.
@@ -60,11 +60,11 @@ Each bundle can be several megabytes, and a single app can accumulate many deplo
 ### Storage Details
 
 - The "cache" PVC stores all R, Julia, and Python packages across apps and tasks.
-It grows over time as different interpreter versions are used.
+  It grows over time as different interpreter versions are used.
 
 - The "data" PVC stores all app and user content.
-Size depends on bundle sizes and deployment frequency.
-You can start with smaller volumes and expand as needed, though resizing may involve some operational overhead.
+  Size depends on bundle sizes and deployment frequency.
+  You can start with smaller volumes and expand as needed, though resizing may involve some operational overhead.
 
 {% aside type="caution" %}
 Ensure you have proper backups for your data PVC. Loss of this volume means loss of all app and user content.
@@ -84,7 +84,6 @@ Each app deployment can scale across multiple replicas based on these parameters
 - `inactive_timeout`: Maximum idle time before closing a connection
 
 These parameters together determine scaling behavior.
-
 
 ### Apps
 

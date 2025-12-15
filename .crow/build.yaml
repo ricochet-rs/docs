@@ -15,7 +15,7 @@ steps:
     image: oven/bun:1.3
     commands:
       - bun install
-      - bunx --bun astro build
+      - bun astro build
 
   - name: PR docs preview
     image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.0

@@ -2,7 +2,7 @@
 title: Quickstart
 ---
 
-import { Tabs, TabItem, Steps, Aside } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Steps, Aside } from "@astrojs/starlight/components";
 
 Deploy your first app in minutes using our public trial instance at [try.ricochet.rs](https://try.ricochet.rs). Note that the trial instance is wiped weekly. Do not use it for production purposes.
 
@@ -10,34 +10,33 @@ Deploy your first app in minutes using our public trial instance at [try.ricoche
 
 1. Create an account at [try.ricochet.rs](https://try.ricochet.rs)
 
-    Or, you can login to your private instance.
+   Or, you can login to your private instance.
 
 2. Install the ricochet CLI
 
+   The [ricochet CLI](https://github.com/ricochet-rs/cli) is used to deploy items to your ricochet server.
 
-    The [ricochet CLI](https://github.com/ricochet-rs/cli) is used to deploy items to your ricochet server. 
-
-    <Tabs>
-    <TabItem label="Mac / Linux">
-        ```bash
-        curl -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.sh | sh
-        ```
-    </TabItem>
-    <TabItem label="Windows">
-        ```bash
-        curl.exe -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.ps1 -o install.ps1; .\install.ps1; Remove-Item install.ps1
-        ```
-    </TabItem>
-    </Tabs>
+   <Tabs>
+   <TabItem label="Mac / Linux">
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.sh | sh
+   ```
+   </TabItem>
+   <TabItem label="Windows">
+   ```bash
+   curl.exe -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.ps1 -o install.ps1; .\install.ps1; Remove-Item install.ps1
+   ```
+   </TabItem>
+   </Tabs>
 
 3. Login to the ricochet instance
 
-   The `-S` flag is used to specify the server url you are logging into. 
+   The `-S` flag is used to specify the server url you are logging into.
 
    ```bash
    ricochet login -S https://try.ricochet.rs
    ```
- 
+
 4. Deploy a Shiny app
 
    First, clone an example Shiny app and navigate to it:
@@ -64,8 +63,8 @@ Deploy your first app in minutes using our public trial instance at [try.ricoche
    ```
 
    You'll be prompted to create a `_ricochet.toml` file. This file is required for deploying to ricochet and tracks your item's configuration.
- 
-    Enter `yes`.
+
+   Enter `yes`.
 
 5. Select the language
 
@@ -112,13 +111,13 @@ Deploy your first app in minutes using our public trial instance at [try.ricoche
    ? Item visibility › External
    ```
 
-10. Deployment started! 
-  
+10. Deployment started!
+
     ```bash
     📦 Deploying new Shiny content item
-    
+
     ✓ Deployment successful!
-    
+
     Links:
     Deployment: https://try.ricochet.rs/deployments/01KE2F8DC4FGNZKGNR6NTW0BK6
     App Overview: https://try.ricochet.rs/apps/01KE2F8DC0NPEMA6TSD4EA1MY4/overview

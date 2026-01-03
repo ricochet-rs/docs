@@ -1,1 +1,3 @@
 src/generated
+# MDX files - prettier's formatting breaks components and code blocks
+**/*.mdx

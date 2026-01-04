@@ -1,0 +1,84 @@
+---
+title: User Roles
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+Every user on a ricochet instance has one of three roles that determine their system-wide capabilities.
+
+- **Admin**: can manage users and all server content
+- **Developer**: can deploy items
+- **Consumer**: can only view items
+
+## Default User Role
+
+When new users authenticate for the first time, they are assigned a default role. The default role is **Developer**, but you can configure this to meet your organization's needs.
+
+Add the following to your `ricochet-config.toml`:
+
+```toml
+[auth]
+default_role = "consumer" 
+```
+
+## Admin
+
+Administrators have full control over the ricochet instance:
+- Manage all content items on the server
+- Configure server settings
+- Manage all users and their roles
+- Access all deployed items regardless of access permissions
+
+Admins are responsible for:
+- Initial server setup and configuration
+- Managing OIDC authentication settings
+- Assigning user roles
+
+## Developer
+
+Developers can create and manage their own content:
+- Deploy items to ricochet using the CLI or Git
+- Manage settings for items they own
+- Collaborate on items they've been invited to
+- View internal and external items
+
+Developers cannot:
+- Access other users' private items (unless added as a collaborator)
+- Manage server settings
+- Assign user roles
+
+## Consumer
+
+Consumers have view-only access:
+- View items they have permission to access
+- Cannot deploy or modify any items
+- Cannot access private items unless explicitly granted access as a collaborator
+
+Consumers are ideal for:
+- Stakeholders who need to view dashboards and reports
+- External users accessing public content
+- Teams that consume data products without creating them
+
+<Aside>
+User roles are separate from content-level collaborator roles. A developer might be an "owner" of one item and a "contributor" on another item.
+</Aside>
+
+## Assigning Roles
+
+User roles are assigned by administrators through the ricochet admin interface.
+
+**Initial Login**: When users authenticate for the first time via OIDC, they are automatically assigned the default role configured in your settings (see [Configuration](#configuration) above).
+
+**Changing Roles**: Administrators can change user roles from the **Users** page `/users`, selecting the user, and changing their **Role**.
+
+
+
+| Capability | Admin | Developer | Consumer |
+| --- | :---: | :---: | :---: |
+| Deploy content | ✅ | ✅ | ❌ |
+| Manage own items | ✅ | ✅ | ❌ |
+| View internal items | ✅ | ✅ | ✅ |
+| View external items | ✅ | ✅ | ✅ |
+| Access all items | ✅ | ❌ | ❌ |
+| Manage server | ✅ | ❌ | ❌ |
+| Assign user roles | ✅ | ❌ | ❌ |

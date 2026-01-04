@@ -2,17 +2,17 @@
 title: Overview
 ---
 
-`ricochet` supports deploying R and Julia based content. Content items are categorize as either a **service** or as a **task** item.
+`ricochet` supports deploying R, Julia, and Python based content. Content items are categorized as either an **App** or a **Task**.
 
-A **service** is one that requires an active runtime such as plumber or shiny.
+An **App** requires an active runtime such as Plumber, Shiny, or Dash.jl.
 
-A **task** is one that runs to completion such as R/Julia scripts and Quarto documents.
+A **Task** runs to completion such as R/Julia/Python scripts and Quarto documents.
 
 All tasks can be [scheduled](/v0-1/user/content-items/4-scheduled-content) (or [invoked via API](/v0-1/user/tasks/1-invoke)). A subset of tasks can be served as a [**static html** website](/v0-1/user/content-items/3-static-content)—for example R Markdown and Quarto documents or websites.
 
-The below are content types supported by ricochet.
+The content types supported by ricochet are listed below.
 
-## Services
+## Apps
 
 | `Content Type`   | `Description`                                                                                       |
 | ---------------- | --------------------------------------------------------------------------------------------------- |
@@ -21,9 +21,9 @@ The below are content types supported by ricochet.
 | `shiny`          | A web app developed using [`{shiny}`](https://shiny.posit.co/r/)                                    |
 | `rmd-shiny`      | an [R Markdown](https://rmarkdown.rstudio.com/) document using a shiny runtime                      |
 | `quarto-r-shiny` | a [Quarto](http://quarto.org/) document using a shiny runtime                                       |
-| `serverless-r`   | R functions deployed as a service (see [Serverless R](/v0-1/user/content-items/5-serverless-r))     |
-| `r-service`      | A web app or API served using an R runtime.                                                         |
-| `julia-service`  | A web app or API served using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
+| `serverless-r`   | R functions deployed as an app (see [Serverless R](/v0-1/user/content-items/5-serverless-r))     |
+| `r-service`      | A web app or API using an R runtime.                                                         |
+| `julia-service`  | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
 
 ## Tasks
 

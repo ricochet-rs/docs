@@ -2,9 +2,66 @@
 title: Authentication
 ---
 
-ricochet uses open ID connect for authentication. This allows you to bring your own identity provider to ricochet.
+import { Aside, LinkCard } from '@astrojs/starlight/components';
 
-ricochet requires that your OIDC provider is able to provide the `email` and `profile` claim.
+ricochet uses OpenID Connect (OIDC) for authentication, allowing you to integrate with any OIDC-compliant identity provider such as Auth0, Zitadel, Clerk, Okta, Azure AD, or Keycloak or more.
 
-- ricochet uses the subject identifier from your OIDC IDP as the user ID.
-- At present the `email` is unused but is collected for future integrations with an SMTP server.
+## Requirements
+
+Your OIDC provider must support:
+- **Claims**: `email` and `profile`
+- **Grant Type**: Authorization Code Flow
+
+ricochet uses the subject identifier (`sub`) from your OIDC provider as the unique user ID. The `email` claim is collected for future SMTP integrations.
+
+## Configuration
+
+Add the following to your `ricochet-config.toml`:
+
+```toml
+[auth.oidc]
+issuer_url = "https://your-domain.auth0.com/"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+display_name_claim = "preferred_username"  # Optional, defaults to "preferred_username"
+```
+
+
+<Aside type="caution">
+The redirect URL **must** use the `/oauth/callback` path for compatibility with the ricochet cli.
+</Aside>
+
+#### Configuration Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `issuer_url` | Yes | Your OIDC provider's issuer URL. Must start with `https://` |
+| `client_id` | Yes | OAuth client ID from your OIDC provider |
+| `client_secret` | Yes | OAuth client secret from your OIDC provider |
+| `redirect_url` | Yes | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
+| `display_name_claim` | No | OIDC claim to use for display name. Defaults to `preferred_username` |
+
+
+<Aside type="caution">
+Environment variables are useful for containerized deployments or sensitive credentials, but **TOML configuration is recommended** whenever possible as it's easier to manage and version control.
+</Aside>
+
+## Validation
+
+ricochet validates your OIDC configuration on startup:
+
+- The `issuer_url` must start with `https://`
+- All required fields must be present
+- The OIDC provider's discovery endpoint (`.well-known/openid-configuration`) must be accessible
+
+If validation fails, ricochet will log an error and refuse to start.
+
+## Next Steps
+
+
+<LinkCard
+  title="Learn about user roles"
+  href="/v0-1/admin/configuration/2-user-roles"
+  description="Configure user roles and default permissions."
+/>

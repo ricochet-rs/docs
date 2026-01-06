@@ -1,68 +1,68 @@
 {/* This is intentionally inlined to avoid FOUC. */}
 <script is:inline>
-	window.StarlightThemeProvider = (() => {
-		const storedTheme =
-			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
-		const theme =
-			storedTheme ||
-			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  window.StarlightThemeProvider = (() => {
+    const storedTheme =
+      typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+    const theme =
+      storedTheme ||
+      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
-		// Set theme immediately before any styles load
-		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
-		document.documentElement.style.colorScheme = theme === 'light' ? 'light' : 'dark';
+    // Set theme immediately before any styles load
+    document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+    document.documentElement.style.colorScheme = theme === 'light' ? 'light' : 'dark';
 
-		// Add class to prevent transitions during initial load
-		document.documentElement.classList.add('loading');
+    // Add class to prevent transitions during initial load
+    document.documentElement.classList.add('loading');
 
-		// Disable transitions temporarily to prevent color flash on load
-		const style = document.createElement('style');
-		style.textContent = `
-			.loading *, .loading *::before, .loading *::after {
-				transition: none !important;
-				animation-duration: 0s !important;
-			}
-			/* Ensure TOC aria-current has accent color immediately - override all scoped styles */
-			starlight-toc a[aria-current="true"],
-			starlight-toc a[aria-current="true"][class],
-			a[aria-current="true"][class*="astro-"] {
-				color: var(--sl-color-text-accent) !important;
-			}
-		`;
-		document.head.appendChild(style);
+    // Disable transitions temporarily to prevent color flash on load
+    const style = document.createElement('style');
+    style.textContent = `
+      .loading *, .loading *::before, .loading *::after {
+        transition: none !important;
+        animation-duration: 0s !important;
+      }
+      /* Ensure TOC aria-current has accent color immediately - override all scoped styles */
+      starlight-toc a[aria-current="true"],
+      starlight-toc a[aria-current="true"][class],
+      a[aria-current="true"][class*="astro-"] {
+        color: var(--sl-color-text-accent) !important;
+      }
+    `;
+    document.head.appendChild(style);
 
-		// Re-enable transitions after page is fully loaded and components initialized
-		const enableTransitions = () => {
-			// Use requestAnimationFrame to ensure DOM is ready
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					document.documentElement.classList.remove('loading');
-					style.remove();
-				});
-			});
-		};
+    // Re-enable transitions after page is fully loaded and components initialized
+    const enableTransitions = () => {
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.remove('loading');
+          style.remove();
+        });
+      });
+    };
 
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', enableTransitions);
-		} else {
-			enableTransitions();
-		}
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', enableTransitions);
+    } else {
+      enableTransitions();
+    }
 
-		return {
-			updatePickers(theme = storedTheme || 'auto') {
-				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
-					const select = picker.querySelector('select');
-					if (select) select.value = theme;
-					/** @type {HTMLTemplateElement | null} */
-					const tmpl = document.querySelector(`#theme-icons`);
-					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
-					if (newIcon) {
-						const oldIcon = picker.querySelector('svg.label-icon');
-						if (oldIcon) {
-							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
-						}
-					}
-				});
-			},
-		};
-	})();
+    return {
+      updatePickers(theme = storedTheme || 'auto') {
+        document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+          const select = picker.querySelector('select');
+          if (select) select.value = theme;
+          /** @type {HTMLTemplateElement | null} */
+          const tmpl = document.querySelector(`#theme-icons`);
+          const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+          if (newIcon) {
+            const oldIcon = picker.querySelector('svg.label-icon');
+            if (oldIcon) {
+              oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+            }
+          }
+        });
+      },
+    };
+  })();
 </script>

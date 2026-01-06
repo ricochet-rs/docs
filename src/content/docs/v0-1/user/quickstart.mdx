@@ -11,85 +11,87 @@ Deploy your first app in minutes using our public trial instance at [try.ricoche
 
 1. Create an account at [try.ricochet.rs](https://try.ricochet.rs)
 
-   Or, you can login to your private instance.
+    Or, you can login to your private instance.
 
 2. Install the ricochet CLI
 
-   The [ricochet CLI](https://github.com/ricochet-rs/cli) is used to deploy items to your ricochet server.
+    The [ricochet CLI](https://github.com/ricochet-rs/cli) is used to deploy items to your ricochet server.
 
-   <Tabs>
-   <TabItem label="Mac / Linux">
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.sh | sh
-   ```
-   </TabItem>
-   <TabItem label="Windows">
-   ```bash
-   curl.exe -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.ps1 -o install.ps1; .\install.ps1; Remove-Item install.ps1
-   ```
-   </TabItem>
-   </Tabs>
+    {/* prettier-ignore */}
+    <Tabs>
+    <TabItem label="Mac / Linux">
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.sh | sh
+    ```
+    </TabItem>
+    <TabItem label="Windows">
+    ```bash
+    curl.exe -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.ps1 -o install.ps1; .\install.ps1; Remove-Item install.ps1
+    ```
+    </TabItem>
+    </Tabs>
 
 3. Login to the ricochet instance
 
-   The `-S` flag is used to specify the server url you are logging into.
+    The `-S` flag is used to specify the server url you are logging into.
 
-   ```bash
-   ricochet login -S https://try.ricochet.rs
-   ```
+    ```bash
+    ricochet login -S https://try.ricochet.rs
+    ```
 
 4. Deploy a Shiny app
 
-   First, clone an example Shiny app and navigate to it:
+    First, clone an example Shiny app and navigate to it:
 
-   <Tabs>
-   <TabItem label="Mac / Linux">
-   ```bash
-   git clone https://github.com/rstudio/shiny-examples.git /tmp/shiny-examples
-   cd /tmp/shiny-examples/050-kmeans-example/
-   ```
-   </TabItem>
-   <TabItem label="Windows">
-   ```bash
-   git clone https://github.com/rstudio/shiny-examples.git
-   cd shiny-examples/050-kmeans-example/
-   ```
-   </TabItem>
-   </Tabs>
+    {/* prettier-ignore */}
+    <Tabs>
+    <TabItem label="Mac / Linux">
+    ```bash
+    git clone https://github.com/rstudio/shiny-examples.git /tmp/shiny-examples
+    cd /tmp/shiny-examples/050-kmeans-example/
+    ```
+    </TabItem>
+    <TabItem label="Windows">
+    ```bash
+    git clone https://github.com/rstudio/shiny-examples.git
+    cd shiny-examples/050-kmeans-example/
+    ```
+    </TabItem>
+    </Tabs>
 
-   Now deploy the app:
+    Now deploy the app:
 
-   ```bash
-   ricochet deploy
-   ```
+    ```bash
+    ricochet deploy
+    ```
 
-   You'll be prompted to create a `_ricochet.toml` file. This file is required for deploying to ricochet and tracks your item's configuration.
+    You'll be prompted to create a `_ricochet.toml` file. This file is required for deploying to ricochet and tracks your item's configuration.
 
-   Enter `yes`.
+    Enter `yes`.
 
 5. Select the language
 
-   Choose **R** from the language options (R, Julia, or Python).
+    Choose **R** from the language options (R, Julia, or Python).
 
-   ```
-   ? Choose a language › R
-   ```
+    ```
+    ? Choose a language › R
+    ```
 
 6. Select the content type
 
    Choose **Shiny** from the content type options. The list can be filterd by typing `"sh"`.
 
-   ```
-   ? Choose content type › Shiny
-   ```
+    ```
+    ? Choose content type › Shiny
+    ```
 
 7. Specify the entrypoint
 
-   The entrypoint is the file or folder that starts your app. For this example, select **app.R**.
+    The entrypoint is the file or folder that starts your app. For this example, select **app.R**.
 
-   ```
-   ? Select Shiny app entrypoint › app.R
-   ```
+    ```
+    ? Select Shiny app entrypoint › app.R
+    ```
 
 8. Give the item a name
 
@@ -100,16 +102,16 @@ Deploy your first app in minutes using our public trial instance at [try.ricoche
 
 9. Set the item's visibility
 
-   Choose who can access your app:
-   - **Private**: Only you and specified users
-   - **Internal**: Only logged-in users
-   - **External**: Public-facing, no authentication
+    Choose who can access your app:
+    - **Private**: Only you and specified users
+    - **Internal**: Only logged-in users
+    - **External**: Public-facing, no authentication
 
-   For this quickstart, select **External**.
+    For this quickstart, select **External**.
 
-   ```
-   ? Item visibility › External
-   ```
+    ```
+    ? Item visibility › External
+    ```
 
 10. Deployment started!
 

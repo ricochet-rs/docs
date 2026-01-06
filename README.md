@@ -7,15 +7,15 @@ Please ensure both are installed locally.
 
 1. Install node packages
 
-   ```sh
-   bun install
-   ```
+    ```sh
+    bun install
+    ```
 
 2. Start the development server
 
-   ```sh
-   bun run dev
-   ```
+    ```sh
+    bun run dev
+    ```
 
 ## Contributing
 

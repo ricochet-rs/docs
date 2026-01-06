@@ -61,8 +61,11 @@
   color: var(--sidebar-accent-foreground) !important;
 }
 
-/* ToC (right sidebar) width */
+/* Custom root styles */
 :root {
+  /* Smaller base font size (default is 16px) */
+  font-size: 14px;
+  /* ToC (right sidebar) width */
   --toc-width: 12rem;
 }
 
@@ -71,10 +74,4 @@
   .right-sidebar {
     width: var(--toc-width);
   }
-}
-
-/* Custom root styles */
-:root {
-  /* Smaller base font size (default is 16px) */
-  font-size: 14px;
 }

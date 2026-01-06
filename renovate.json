@@ -1,4 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>ricochet-rs/renovate-config"]
+  "extends": [
+    "github>ricochet-rs/renovate-config"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^justfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n.*?:= \"(?<currentValue>.*?)\""
+      ]
+    }
+  ]
 }

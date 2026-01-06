@@ -60,3 +60,14 @@
   background-color: var(--sidebar-accent) !important;
   color: var(--sidebar-accent-foreground) !important;
 }
+
+/* Reduce ToC (right sidebar) width */
+@media (min-width: 72rem) {
+  .right-sidebar-container {
+    width: 12rem;
+  }
+
+  .right-sidebar {
+    width: 12rem;
+  }
+}

@@ -60,3 +60,9 @@
   background-color: var(--sidebar-accent) !important;
   color: var(--sidebar-accent-foreground) !important;
 }
+
+/* Custom root styles */
+:root {
+  /* Smaller base font size (default is 16px) */
+  font-size: 14px;
+}

@@ -2,7 +2,7 @@
 title: Access and Permissions
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside } from "@astrojs/starlight/components";
 
 Control who can access your deployed content using access types and collaborators.
 
@@ -13,6 +13,7 @@ Every content item has an access type that controls who can view it:
 ### Private
 
 Only the item owner and specified collaborators can access the item. Private items are ideal for:
+
 - Work-in-progress applications
 - Internal tools for specific teams
 - Sensitive data or restricted content
@@ -20,6 +21,7 @@ Only the item owner and specified collaborators can access the item. Private ite
 ### Internal
 
 All logged-in users can view the item. Internal items are useful for:
+
 - Company-wide dashboards
 - Team analytics
 - Internal documentation
@@ -27,6 +29,7 @@ All logged-in users can view the item. Internal items are useful for:
 ### External
 
 Anyone can view the item without authentication. External items are perfect for:
+
 - Public-facing applications and APIs
 - Demo applications
 
@@ -37,6 +40,7 @@ For fine-grained access control, you can invite collaborators to individual cont
 ### Owner
 
 The user who originally deployed the item. Owners have full control:
+
 - Manage all item settings
 - Add or remove collaborators
 - Delete the item
@@ -45,6 +49,7 @@ The user who originally deployed the item. Owners have full control:
 ### Admin
 
 Collaborator admins can manage the item:
+
 - Modify all item settings
 - Add or remove other collaborators
 - Delete the item
@@ -53,6 +58,7 @@ Collaborator admins can manage the item:
 ### Editor
 
 Editors can configure the item but have limited control:
+
 - Modify item settings
 - Cannot manage collaborators
 - Cannot delete the item
@@ -60,6 +66,7 @@ Editors can configure the item but have limited control:
 ### Contributor
 
 Contributors can only deploy updates:
+
 - Deploy new versions of the item
 - Cannot modify settings
 - Cannot manage collaborators
@@ -67,11 +74,11 @@ Contributors can only deploy updates:
 ### Consumer
 
 Consumers have read-only access:
+
 - View the item and its content
 - No modification privileges
 
 ## Setting Access and Permissions
-
 
 1. Navigate to your item's settings page
 2. Go to the "Access" section
@@ -79,7 +86,8 @@ Consumers have read-only access:
 4. Add collaborators and assign their roles
 
 <Aside type="tip">
-Start with `private` access while developing, then change to `internal` or `external` when ready to share.
+  Start with `private` access while developing, then change to `internal` or
+  `external` when ready to share.
 </Aside>
 
 ## Next Steps

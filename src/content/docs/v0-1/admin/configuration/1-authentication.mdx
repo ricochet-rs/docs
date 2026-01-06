@@ -2,13 +2,14 @@
 title: Authentication
 ---
 
-import { Aside, LinkCard } from '@astrojs/starlight/components';
+import { Aside, LinkCard } from "@astrojs/starlight/components";
 
 ricochet uses OpenID Connect (OIDC) for authentication, allowing you to integrate with any OIDC-compliant identity provider such as Auth0, Zitadel, Clerk, Okta, Azure AD, or Keycloak or more.
 
 ## Requirements
 
 Your OIDC provider must support:
+
 - **Claims**: `email` and `profile`
 - **Grant Type**: Authorization Code Flow
 
@@ -27,24 +28,25 @@ redirect_url = "https://your-ricochet-domain.com/oauth/callback"
 display_name_claim = "preferred_username"  # Optional, defaults to "preferred_username"
 ```
 
-
 <Aside type="caution">
-The redirect URL **must** use the `/oauth/callback` path for compatibility with the ricochet cli.
+  The redirect URL **must** use the `/oauth/callback` path for compatibility
+  with the ricochet cli.
 </Aside>
 
 #### Configuration Fields
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `issuer_url` | Yes | Your OIDC provider's issuer URL. Must start with `https://` |
-| `client_id` | Yes | OAuth client ID from your OIDC provider |
-| `client_secret` | Yes | OAuth client secret from your OIDC provider |
-| `redirect_url` | Yes | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
-| `display_name_claim` | No | OIDC claim to use for display name. Defaults to `preferred_username` |
-
+| Field                | Required | Description                                                                                                    |
+| -------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| `issuer_url`         | Yes      | Your OIDC provider's issuer URL. Must start with `https://`                                                    |
+| `client_id`          | Yes      | OAuth client ID from your OIDC provider                                                                        |
+| `client_secret`      | Yes      | OAuth client secret from your OIDC provider                                                                    |
+| `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
+| `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
 
 <Aside type="caution">
-Environment variables are useful for containerized deployments or sensitive credentials, but **TOML configuration is recommended** whenever possible as it's easier to manage and version control.
+  Environment variables are useful for containerized deployments or sensitive
+  credentials, but **TOML configuration is recommended** whenever possible as
+  it's easier to manage and version control.
 </Aside>
 
 ## Validation
@@ -58,7 +60,6 @@ ricochet validates your OIDC configuration on startup:
 If validation fails, ricochet will log an error and refuse to start.
 
 ## Next Steps
-
 
 <LinkCard
   title="Learn about user roles"

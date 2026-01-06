@@ -71,4 +71,8 @@
   .right-sidebar {
     width: var(--toc-width);
   }
+/* Custom root styles */
+:root {
+  /* Smaller base font size (default is 16px) */
+  font-size: 14px;
 }

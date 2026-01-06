@@ -1,0 +1,10 @@
+# Lychee link checker configuration
+# https://lychee.cli.rs/configuration
+
+# Exclude patterns
+exclude = [
+    # 404 page is expected to return 404
+    "https://docs.ricochet.rs/404/",
+    # Trial instance may be down
+    "https://try.ricochet.rs.*",
+]

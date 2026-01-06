@@ -1,4 +1,7 @@
-set dotenv-load:=true
+set dotenv-load := true
+
+# renovate: datasource=docker depName=lycheeverse/lychee
+lychee_version := "0.22-alpine"
 
 build:
     bun astro build
@@ -6,8 +9,9 @@ build:
 preview:
     bun astro dev
 
-links:
-  lychee dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --exclude-path src/ --cache --max-cache-age 1d
+# check for broken links (builds first, runs lychee via docker)
+links: build
+    docker run --rm -v {{justfile_directory()}}:/app -w /app lycheeverse/lychee:{{lychee_version}} dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d
 
 install:
     bun install

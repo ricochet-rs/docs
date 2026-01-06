@@ -2,10 +2,24 @@
 title: The ricochet CLI
 ---
 
+import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+
 The ricochet CLI is a Rust-based command-line tool designed to facilitate the deployment and management of ricochet apps and tasks.
 It provides a user-friendly interface for interacting with the ricochet API, allowing users to easily create, manage, and monitor their ricochet instances.
 
 ## Installation
+
+<Tabs>
+  <TabItem label="Mac / Linux">
+    ```bash curl -fsSL
+    https://raw.githubusercontent.com/ricochet-rs/cli/main/install.sh | sh ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```bash curl.exe -fsSL
+    https://raw.githubusercontent.com/ricochet-rs/cli/main/install.ps1 -o
+    install.ps1; .\install.ps1; Remove-Item install.ps1 ```
+  </TabItem>
+</Tabs>
 
 ### Manual Installation
 
@@ -29,23 +43,23 @@ tar -xzf ricochet-$VERSION-$OS_ARCH.tar.gz
 mv ricochet-$VERSION-$OS_ARCH/ricochet /usr/local/bin/
 ```
 
-{% aside type="note" %}
-On Windows, execute the `.exe` file to install the ricochet CLI after extracting the tarball.
-{% /aside %}
+<Aside type="note">
+  On Windows, execute the `.exe` file to install the ricochet CLI after
+  extracting the tarball.
+</Aside>
 
 ### Homebrew (macOS)
 
 For macOS, we also provide a Homebrew formula:
 
 ```sh
+brew tap ricochet-rs/homebrew-tap
 brew install ricochet
 ```
 
 ### Windows
 
-{% aside type="tip" %}
-A Scoop formula is planned but not yet available.
-{% /aside %}
+<Aside type="tip">A Scoop formula is planned but not yet available.</Aside>
 
 ## Authentication
 

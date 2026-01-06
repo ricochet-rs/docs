@@ -8,6 +8,7 @@ import markdoc from "@astrojs/markdoc";
 import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
+import starlightVersions from "starlight-versions";
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +19,12 @@ export default defineConfig({
     markdoc(),
     starlight({
       title: "ricochet",
-      customCss: ["./src/styles/global.css", "./src/styles/custom.css"],
+      customCss: [
+        "./src/styles/theme.css",
+        "./src/styles/starlight-mappings.css",
+        "./src/styles/global.css",
+        "./src/styles/custom.css",
+      ],
       // customCss: ["./src/styles/global.css"],
       head: [
         {
@@ -83,6 +89,9 @@ export default defineConfig({
         ThemeSelect: "./src/components/ThemeSelect.astro",
         ThemeProvider: "./src/components/ThemeProvider.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
+        // Override Banner and PageTitle to remove version outdated warnings
+        Banner: "./src/components/Banner.astro",
+        PageTitle: "./src/components/PageTitle.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {
@@ -94,6 +103,10 @@ export default defineConfig({
       },
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
+        starlightVersions({
+          current: { label: "0.1 (latest)", redirect: "root" },
+          versions: [{ slug: "v0-1", label: "0.1" }],
+        }),
         starlightThemeNova(),
         starlightLinksValidator(),
         starlightUtils({
@@ -122,54 +135,9 @@ export default defineConfig({
         baseUrl:
           "https://github.com/ricochet-rs/ricochet-docs/edit/main/src/content/docs/",
       },
-      sidebar: [
-        // {
-        // label: "leading",
-        // items: [
-        // { label: "Docs", link: "/docs" },
-        // { label: "Demos", link: "/demos/1" },
-        // ],
-        // },
-        {
-          label: "Admin",
-          items: [
-            {
-              label: "Installation",
-              autogenerate: { directory: "/admin/installation" },
-            },
-            {
-              label: "Configuration",
-              autogenerate: { directory: "/admin/configuration" },
-            },
-            {
-              label: "Pricing",
-              autogenerate: { directory: "/admin/pricing" },
-            },
-            {
-              label: "Technical Details",
-              autogenerate: { directory: "/admin/technical/" },
-            },
-          ],
-        },
-        {
-          label: "User",
-          items: [
-            {
-              label: "Content Items",
-              autogenerate: { directory: "user/content-items" },
-            },
-            {
-              label: "Deployment",
-              autogenerate: { directory: "user/deployment" },
-            },
-            {
-              label: "Managing Content",
-              autogenerate: { directory: "user/managing-content" },
-            },
-            { label: "Tasks", autogenerate: { directory: "user/tasks" } },
-          ],
-        },
-      ],
+      // Sidebar for root (version selector page only)
+      // Versioned docs use their own sidebar configs in src/content/versions/
+      sidebar: [],
     }),
   ],
 

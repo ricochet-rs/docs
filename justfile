@@ -4,7 +4,18 @@ build:
     bun astro build
 
 preview:
-    bun run dev
+    bun astro dev
 
 links:
   lychee dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --exclude-path src/ --cache --max-cache-age 1d
+
+install:
+    bun install
+
+# lint using prettier
+lint:
+    bun prettier --check .
+
+# fix lints using prettier
+fmt:
+    bun prettier --write .

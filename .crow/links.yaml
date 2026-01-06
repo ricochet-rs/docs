@@ -1,0 +1,16 @@
+when:
+  - event: pull_request
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+
+labels:
+  type: static
+
+depends_on:
+  - build
+
+steps:
+  - name: Check links
+    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.22-alpine
+    commands:
+      - lychee dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d

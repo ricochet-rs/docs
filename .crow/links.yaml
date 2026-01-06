@@ -1,0 +1,21 @@
+when:
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+
+labels:
+  type: static
+
+steps:
+  - name: Build
+    image: reg.ricochet.rs/docker.io/oven/bun:1.3-alpine
+    commands:
+      - bun install
+      - bun astro build
+
+  - name: Check links
+    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.22-alpine
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - lychee dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d

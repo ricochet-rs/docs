@@ -61,13 +61,17 @@
   color: var(--sidebar-accent-foreground) !important;
 }
 
-/* Reduce ToC (right sidebar) width */
-@media (min-width: 72rem) {
-  .right-sidebar-container {
-    width: 12rem;
-  }
+/* Custom root styles */
+:root {
+  /* Smaller base font size (default is 16px) */
+  font-size: 14px;
+  /* ToC (right sidebar) width */
+  --toc-width: 12rem;
+}
 
+@media (min-width: 72rem) {
+  .right-sidebar-container,
   .right-sidebar {
-    width: 12rem;
+    width: var(--toc-width);
   }
 }

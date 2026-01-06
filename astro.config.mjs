@@ -39,7 +39,7 @@ export default defineConfig({
           tag: "link",
           attrs: {
             rel: "icon",
-            href: "/favicon.png",
+            href: "/favicon-32x32.png",
             sizes: "32x32",
           },
         },
@@ -92,6 +92,8 @@ export default defineConfig({
         // Override Banner and PageTitle to remove version outdated warnings
         Banner: "./src/components/Banner.astro",
         PageTitle: "./src/components/PageTitle.astro",
+        // Override ToC to wrap long titles
+        TableOfContents: "./src/components/TableOfContents.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {

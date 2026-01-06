@@ -1,0 +1,39 @@
+---
+import StarlightTableOfContents from '@astrojs/starlight/components/TableOfContents.astro';
+---
+
+<StarlightTableOfContents />
+
+<style is:global>
+	/* Force ToC text to wrap within sidebar width */
+	starlight-toc {
+		display: block;
+		width: var(--toc-width, 12rem);
+		max-width: var(--toc-width, 12rem);
+		overflow: hidden;
+		box-sizing: border-box;
+		padding-right: 1rem;
+	}
+	starlight-toc nav,
+	starlight-toc ul,
+	starlight-toc li {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		overflow: hidden;
+	}
+	starlight-toc a {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		white-space: normal;
+		word-break: break-word;
+		overflow-wrap: anywhere;
+		box-sizing: border-box;
+	}
+	starlight-toc a span {
+		white-space: normal;
+		word-break: break-word;
+		overflow-wrap: anywhere;
+	}
+</style>

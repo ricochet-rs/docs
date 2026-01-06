@@ -61,6 +61,18 @@
   color: var(--sidebar-accent-foreground) !important;
 }
 
+/* ToC (right sidebar) width */
+:root {
+  --toc-width: 12rem;
+}
+
+@media (min-width: 72rem) {
+  .right-sidebar-container,
+  .right-sidebar {
+    width: var(--toc-width);
+  }
+}
+
 /* Custom root styles */
 :root {
   /* Smaller base font size (default is 16px) */

@@ -2,4 +2,6 @@ src/generated
 # Prettier breaks code blocks inside <Tabs> components in MDX
 # Quickstart guides commonly use Tabs for OS-specific instructions
 **/quickstart*.mdx
+
+# prettier breaks with <FileTree> comopnent
 **/admin/configuration/0-overview.mdx

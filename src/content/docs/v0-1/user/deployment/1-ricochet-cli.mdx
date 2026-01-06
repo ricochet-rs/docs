@@ -44,7 +44,8 @@ brew install ricochet
 
 ### Manual Installation
 
-We provide pre-built binaries for macOS, Linux, and Windows. Download from:
+We provide pre-built binaries for macOS, Linux, and Windows.
+Download from:
 
 ```
 https://hel1.your-objectstorage.com/ricochet-cli/$VERSION/ricochet-$VERSION-$OS_ARCH.tar.gz
@@ -77,11 +78,13 @@ Use the `login` command with the `-S` flag to specify the server URL:
 ricochet login -S https://try.ricochet.rs
 ```
 
-This opens your browser to complete authentication. Once authenticated, your credentials are stored locally and used for subsequent commands.
+This opens your browser to complete authentication.
+Once authenticated, your credentials are stored locally and used for subsequent commands.
 
 ### Multiple Instances
 
-You can authenticate with multiple ricochet servers. Each server's credentials are stored separately, keyed by the server URL.
+You can authenticate with multiple ricochet servers.
+Each server's credentials are stored separately, keyed by the server URL.
 
 To switch between servers, specify the `-S` flag with your commands:
 
@@ -132,7 +135,7 @@ If no `_ricochet.toml` file exists, the CLI walks you through an interactive set
 
 </Steps>
 
-After completing setup, a `_ricochet.toml` file is created in your project directory.  
+After completing setup, a `_ricochet.toml` file is created in your project directory.
 See [Using `_ricochet.toml`](/v0-1/user/deployment/2-ricochet-toml) for configuration details.
 
 ### Redeploying
@@ -142,4 +145,3 @@ Subsequent deployments use the existing `_ricochet.toml` configuration:
 ```bash
 ricochet deploy
 ```
-

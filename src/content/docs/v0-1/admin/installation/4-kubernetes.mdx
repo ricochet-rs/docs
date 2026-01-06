@@ -70,7 +70,8 @@ Each bundle can be several megabytes, and a single app can accumulate many deplo
   You can start with smaller volumes and expand as needed, though resizing may involve some operational overhead.
 
 <Aside type="caution">
-  Ensure you have proper backups for your data PVC. Loss of this volume means
+  Ensure you have proper backups for your data PVC.
+  Loss of this volume means
   loss of all app and user content.
 </Aside>
 
@@ -107,6 +108,7 @@ The following fields can be set instance-wide through the Helm chart and should 
 - strategy
 
 <Aside type="note">
-  This feature is disabled by default for security. Enable it by setting
+  This feature is disabled by default for security.
+  Enable it by setting
   `allow_custom_k8s_config` to `true` in the Helm chart values.
 </Aside>

@@ -7,4 +7,6 @@ exclude = [
     "https://docs.ricochet.rs/404/",
     # Trial instance may be down
     "https://try.ricochet.rs.*",
+    # Canonical/og:url self-references won't resolve until deployed
+    "https://docs.ricochet.rs/v0-1/.*",
 ]

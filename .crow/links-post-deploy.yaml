@@ -1,0 +1,20 @@
+when:
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+
+labels:
+  type: static
+
+depends_on:
+  - build
+
+steps:
+  # Post-deploy check validates the live site including canonical URLs.
+  # Runs after build pipeline completes S3 upload.
+  - name: Post-deploy link check
+    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.22-alpine
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - lychee https://docs.ricochet.rs/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d

@@ -1,15 +1,63 @@
 ---
-import StarlightTableOfContents from '@astrojs/starlight/components/TableOfContents.astro';
+// Custom TableOfContents that renders backticks as inline code
+import TableOfContentsList from './TableOfContentsList.astro';
+
+const { toc } = Astro.locals.starlightRoute;
 ---
 
-<StarlightTableOfContents />
+{
+  toc && (
+    <starlight-toc data-min-h={toc.minHeadingLevel} data-max-h={toc.maxHeadingLevel}>
+      <nav aria-labelledby="starlight__on-this-page">
+        <h2 id="starlight__on-this-page">{Astro.locals.t('tableOfContents.onThisPage')}</h2>
+        <TableOfContentsList toc={toc.items} />
+      </nav>
+    </starlight-toc>
+  )
+}
+
+<script is:inline>
+  // Sync ToC links with actual heading content to preserve <code> tags
+  (function() {
+    function syncTocWithHeadings() {
+      document.querySelectorAll('starlight-toc').forEach(function(toc) {
+        var links = toc.querySelectorAll('a');
+        links.forEach(function(link) {
+          var href = link.getAttribute('href');
+          // Skip the #_top link (Overview) - it's intentionally different from page title
+          if (href && href.startsWith('#') && href !== '#_top') {
+            var id = decodeURIComponent(href.slice(1));
+            var heading = document.getElementById(id);
+            if (heading) {
+              // Clone to avoid modifying original
+              var clone = heading.cloneNode(true);
+              // Remove anchor links that might be inside headings
+              var anchors = clone.querySelectorAll('a');
+              anchors.forEach(function(a) { a.remove(); });
+              var content = clone.innerHTML.trim();
+              if (content) {
+                link.innerHTML = content;
+              }
+            }
+          }
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncTocWithHeadings);
+    } else {
+      syncTocWithHeadings();
+    }
+  })();
+</script>
 
 <style is:global>
   /* Force ToC text to wrap within sidebar width */
   starlight-toc {
     display: block;
-    width: var(--toc-width, 12rem);
-    max-width: var(--toc-width, 12rem);
+    width: var(--toc-width, 15rem);
+    max-width: var(--toc-width, 15rem);
     overflow: hidden;
     box-sizing: border-box;
     padding-right: 1rem;
@@ -35,5 +83,11 @@ import StarlightTableOfContents from '@astrojs/starlight/components/TableOfConte
     white-space: normal;
     word-break: break-word;
     overflow-wrap: anywhere;
+  }
+  starlight-toc a code {
+    font-family: var(--sl-font-mono);
+    font-size: 0.85em;
+    background-color: var(--sl-color-bg-inline-code);
+    padding: 0.1em 0.2em;
   }
 </style>

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Adds semantic line breaks (one sentence per line) to MDX prose.
+ * Also collapses multiple blank lines into single blank lines.
  * Preserves: frontmatter, imports, JSX, code blocks, lists, headings, tables.
  */
 
@@ -82,7 +83,19 @@ function processFile(content) {
     }
   }
 
-  return result.join("\n");
+  // Collapse multiple consecutive blank lines into single blank lines
+  const collapsed = [];
+  let prevBlank = false;
+  for (const line of result) {
+    const isBlank = line.trim() === "";
+    if (isBlank && prevBlank) {
+      continue; // Skip consecutive blank lines
+    }
+    collapsed.push(line);
+    prevBlank = isBlank;
+  }
+
+  return collapsed.join("\n");
 }
 
 async function main() {

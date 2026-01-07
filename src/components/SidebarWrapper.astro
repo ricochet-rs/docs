@@ -1,0 +1,21 @@
+---
+// Custom SidebarWrapper that uses our SidebarSublist with backtick support
+import { type StarlightRouteData } from "@astrojs/starlight/route-data";
+import MobileMenuFooter from 'virtual:starlight/components/MobileMenuFooter';
+import SidebarPersister from '@astrojs/starlight/components/SidebarPersister.astro';
+import SidebarSublist from './SidebarSublist.astro';
+
+interface Props {
+  sidebar?: StarlightRouteData["sidebar"];
+}
+
+const sidebar = Astro.props.sidebar ?? Astro.locals.starlightRoute.sidebar;
+---
+
+<SidebarPersister>
+  <SidebarSublist sublist={sidebar} />
+</SidebarPersister>
+
+<div class="md:sl-hidden">
+  <MobileMenuFooter />
+</div>

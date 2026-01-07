@@ -18,9 +18,9 @@ install:
 
 # lint using prettier
 lint:
-    bun prettier --check .
+    prettier --check .
 
 # fix lints using prettier and format prose (semantic line breaks)
 fmt:
     bun run scripts/semantic-breaks.mjs
-    bun prettier --write .
+    prettier --write .

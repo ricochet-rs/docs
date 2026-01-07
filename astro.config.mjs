@@ -28,6 +28,11 @@ export default defineConfig({
       // customCss: ["./src/styles/global.css"],
       head: [
         {
+          // Prevent FOUC by setting font-size before page renders
+          tag: "style",
+          content: ":root { font-size: 14px; }",
+        },
+        {
           tag: "link",
           attrs: {
             rel: "icon",
@@ -105,7 +110,11 @@ export default defineConfig({
         // https://expressive-code.com/reference/style-overrides/
         useStarlightDarkModeSwitch: true,
         useStarlightUiThemeColors: false,
-        styleOverrides: { borderRadius: "0", codePaddingBlock: "0.8rem" },
+        styleOverrides: {
+          borderRadius: "0",
+          codePaddingBlock: "0.8rem",
+          codeFontSize: "0.775rem",
+        },
       },
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [

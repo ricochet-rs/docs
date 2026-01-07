@@ -1,0 +1,88 @@
+---
+// Custom TableOfContentsList that renders backticks as inline code
+import type { TocItem } from '@astrojs/starlight/utils/generateToC';
+import { parseBackticks } from '../utils/parseBackticks';
+
+interface Props {
+  toc: TocItem[];
+  isMobile?: boolean;
+  depth?: number;
+}
+
+const { toc, isMobile = false, depth = 0 } = Astro.props;
+---
+
+<ul class:list={{ isMobile }}>
+  {toc.map((item) => (
+    <li>
+      <a
+        href={`#${item.slug}`}
+        style={!isMobile ? `--depth: ${depth};` : undefined}
+        set:html={parseBackticks(item.text).map(p => p.isCode ? `<code>${p.text}</code>` : p.text).join('')}
+      />
+      {item.children.length > 0 && (
+        <Astro.self toc={item.children} isMobile={isMobile} depth={depth + 1} />
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: block;
+    border-radius: 0.25rem;
+    padding-block: 0.25rem;
+    padding-inline: calc(0.5rem + var(--depth, 0) * 0.75rem) 0.5rem;
+    line-height: 1.25;
+    color: var(--sl-color-gray-3);
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus {
+    color: var(--sl-color-white);
+  }
+
+  [aria-current='true'],
+  [aria-current='true']:hover,
+  [aria-current='true']:focus {
+    color: var(--sl-color-text-accent);
+    font-weight: 600;
+  }
+
+  a :global(code) {
+    font-family: var(--sl-font-mono);
+    font-size: 0.85em;
+    background-color: var(--sl-color-bg-inline-code);
+    padding: 0.1em 0.2em;
+  }
+
+  /* Mobile styles */
+  .isMobile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .isMobile li {
+    border-top: 1px solid var(--sl-color-hairline-light);
+  }
+
+  .isMobile a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0;
+    padding: 0.5rem 0;
+    width: 100%;
+  }
+
+  .isMobile [aria-current='true']::before {
+    content: '✓';
+    font-size: 0.875rem;
+  }
+</style>

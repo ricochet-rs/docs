@@ -92,3 +92,13 @@ h6 code {
   background-color: var(--sl-color-bg-inline-code);
   padding: 0.1em 0.3em;
 }
+
+/* Disable transitions on code blocks to prevent zoom animation on load */
+.expressive-code,
+.expressive-code *,
+pre,
+pre *,
+code {
+  transition: none !important;
+  animation: none !important;
+}

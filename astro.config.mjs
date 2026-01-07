@@ -28,7 +28,7 @@ export default defineConfig({
       // customCss: ["./src/styles/global.css"],
       head: [
         {
-          // Prevent FOUC by setting font-size before page renders
+          // Prevent FOUC by setting base font-size before page renders
           tag: "style",
           content: ":root { font-size: 14px; }",
         },

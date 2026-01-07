@@ -67,6 +67,8 @@
   font-size: 14px;
   /* ToC (right sidebar) width */
   --toc-width: 12rem;
+  /* Main content width (default is ~700px) */
+  --sl-content-width: 800px;
 }
 
 @media (min-width: 72rem) {

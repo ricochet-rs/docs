@@ -2,7 +2,7 @@
 title: Access and Permissions
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Steps } from "@astrojs/starlight/components";
 
 Control who can access your deployed content using access types and collaborators.
 
@@ -10,85 +10,37 @@ Control who can access your deployed content using access types and collaborator
 
 Every content item has an access type that controls who can view it:
 
-### Private
-
-Only the item owner and specified collaborators can access the item.
-Private items are ideal for:
-
-- Work-in-progress applications
-- Internal tools for specific teams
-- Sensitive data or restricted content
-
-### Internal
-
-All logged-in users can view the item.
-Internal items are useful for:
-
-- Company-wide dashboards
-- Team analytics
-- Internal documentation
-
-### External
-
-Anyone can view the item without authentication.
-External items are perfect for:
-
-- Public-facing applications and APIs
-- Demo applications
+- **Private**: Only the item owner and specified collaborators can access the item
+- **Internal**: All logged-in users can view the item
+- **External**: Anyone can view the item without authentication
 
 ## Content Collaborators
 
 For fine-grained access control, you can invite collaborators to individual content items.
 Each collaborator has a specific role:
 
-### Owner
+- **Owner**: the user who deployed the item with full control
+- **Admin**: can manage settings, collaborators, and delete the item
+- **Editor**: can modify settings but cannot manage collaborators
+- **Contributor**: can deploy updates only
+- **Consumer**: read-only access
 
-The user who originally deployed the item.
-Owners have full control:
-
-- Manage all item settings
-- Add or remove collaborators
-- Delete the item
-- Deploy updates
-
-### Admin
-
-Collaborator admins can manage the item:
-
-- Modify all item settings
-- Add or remove other collaborators
-- Delete the item
-- Cannot deploy updates (unless they're also a developer with deploy access)
-
-### Editor
-
-Editors can configure the item but have limited control:
-
-- Modify item settings
-- Cannot manage collaborators
-- Cannot delete the item
-
-### Contributor
-
-Contributors can only deploy updates:
-
-- Deploy new versions of the item
-- Cannot modify settings
-- Cannot manage collaborators
-
-### Consumer
-
-Consumers have read-only access:
-
-- View the item and its content
-- No modification privileges
+| Capability            | Owner | Admin | Editor | Contributor | Consumer |
+| --------------------- | :---: | :---: | :----: | :---------: | :------: |
+| View item             |  ✅   |  ✅   |   ✅   |     ✅      |    ✅    |
+| Deploy updates        |  ✅   |  ✅   |   ✅   |     ✅      |    ❌    |
+| Modify settings       |  ✅   |  ✅   |   ✅   |     ❌      |    ❌    |
+| Manage collaborators  |  ✅   |  ✅   |   ❌   |     ❌      |    ❌    |
+| Delete item           |  ✅   |  ✅   |   ❌   |     ❌      |    ❌    |
 
 ## Setting Access and Permissions
 
+<Steps>
 1. Navigate to your item's settings page
 2. Go to the "Access" section
 3. Choose the access type
 4. Add collaborators and assign their roles
+</Steps>
 
 <Aside type="tip">
   Start with `private` access while developing, then change to `internal` or

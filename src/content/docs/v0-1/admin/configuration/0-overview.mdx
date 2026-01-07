@@ -34,7 +34,8 @@ redirect_url = "http://localhost:6188/oauth/callback
 
 ## Storage
 
-ricochet requires persistent storage for its database, deployments, encryption keys and more which we call `RICOCHET_HOME`.
+ricochet requires persistent storage for its database, deployments, and encryption keys.
+We refer to this location as `RICOCHET_HOME`.
 
 <FileTree>
 
@@ -63,16 +64,11 @@ RICOCHET_AUTH__DEFAULT_ROLE=consumer
 
 ### Configuration Precedence
 
-ricochet uses the below precedence for configuration values.
-Enviroment variables are prioritized over the `ricochet-config.toml` which is prioritized over default values.
+ricochet uses the below precedence for configuration values:
 
-1. Environment variables 
-1. TOML configuration file
-1. Default values
+1. Enviroment variables are prioritized over the `ricochet-config.toml` 
+2. `ricochet-config.toml` is prioritized over default values
 
-<Aside>
-We recommend using `ricochet-config.toml` for configuration whenever possible and environment variables for overrides or dynamic settings when starting ricochet.
-</Aside>
 
 ## Configuration settings
 
@@ -88,7 +84,7 @@ We recommend using `ricochet-config.toml` for configuration whenever possible an
   description="Configure default user roles and understand ricochet's permission system."
 />
 <LinkCard
-  title="Execution Engine"
+  title="Execution Backend"
   href="/v0-1/admin/configuration/execution-engine/"
-  description="Use Kubernetes, Docker, or Podman as an execution engine."
+  description="Use Kubernetes, Docker, or Podman as an execution backend."
 />

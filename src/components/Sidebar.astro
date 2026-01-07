@@ -1,16 +1,43 @@
 ---
 // Custom Sidebar that renders backticks in labels as inline code
-import MobileMenuFooter from 'virtual:starlight/components/MobileMenuFooter';
-import SidebarPersister from '@astrojs/starlight/components/SidebarPersister.astro';
-import SidebarSublist from './SidebarSublist.astro';
+// and supports multi-sidebar from starlight-utils
+import config from "virtual:starlight-utils/config";
+import HorizontalList from "./HorizontalList.astro";
+import SidebarWrapper from "./SidebarWrapper.astro";
+import { AstroError } from "astro/errors";
 
-const { sidebar } = Astro.locals.starlightRoute;
+interface Props {
+  renderDefault?: boolean;
+}
+
+if (!Astro.locals.starlightUtils?.multiSidebar) {
+  // Fall back to simple sidebar if multiSidebar is not configured
+}
 ---
 
-<SidebarPersister>
-  <SidebarSublist sublist={sidebar} />
-</SidebarPersister>
-
-<div class="md:sl-hidden">
-  <MobileMenuFooter />
-</div>
+{
+  config?.multiSidebar ? (
+    <>
+      {config.multiSidebar.switcherStyle === "horizontalList" && (
+        <HorizontalList />
+      )}
+      {config.multiSidebar.switcherStyle === "hidden" &&
+        Astro.locals.starlightUtils.multiSidebar.map(
+          ({ isCurrentSidebar, label, sidebar }) => (
+            <div
+              hidden={!isCurrentSidebar}
+              data-starlight-multi-sidebar-label={label.label}
+            >
+              <SidebarWrapper {sidebar} />
+            </div>
+          )
+        )}
+      {config.multiSidebar.switcherStyle !== "horizontalList" &&
+        config.multiSidebar.switcherStyle !== "hidden" && (
+          <SidebarWrapper />
+        )}
+    </>
+  ) : (
+    <SidebarWrapper />
+  )
+}

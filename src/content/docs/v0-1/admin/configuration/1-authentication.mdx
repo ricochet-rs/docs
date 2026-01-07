@@ -5,7 +5,8 @@ title: Authentication
 
 import { Aside, LinkCard } from "@astrojs/starlight/components";
 
-ricochet uses OpenID Connect (OIDC) for authentication. This allows you to bring your own identity provider to ricochet.
+ricochet uses OpenID Connect (OIDC) for authentication.
+This allows you to bring your own identity provider to ricochet.
 
 ## Requirements
 
@@ -14,7 +15,8 @@ Your OIDC provider must support:
 - **Claims**: `email` and `profile`
 - **Grant Type**: Authorization Code Flow
 
-ricochet uses the subject identifier (`sub`) from your OIDC provider as the unique user ID. The `email` claim is collected for future SMTP integrations.
+ricochet uses the subject identifier (`sub`) from your OIDC provider as the unique user ID.
+The `email` claim is collected for future SMTP integrations.
 
 ## Configuration
 

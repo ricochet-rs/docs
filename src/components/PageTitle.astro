@@ -1,6 +1,31 @@
 ---
-// Custom PageTitle that omits the version notice
-import Default from '@astrojs/starlight/components/PageTitle.astro'
+// Custom PageTitle that renders backticks as inline code
+import { parseBackticks } from '../utils/parseBackticks';
+
+const title = Astro.locals.starlightRoute.entry.data.title;
+const parts = parseBackticks(title);
 ---
 
-<Default><slot /></Default>
+<h1 id="_top">
+  {parts.map((part) =>
+    part.isCode ? <code>{part.text}</code> : part.text
+  )}
+</h1>
+
+<style>
+  @layer starlight.core {
+    h1 {
+      margin-top: 1rem;
+      font-size: var(--sl-text-h1);
+      line-height: var(--sl-line-height-headings);
+      font-weight: 600;
+      color: var(--sl-color-white);
+    }
+    h1 code {
+      font-family: var(--sl-font-mono);
+      font-size: 0.85em;
+      background-color: var(--sl-color-bg-inline-code);
+      padding: 0.1em 0.3em;
+    }
+  }
+</style>

@@ -94,6 +94,10 @@ export default defineConfig({
         PageTitle: "./src/components/PageTitle.astro",
         // Override ToC to wrap long titles
         TableOfContents: "./src/components/TableOfContents.astro",
+        // Override Sidebar to render backticks as code
+        Sidebar: "./src/components/Sidebar.astro",
+        // Override Pagination to render backticks as code
+        Pagination: "./src/components/Pagination.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {

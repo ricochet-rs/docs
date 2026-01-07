@@ -79,3 +79,16 @@
     width: var(--toc-width);
   }
 }
+
+/* Style inline code in headings */
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+  font-family: var(--sl-font-mono);
+  font-size: 0.85em;
+  background-color: var(--sl-color-bg-inline-code);
+  padding: 0.1em 0.3em;
+}

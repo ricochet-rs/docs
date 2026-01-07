@@ -2,7 +2,6 @@
 title: Authentication
 ---
 
-
 import { Aside, LinkCard } from "@astrojs/starlight/components";
 
 ricochet uses OpenID Connect (OIDC) for authentication, allowing you to integrate with any OIDC-compliant identity provider.
@@ -43,7 +42,6 @@ display_name_claim = "preferred_username"  # Optional, defaults to "preferred_us
 | `client_secret`      | Yes      | OAuth client secret from your OIDC provider                                                                    |
 | `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
 | `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
-
 
 ## Next Steps
 

@@ -4,11 +4,8 @@ title: Overview
 
 import { Aside, LinkCard, FileTree } from '@astrojs/starlight/components';
 
-
-
 ricochet is configured using a `ricochet-config.toml` file.
 The configuration file controls OIDC authentication, the default user role, backend execution, and item storage.
-
 
 When using the default ricochet systemd service, the configuration file is located at `/var/lib/ricochet/ricochet-config.toml`.
 If using the ricochet server cli you can specify the config using `ricochet start --config /path/to/ricochet-config.toml`.
@@ -68,7 +65,6 @@ ricochet uses the below precedence for configuration values:
 
 1. Enviroment variables are prioritized over the `ricochet-config.toml`
 2. `ricochet-config.toml` is prioritized over default values
-
 
 ## Configuration settings
 

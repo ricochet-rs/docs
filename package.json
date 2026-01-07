@@ -21,6 +21,8 @@
     "add": "^2.0.6",
     "astro": "5.16.6",
     "pagefind": "^1.4.0",
+    "playwright": "^1.57.0",
+    "remark-mermaidjs": "^7.0.0",
     "sharp": "^0.34.4",
     "starlight-links-validator": "^0.19.1",
     "starlight-scroll-to-top": "^0.4.0",

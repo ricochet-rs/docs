@@ -92,3 +92,17 @@ h6 code {
   background-color: var(--sl-color-bg-inline-code);
   padding: 0.1em 0.3em;
 }
+
+/* Mermaid diagram styles */
+svg.flowchart,
+svg[id^="mermaid"] {
+  display: block;
+  margin: 1.5rem auto;
+  max-width: 100%;
+}
+
+/* Dark mode: invert mermaid diagrams for better visibility */
+[data-theme="dark"] svg.flowchart,
+[data-theme="dark"] svg[id^="mermaid"] {
+  filter: invert(1) hue-rotate(180deg);
+}

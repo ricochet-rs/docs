@@ -9,6 +9,7 @@ import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
+import remarkMermaid from "remark-mermaidjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -158,5 +159,18 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+  },
+
+  markdown: {
+    remarkPlugins: [
+      [
+        remarkMermaid,
+        {
+          mermaidConfig: {
+            theme: "neutral",
+          },
+        },
+      ],
+    ],
   },
 });

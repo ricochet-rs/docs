@@ -38,6 +38,46 @@ Ensure your firewall and network policies allow outbound HTTPS connections to th
 If the licensing server becomes temporarily unreachable after a successful validation, ricochet continues using the last known license status until the next successful validation.
 </Aside>
 
+## Offline Licensing
+
+ricochet supports offline license verification using cryptographically signed license files.
+This allows for seamless operation even if you can't reach the licensing server.
+
+### How It Works
+
+1. **Online validation succeeds**: When ricochet successfully validates your license online, it automatically downloads and caches a signed license file locally.
+
+2. **Network becomes unavailable**: If a subsequent validation attempt fails due to network issues, ricochet falls back to verifying the cached license file.
+
+3. **Cryptographic verification**: The cached license file contains:
+    - An Ed25519 signature to verify authenticity
+    - AES-256-GCM encrypted license data
+    - Expiry information for the cached certificate
+
+<Aside type="caution">
+Offline verification requires the `public_key` configuration option.
+Without it, ricochet cannot verify the signature of cached license files and will fall back to unlicensed mode when offline.
+</Aside>
+
+### Cache Location
+
+The license file is cached at `$RICOCHET_HOME/.license.lic`.
+This file is automatically managed by ricochet and refreshed on each successful online validation.
+
+### Validation Flow
+
+```mermaid
+flowchart TD
+    A[Startup / Periodic Validation] --> B{Online Validation}
+    B -->|Success| C[Cache License File]
+    C --> D[Licensed]
+    B -->|Failure| E{Cached License?}
+    E -->|Yes| F{Verify & Decrypt}
+    F -->|Valid| G[Licensed - cached]
+    F -->|Invalid| H[Unlicensed]
+    E -->|No| H
+```
+
 ## Configuration
 
 License configuration can be set via environment variables or in `ricochet.toml`.
@@ -60,7 +100,8 @@ Add the following to your `ricochet.toml`:
 account_id = "your-account-id"
 product_id = "your-product-id"
 license_key = "your-license-key"
-public_key = "your-ed25519-public-key"
+# Hex-encoded Ed25519 public key (64 characters) - required for offline licensing
+public_key = "e8601e48b69383ba520245fd07971e983d06d22c4257cfd82304601479cee788"
 ```
 
 | Field | Required | Description |
@@ -68,7 +109,7 @@ public_key = "your-ed25519-public-key"
 | `account_id` | Yes | Your Keygen account identifier |
 | `product_id` | Yes | The ricochet product identifier |
 | `license_key` | Yes | Your unique license key |
-| `public_key` | No | Ed25519 public key for verifying license response signatures. Provides additional security by ensuring responses haven't been tampered with. Obtain this from your Keygen account settings. |
+| `public_key` | No | Ed25519 public key (hex-encoded, 64 characters) for cryptographic verification. **Required for offline licensing** - without it, ricochet cannot verify cached license files during network outages. Also provides additional security for online validation by ensuring responses haven't been tampered with. Obtain this from your Keygen account settings under "Ed25519 Public Key". |
 
 <Aside type="note">
 Environment variables take precedence over TOML configuration values.

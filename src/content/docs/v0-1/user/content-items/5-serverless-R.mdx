@@ -4,11 +4,13 @@ title: "Serverless Functions"
 
 `ricochet` provides a serverless function runtime for R as the content type `serverless-r`.
 
-Serverless R enables users to create a simple R script with function definitions and deploy them as a RESTful API. The serverless function runtime abstracts away the hard work of converting R code into RESTful APIs so you can focus on deploying.
+Serverless R enables users to create a simple R script with function definitions and deploy them as a RESTful API.
+The serverless function runtime abstracts away the hard work of converting R code into RESTful APIs so you can focus on deploying.
 
 ## Usage
 
-The `serverless-r` content type requires an R script as the entrypoint which defines a list object called `routes`. The `routes` object is used to define the REST API endpoints.
+The `serverless-r` content type requires an R script as the entrypoint which defines a list object called `routes`.
+The `routes` object is used to define the REST API endpoints.
 
 Take an example `hello-world.R` file:
 
@@ -25,9 +27,11 @@ add2 <- function(x, y) {
 routes <- list(add2, hello_world)
 ```
 
-That's it! This will create a REST API with two routes: `/add2` and `hello_world`.
+That's it!
+This will create a REST API with two routes: `/add2` and `hello_world`.
 
-You can change the name of the endpoints by providing a named list. For example the route
+You can change the name of the endpoints by providing a named list.
+For example the route
 
 ```r
 routes <- list(
@@ -40,17 +44,24 @@ will create two endpoints called `/add-2` and `/hello-world`.
 
 ## Deploying
 
-To deploy a `serverless-r` item, create a new `_ricochet.toml` in your project using `ricochet::use_ricochet_toml()`. When selecting prompted to select the content type `"Serverless R"`. Then run `ricochet::deploy()`. Thats it!
+To deploy a `serverless-r` item, create a new `_ricochet.toml` in your project using `ricochet::use_ricochet_toml()`.
+When selecting prompted to select the content type `"Serverless R"`.
+Then run `ricochet::deploy()`.
+Thats it!
 
 ## Request Types
 
-The serverless R runtime supports only GET and POST requests. Function without any arguments are served as a **`GET`** request. If a function has aguments, it is accessible via `POST` request.
+The serverless R runtime supports only GET and POST requests.
+Function without any arguments are served as a **`GET`** request.
+If a function has aguments, it is accessible via `POST` request.
 
-By default all responses return (serialized) JSON. POST requests expect JSON in their bodies by default.
+By default all responses return (serialized) JSON.
+POST requests expect JSON in their bodies by default.
 
 ## Using (de)serializers
 
-It is possible to customize the type that responses are serialized as and how bodies are deserialized. Below are the available serializers and deserializers.
+It is possible to customize the type that responses are serialized as and how bodies are deserialized.
+Below are the available serializers and deserializers.
 
 - Serializers:
   - `csv`, `excel`, `feather`, `geojson`, `html`, `htmlwidget`, `jpeg`, `json`, `json-unboxed`, `octet`, `parquet`, `pdf`, `png`, `png`, `svg`, `svglite`, `text`, `tiff`, `tsv`, `yaml`.
@@ -71,7 +82,8 @@ list(
 
 You can return a csv file from your serverless functions by specifying the `serialize = "csv"` or you can also expect a csv file as your input by setting `deserialize = "csv"` as well.
 
-The below example creates two endpoints. `/penguins` returns the first 5 rows of the `penguins` data frame as a csv file and `/nrow` returns the number of rows sent in a csv file request.
+The below example creates two endpoints.
+`/penguins` returns the first 5 rows of the `penguins` data frame as a csv file and `/nrow` returns the number of rows sent in a csv file request.
 
 ```r
 routes <- list(
@@ -86,7 +98,8 @@ routes <- list(
 )
 ```
 
-The deployed serverless functions can be called using httr2. To read the csv file:
+The deployed serverless functions can be called using httr2.
+To read the csv file:
 
 ```r
 library(httr2)

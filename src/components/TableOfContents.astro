@@ -24,7 +24,8 @@ const { toc } = Astro.locals.starlightRoute;
         var links = toc.querySelectorAll('a');
         links.forEach(function(link) {
           var href = link.getAttribute('href');
-          if (href && href.startsWith('#')) {
+          // Skip the #_top link (Overview) - it's intentionally different from page title
+          if (href && href.startsWith('#') && href !== '#_top') {
             var id = decodeURIComponent(href.slice(1));
             var heading = document.getElementById(id);
             if (heading) {

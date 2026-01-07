@@ -1,0 +1,86 @@
+---
+title: Overview
+---
+
+import { Aside, LinkCard, FileTree } from '@astrojs/starlight/components';
+
+ricochet is configured using a `ricochet-config.toml` file.
+The configuration file controls OIDC authentication, the default user role, backend execution, and item storage.
+
+When using the default ricochet systemd service, the configuration file is located at `/var/lib/ricochet/ricochet-config.toml`.
+If using the ricochet server cli you can specify the config using `ricochet start --config /path/to/ricochet-config.toml`.
+
+<Aside type="tip">
+If no configuration file exists, ricochet will create one automatically on first startup.
+</Aside>
+
+### Example `ricochet-config.toml`
+
+```bash
+home = "/var/lib/ricochet/data"
+
+[auth]
+default_role = "developer"
+
+[auth.oidc]
+issuer_url = "https://auth.example.com"
+client_id = "your-client-id"
+client_secret = "your-client-secret"
+redirect_url = "http://localhost:6188/oauth/callback
+```
+
+## Storage
+
+ricochet requires persistent storage for its database, deployments, and encryption keys.
+We refer to this location as `RICOCHET_HOME`.
+
+<FileTree>
+
+- content/ deployment bundles
+  - ...
+- .ricochet.json encyption keys
+- .ricochet.pub public rsa key
+- ricochet.sqlite3 ricochet's database
+</FileTree>
+
+The default location of `RICOCHET_HOME` is the current working directory unless specified by the top-level `home` configuration in the `ricochet-config.toml` e.g.
+`home = "/path/to/ricochet/home"` or environment variable.
+In the case of the **systemd service**, the default location is `/var/lib/ricochet/data`.
+
+Alternatively, use the `RICOCHET_HOME` environment variable to specify where ricochet should use the home directory.
+
+## Environment Variables
+
+Environment variables can override TOML settings using the `RICOCHET_` prefix with double underscores (`__`) for nested keys.
+For example to set values from `[auth.oidc]` the following environment variables can be used:
+
+```bash
+RICOCHET_AUTH__OIDC__CLIENT_SECRET=secret-value
+RICOCHET_AUTH__DEFAULT_ROLE=consumer
+```
+
+### Configuration Precedence
+
+ricochet uses the below precedence for configuration values:
+
+1. Enviroment variables are prioritized over the `ricochet-config.toml`
+2. `ricochet-config.toml` is prioritized over default values
+
+## Configuration settings
+
+<LinkCard
+  title="Authentication"
+  href="/v0-1/admin/configuration/1-authentication/"
+  description="Configure OIDC authentication with your identity provider."
+/>
+
+<LinkCard
+  title="User Roles"
+  href="/v0-1/admin/configuration/2-user-roles/"
+  description="Configure default user roles and understand ricochet's permission system."
+/>
+<LinkCard
+  title="Execution Backend"
+  href="/v0-1/admin/configuration/execution-backend/"
+  description="Use Kubernetes, Docker, or Podman as an execution backend."
+/>

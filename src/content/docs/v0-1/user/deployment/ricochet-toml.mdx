@@ -1,5 +1,5 @@
 ---
-title: Using _ricochet.toml
+title: Using `_ricochet.toml`
 ---
 
 Each deployment to ricochet is accompanied by a `_ricochet.toml` file.
@@ -35,7 +35,7 @@ and the following optional settings (depending on the content type):
 - `serve`
 - `static`
 
-## 'content' Settings
+## `content` Settings
 
 The `[content]` section of the `_ricochet.toml` is required.
 It has the following required fields:
@@ -54,7 +54,7 @@ It has the following required fields:
 Upon your first successful deployment, a unique content ID is created.
 The content ID is tracked in the `id` field.
 
-## 'static' settings
+## `static` settings
 
 Some items such as R Markdown or Quarto may create static html websites.
 The `[static]` content settings can be used to specify which directory should be served from your content item.
@@ -72,7 +72,7 @@ index = "index.html"
 output_dir = "_site"
 ```
 
-## 'serve' settings
+## `serve` settings
 
 Content items that require a running background process such as shiny or plumber are considered services.
 Use the `[serve]` settings to determine how the content scales.
@@ -97,7 +97,7 @@ spawn_threshold = 80
 max_connections = 10
 ```
 
-## 'language' settings
+## `language` settings
 
 The language section of the `_ricochet.toml` is required.
 It contains two fields: `name` and `packages`.
@@ -108,7 +108,7 @@ These specify which language the content item is using as well as how the depend
 | `name`     | The language of the content item. Must be `"r"` or `"julia"`.                                                                               |
 | `packages` | For `"r"` must be `"renv.lock"`. For `"julia"` must be `"Manifest.toml"`. No other dependency management tools are supported at the moment. |
 
-## 'schedule' settings
+## `schedule` settings
 
 All tasks items can be scheduled by specifying the `cron` field.
 

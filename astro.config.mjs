@@ -28,6 +28,11 @@ export default defineConfig({
       // customCss: ["./src/styles/global.css"],
       head: [
         {
+          // Prevent FOUC by setting base font-size before page renders
+          tag: "style",
+          content: ":root { font-size: 14px; }",
+        },
+        {
           tag: "link",
           attrs: {
             rel: "icon",
@@ -94,6 +99,10 @@ export default defineConfig({
         PageTitle: "./src/components/PageTitle.astro",
         // Override ToC to wrap long titles
         TableOfContents: "./src/components/TableOfContents.astro",
+        // Override Sidebar to render backticks as code
+        Sidebar: "./src/components/Sidebar.astro",
+        // Override Pagination to render backticks as code
+        Pagination: "./src/components/Pagination.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {
@@ -101,7 +110,11 @@ export default defineConfig({
         // https://expressive-code.com/reference/style-overrides/
         useStarlightDarkModeSwitch: true,
         useStarlightUiThemeColors: false,
-        styleOverrides: { borderRadius: "0", codePaddingBlock: "0.8rem" },
+        styleOverrides: {
+          borderRadius: "0",
+          codePaddingBlock: "0.8rem",
+          codeFontSize: "0.775rem",
+        },
       },
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [

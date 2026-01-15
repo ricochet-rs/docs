@@ -21,12 +21,13 @@ home = "/var/lib/ricochet/data"
 
 [auth]
 default_role = "developer"
+require_authentication = false  # Set to true to require login for all access
 
 [auth.oidc]
 issuer_url = "https://auth.example.com"
 client_id = "your-client-id"
 client_secret = "your-client-secret"
-redirect_url = "http://localhost:6188/oauth/callback
+redirect_url = "http://localhost:6188/oauth/callback"
 ```
 
 ## Storage
@@ -57,6 +58,7 @@ For example to set values from `[auth.oidc]` the following environment variables
 ```bash
 RICOCHET_AUTH__OIDC__CLIENT_SECRET=secret-value
 RICOCHET_AUTH__DEFAULT_ROLE=consumer
+RICOCHET_AUTH__REQUIRE_AUTHENTICATION=false
 ```
 
 ### Configuration Precedence

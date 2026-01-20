@@ -18,7 +18,7 @@ steps:
       - bun astro build
 
   - name: PR docs preview
-    image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.0
+    image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.2
     settings:
       path: "./dist"
       surge_token:

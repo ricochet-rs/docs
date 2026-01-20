@@ -43,6 +43,32 @@ display_name_claim = "preferred_username"  # Optional, defaults to "preferred_us
 | `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
 | `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
 
+## Requiring Authentication
+
+By default, unauthenticated users can browse the "Explore" page and view public content.
+To require authentication for all access, enable the `require_authentication` option:
+
+```toml
+[auth]
+require_authentication = true
+```
+
+Or via environment variable:
+
+```bash
+RICOCHET_AUTH__REQUIRE_AUTHENTICATION=true
+```
+
+### Behavior
+
+| Setting                        | Unauthenticated User Access                          |
+| ------------------------------ | ---------------------------------------------------- |
+| `require_authentication=false` | Can view Explore page and public content only        |
+| `require_authentication=true`  | Redirected to sign-in page on all routes             |
+
+When `require_authentication` is enabled, users see a full-screen login page with SSO sign-in.
+When disabled (the default), unauthenticated users can browse public content but see a sign-in prompt in the sidebar to access protected features like deployment, API keys, and settings.
+
 ## Next Steps
 
 <LinkCard

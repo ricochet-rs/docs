@@ -9,5 +9,8 @@
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n.*?:= \"(?<currentValue>.*?)\""
       ]
     }
-  ]
+  ],
+  "statusCheckNames": {
+    "minimumReleaseAge": null
+  }
 }

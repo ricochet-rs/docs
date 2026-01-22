@@ -1,0 +1,59 @@
+---
+title: Access and Permissions
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Control who can access your deployed content using access types and collaborators.
+
+## Access Types
+
+Every content item has an access type that controls who can view it:
+
+- **Private**: Only the item owner and specified collaborators can access the item
+- **Internal**: All logged-in users can view the item
+- **External**: Anyone can view the item without authentication
+
+## Content Collaborators
+
+For fine-grained access control, you can invite collaborators to individual content items.
+Each collaborator has a specific role:
+
+- **Owner**: the user who deployed the item with full control
+- **Admin**: can manage settings, collaborators, and delete the item
+- **Editor**: can modify settings but cannot manage collaborators
+- **Contributor**: can deploy updates only
+- **Consumer**: read-only access
+
+| Capability            | Owner | Admin | Editor | Contributor | Consumer |
+| --------------------- | :---: | :---: | :----: | :---------: | :------: |
+| View item             |  ✅   |  ✅   |   ✅   |     ✅      |    ✅    |
+| Deploy updates        |  ✅   |  ✅   |   ✅   |     ✅      |    ❌    |
+| Modify settings       |  ✅   |  ✅   |   ✅   |     ❌      |    ❌    |
+| Manage collaborators  |  ✅   |  ✅   |   ❌   |     ❌      |    ❌    |
+| Delete item           |  ✅   |  ✅   |   ❌   |     ❌      |    ❌    |
+
+## Setting Access and Permissions
+
+<Steps>
+1. Navigate to your item's settings page
+
+2. Go to the "Access" section
+
+3. Choose the access type
+
+4. Add collaborators and assign their roles
+</Steps>
+
+<Aside type="tip">
+  Start with `private` access while developing, then change to `internal` or
+  `external` when ready to share.
+</Aside>
+
+## Next Steps
+
+- Learn about [deploying content](/v0-1/user/deployment/1-ricochet-cli) with the CLI
+- Explore [scheduling tasks](/v0-1/user/content-items/4-scheduled-content) for automated reports
+
+Have questions?
+[Start a discussion](https://github.com/orgs/ricochet-rs/discussions/new/choose) on GitHub.

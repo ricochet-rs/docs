@@ -1,0 +1,78 @@
+---
+title: Authentication
+---
+
+import { Aside, LinkCard } from "@astrojs/starlight/components";
+
+ricochet uses OpenID Connect (OIDC) for authentication, allowing you to integrate with any OIDC-compliant identity provider.
+
+## Requirements
+
+The OIDC provider must support:
+
+- **Claims**: `email` and `profile`
+- **Grant Type**: Authorization Code Flow
+
+ricochet uses the subject identifier (`sub`) as the unique user ID.
+The `email` claim is collected for future SMTP integrations.
+
+## Configuration
+
+Add the following to your `ricochet-config.toml`:
+
+```toml
+[auth.oidc]
+issuer_url = "https://auth.example.com/"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+display_name_claim = "preferred_username"  # Optional, defaults to "preferred_username"
+```
+
+<Aside type="caution">
+  The redirect URL **must** use the `/oauth/callback` path for compatibility with the ricochet cli.
+</Aside>
+
+#### Configuration Fields
+
+| Field                | Required | Description                                                                                                    |
+| -------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| `issuer_url`         | Yes      | Your OIDC provider's issuer URL. Must start with `https://`                                                    |
+| `client_id`          | Yes      | OAuth client ID from your OIDC provider                                                                        |
+| `client_secret`      | Yes      | OAuth client secret from your OIDC provider                                                                    |
+| `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
+| `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
+
+## Requiring Authentication
+
+By default, unauthenticated users can browse the "Explore" page and view public content.
+To require authentication for all access, enable the `require_authentication` option:
+
+```toml
+[auth]
+require_authentication = true
+```
+
+Or via environment variable:
+
+```bash
+RICOCHET_AUTH__REQUIRE_AUTHENTICATION=true
+```
+
+### Behavior
+
+| Setting                        | Unauthenticated User Access                          |
+| ------------------------------ | ---------------------------------------------------- |
+| `require_authentication=false` | Can view Explore page and public content only        |
+| `require_authentication=true`  | Redirected to sign-in page on all routes             |
+
+When `require_authentication` is enabled, users see a full-screen login page with SSO sign-in.
+When disabled (the default), unauthenticated users can browse public content but see a sign-in prompt in the sidebar to access protected features like deployment, API keys, and settings.
+
+## Next Steps
+
+<LinkCard
+  title="Learn about user roles"
+  href="/v0-1/admin/configuration/2-user-roles"
+  description="Configure user roles and default permissions."
+/>

@@ -197,7 +197,14 @@ const themeLabels = {
     });
 
     // Update document theme
-    document.documentElement.dataset.theme = theme === 'auto' ? getPreferredColorScheme() : theme;
+    const effectiveTheme = theme === 'auto' ? getPreferredColorScheme() : theme;
+    document.documentElement.dataset.theme = effectiveTheme;
+    // Toggle .dark class for nova theme compatibility
+    if (effectiveTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
 
     // Store preference
     storeTheme(theme);

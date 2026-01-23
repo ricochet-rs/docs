@@ -2,4 +2,10 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@layer base, starlight, theme, components, utilities;
+/* Scan nova theme components for Tailwind utilities */
+@source "../../node_modules/starlight-theme-nova/src/**/*.astro";
+
+/* Configure dark mode to use .dark class (nova theme compatibility) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base, starlight, nova, theme, components, utilities;

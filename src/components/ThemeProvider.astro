@@ -8,8 +8,15 @@
       (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
     // Set theme immediately before any styles load
-    document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
-    document.documentElement.style.colorScheme = theme === 'light' ? 'light' : 'dark';
+    const effectiveTheme = theme === 'light' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = effectiveTheme;
+    document.documentElement.style.colorScheme = effectiveTheme;
+    // Add .dark class for nova theme compatibility
+    if (effectiveTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
 
     // Add class to prevent transitions during initial load
     document.documentElement.classList.add('loading');

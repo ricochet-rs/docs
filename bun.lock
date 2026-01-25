@@ -17,7 +17,7 @@
         "sharp": "^0.34.4",
         "starlight-links-validator": "^0.19.1",
         "starlight-scroll-to-top": "^0.4.0",
-        "starlight-theme-nova": "^0.11.0",
+        "starlight-theme-nova": "^0.11.5",
         "starlight-versions": "^0.5.6",
         "tailwindcss": "^4.1.14",
       },

@@ -8,4 +8,21 @@
 /* Configure dark mode to use .dark class (nova theme compatibility) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Reference Starlight CSS variables for Tailwind utility generation */
+@theme reference {
+  --sl-nav-height: initial;
+  --sl-nav-pad-x: initial;
+  --sl-nav-pad-y: initial;
+  --sl-sidebar-width: initial;
+  --sl-sidebar-pad-x: initial;
+  --sl-z-index-navbar: initial;
+  --sl-z-index-menu: initial;
+  --sl-mobile-toc-height: initial;
+  --sl-content-inline-start: initial;
+  --sl-color-hairline: initial;
+  --sl-color-bg-nav: initial;
+  --sl-color-black: initial;
+  --sl-color-gray-5: initial;
+}
+
 @layer base, starlight, nova, theme, components, utilities;

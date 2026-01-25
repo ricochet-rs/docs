@@ -10,6 +10,12 @@
       ]
     }
   ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["starlight-theme-nova"],
+      "automerge": false
+    }
+  ],
   "statusCheckNames": {
     "minimumReleaseAge": null
   }

@@ -1,3 +1,68 @@
+
 ---
 title: Persistent Storage
 ---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Ricochet uses persistent storage to ensure deployed content and dependencies remain available across restarts, updates, and scaling events.
+
+## How It Works
+
+When content is deployed to ricochet, two types of persistent storage are used:
+
+### Content Storage
+
+Deployed bundles are stored in a shared content volume.
+Each deployment receives its own isolated directory containing:
+
+- Application code and files
+- Rendered output (for static content like Quarto or R Markdown)
+- Any files the application creates at runtime
+
+When running on Kubernetes, each app instance mounts only its own content directory, providing isolation between different content items.
+
+### Package Cache
+
+All installed packages (R, Python, Julia) are stored in a shared cache volume.
+This cache is shared across all deployed content, which means:
+
+- Packages only need to be installed once per version
+- Subsequent deployments using the same packages start faster
+- Different apps using the same dependencies share cached packages
+
+## Runtime File Access
+
+Applications have read-write access to their content directory at runtime.
+This allows:
+
+- Writing temporary files during execution
+- Creating output files (logs, reports, data exports)
+- Modifying files within the content directory
+
+<Aside type="caution">
+  Files written at runtime persist across app restarts but are overwritten on the next deployment.
+  External storage (databases, object storage) should be used for data that must survive redeployments.
+</Aside>
+
+## Working Directory
+
+When an application runs, the working directory is set to the content directory.
+Relative paths in code resolve against this directory, matching the behavior seen during local development.
+In R:
+
+```r
+# These paths work as expected
+read.csv("data/input.csv")
+saveRDS(model, "output/model.rds")
+```
+
+## Best Practices
+
+1. **Avoid storing large datasets in bundles.** External data sources or object storage are better suited for large files.
+
+2. **Use environment variables for connection strings.** This keeps credentials out of deployed code and allows different configurations per environment.
+
+3. **Design for statelessness.** While runtime files persist, designing apps to work without relying on local state makes scaling and redeployment smoother.
+
+4. **Clean up temporary files.** Applications that generate temporary files should clean them up to avoid accumulating unused data.

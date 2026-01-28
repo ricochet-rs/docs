@@ -1,0 +1,36 @@
+---
+title: v0.1.0
+description: Release notes for Ricochet v0.1.0
+slug: releases/v0.1.0
+tableOfContents: false
+template: splash
+---
+
+**Released: January 23, 2026**
+
+The inaugural release of Ricochet brings a complete platform for deploying and managing R, Julia, and Python content.
+
+### Highlights
+
+- **Multi-Language Support**: Deploy R (Shiny, Plumber, R Markdown, Quarto), Julia scripts, and Python applications with automatic dependency management
+- **Flexible Deployment Backends**: Run content locally with Linux process isolation, or scale to Kubernetes
+- **Modern Web Interface**: A fully-featured dashboard with real-time updates, toast notifications, and mobile-responsive design
+
+### Features
+
+- **Git-Backed Deployments**: Version control your content with automatic deployment on push
+- **Kubernetes Support**: Deploy at scale with health checks, dynamic environment variables, and vanity URLs
+- **API Keys**: Scoped API key management with expiration and per-content permissions
+- **Collaborators**: Invite team members with role-based access control
+- **Scheduling**: Run tasks on cron schedules with manual "Run Now" support
+- **Custom Package Repositories**: Configure custom CRAN mirrors or internal package sources
+- **OIDC Authentication**: Integrate with Auth0, Zitadel, Clerk, or any OIDC provider
+- **CLI Authentication**: OAuth callback support for local CLI authentication
+- **Swagger UI**: Interactive API documentation at `/swagger`
+- **Feedback Button**: Easily submit feedback from within the UI
+
+### Packaging
+
+- Fully self-contained binaries for Linux and macOS
+- `.deb` and `.rpm` installers available
+- Container images for Ubuntu and RHEL-based systems

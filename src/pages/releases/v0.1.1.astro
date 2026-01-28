@@ -1,0 +1,46 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "v0.1.1",
+    description: "Release notes for Ricochet v0.1.1",
+  }}
+>
+  <p><strong>Released: January 28, 2026</strong></p>
+
+  <h3>Security</h3>
+  <ul>
+    <li>
+      <strong>Route Authorization</strong>: All routes now enforce proper
+      authorization, ensuring content access is controlled across the platform
+    </li>
+    <li>
+      <strong>Collaborator Privacy</strong>: Collaborator information is now
+      protected with appropriate privacy controls
+    </li>
+  </ul>
+
+  <h3>Reliability</h3>
+  <ul>
+    <li>
+      <strong>Graceful Shutdown</strong>: The API server now handles shutdown
+      signals properly, allowing in-flight requests to complete before
+      terminating
+    </li>
+    <li>
+      <strong>Improved Resource Management</strong>: Stack size is now fixed at
+      8MB and thread pool sizing is calculated dynamically for better
+      performance under load
+    </li>
+  </ul>
+
+  <h3>Fixes</h3>
+  <ul>
+    <li>
+      <strong>API Key Copy Button</strong>: Resolves an issue where the copy
+      button for API keys was not functioning correctly
+    </li>
+  </ul>
+</StarlightPage>

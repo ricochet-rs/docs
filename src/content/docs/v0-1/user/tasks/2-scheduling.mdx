@@ -1,0 +1,85 @@
+---
+title: Scheduled Tasks
+---
+
+All tasks can be scheduled. This includes, R / Julia scripts, R Markdown, or Quarto documents.
+
+Items can be scheduled using cron syntax.
+
+:::note[Timezones]
+All cron schedules are in UTC at present.
+:::
+
+## Scheduling
+
+Tasks can be scheduled using the ricochet UI or the REST API.
+
+### Using the UI
+
+You can schedule a task from the ricochet UI by navigating to the "Schedule" settings in the runtime configuration page (e.g., `https://try.ricochet.rs/tasks/{item-id}/runtime`).
+
+
+### Using the REST API
+
+
+```shell
+curl -X PATCH \
+  'https://try.ricochet.rs/api/v0/content/01JT1AAJY0EVDE4C0277XX148R/schedule' \
+  -H 'Authorization: Key rico_wuvV9j9JurM_H2cP4wCQiQVjeAbdsYce5MVyze9RqzSQp' \
+  -H 'Content-Type: application/json' \
+  -d '{"schedule": "0 */2 * * *"}'
+```
+
+## cron patterns
+
+Traditional cron patterns can be provided using the following POSIX-like format:
+
+```
+┌──────────────── (optional) second (0 - 59)
+│ ┌────────────── minute (0 - 59)
+│ │ ┌──────────── hour (0 - 23)
+│ │ │ ┌────────── day of month (1 - 31)
+│ │ │ │ ┌──────── month (1 - 12, JAN-DEC)
+│ │ │ │ │ ┌────── day of week (0 - 6, SUN-Mon)
+│ │ │ │ │ │       (0 to 6 are Sunday to Saturday; 7 is Sunday, the same as 0)
+│ │ │ │ │ │
+* * * * * *
+```
+
+For example, to schedule an item to run every other hour use `0 */2 * * *`.
+
+## Expression modifiers
+
+cron expressions can also take advantage of the modifiers: `L`, `#`, and `W`.
+
+### `L`ast modifiers
+
+`L` is used to denote the last day of the week or month. This can be used in the "Day of Month" or "Day of Week" fields.
+
+For example, `"0 0 L * *"` will schedule the item to be invoked every last day of the month. The `*` in the day of week field is ignored.
+
+
+### nth modifier
+
+The `#` modifier can be used to specify which occurence of a particular day in a month. This can only be used in the "Day of Week" field.
+
+For example, using `0 0 * * FRI#2` would specify the item to be invoked every second Friday of a month.
+
+### Closest `W`eekday modifier
+
+The `W` modifier can be used to specify the closes weekday to a day of the month. This can only be utilized in the "Day of Month" field.
+
+Using `10W` will find the closest weekday to the 10th of the month. If the 10th falls on a Saturday, it will match to the 9th (Friday). Or if the 10th is a Sunday, it will be matched to the 11th (Monday).
+
+## Shorthands
+
+Additionally, shorthand patterns can be specified:
+
+```
+@yearly	  Run once a year, ie. "0 0 1 1 *".
+@annually Run once a year, ie. "0 0 1 1 *".
+@monthly  Run once a month, ie. "0 0 1 * *".
+@weekly	  Run once a week, ie. "0 0 * * 0".
+@daily	  Run once a day, ie. "0 0 * * *".
+@hourly	  Run once an hour, ie. "0 * * * *".
+```

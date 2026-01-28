@@ -3,6 +3,9 @@ set dotenv-load := true
 # renovate: datasource=docker depName=lycheeverse/lychee
 lychee_version := "0.22-alpine"
 
+default:
+    @just --list
+
 build:
     bun astro build
 

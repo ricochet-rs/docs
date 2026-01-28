@@ -13,12 +13,12 @@
           "autogenerate": { "directory": "user/deployment" }
         },
         {
-          "label": "Managing Content",
-          "autogenerate": { "directory": "user/managing-content" }
-        },
-        {
           "label": "Tasks",
           "autogenerate": { "directory": "user/tasks" }
+        },
+        {
+          "label": "Managing Content",
+          "autogenerate": { "directory": "user/managing-content" }
         }
       ]
     },

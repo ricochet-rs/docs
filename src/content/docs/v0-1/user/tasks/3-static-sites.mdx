@@ -1,0 +1,31 @@
+---
+title: Static Sites
+---
+
+Many tasks generate static HTML sites, such as Quarto or R Markdown documents. These static sites can be served alongside the content item itself using the `[static]` content settings in your `_ricochet.toml` file.
+
+:::note[Known Limitation]
+Static HTML settings can only be configured in the `_ricochet.toml` file prior to initial deployment or by using the `PATCH /api/v0/content/{item-id}/settings` API route.
+:::
+
+
+## Configuration
+
+The `[static]` section supports the following fields:
+
+| Field | Description |
+| ------- | -------------- |
+| `output_dir` | The directory to serve. |
+| `index` | The file to serve from `output_dir`. Defaults to `index.html`. |
+
+## Example
+
+To serve an R Markdown website that renders to the `_site/` directory:
+
+```toml
+[static]
+index = "index.html"
+output_dir = "_site"
+```
+
+The site will be accessible at `/static/{item-id}` and will automatically redirect to the `index` path.

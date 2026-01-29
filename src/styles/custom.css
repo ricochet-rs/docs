@@ -92,3 +92,10 @@ h6 code {
   background-color: var(--sl-color-bg-inline-code);
   padding: 0.1em 0.3em;
 }
+
+/* Fix social icons visibility - Tailwind md:flex not working properly */
+@media (min-width: 768px) {
+  header .hidden.items-center.gap-2 {
+    display: flex !important;
+  }
+}

@@ -137,17 +137,16 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/ricochet-rs/ricochet-docs",
+          href: "https://github.com/ricochet-rs/docs",
         },
         {
           icon: "discord",
           label: "Discord",
-          href: "https://discord.gg/tAsn8GbR",
+          href: "https://discord.gg/52YExXuj",
         },
       ],
       editLink: {
-        baseUrl:
-          "https://github.com/ricochet-rs/ricochet-docs/edit/main/src/content/docs/",
+        baseUrl: "https://github.com/ricochet-rs/docs/edit/main/",
       },
       // Sidebar for root (version selector page only)
       // Versioned docs use their own sidebar configs in src/content/versions/

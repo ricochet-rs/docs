@@ -1,0 +1,23 @@
+---
+title: v0.1.1
+description: Release notes for Ricochet v0.1.1
+slug: releases/v0.1.1
+tableOfContents: false
+template: splash
+---
+
+**Released: January 28, 2026**
+
+### Security
+
+- **Route Authorization**: All routes now enforce proper authorization, ensuring content access is controlled across the platform
+- **Collaborator Privacy**: Collaborator information is now protected with appropriate privacy controls
+
+### Reliability
+
+- **Graceful Shutdown**: The API server now handles shutdown signals properly, allowing in-flight requests to complete before terminating
+- **Improved Resource Management**: Stack size is now fixed at 8MB and thread pool sizing is calculated dynamically for better performance under load
+
+### Fixes
+
+- **API Key Copy Button**: Resolves an issue where the copy button for API keys was not functioning correctly

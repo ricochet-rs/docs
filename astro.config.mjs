@@ -122,15 +122,14 @@ export default defineConfig({
           current: { label: "0.1 (latest)", redirect: "root" },
           versions: [{ slug: "v0-1", label: "0.1" }],
         }),
-        starlightThemeNova(),
+        starlightThemeNova({
+          nav: [{ label: "Release Notes", href: "/releases/" }],
+        }),
         starlightLinksValidator(),
         starlightUtils({
           multiSidebar: {
             switcherStyle: "horizontalList",
           },
-          // navLinks: {
-          //   leading: { useSidebarLabelled: "leading" },
-          // },
         }),
         starlightScrollToTop(),
       ],

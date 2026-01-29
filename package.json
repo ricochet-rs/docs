@@ -19,7 +19,7 @@
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
     "@tailwindcss/vite": "^4.1.14",
     "add": "^2.0.6",
-    "astro": "5.16.11",
+    "astro": "5.16.13",
     "pagefind": "^1.4.0",
     "sharp": "^0.34.4",
     "starlight-links-validator": "^0.19.1",

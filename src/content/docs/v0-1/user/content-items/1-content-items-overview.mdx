@@ -9,8 +9,8 @@ An **App** requires an active runtime such as Plumber, Shiny, or Dash.jl.
 
 A **Task** runs to completion such as R/Julia/Python scripts and Quarto documents.
 
-All tasks can be [scheduled](/v0-1/user/content-items/4-scheduled-content) (or [invoked via API](/v0-1/user/tasks/1-invoke)).
-A subset of tasks can be served as a [**static html** website](/v0-1/user/content-items/3-static-content)—for example R Markdown and Quarto documents or websites.
+All tasks can be [scheduled](/v0-1/user/tasks/2-scheduling) (or [invoked via API](/v0-1/user/tasks/1-invoke)).
+A subset of tasks can be served as a [**static html** website](/v0-1/user/tasks/3-static-sites)—for example R Markdown and Quarto documents or websites.
 
 The content types supported by ricochet are listed below:
 
@@ -23,7 +23,7 @@ The content types supported by ricochet are listed below:
 | `shiny`          | A web app developed using [`{shiny}`](https://shiny.posit.co/r/)                             |
 | `rmd-shiny`      | an [R Markdown](https://rmarkdown.rstudio.com/) document using a shiny runtime               |
 | `quarto-r-shiny` | a [Quarto](http://quarto.org/) document using a shiny runtime                                |
-| `serverless-r`   | R functions deployed as an API (see [Serverless R](/v0-1/user/content-items/5-serverless-r)) |
+| `serverless-r`   | R functions deployed as an API |
 | `r-service`      | A web app or API using an R runtime.                                                         |
 | `julia-service`  | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
 

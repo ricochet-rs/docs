@@ -1,0 +1,26 @@
+---
+title: v0.1.2
+description: Release notes for Ricochet v0.1.2
+slug: releases/v0.1.2
+tableOfContents: false
+template: splash
+---
+
+**Released: February 10, 2026**
+
+### Security
+
+- **Dependency Updates**: Updated critical security dependencies including Rust crates `time` and `git2` to address security vulnerabilities
+
+### Fixes
+
+- **Kubernetes Deployment Readiness**: Improved `wait_for_ready` functionality and service port handling for more reliable Kubernetes deployments
+- **Kubernetes Cleanup**: Deployments are now properly cleaned up when content is deleted
+- **User Preferences**: Theme and sidebar preferences now persist correctly across the entire application by setting cookie path to root
+- **UI Slug Handling**: Removed problematic slug display in the user interface
+- **Database Connection Stability**: Added explicit SQLite connection pool configuration for improved database reliability
+- **Script Permissions**: Added proper execute permissions to shell scripts
+
+### Improvements
+
+- **Settings Page**: Improved conditional rendering to correctly display "app" vs "task" labels based on context

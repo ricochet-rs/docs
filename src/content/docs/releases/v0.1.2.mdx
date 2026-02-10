@@ -1,0 +1,26 @@
+---
+title: v0.1.2
+docs: release notes for Ricochet v0.1.2
+slug: releases/v0.1.2
+tableOfContents: false
+template: splash
+---
+
+**Released: February 10, 2026**
+
+### Security
+
+- **Database Pool Configuration**: Added explicit SQLite pool configuration to improve connection handling and stability
+- **Dependency Updates**: Updated `time` and `git2` Rust crates to address security vulnerabilities
+
+### Fixes
+
+#### Kubernetes
+
+- **Deployment Readiness**: Improved readiness checks and service port handling to ensure more reliable deployment status detection
+- **Resource Cleanup**: Deployments are now properly cleaned up when content is deleted, preventing orphaned resources
+
+#### User Interface
+
+- **Theme and Sidebar Preferences**: Fixed cookie path settings to properly persist theme and sidebar preferences across the application
+- **Navigation**: Removed slug references in the UI for cleaner navigation

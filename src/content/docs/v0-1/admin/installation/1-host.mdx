@@ -68,21 +68,21 @@ sudo chown root:root /var/lib/ricochet/ricochet-config.toml
 <Steps>
 1. Reload systemd to pick up the new unit file:
 
-  ```sh
-  sudo systemctl daemon-reload
-  ```
+    ```sh
+    sudo systemctl daemon-reload
+    ```
 
 2. Enable and start the service:
 
-  ```sh
-  sudo systemctl enable --now ricochet-server.service
-  ```
+    ```sh
+    sudo systemctl enable --now ricochet-server.service
+    ```
 
 3. Verify the service is running:
 
-  ```sh
-  sudo systemctl status ricochet-server.service
-  ```
+    ```sh
+    sudo systemctl status ricochet-server.service
+    ```
 </Steps>
 
 Ricochet Server listens on port **6188** by default.

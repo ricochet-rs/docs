@@ -34,7 +34,13 @@ Ricochet Server packages are published to object storage.
     ```
   </TabItem>
   <TabItem label="Standalone binary">
-    We also provide statically linked binaries which are available for x86_64 and aarch64:
+    We also provide universal statically linked linux binaries which are available for x86_64 and aarch64.
+    These can be used for operating systems that we do not officially support.
+    
+    <Aside type="note">
+      The standalone binary does not include systemd service configuration.
+      You will need to manage the process manually or create your own service file.
+    </Aside>
 
     ```sh
     VERSION=0.1.2
@@ -48,18 +54,8 @@ Ricochet Server packages are published to object storage.
     tar -xzf ricochet-0.1.2-*.tar.gz
     chmod +x ricochet
     sudo mv ricochet /usr/local/bin/
-    ```
+    ``` 
 
-    Add `/usr/local/bin` to your PATH if it's not already included:
-    ```sh
-    echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
-    source ~/.bashrc
-    ```
-
-    <Aside type="note">
-      The standalone binary does not include systemd service configuration.
-      You will need to manage the process manually or create your own service file.
-    </Aside>
   </TabItem>
 </Tabs>
 
@@ -143,7 +139,8 @@ To upgrade to a new version, download the new package and install it over the ex
 
 ## Data science interpreters
 
-When installing on a host, the R, Python, and Julia interpreters must be installed directly on the machine.
+Ricochet works without any interpreters installed.
+However, if you plan to deploy R, Python, or Julia content, you must install the respective interpreters on the host machine.
 Container and Kubernetes deployments bundle their own interpreters and do not require this step.
 
 Ricochet vendors `uv`, `juliaup`, and `renv` in the package installations, located at `RICOCHET_HOME/vendor`.
@@ -152,7 +149,8 @@ See the [storage configuration](/dev/admin/configuration/0-overview/#storage) fo
 
 ### Python
 
-Ricochet **requires** Python to be installed via [uv](https://docs.astral.sh/uv/).
+If deploying Python-based content, Ricochet uses `uv` to discover available Python installations.
+Python **must** be installed via [uv](https://docs.astral.sh/uv/).
 Only uv-managed Python installations are supported.
 
 ```sh
@@ -172,7 +170,8 @@ However, if you want to make use of multiple R versions, `rig` is the easiest an
 
 ### Julia
 
-Ricochet **requires** Julia to be installed via [juliaup](https://github.com/JuliaLang/juliaup).
+If deploying Julia-based content, Ricochet uses `juliaup` to discover installed Julia channels.
+Julia **must** be installed via [juliaup](https://github.com/JuliaLang/juliaup).
 Only juliaup-managed Julia installations are supported.
 
 ```sh

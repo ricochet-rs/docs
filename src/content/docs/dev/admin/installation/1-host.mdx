@@ -21,14 +21,14 @@ Ricochet Server packages are published to object storage.
 <Tabs>
   <TabItem label="Debian / Ubuntu">
     ```sh
-    VERSION=0.1.2
+    VERSION=$(curl -s https://ricochet.rs/releases.json | jq -r '.latest' | sed 's/^v//')
     curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-server_${VERSION}-1_amd64.deb
     sudo apt install ./ricochet-server_${VERSION}-1_amd64.deb
     ```
   </TabItem>
   <TabItem label="RHEL / AlmaLinux">
     ```sh
-    VERSION=0.1.2
+    VERSION=$(curl -s https://ricochet.rs/releases.json | jq -r '.latest' | sed 's/^v//')
     curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-server-${VERSION}-1.el10.x86_64.rpm
     sudo dnf install ./ricochet-server-${VERSION}-1.el10.x86_64.rpm
     ```
@@ -36,25 +36,25 @@ Ricochet Server packages are published to object storage.
   <TabItem label="Standalone binary">
     We also provide universal statically linked linux binaries which are available for x86_64 and aarch64.
     These can be used for operating systems that we do not officially support.
-    
+
     <Aside type="note">
       The standalone binary does not include systemd service configuration.
       You will need to manage the process manually or create your own service file.
     </Aside>
 
     ```sh
-    VERSION=0.1.2
+    VERSION=$(curl -s https://ricochet.rs/releases.json | jq -r '.latest' | sed 's/^v//')
     # For x86_64
-    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-0.1.2-x86_64.tar.gz
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-${VERSION}-x86_64.tar.gz
 
     # Or for aarch64
-    # curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-0.1.2-aarch64.tar.gz
+    # curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-${VERSION}-aarch64.tar.gz
 
     # Extract and install
-    tar -xzf ricochet-0.1.2-*.tar.gz
+    tar -xzf ricochet-${VERSION}-*.tar.gz
     chmod +x ricochet
     sudo mv ricochet /usr/local/bin/
-    ``` 
+    ```
 
   </TabItem>
 </Tabs>

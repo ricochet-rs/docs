@@ -145,9 +145,13 @@ To upgrade to a new version, download the new package and install it over the ex
 When installing on a host, the R, Python, and Julia interpreters must be installed directly on the machine.
 Container and Kubernetes deployments bundle their own interpreters and do not require this step.
 
+Ricochet vendors `uv`, `juliaup`, and `renv` in the package installations, located at `RICOCHET_HOME/vendor`.
+When using the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
+See the [storage configuration](/dev/admin/configuration/0-overview/#storage) for more details.
+
 ### Python
 
-Use [uv](https://docs.astral.sh/uv/) to install Python interpreters:
+Ricochet **requires** Python to be installed via [uv](https://docs.astral.sh/uv/). Only uv-managed Python installations are supported.
 
 ```sh
 uv python install <version>
@@ -166,7 +170,7 @@ However, if you want to make use of multiple R versions, `rig` is the easiest an
 
 ### Julia
 
-Use [juliaup](https://github.com/JuliaLang/juliaup) to install Julia interpreters:
+Ricochet **requires** Julia to be installed via [juliaup](https://github.com/JuliaLang/juliaup). Only juliaup-managed Julia installations are supported.
 
 ```sh
 juliaup add <version>

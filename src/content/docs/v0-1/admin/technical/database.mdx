@@ -4,7 +4,8 @@ title: "Database"
 
 import { Aside } from "@astrojs/starlight/components";
 
-ricochet uses SQLite to store critical system data including deployed content, users, access controls, API keys, logs, and analytics. SQLite is bundled and statically linked within the ricochet binary—no external installation is required.
+ricochet uses SQLite to store critical system data including deployed content, users, access controls, API keys, logs, and analytics.
+SQLite is bundled and statically linked within the ricochet binary—no external installation is required.
 
 The database file is located at `RICOCHET_HOME/ricochet.sqlite3`.
 
@@ -15,7 +16,8 @@ If the file does not exist when ricochet starts, it will be created automaticall
 - **Size**: Under normal operation, the database should remain fairly small.
 
 <Aside type="caution">
-If the database file is deleted, ricochet will not continue to work. While deployed content source files remain available at `RICOCHET_HOME/content`, they cannot be accessed via the UI, invoked, or otherwise used.
+If the database file is deleted, ricochet will not continue to work.
+While deployed content source files remain available at `RICOCHET_HOME/content`, they cannot be accessed via the UI, invoked, or otherwise used.
 </Aside>
 
 ---

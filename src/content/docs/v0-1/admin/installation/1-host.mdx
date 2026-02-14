@@ -21,16 +21,16 @@ Ricochet Server packages are published to object storage.
 <Tabs>
   <TabItem label="Debian / Ubuntu">
     ```sh
-    VERSION=$(curl -s https://ricochet.rs/releases.json | jq -r '.latest' | sed 's/^v//')
-    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-server_${VERSION}-1_amd64.deb
-    sudo apt install ./ricochet-server_${VERSION}-1_amd64.deb
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_amd64.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_amd64.deb
     ```
   </TabItem>
   <TabItem label="RHEL / AlmaLinux">
     ```sh
-    VERSION=$(curl -s https://ricochet.rs/releases.json | jq -r '.latest' | sed 's/^v//')
-    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-server-${VERSION}-1.el10.x86_64.rpm
-    sudo dnf install ./ricochet-server-${VERSION}-1.el10.x86_64.rpm
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
     ```
   </TabItem>
   <TabItem label="Standalone binary">
@@ -43,15 +43,15 @@ Ricochet Server packages are published to object storage.
     </Aside>
 
     ```sh
-    VERSION=$(curl -s https://ricochet.rs/releases.json | jq -r '.latest' | sed 's/^v//')
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
     # For x86_64
-    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-${VERSION}-x86_64.tar.gz
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-x86_64.tar.gz
 
     # Or for aarch64
-    # curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-${VERSION}-aarch64.tar.gz
+    # curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64.tar.gz
 
     # Extract and install
-    tar -xzf ricochet-${VERSION}-*.tar.gz
+    tar -xzf ricochet-${VERSION#v}-*.tar.gz
     chmod +x ricochet
     sudo mv ricochet /usr/local/bin/
     ```

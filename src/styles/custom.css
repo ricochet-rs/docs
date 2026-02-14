@@ -80,6 +80,11 @@
   }
 }
 
+/* Reduce top margin on h2 */
+.sl-markdown-content .sl-heading-wrapper.level-h2 {
+  margin-top: 1.5rem;
+}
+
 /* Style inline code in headings */
 h1 code,
 h2 code,

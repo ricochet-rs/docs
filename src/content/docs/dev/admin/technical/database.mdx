@@ -6,7 +6,11 @@ ricochet uses SQLite to store critical system data including deployed content, u
 SQLite is bundled and statically linked within the ricochet binary.
 No external installation is required.
 
-The database file is located at `RICOCHET_HOME/ricochet.sqlite3`.\
+:::note
+Postgres support is planned in a future release.
+:::
+
+The database file is located at `RICOCHET_HOME/ricochet.sqlite3`.
 If the file does not exist when ricochet starts, it will be created automatically.
 
 ricochet automatically handles database schema migrations when upgrading to new versions.

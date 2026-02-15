@@ -17,24 +17,49 @@ This guide covers manual installation on a single Linux server.
 ## Install the package
 
 Ricochet Server packages are published to object storage.
-Replace `VERSION` with the desired semver release version (and possibly the respective OS release version).
 
 <Tabs>
   <TabItem label="Debian / Ubuntu">
     ```sh
-    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/VERSION/ricochet-server_${VERSION}-1_amd64.deb
-    sudo apt install ./ricochet-server_${VERSION}-1_amd64.deb
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_amd64.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_amd64.deb
     ```
   </TabItem>
   <TabItem label="RHEL / AlmaLinux">
     ```sh
-    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/VERSION/ricochet-server-VERSION-1.el10.x86_64.rpm
-    sudo dnf install ./ricochet-server-VERSION-1.el10.x86_64.rpm
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
     ```
+  </TabItem>
+  <TabItem label="Standalone binary">
+    We also provide universal statically linked linux binaries which are available for x86_64 and aarch64.
+    These can be used for operating systems that we do not officially support.
+
+    <Aside type="note">
+      The standalone binary does not include systemd service configuration.
+      You will need to manage the process manually or create your own service file.
+    </Aside>
+
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    # For x86_64
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-x86_64.tar.gz
+
+    # Or for aarch64
+    # curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64.tar.gz
+
+    # Extract and install
+    tar -xzf ricochet-${VERSION#v}-*.tar.gz
+    chmod +x ricochet
+    sudo mv ricochet /usr/local/bin/
+    ```
+
   </TabItem>
 </Tabs>
 
-The package installs the `ricochet-server` binary and a `ricochet-server.service` systemd unit.
+The package installs the `ricochet` binary and a `ricochet-server.service` systemd unit.
 
 ## Configure
 
@@ -114,8 +139,44 @@ To upgrade to a new version, download the new package and install it over the ex
 
 ## Data science interpreters
 
-When installing on a host, the R, Python, and Julia interpreters must be installed directly on the machine.
+Ricochet works without any interpreters installed.
+However, if you plan to deploy R, Python, or Julia content, you must install the respective interpreters on the host machine.
 Container and Kubernetes deployments bundle their own interpreters and do not require this step.
+
+Ricochet vendors `uv`, `juliaup`, and `renv` in the package installations, located at `RICOCHET_HOME/vendor`.
+When using the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
+See the [storage configuration](/dev/admin/configuration/0-overview/#storage) for more details.
+
+### Python
+
+If deploying Python-based content, Ricochet uses `uv` to discover available Python installations.
+Python **must** be installed via [uv](https://docs.astral.sh/uv/).
+Only uv-managed Python installations are supported.
+
+```sh
+uv python install <version>
+```
+
+### R
+
+We recommend using [rig](https://github.com/r-lib/rig) to install R:
+
+```sh
+rig add <version>
+```
+
+You can also install R from [CRAN](https://cran.r-project.org/) or your distribution's package manager.
+However, if you want to make use of multiple R versions, `rig` is the easiest and most flexible option.
+
+### Julia
+
+If deploying Julia-based content, Ricochet uses `juliaup` to discover installed Julia channels.
+Julia **must** be installed via [juliaup](https://github.com/JuliaLang/juliaup).
+Only juliaup-managed Julia installations are supported.
+
+```sh
+juliaup add <version>
+```
 
 ### Ansible
 
@@ -130,29 +191,6 @@ roles:
   - role: devxy.data_science_core.r
   - role: devxy.data_science_core.python
 ```
-
-### Python
-
-We recommend to use [uv](https://docs.astral.sh/uv/) to install Python interpreters:
-
-```sh
-uv python install <version>
-```
-
-### R
-
-We recommend to use [rig](https://github.com/r-lib/rig) to install R interpreters:
-
-```sh
-rig add <version>
-```
-
-You can also install R from [CRAN](https://cran.r-project.org/) or your distribution's package manager.
-However, if you want to make use of multiple R versions, `rig` is the easiest and most flexible option.
-
-### Julia
-
-Install Julia from the [official downloads page](https://julialang.org/downloads/) or via [juliaup](https://github.com/JuliaLang/juliaup).
 
 ### System libraries
 

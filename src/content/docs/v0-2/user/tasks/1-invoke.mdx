@@ -1,0 +1,34 @@
+---
+title: "Invoking Tasks"
+---
+
+All tasks (e.g., R/Julia scripts, R Markdown, or Quarto documents) can be **invoked** to trigger them to run at any time.
+Tasks are invoked via the ricochet content API at the endpoint `POST /api/v0/content/{item-id}/invoke`.
+
+If a task is scheduled, you can invoke it outside of its schedule for one-off execution.
+
+:::note[Permissions]
+Tasks can only be invoked by the item owner, collaborators, or admins.
+:::
+
+## Using the UI
+
+You can invoke a task directly from the ricochet UI by clicking the "Run now" button on the item overview page (e.g., `https://try.ricochet.rs/tasks/{item-id}/overview`).
+
+## Using the CLI
+
+You can use the `ricochet` CLI to invoke a task:
+
+```shell
+ricochet invoke 01JSZAXZ3TSTAYXP56ARDVFJCJ
+```
+
+## Using the REST API
+
+Alternatively, you can invoke the task using the REST API endpoint:
+
+```shell
+curl -X POST \
+  "https://try.ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/invoke" \
+  -H "Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k"
+```

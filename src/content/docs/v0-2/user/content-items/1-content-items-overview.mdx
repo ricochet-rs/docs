@@ -1,0 +1,38 @@
+---
+title: Overview
+---
+
+`ricochet` supports deploying R, Julia, and Python based content.
+Content items are categorized as either an **App** or a **Task**.
+
+An **App** requires an active runtime such as Plumber, Shiny, or Dash.jl.
+
+A **Task** runs to completion such as R/Julia/Python scripts and Quarto documents.
+
+All tasks can be [scheduled](/v0-1/user/tasks/2-scheduling) (or [invoked via API](/v0-1/user/tasks/1-invoke)).
+A subset of tasks can be served as a [**static html** website](/v0-1/user/tasks/3-static-sites)—for example R Markdown and Quarto documents or websites.
+
+The content types supported by ricochet are listed below:
+
+## Apps
+
+| `Content Type`   | `Description`                                                                                |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| `plumber`        | An API developed using [`{plumber}`](https://rplumber.io)                                    |
+| `ambiorix`       | An API or web app developed using [`{ambiorix}`](https://ambiorix.dev)                       |
+| `shiny`          | A web app developed using [`{shiny}`](https://shiny.posit.co/r/)                             |
+| `rmd-shiny`      | an [R Markdown](https://rmarkdown.rstudio.com/) document using a shiny runtime               |
+| `quarto-r-shiny` | a [Quarto](http://quarto.org/) document using a shiny runtime                                |
+| `serverless-r`   | R functions deployed as an API |
+| `r-service`      | A web app or API using an R runtime.                                                         |
+| `julia-service`  | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
+
+## Tasks
+
+| `Content Type` | `Description`                                             |
+| -------------- | --------------------------------------------------------- |
+| `r`            | An R script with the extension `.R` or `.r`.              |
+| `julia`        | A Julia script.                                           |
+| `rmd`          | An R Markdown document with the extension `.Rmd` or `.r`. |
+| `quarto-r`     | A Quarto document using an R runtime.                     |
+| `quarto-jl`    | A Quarto document using a Julia runtime.                  |

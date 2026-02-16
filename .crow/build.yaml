@@ -18,7 +18,7 @@ steps:
       - bun astro build
 
   - name: PR docs preview
-    image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.0
+    image: codeberg.org/woodpecker-plugins/plugin-surge-preview:1.4.2
     settings:
       path: "./dist"
       surge_token:
@@ -30,7 +30,7 @@ steps:
       - event: [pull_request, pull_request_closed]
 
   - name: "Upload to S3"
-    image: reg.ricochet.rs/docker.io/woodpeckerci/plugin-s3:1.5.2
+    image: reg.ricochet.rs/docker.io/woodpeckerci/plugin-s3:1.5.3
     settings:
       bucket: ricochet-docs
       region: fsn1

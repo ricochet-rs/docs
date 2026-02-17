@@ -1,6 +1,7 @@
 ---
 import { Icon } from '@astrojs/starlight/components'
 import starlightConfig from 'virtual:starlight/user-config'
+// @ts-expect-error - Virtual module provided by starlight-versions Vite plugin at build time
 import starlightVersionsConfig from 'virtual:starlight-versions-config'
 
 type Version = { slug: string; label?: string; redirect?: 'same-page' | 'root' }
@@ -181,7 +182,7 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
       calc(var(--sl-versions-caret-icon-size) + 0.25rem);
     text-overflow: ellipsis;
     /* Fixed width to prevent flickering - fits "1.0" and "0.1" */
-    width: 4rem;
+    width: 4.5rem;
   }
 
   option {

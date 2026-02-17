@@ -7,14 +7,14 @@ labels:
 
 steps:
   - name: scan
-    image: reg.ricochet.rs/docker.io/aquasec/trivy:0.66.0
+    image: reg.ricochet.rs/docker.io/aquasec/trivy:0.69.1
     environment:
       TRIVY_DISABLE_VEX_NOTICE: true
     commands:
       - trivy fs --format template --template @assets/trivy-markdown.tpl --skip-dirs vendor,node_modules/,extras . > scan.md
 
   - name: Update issue
-    image: reg.ricochet.rs/docker.io/library/alpine:3.22
+    image: reg.ricochet.rs/docker.io/library/alpine:3.23
     environment:
       GH_TOKEN:
         from_secret: ricochet_issue_token

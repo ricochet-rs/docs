@@ -120,7 +120,10 @@ export default defineConfig({
       plugins: [
         starlightVersions({
           current: { label: "0.2 (latest)", redirect: "root" },
-          versions: [{ slug: "v0-1", label: "0.1" }],
+          versions: [
+            { slug: "v0-2", label: "0.2" },
+            { slug: "v0-1", label: "0.1" },
+          ],
         }),
         starlightThemeNova({
           nav: [{ label: "Release Notes", href: "/releases/" }],

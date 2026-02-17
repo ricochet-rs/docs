@@ -12,7 +12,7 @@ steps:
   # Post-deploy check validates the live site including canonical URLs.
   # Runs after build pipeline completes S3 upload.
   - name: Post-deploy link check
-    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.22-alpine
+    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.23-alpine
     environment:
       GITHUB_TOKEN:
         from_secret: github_token

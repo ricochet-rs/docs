@@ -16,7 +16,7 @@ steps:
   # Canonical/og:url self-references are excluded via lychee.toml since they
   # point to docs.ricochet.rs which won't have new pages until after deploy.
   - name: Pre-deploy link check
-    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.22-alpine
+    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.23-alpine
     environment:
       GITHUB_TOKEN:
         from_secret: github_token

@@ -30,12 +30,10 @@ if (!Astro.locals.starlightUtils?.multiSidebar) {
             >
               <SidebarWrapper {sidebar} />
             </div>
-          )
+          ),
         )}
       {config.multiSidebar.switcherStyle !== "horizontalList" &&
-        config.multiSidebar.switcherStyle !== "hidden" && (
-          <SidebarWrapper />
-        )}
+        config.multiSidebar.switcherStyle !== "hidden" && <SidebarWrapper />}
     </>
   ) : (
     <SidebarWrapper />

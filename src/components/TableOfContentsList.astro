@@ -1,7 +1,7 @@
 ---
 // Custom TableOfContentsList that renders backticks as inline code
-import type { TocItem } from '@astrojs/starlight/utils/generateToC';
-import { parseBackticks } from '../utils/parseBackticks';
+import type { TocItem } from "@astrojs/starlight/utils/generateToC";
+import { parseBackticks } from "../utils/parseBackticks";
 
 interface Props {
   toc: TocItem[];
@@ -14,19 +14,28 @@ const { toc, isMobile = false, depth = 0, isFirst = true } = Astro.props;
 ---
 
 <ul class:list={{ isMobile }}>
-  {toc.map((item, index) => (
-    <li>
-      <a
-        href={`#${item.slug}`}
-        style={!isMobile ? `--depth: ${depth};` : undefined}
-        aria-current={isFirst && index === 0 ? 'true' : undefined}
-        set:html={parseBackticks(item.text).map(p => p.isCode ? `<code>${p.text}</code>` : p.text).join('')}
-      />
-      {item.children.length > 0 && (
-        <Astro.self toc={item.children} isMobile={isMobile} depth={depth + 1} isFirst={false} />
-      )}
-    </li>
-  ))}
+  {
+    toc.map((item, index) => (
+      <li>
+        <a
+          href={`#${item.slug}`}
+          style={!isMobile ? `--depth: ${depth};` : undefined}
+          aria-current={isFirst && index === 0 ? "true" : undefined}
+          set:html={parseBackticks(item.text)
+            .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
+            .join("")}
+        />
+        {item.children.length > 0 && (
+          <Astro.self
+            toc={item.children}
+            isMobile={isMobile}
+            depth={depth + 1}
+            isFirst={false}
+          />
+        )}
+      </li>
+    ))
+  }
 </ul>
 
 <style>
@@ -50,9 +59,9 @@ const { toc, isMobile = false, depth = 0, isFirst = true } = Astro.props;
     color: var(--sl-color-white);
   }
 
-  [aria-current='true'],
-  [aria-current='true']:hover,
-  [aria-current='true']:focus {
+  [aria-current="true"],
+  [aria-current="true"]:hover,
+  [aria-current="true"]:focus {
     color: var(--sl-color-text-accent);
     font-weight: 600;
   }
@@ -83,8 +92,8 @@ const { toc, isMobile = false, depth = 0, isFirst = true } = Astro.props;
     width: 100%;
   }
 
-  .isMobile [aria-current='true']::before {
-    content: '✓';
+  .isMobile [aria-current="true"]::before {
+    content: "✓";
     font-size: 0.875rem;
   }
 </style>

@@ -1,137 +1,170 @@
 ---
-import { Icon } from '@astrojs/starlight/components'
-import starlightConfig from 'virtual:starlight/user-config'
+import { Icon } from "@astrojs/starlight/components";
+import starlightConfig from "virtual:starlight/user-config";
 // @ts-expect-error - Virtual module provided by starlight-versions Vite plugin at build time
-import starlightVersionsConfig from 'virtual:starlight-versions-config'
+import starlightVersionsConfig from "virtual:starlight-versions-config";
 
-type Version = { slug: string; label?: string; redirect?: 'same-page' | 'root' }
+type Version = {
+  slug: string;
+  label?: string;
+  redirect?: "same-page" | "root";
+};
 
 function getVersionFromSlug(
   config: typeof starlightVersionsConfig,
   starlightCfg: typeof starlightConfig,
-  slug: string
+  slug: string,
 ): Version | undefined {
-  const segments = slug.split('/')
-  const versionOrLocaleSegment = segments[0]
-  if (!versionOrLocaleSegment) return undefined
-  const version = config.versions.find((v: Version) => v.slug === versionOrLocaleSegment)
-  if (version) return version
-  const locales = Object.keys(starlightCfg.locales ?? {})
-  if (!locales.includes(versionOrLocaleSegment)) return undefined
-  const versionSegment = segments[1]
-  return config.versions.find((v: Version) => v.slug === versionSegment)
+  const segments = slug.split("/");
+  const versionOrLocaleSegment = segments[0];
+  if (!versionOrLocaleSegment) return undefined;
+  const version = config.versions.find(
+    (v: Version) => v.slug === versionOrLocaleSegment,
+  );
+  if (version) return version;
+  const locales = Object.keys(starlightCfg.locales ?? {});
+  if (!locales.includes(versionOrLocaleSegment)) return undefined;
+  const versionSegment = segments[1];
+  return config.versions.find((v: Version) => v.slug === versionSegment);
 }
 
 function stripTrailingSlash(path: string): string {
-  return path.endsWith('/') ? path.slice(0, -1) : path
+  return path.endsWith("/") ? path.slice(0, -1) : path;
 }
 
 function getExtension(path: string): string {
-  const match = path.match(/\.[^.]+$/)
-  return match ? match[0] : ''
+  const match = path.match(/\.[^.]+$/);
+  return match ? match[0] : "";
 }
 
 function stripExtension(path: string): string {
-  return path.replace(/\.[^.]+$/, '')
+  return path.replace(/\.[^.]+$/, "");
 }
 
 function getVersionURL(
   config: typeof starlightVersionsConfig,
   starlightCfg: typeof starlightConfig,
   url: URL,
-  version: Version | undefined
+  version: Version | undefined,
 ): URL {
-  const versionURL = new URL(url)
-  const versionSlug = version?.slug ?? ''
-  const versionRedirect = version?.redirect ?? config.current.redirect
+  const versionURL = new URL(url);
+  const versionSlug = version?.slug ?? "";
+  const versionRedirect = version?.redirect ?? config.current.redirect;
 
-  const base = stripTrailingSlash(import.meta.env.BASE_URL)
-  const hasBase = versionURL.pathname.startsWith(base)
+  const base = stripTrailingSlash(import.meta.env.BASE_URL);
+  const hasBase = versionURL.pathname.startsWith(base);
 
   if (hasBase) {
-    versionURL.pathname = versionURL.pathname.replace(base, '')
+    versionURL.pathname = versionURL.pathname.replace(base, "");
   }
 
-  let baseSegment: string | undefined
-  let localeSegment: string | undefined
+  let baseSegment: string | undefined;
+  let localeSegment: string | undefined;
 
-  const isHTML = getExtension(versionURL.pathname) === '.html'
-  const [, firstSegment, secondSegment] = versionURL.pathname.split('/')
+  const isHTML = getExtension(versionURL.pathname) === ".html";
+  const [, firstSegment, secondSegment] = versionURL.pathname.split("/");
 
   if (starlightCfg.isMultilingual || starlightCfg.locales) {
-    const versionOrLocale = firstSegment?.replace('.html', '')
-    const isRootLocale = versionOrLocale && !Object.keys(starlightCfg.locales ?? {}).includes(versionOrLocale)
-    baseSegment = isRootLocale ? firstSegment : secondSegment
+    const versionOrLocale = firstSegment?.replace(".html", "");
+    const isRootLocale =
+      versionOrLocale &&
+      !Object.keys(starlightCfg.locales ?? {}).includes(versionOrLocale);
+    baseSegment = isRootLocale ? firstSegment : secondSegment;
 
     if (!isRootLocale) {
-      localeSegment = versionOrLocale
-      versionURL.pathname = versionURL.pathname.replace(`/${firstSegment}`, '')
+      localeSegment = versionOrLocale;
+      versionURL.pathname = versionURL.pathname.replace(`/${firstSegment}`, "");
     }
   } else {
-    baseSegment = firstSegment
+    baseSegment = firstSegment;
   }
 
-  const isRootHTML = baseSegment && getExtension(baseSegment) === '.html'
-  const baseSlug = baseSegment && isRootHTML ? stripExtension(baseSegment) : baseSegment
+  const isRootHTML = baseSegment && getExtension(baseSegment) === ".html";
+  const baseSlug =
+    baseSegment && isRootHTML ? stripExtension(baseSegment) : baseSegment;
 
   if (baseSlug && baseSlug in config.versionsBySlug) {
     if (versionSlug) {
       versionURL.pathname =
-        versionRedirect === 'same-page'
+        versionRedirect === "same-page"
           ? versionURL.pathname.replace(baseSlug, versionSlug)
-          : `${versionSlug}${isHTML ? '.html' : '/'}`
+          : `${versionSlug}${isHTML ? ".html" : "/"}`;
     } else if (isRootHTML) {
-      versionURL.pathname = '/index.html'
+      versionURL.pathname = "/index.html";
     } else {
       versionURL.pathname =
-        versionRedirect === 'same-page' ? versionURL.pathname.replace(`/${baseSlug}`, '') : isHTML ? '/index.html' : '/'
+        versionRedirect === "same-page"
+          ? versionURL.pathname.replace(`/${baseSlug}`, "")
+          : isHTML
+            ? "/index.html"
+            : "/";
     }
   } else if (versionSlug) {
     versionURL.pathname =
-      baseSegment === 'index.html'
+      baseSegment === "index.html"
         ? `/${versionSlug}.html`
-        : versionRedirect === 'same-page'
+        : versionRedirect === "same-page"
           ? `/${versionSlug}${versionURL.pathname}`
           : isHTML
             ? `${versionSlug}.html`
-            : `/${versionSlug}/`
-  } else if (versionRedirect === 'root' && !isRootHTML) {
-    versionURL.pathname = isHTML ? '/index.html' : versionSlug
+            : `/${versionSlug}/`;
+  } else if (versionRedirect === "root" && !isRootHTML) {
+    versionURL.pathname = isHTML ? "/index.html" : versionSlug;
   }
 
   if (localeSegment) {
     versionURL.pathname = isHTML
-      ? versionURL.pathname === '/index.html'
+      ? versionURL.pathname === "/index.html"
         ? `/${localeSegment}.html`
-        : `/${localeSegment}${versionURL.pathname.replace(/\/$/, '.html')}`
-      : `/${localeSegment}${versionURL.pathname}`
+        : `/${localeSegment}${versionURL.pathname.replace(/\/$/, ".html")}`
+      : `/${localeSegment}${versionURL.pathname}`;
   }
 
   if (hasBase) {
-    versionURL.pathname = base + versionURL.pathname
+    versionURL.pathname = base + versionURL.pathname;
   }
 
-  return versionURL
+  return versionURL;
 }
 
-const { id } = Astro.locals.starlightRoute
-const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig, id)
+const { id } = Astro.locals.starlightRoute;
+const pageVersion = getVersionFromSlug(
+  starlightVersionsConfig,
+  starlightConfig,
+  id,
+);
 ---
 
 <starlight-version-select>
   <label>
     <span class="sr-only">Select version</span>
     <Icon name="open-book" class="icon label-icon" />
-    <select value={pageVersion?.label ?? starlightVersionsConfig.versions[0]?.label} autocomplete="off">
+    <select
+      value={pageVersion?.label ?? starlightVersionsConfig.versions[0]?.label}
+      autocomplete="off"
+    >
       {
-        starlightVersionsConfig.versions.filter((version: Version) => version.slug !== 'dev').map((version: Version) => (
-          <option
-            selected={version.slug === pageVersion?.slug || (pageVersion === undefined && version === starlightVersionsConfig.versions[0])}
-            value={getVersionURL(starlightVersionsConfig, starlightConfig, Astro.url, version).pathname}
-          >
-            {version.label ?? version.slug}
-          </option>
-        ))
+        starlightVersionsConfig.versions
+          .filter((version: Version) => version.slug !== "dev")
+          .map((version: Version) => (
+            <option
+              selected={
+                version.slug === pageVersion?.slug ||
+                (pageVersion === undefined &&
+                  version === starlightVersionsConfig.versions[0])
+              }
+              value={
+                getVersionURL(
+                  starlightVersionsConfig,
+                  starlightConfig,
+                  Astro.url,
+                  version,
+                ).pathname
+              }
+            >
+              {version.label ?? version.slug}
+            </option>
+          ))
       }
     </select>
     <Icon name="down-caret" class="icon caret-icon" />
@@ -199,29 +232,30 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
 
 <script>
   customElements.define(
-    'starlight-version-select',
+    "starlight-version-select",
     class StarlightVersionSelect extends HTMLElement {
       constructor() {
-        super()
+        super();
 
-        const select = this.querySelector('select')
-        if (!select) return
+        const select = this.querySelector("select");
+        if (!select) return;
 
-        select.addEventListener('change', (event) => {
+        select.addEventListener("change", (event) => {
           if (event.currentTarget instanceof HTMLSelectElement) {
-            globalThis.location.pathname = event.currentTarget.value
+            globalThis.location.pathname = event.currentTarget.value;
           }
-        })
+        });
 
-        window.addEventListener('pageshow', (event) => {
-          if (!event.persisted) return
-          const markupSelectedIndex = select.querySelector<HTMLOptionElement>('option[selected]')?.index
+        window.addEventListener("pageshow", (event) => {
+          if (!event.persisted) return;
+          const markupSelectedIndex =
+            select.querySelector<HTMLOptionElement>("option[selected]")?.index;
 
           if (markupSelectedIndex !== select.selectedIndex) {
-            select.selectedIndex = markupSelectedIndex ?? 0
+            select.selectedIndex = markupSelectedIndex ?? 0;
           }
-        })
+        });
       }
     },
-  )
+  );
 </script>

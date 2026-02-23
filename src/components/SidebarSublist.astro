@@ -1,7 +1,7 @@
 ---
 // Custom SidebarSublist that renders backticks in labels as inline code
-import type { SidebarEntry } from '@astrojs/starlight/utils/navigation';
-import { parseBackticks } from '../utils/parseBackticks';
+import type { SidebarEntry } from "@astrojs/starlight/utils/navigation";
+import { parseBackticks } from "../utils/parseBackticks";
 
 interface Props {
   sublist: SidebarEntry[];
@@ -11,28 +11,51 @@ interface Props {
 const { sublist, nested } = Astro.props;
 ---
 
-<ul class:list={{ 'top-level': !nested }}>
-  {sublist.map((entry) => (
-    <li>
-      {entry.type === 'link' ? (
-        <a href={entry.href} aria-current={entry.isCurrent && 'page'} class:list={[{ large: !nested }, entry.attrs.class]} {...entry.attrs}>
-          <span set:html={parseBackticks(entry.label).map(p => p.isCode ? `<code>${p.text}</code>` : p.text).join('')} />
-        </a>
-      ) : (
-        <details open={entry.collapsed ? false : true}>
-          <summary>
-            <span class="group-label">
-              <span class:list={{ large: !nested }} set:html={parseBackticks(entry.label).map(p => p.isCode ? `<code>${p.text}</code>` : p.text).join('')} />
-            </span>
-            <svg aria-hidden="true" class="caret" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 0 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41 0Z"/>
-            </svg>
-          </summary>
-          <Astro.self sublist={entry.entries} nested />
-        </details>
-      )}
-    </li>
-  ))}
+<ul class:list={{ "top-level": !nested }}>
+  {
+    sublist.map((entry) => (
+      <li>
+        {entry.type === "link" ? (
+          <a
+            href={entry.href}
+            aria-current={entry.isCurrent && "page"}
+            class:list={[{ large: !nested }, entry.attrs.class]}
+            {...entry.attrs}
+          >
+            <span
+              set:html={parseBackticks(entry.label)
+                .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
+                .join("")}
+            />
+          </a>
+        ) : (
+          <details open={entry.collapsed ? false : true}>
+            <summary>
+              <span class="group-label">
+                <span
+                  class:list={{ large: !nested }}
+                  set:html={parseBackticks(entry.label)
+                    .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
+                    .join("")}
+                />
+              </span>
+              <svg
+                aria-hidden="true"
+                class="caret"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 0 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41 0Z" />
+              </svg>
+            </summary>
+            <Astro.self sublist={entry.entries} nested />
+          </details>
+        )}
+      </li>
+    ))
+  }
 </ul>
 
 <style>
@@ -78,7 +101,7 @@ const { sublist, nested } = Astro.props;
     transition: transform 0.2s ease-in-out;
     flex-shrink: 0;
   }
-  :global([dir='rtl']) .caret {
+  :global([dir="rtl"]) .caret {
     transform: rotateZ(180deg);
   }
   [open] > summary .caret {
@@ -99,9 +122,9 @@ const { sublist, nested } = Astro.props;
     color: var(--sl-color-white);
   }
 
-  [aria-current='page'],
-  [aria-current='page']:hover,
-  [aria-current='page']:focus {
+  [aria-current="page"],
+  [aria-current="page"]:hover,
+  [aria-current="page"]:focus {
     font-weight: 600;
     color: var(--sl-color-text-invert);
     background-color: var(--sl-color-text-accent);
@@ -116,7 +139,7 @@ const { sublist, nested } = Astro.props;
   }
 
   /* Remove code background on active sidebar links */
-  [aria-current='page'] > span :global(code) {
+  [aria-current="page"] > span :global(code) {
     background-color: transparent;
   }
 

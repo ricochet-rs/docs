@@ -27,5 +27,9 @@
     "starlight-theme-nova": "^0.11.5",
     "starlight-versions": "^0.6.0",
     "tailwindcss": "^4.1.14"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

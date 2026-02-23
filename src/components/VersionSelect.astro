@@ -124,7 +124,7 @@ const pageVersion = getVersionFromSlug(starlightVersionsConfig, starlightConfig,
     <Icon name="open-book" class="icon label-icon" />
     <select value={pageVersion?.label ?? starlightVersionsConfig.versions[0]?.label} autocomplete="off">
       {
-        starlightVersionsConfig.versions.map((version: Version) => (
+        starlightVersionsConfig.versions.filter((version: Version) => version.slug !== 'dev').map((version: Version) => (
           <option
             selected={version.slug === pageVersion?.slug || (pageVersion === undefined && version === starlightVersionsConfig.versions[0])}
             value={getVersionURL(starlightVersionsConfig, starlightConfig, Astro.url, version).pathname}

@@ -7,15 +7,15 @@ Each entry is appended as a single JSON line to `RICOCHET_HOME/logs/audit/audit.
 
 ## Audited operations
 
-| Action | Event | Details |
-|---|---|---|
-| User role change | `user.role_change` | Old role, new role, actor, target user |
-| First admin bootstrap | `user.first_admin` | User promoted to admin as first registered user |
-| Execution environment created | `exec_env.create` | Environment name, actor |
-| Execution environment updated | `exec_env.update` | Environment name, changes, actor |
-| Execution environment deleted | `exec_env.delete` | Environment name, actor |
-| Content access granted | `access.grant` | Content ID, target user, role |
-| Content access revoked | `access.revoke` | Content ID, target user, role |
+| Action                        | Event              | Details                                         |
+| ----------------------------- | ------------------ | ----------------------------------------------- |
+| User role change              | `user.role_change` | Old role, new role, actor, target user          |
+| First admin bootstrap         | `user.first_admin` | User promoted to admin as first registered user |
+| Execution environment created | `exec_env.create`  | Environment name, actor                         |
+| Execution environment updated | `exec_env.update`  | Environment name, changes, actor                |
+| Execution environment deleted | `exec_env.delete`  | Environment name, actor                         |
+| Content access granted        | `access.grant`     | Content ID, target user, role                   |
+| Content access revoked        | `access.revoke`    | Content ID, target user, role                   |
 
 ## Log format
 
@@ -32,15 +32,15 @@ Each line is a JSON object with the following fields:
 }
 ```
 
-| Field | Description |
-|---|---|
-| `timestamp` | ISO 8601 timestamp with timezone |
-| `action` | The operation that was performed |
-| `actor` | The user or system component that initiated the action |
-| `target` | The resource or user the action was performed on (optional) |
-| `details` | Additional context as a JSON object (optional) |
-| `success` | Whether the operation succeeded |
-| `error` | Error message when `success` is `false` (optional) |
+| Field       | Description                                                 |
+| ----------- | ----------------------------------------------------------- |
+| `timestamp` | ISO 8601 timestamp with timezone                            |
+| `action`    | The operation that was performed                            |
+| `actor`     | The user or system component that initiated the action      |
+| `target`    | The resource or user the action was performed on (optional) |
+| `details`   | Additional context as a JSON object (optional)              |
+| `success`   | Whether the operation succeeded                             |
+| `error`     | Error message when `success` is `false` (optional)          |
 
 ## Log rotation
 

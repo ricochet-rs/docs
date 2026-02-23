@@ -20,7 +20,7 @@ install:
     bun install
 
 # lint using prettier
-lint:
+lint: install
     bun prettier --check .
 
 # fix lints using prettier and format prose (semantic line breaks)

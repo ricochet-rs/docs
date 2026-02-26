@@ -45,7 +45,7 @@ It has the following required fields:
 | `name`         | The display name of your content item.                                                                                                                                                                                                                                                                                                                                |
 | `entrypoint`   | The file that starts your content item for example `"app.R"`.                                                                                                                                                                                                                                                                                                         |
 | `access_type`  | Determines the visibility of the content item. It must be one of `private`, `internal`, or `external`. Defaults to `private`.                                                                                                                                                                                                                                         |
-| `content_type` | Specifies the content type to be deployed: R script `"r"`, R Markdown `"rmd"`, Plumber `"plumber"`, Ambiorix `"ambiorix"`, R Markdown (Shiny) `"rmd-shiny"`, R service `"r-service"`, Serverless R `"serverless-r"`, Quarto R `"quarto-r"`, Quarto R (Shiny) `"quarto-r-shiny"`, Quarto Julia `"quarto-jl"`, Julia script `"julia"`, Julia service `"julia-service"`. |
+| `content_type` | Specifies the content type to be deployed. See [Content Items Overview](/dev/user/content-items/1-content-items-overview) for the full list. Valid values: `"r"`, `"rmd"`, `"plumber"`, `"ambiorix"`, `"shiny"`, `"rmd-shiny"`, `"r-service"`, `"serverless-r"`, `"quarto-r"`, `"quarto-r-shiny"`, `"julia"`, `"julia-service"`, `"quarto-jl"`, `"python"`, `"python-service"`, `"quarto-py"`, `"fast-api"`, `"flask"`, `"streamlit"`, `"dash"`. |
 | `slug`         | A unique suffix to view your content item from. It must contain only numbers, letters, or the characters `-` or `_`. For example `slug: "my-shiny-app"` will be accessible via `https://<domain>/my-shiny-app`                                                                                                                                                        |
 | `summary`      | A text summary for the content item. This is visible under the content item's card.                                                                                                                                                                                                                                                                                   |
 | `thumbnail`    | The relative path to an image to use as a thumbnail. Must be a png, jpg, or gif and 5mb or smaller.                                                                                                                                                                                                                                                                   |
@@ -74,7 +74,7 @@ output_dir = "_site"
 
 ## `serve` settings
 
-Content items that require a running background process such as shiny or plumber are considered services.
+Content items that require a running background process such as Shiny, Plumber, FastAPI, Flask, Streamlit, or Dash are considered services.
 Use the `[serve]` settings to determine how the content scales.
 
 The following settings can be set:
@@ -105,8 +105,8 @@ These specify which language the content item is using as well as how the depend
 
 | Field      | Description                                                                                                                                 |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`     | The language of the content item. Must be `"r"` or `"julia"`.                                                                               |
-| `packages` | For `"r"` must be `"renv.lock"`. For `"julia"` must be `"Manifest.toml"`. No other dependency management tools are supported at the moment. |
+| `name`     | The language of the content item. Must be `"r"`, `"julia"`, or `"python"`.                                                                                                              |
+| `packages` | For `"r"` must be `"renv.lock"`. For `"julia"` must be `"Manifest.toml"`. For `"python"` must be `"uv.lock"`. No other dependency management tools are supported at the moment. |
 
 ## `schedule` settings
 

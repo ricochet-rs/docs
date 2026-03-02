@@ -5,7 +5,7 @@ title: Overview
 `ricochet` supports deploying R, Julia, and Python based content.
 Content items are categorized as either an **App** or a **Task**.
 
-An **App** requires an active runtime such as Plumber, Shiny, or Dash.jl.
+An **App** requires an active runtime such as Plumber, Shiny, FastAPI, or Dash.jl.
 
 A **Task** runs to completion such as R/Julia/Python scripts and Quarto documents.
 
@@ -16,15 +16,32 @@ The content types supported by ricochet are listed below:
 
 ## Apps
 
+### R
+
+| `Content Type`   | `Description`                                                                  |
+| ---------------- | ------------------------------------------------------------------------------ |
+| `plumber`        | An API developed using [`{plumber}`](https://rplumber.io)                      |
+| `ambiorix`       | An API or web app developed using [`{ambiorix}`](https://ambiorix.dev)         |
+| `shiny`          | A web app developed using [`{shiny}`](https://shiny.posit.co/r/)               |
+| `rmd-shiny`      | An [R Markdown](https://rmarkdown.rstudio.com/) document using a shiny runtime |
+| `quarto-r-shiny` | A [Quarto](http://quarto.org/) document using a shiny runtime                  |
+| `serverless-r`   | R functions deployed as an API                                                 |
+| `r-service`      | A web app or API using an R runtime.                                           |
+
+### Python
+
+| `Content Type`   | `Description`                                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| `fast-api`       | An API developed using [FastAPI](https://fastapi.tiangolo.com/). Launched with `uvicorn`.                      |
+| `flask`          | A web app or API developed using [Flask](https://flask.palletsprojects.com/).                                  |
+| `streamlit`      | A data app developed using [Streamlit](https://streamlit.io/).                                                 |
+| `dash`           | A data app developed using [Dash](https://dash.plotly.com/).                                                   |
+| `python-service` | A generic Python web app or API. The entrypoint script is run directly; it must bind to `PORT` from the environment. |
+
+### Julia
+
 | `Content Type`   | `Description`                                                                                |
 | ---------------- | -------------------------------------------------------------------------------------------- |
-| `plumber`        | An API developed using [`{plumber}`](https://rplumber.io)                                    |
-| `ambiorix`       | An API or web app developed using [`{ambiorix}`](https://ambiorix.dev)                       |
-| `shiny`          | A web app developed using [`{shiny}`](https://shiny.posit.co/r/)                             |
-| `rmd-shiny`      | an [R Markdown](https://rmarkdown.rstudio.com/) document using a shiny runtime               |
-| `quarto-r-shiny` | a [Quarto](http://quarto.org/) document using a shiny runtime                                |
-| `serverless-r`   | R functions deployed as an API |
-| `r-service`      | A web app or API using an R runtime.                                                         |
 | `julia-service`  | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
 
 ## Tasks
@@ -32,7 +49,9 @@ The content types supported by ricochet are listed below:
 | `Content Type` | `Description`                                             |
 | -------------- | --------------------------------------------------------- |
 | `r`            | An R script with the extension `.R` or `.r`.              |
+| `python`       | A Python script with the extension `.py`.                 |
 | `julia`        | A Julia script.                                           |
 | `rmd`          | An R Markdown document with the extension `.Rmd` or `.r`. |
 | `quarto-r`     | A Quarto document using an R runtime.                     |
 | `quarto-jl`    | A Quarto document using a Julia runtime.                  |
+| `quarto-py`    | A Quarto document using a Python runtime.                 |

@@ -1,0 +1,26 @@
+---
+title: v0.3.0
+docs: release notes for Ricochet v0.3.0
+slug: releases/v0.3.0
+tableOfContents: false
+template: splash
+---
+
+**Released: March 3, 2026**
+
+### Features
+
+- **Audit Logging**: Security-related operations are now logged for compliance and monitoring purposes
+- **Python Framework Support**: Added content types for Python frameworks
+- **Log Rotation**: Implemented automatic log rotation
+- **OpenTelemetry Integration**: Added observability support through OpenTelemetry
+### Fixes
+
+#### Authentication
+
+- **OAuth Error Handling**: OAuth callback errors now redirect users to the login page instead of showing raw 4xx error responses
+- **Admin Role Assignment**: Fixed issue where the first user created was not automatically assigned the admin role
+
+#### Kubernetes
+
+- **Multi-Architecture Support**: Resolved issues with multi-arch cluster support and added real-time restore logs for better visibility

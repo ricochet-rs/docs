@@ -119,8 +119,9 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightVersions({
-          current: { label: "0.2 (latest)", redirect: "root" },
+          current: { label: "0.3 (latest)", redirect: "root" },
           versions: [
+            { slug: "v0-3", label: "0.3" },
             { slug: "dev", label: "dev" },
             { slug: "v0-2", label: "0.2" },
             { slug: "v0-1", label: "0.1" },

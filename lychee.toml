@@ -10,4 +10,5 @@ exclude = [
     # Canonical/og:url self-references won't resolve until deployed
     "https://docs.ricochet.rs/v0-1/.*",
     "https://docs.ricochet.rs/v0-2/.*",
+    "https://docs.ricochet.rs/v0-3/.*",
 ]

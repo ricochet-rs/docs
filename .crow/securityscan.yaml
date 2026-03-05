@@ -7,7 +7,7 @@ labels:
 
 steps:
   - name: scan
-    image: reg.ricochet.rs/docker.io/aquasec/trivy:0.69.1
+    image: reg.ricochet.rs/docker.io/aquasec/trivy:0.69.2
     environment:
       TRIVY_DISABLE_VEX_NOTICE: true
     commands:

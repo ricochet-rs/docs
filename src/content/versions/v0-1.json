@@ -34,8 +34,8 @@
           "autogenerate": { "directory": "admin/configuration" }
         },
         {
-          "label": "Pricing",
-          "autogenerate": { "directory": "admin/pricing" }
+          "label": "Pricing & Licensing",
+          "autogenerate": { "directory": "admin/pricing-licensing" }
         },
         {
           "label": "Technical Details",

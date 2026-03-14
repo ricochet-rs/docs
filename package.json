@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@astrojs/markdoc": "0.15.11",
-    "@astrojs/starlight": "0.37.7",
-    "@astrojs/starlight-markdoc": "^0.5.0",
+    "@astrojs/starlight": "0.38.1",
+    "@astrojs/starlight-markdoc": "^0.6.0",
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
     "@tailwindcss/vite": "^4.1.14",
@@ -22,10 +22,10 @@
     "astro": "5.18.1",
     "pagefind": "^1.4.0",
     "sharp": "^0.34.4",
-    "starlight-links-validator": "^0.19.1",
+    "starlight-links-validator": "^0.20.0",
     "starlight-scroll-to-top": "^0.4.0",
     "starlight-theme-nova": "^0.11.5",
-    "starlight-versions": "^0.7.0",
+    "starlight-versions": "^0.8.0",
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {

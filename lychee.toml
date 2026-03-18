@@ -11,4 +11,5 @@ exclude = [
     "https://docs.ricochet.rs/v0-1/.*",
     "https://docs.ricochet.rs/v0-2/.*",
     "https://docs.ricochet.rs/v0-3/.*",
+    "https://docs.ricochet.rs/v0-4/.*",
 ]

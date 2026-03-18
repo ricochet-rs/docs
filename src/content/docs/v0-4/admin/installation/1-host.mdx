@@ -1,0 +1,247 @@
+---
+title: Host
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Ricochet Server is distributed as native `.deb` and `.rpm` packages and runs as a systemd service.
+This guide covers manual installation on a single Linux server.
+
+## Supported platforms
+
+| Distribution              | Architecture | Package format |
+| ------------------------- | ------------ | -------------- |
+| Debian / Ubuntu           | amd64        | `.deb`         |
+| AlmaLinux / RHEL / EL  | x86_64       | `.rpm`         |
+
+## Install the package
+
+Ricochet Server packages are published to object storage.
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_amd64.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_amd64.deb
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
+    ```
+  </TabItem>
+  <TabItem label="Standalone binary">
+    We also provide universal statically linked linux binaries which are available for x86_64 and aarch64.
+    These can be used for operating systems that we do not officially support.
+
+    <Aside type="note">
+      The standalone binary does not include systemd service configuration.
+      You will need to manage the process manually or create your own service file.
+    </Aside>
+
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    # For x86_64
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-x86_64.tar.gz
+
+    # Or for aarch64
+    # curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64.tar.gz
+
+    # Extract and install
+    tar -xzf ricochet-${VERSION#v}-*.tar.gz
+    chmod +x ricochet
+    sudo mv ricochet /usr/local/bin/
+    ```
+
+  </TabItem>
+</Tabs>
+
+The package installs the `ricochet` binary and a `ricochet-server.service` systemd unit.
+
+## Configure
+
+Ricochet reads its configuration from `/var/lib/ricochet/ricochet-config.toml`.\
+Create or edit this file with your deployment's settings.
+
+At a minimum you need to configure OIDC authentication:
+
+```toml title="/var/lib/ricochet/ricochet-config.toml"
+[auth.oidc]
+issuer_url = "https://your-idp.example.com/"
+client_id = "your-client-id"
+client_secret = "your-client-secret"
+redirect_url = "https://your-ricochet-host.example.com/oauth/callback"
+```
+
+Ensure appropriate permissions are set on the config file:
+
+```sh
+sudo chmod 0644 /var/lib/ricochet/ricochet-config.toml
+sudo chown root:root /var/lib/ricochet/ricochet-config.toml
+```
+
+<Aside type="caution">
+  The config file contains your OIDC client secret.
+  Restrict read access as appropriate for your environment.
+</Aside>
+
+## Start the service
+
+<Steps>
+1. Reload systemd to pick up the new unit file:
+
+    ```sh
+    sudo systemctl daemon-reload
+    ```
+
+2. Enable and start the service:
+
+    ```sh
+    sudo systemctl enable --now ricochet-server.service
+    ```
+
+3. Verify the service is running:
+
+    ```sh
+    sudo systemctl status ricochet-server.service
+    ```
+</Steps>
+
+Ricochet Server listens on port **6188** by default.
+
+## Upgrade
+
+To upgrade to a new version, download the new package and install it over the existing one.
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-server_${VERSION}-1_amd64.deb
+    sudo apt install ./ricochet-server_${VERSION}-1_amd64.deb
+    sudo systemctl restart ricochet-server.service
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    curl -fLO https://hel1.your-objectstorage.com/ricochet-server/${VERSION}/ricochet-server-${VERSION}-1.el10.x86_64.rpm
+    sudo dnf install ./ricochet-server-${VERSION}-1.el10.x86_64.rpm
+    sudo systemctl restart ricochet-server.service
+    ```
+
+    <Aside type="note">
+      Use `dnf install` (not `dnf upgrade`) — it handles both fresh installs and version changes, including downgrades.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+## Data science interpreters
+
+Ricochet works without any interpreters installed.
+However, if you plan to deploy R, Python, or Julia content, you must install the respective interpreters on the host machine.
+Container and Kubernetes deployments bundle their own interpreters and do not require this step.
+
+Ricochet vendors `uv`, `juliaup`, and `renv` in the package installations, located at `RICOCHET_HOME/vendor`.
+When using the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
+See the [storage configuration](/dev/admin/configuration/0-overview/#storage) for more details.
+
+### Python
+
+If deploying Python-based content, Ricochet uses `uv` to discover available Python installations.
+Python **must** be installed via [uv](https://docs.astral.sh/uv/).
+Only uv-managed Python installations are supported.
+
+```sh
+uv python install <version>
+```
+
+### R
+
+We recommend using [rig](https://github.com/r-lib/rig) to install R:
+
+```sh
+rig add <version>
+```
+
+You can also install R from [CRAN](https://cran.r-project.org/) or your distribution's package manager.
+However, if you want to make use of multiple R versions, `rig` is the easiest and most flexible option.
+
+### Julia
+
+If deploying Julia-based content, Ricochet uses `juliaup` to discover installed Julia channels.
+Julia **must** be installed via [juliaup](https://github.com/JuliaLang/juliaup).
+Only juliaup-managed Julia installations are supported.
+
+```sh
+juliaup add <version>
+```
+
+### Ansible
+
+If you manage your infrastructure with Ansible, the [devxy.data_science_core](https://galaxy.ansible.com/ui/repo/published/devxy/data_science_core/) collection provides roles for installing R, Python, and their system dependencies:
+
+```sh
+ansible-galaxy collection install devxy.data_science_core
+```
+
+```yaml
+roles:
+  - role: devxy.data_science_core.r
+  - role: devxy.data_science_core.python
+```
+
+### System libraries
+
+The interpreters may require additional system libraries for compiling packages at runtime.\
+Here's a baseline of system libraries which we recommend installing:
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    sudo apt install \
+      libgit2-dev libxml2-dev libharfbuzz-dev libfreetype-dev libfontconfig-dev \
+      libgdal-dev libproj-dev libgeos-dev libjq-dev libmagick++-dev \
+      libnetcdf-dev libfribidi-dev jags libglpk-dev libpng-dev \
+      libsecret-1-dev poppler-utils libreadline-dev unixodbc-dev \
+      default-jdk-headless libicu-dev libudunits2-dev libsodium-dev \
+      zlib1g-dev libglu1-mesa-dev libcairo2-dev git freetds-common \
+      libv8-dev librsvg2-dev libsqlite3-dev libpq-dev libgmp3-dev libmpfr-dev
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    sudo dnf install \
+      libgit2-devel libxml2-devel harfbuzz-devel freetype-devel fontconfig-devel \
+      gdal-devel proj-devel geos-devel jq-devel ImageMagick-c++-devel \
+      netcdf-devel fribidi-devel glpk-devel libpng-devel \
+      libsecret-devel poppler-utils readline-devel unixODBC-devel \
+      java-21-openjdk-headless libicu-devel udunits2-devel libsodium-devel \
+      zlib-devel mesa-libGLU-devel cairo-devel git freetds \
+      librsvg2-devel sqlite-devel libpq-devel gmp-devel mpfr-devel
+    ```
+  </TabItem>
+</Tabs>
+
+## Uninstall
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    sudo systemctl stop ricochet-server.service
+    sudo systemctl disable ricochet-server.service
+    sudo apt purge ricochet-server
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    sudo systemctl stop ricochet-server.service
+    sudo systemctl disable ricochet-server.service
+    sudo dnf remove ricochet-server
+    ```
+  </TabItem>
+</Tabs>
+
+The configuration file at `/var/lib/ricochet/ricochet-config.toml` is not removed automatically.
+Delete it manually if it is no longer needed.

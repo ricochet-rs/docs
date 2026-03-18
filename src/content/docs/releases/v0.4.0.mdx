@@ -11,18 +11,14 @@ template: splash
 ### Features
 
 - **Shiny Python Support**: Added Shiny Python as a new content type and renamed the existing Shiny option to Shiny (R) to distinguish between the two frameworks
-- **Improved Routing**: Added comprehensive routing tests for the Pingora proxy engine
 
 ### Fixes
 
-- **Plumber Default Route**: When no path is specified for Plumber applications, the proxy now automatically routes to `/__docs__/` for easier API documentation access
-- **Non-uv Discovery**: Fixed discovery of Python environments that don't use uv
-- **Admin Permissions**: Administrators can now properly demote other administrators as intended
+- **Plumber Default Route**: When no path is specified for Plumber applications, ricochet routes to `/__docs__/`.
+- **Python Discovery**: enabled discovery of python installations not managed by UV
+- **Admin Permissions**: Administrators can now demote other administrators
 - **Julia Data Dependencies**: Set `DATADEPS_ALWAYS_ACCEPT=1` for Julia processes to avoid interactive prompts
-- **Graceful Shutdown**: Improved tracing functionality to shutdown gracefully
-- **Archive Extraction**: Fixed extraction of vendored uv and juliaup tarballs by properly stripping top-level directories
-- **API Rate Limits**: Now uses GITHUB_TOKEN when fetching binaryen versions to avoid GitHub API rate limits
-- **Memory Allocator**: Changed the default memory allocator for musl builds to improve performance
+- **Graceful Shutdown**: OTLP tracing now correctly shuts down
 
 ### Improvements
 

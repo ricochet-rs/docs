@@ -150,6 +150,11 @@ export default defineConfig({
           label: "Discord",
           href: "https://discord.gg/ctWt3du7aw",
         },
+        {
+          icon: "matrix",
+          label: "Matrix",
+          href: "https://matrix.ricochet.rs",
+        },
       ],
       editLink: {
         baseUrl: "https://github.com/ricochet-rs/docs/edit/main/",

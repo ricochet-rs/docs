@@ -1,0 +1,25 @@
+---
+title: v0.4.0
+docs: release notes for Ricochet v0.4.0
+slug: releases/v0.4.0
+tableOfContents: false
+template: splash
+---
+
+**Released: March 18, 2026**
+
+### Features
+
+- **Shiny Python Support**: Added Shiny Python as a new content type and renamed the existing Shiny option to Shiny (R) to distinguish between the two frameworks
+
+### Fixes
+
+- **Plumber Default Route**: When no path is specified for Plumber applications, ricochet routes to `/__docs__/`.
+- **Python Discovery**: enabled discovery of python installations not managed by UV
+- **Admin Permissions**: Administrators can now demote other administrators
+- **Julia Data Dependencies**: Set `DATADEPS_ALWAYS_ACCEPT=1` for Julia processes to avoid interactive prompts
+- **Graceful Shutdown**: OTLP tracing now correctly shuts down
+
+### Improvements
+
+- **Application Loading**: Prevented duplicate backends when spawning instances, improved the app loading experience, and fixed a memory leak in Kubernetes deployments

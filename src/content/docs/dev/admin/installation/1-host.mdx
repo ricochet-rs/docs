@@ -149,9 +149,8 @@ See the [storage configuration](/dev/admin/configuration/0-overview/#storage) fo
 
 ### Python
 
-If deploying Python-based content, Ricochet uses `uv` to discover available Python installations.
-Python **must** be installed via [uv](https://docs.astral.sh/uv/).
-Only uv-managed Python installations are supported.
+If deploying Python-based content, Ricochet will discover Python installations on the host.
+We encourage installing Python via [uv](https://docs.astral.sh/uv/) for the best experience managing multiple Python versions.
 
 ```sh
 uv python install <version>

@@ -143,9 +143,23 @@ Ricochet works without any interpreters installed.
 However, if you plan to deploy R, Python, or Julia content, you must install the respective interpreters on the host machine.
 Container and Kubernetes deployments bundle their own interpreters and do not require this step.
 
-Ricochet vendors `uv`, `juliaup`, and `renv` in the package installations, located at `RICOCHET_HOME/vendor`.
+### Vendored dependencies
+
+The `.deb` and `.rpm` packages bundle the following tools so that ricochet can manage language environments without relying on system-installed versions:
+
+| Tool | Vendor path | Purpose |
+| --- | --- | --- |
+| [uv](https://docs.astral.sh/uv/) | `RICOCHET_HOME/vendor/py/uv` | Python package management, running Python content, and Python version discovery |
+| [juliaup](https://github.com/JuliaLang/juliaup) | `RICOCHET_HOME/vendor/jl/juliaup` | Managing Julia environments and Julia version discovery |
+| [renv](https://rstudio.github.io/renv/) | `RICOCHET_HOME/vendor/r/renv` | R package environment restoration |
+
 When using the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
 See the [storage configuration](/dev/admin/configuration/0-overview/#storage) for more details.
+
+<Aside type="note">
+The standalone binary does not include vendored dependencies.
+You must install `uv`, `juliaup`, and `renv` yourself if using the standalone binary.
+</Aside>
 
 ### Python
 

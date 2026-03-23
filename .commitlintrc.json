@@ -18,6 +18,7 @@
         "WIP"
       ]
     ],
-    "type-case": [0, "always", "lower-case"]
+    "type-case": [0, "always", "lower-case"],
+    "subject-case": [0]
   }
 }

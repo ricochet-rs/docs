@@ -43,6 +43,21 @@ display_name_claim = "preferred_username"  # Optional, defaults to "preferred_us
 | `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
 | `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
 
+## Microsoft Entra ID (Azure AD)
+
+When using Microsoft Entra ID, you must use the v2.0 issuer URL.
+The v1 issuer (`https://sts.windows.net/{tenant-id}/`) returns a non-standard discovery document that is incompatible with ricochet's OIDC client.
+
+```toml
+[auth.oidc]
+issuer_url = "https://login.microsoftonline.com/{tenant-id}/v2.0"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+```
+
+Replace `{tenant-id}` with your Azure tenant ID.
+
 ## Requiring Authentication
 
 By default, unauthenticated users can browse the "Explore" page and view public content.

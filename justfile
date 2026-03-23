@@ -14,7 +14,7 @@ preview:
 
 # check for broken links (builds first, runs lychee via docker)
 links: build
-    docker run --rm -v {{justfile_directory()}}:/app -w /app lycheeverse/lychee:{{lychee_version}} dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d --exclude 'https://docs\.ricochet\.rs/v0-\d+/.*'
+    docker run --rm -v {{justfile_directory()}}:/app -w /app lycheeverse/lychee:{{lychee_version}} dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d --config lychee-predeploy.toml
 
 install:
     bun install

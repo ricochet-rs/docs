@@ -98,8 +98,3 @@ The `--no-python-downloads` flag prevents `uv` from downloading Python versions 
 Resolved packages are cached at `$RICOCHET_HOME/.cache/uv`.
 This directory is created automatically during the first Python deployment.
 The cache is shared across all Python content items on the server.
-
-## Limitations
-
-- Container and Kubernetes execution environment support is not yet implemented for Python content. Python content currently runs on the host only.
-- Python versions must be pre-installed on the server. Ricochet will not download Python versions at deploy time.

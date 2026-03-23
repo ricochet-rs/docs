@@ -103,6 +103,8 @@ export default defineConfig({
         Sidebar: "./src/components/Sidebar.astro",
         // Override Pagination to render backticks as code
         Pagination: "./src/components/Pagination.astro",
+        // Override Header to add release notes icon on mobile
+        Header: "./src/components/Header.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {

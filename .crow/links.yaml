@@ -13,12 +13,15 @@ steps:
       - bun astro build
 
   # Pre-deploy check validates internal links in dist/ before deployment.
-  # Canonical/og:url self-references are excluded via lychee.toml since they
-  # point to docs.ricochet.rs which won't have new pages until after deploy.
+  # Uses lychee-predeploy.toml which adds canonical/og:url excludes on top
+  # of the base lychee.toml excludes. These self-references point to
+  # docs.ricochet.rs which won't have new pages until after deploy.
+  # The post-deploy check uses lychee.toml (without version excludes) so
+  # it can validate all links on the live site.
   - name: Pre-deploy link check
     image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.23-alpine
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
     commands:
-      - lychee dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d
+      - lychee dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d --config lychee-predeploy.toml

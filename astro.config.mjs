@@ -103,6 +103,8 @@ export default defineConfig({
         Sidebar: "./src/components/Sidebar.astro",
         // Override Pagination to render backticks as code
         Pagination: "./src/components/Pagination.astro",
+        // Override Header to add release notes icon on mobile
+        Header: "./src/components/Header.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {
@@ -119,8 +121,11 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightVersions({
-          current: { label: "0.2 (latest)", redirect: "root" },
+          current: { label: "0.4 (latest)", redirect: "root" },
           versions: [
+            { slug: "v0-4", label: "0.4" },
+            { slug: "v0-3", label: "0.3" },
+            { slug: "dev", label: "dev" },
             { slug: "v0-2", label: "0.2" },
             { slug: "v0-1", label: "0.1" },
           ],
@@ -145,7 +150,12 @@ export default defineConfig({
         {
           icon: "discord",
           label: "Discord",
-          href: "https://discord.gg/52YExXuj",
+          href: "https://discord.gg/ctWt3du7aw",
+        },
+        {
+          icon: "matrix",
+          label: "Matrix",
+          href: "https://matrix.ricochet.rs",
         },
       ],
       editLink: {

@@ -1,23 +1,40 @@
 ---
 // Custom Pagination that renders backticks as inline code
-import { parseBackticks } from '../utils/parseBackticks';
+import { parseBackticks } from "../utils/parseBackticks";
 
 const { dir, pagination } = Astro.locals.starlightRoute;
 const { prev, next } = pagination;
-const isRtl = dir === 'rtl';
+const isRtl = dir === "rtl";
 ---
 
 <div class="pagination-links print:hidden" dir={dir}>
   {
     prev && (
       <a href={prev.href} rel="prev">
-        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <path d={isRtl ? "M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6l-6 6l-1.41-1.41z" : "M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6l6 6l1.41-1.41z"} />
+        <svg
+          aria-hidden="true"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d={
+              isRtl
+                ? "M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6l-6 6l-1.41-1.41z"
+                : "M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6l6 6l1.41-1.41z"
+            }
+          />
         </svg>
         <span>
-          {Astro.locals.t('page.previousLink')}
+          {Astro.locals.t("page.previousLink")}
           <br />
-          <span class="link-title" set:html={parseBackticks(prev.label).map(p => p.isCode ? `<code>${p.text}</code>` : p.text).join('')} />
+          <span
+            class="link-title"
+            set:html={parseBackticks(prev.label)
+              .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
+              .join("")}
+          />
         </span>
       </a>
     )
@@ -25,13 +42,30 @@ const isRtl = dir === 'rtl';
   {
     next && (
       <a href={next.href} rel="next">
-        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <path d={isRtl ? "M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6l6 6l1.41-1.41z" : "M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6l-6 6l-1.41-1.41z"} />
+        <svg
+          aria-hidden="true"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d={
+              isRtl
+                ? "M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6l6 6l1.41-1.41z"
+                : "M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6l-6 6l-1.41-1.41z"
+            }
+          />
         </svg>
         <span>
-          {Astro.locals.t('page.nextLink')}
+          {Astro.locals.t("page.nextLink")}
           <br />
-          <span class="link-title" set:html={parseBackticks(next.label).map(p => p.isCode ? `<code>${p.text}</code>` : p.text).join('')} />
+          <span
+            class="link-title"
+            set:html={parseBackticks(next.label)
+              .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
+              .join("")}
+          />
         </span>
       </a>
     )
@@ -62,7 +96,7 @@ const isRtl = dir === 'rtl';
       box-shadow: var(--sl-shadow-md);
       overflow-wrap: anywhere;
     }
-    [rel='next'] {
+    [rel="next"] {
       justify-content: end;
       text-align: end;
       flex-direction: row-reverse;

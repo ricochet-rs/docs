@@ -6,3 +6,7 @@ README.md
 # Prettier breaks code blocks inside <Tabs> components in MDX
 # Quickstart guides commonly use Tabs for OS-specific instructions
 **/*.mdx
+
+bun.lock
+package.json
+pnpm-lock.yaml

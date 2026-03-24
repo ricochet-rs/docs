@@ -10,7 +10,7 @@ let count = 0;
 
 if (!Astro.locals.starlightUtils.multiSidebar) {
   throw new AstroError(
-    "An error occurred with starlight-utils. Please [file an issue on GitHub](https://github.com/lorenzolewis/starlight-utils/issues)."
+    "An error occurred with starlight-utils. Please [file an issue on GitHub](https://github.com/lorenzolewis/starlight-utils/issues).",
   );
 }
 
@@ -181,6 +181,6 @@ const sidebars = Astro.locals.starlightUtils.multiSidebar.map((sidebar) => {
 
   customElements.define(
     "starlight-multi-sidebar-tabs",
-    StarlightMultiSidebarTabs
+    StarlightMultiSidebarTabs,
   );
 </script>

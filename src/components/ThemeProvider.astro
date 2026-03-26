@@ -2,27 +2,30 @@
 <script is:inline>
   window.StarlightThemeProvider = (() => {
     const storedTheme =
-      typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+      typeof localStorage !== "undefined" &&
+      localStorage.getItem("starlight-theme");
     const theme =
       storedTheme ||
-      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      (window.matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "dark");
 
     // Set theme immediately before any styles load
-    const effectiveTheme = theme === 'light' ? 'light' : 'dark';
+    const effectiveTheme = theme === "light" ? "light" : "dark";
     document.documentElement.dataset.theme = effectiveTheme;
     document.documentElement.style.colorScheme = effectiveTheme;
     // Add .dark class for nova theme compatibility
-    if (effectiveTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (effectiveTheme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
 
     // Add class to prevent transitions during initial load
-    document.documentElement.classList.add('loading');
+    document.documentElement.classList.add("loading");
 
     // Disable transitions temporarily to prevent color flash on load
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .loading *, .loading *::before, .loading *::after {
         transition: none !important;
@@ -42,33 +45,35 @@
       // Use requestAnimationFrame to ensure DOM is ready
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          document.documentElement.classList.remove('loading');
+          document.documentElement.classList.remove("loading");
           style.remove();
         });
       });
     };
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', enableTransitions);
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", enableTransitions);
     } else {
       enableTransitions();
     }
 
     return {
-      updatePickers(theme = storedTheme || 'auto') {
-        document.querySelectorAll('starlight-theme-select').forEach((picker) => {
-          const select = picker.querySelector('select');
-          if (select) select.value = theme;
-          /** @type {HTMLTemplateElement | null} */
-          const tmpl = document.querySelector(`#theme-icons`);
-          const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
-          if (newIcon) {
-            const oldIcon = picker.querySelector('svg.label-icon');
-            if (oldIcon) {
-              oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+      updatePickers(theme = storedTheme || "auto") {
+        document
+          .querySelectorAll("starlight-theme-select")
+          .forEach((picker) => {
+            const select = picker.querySelector("select");
+            if (select) select.value = theme;
+            /** @type {HTMLTemplateElement | null} */
+            const tmpl = document.querySelector(`#theme-icons`);
+            const newIcon = tmpl && tmpl.content.querySelector("." + theme);
+            if (newIcon) {
+              const oldIcon = picker.querySelector("svg.label-icon");
+              if (oldIcon) {
+                oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+              }
             }
-          }
-        });
+          });
       },
     };
   })();

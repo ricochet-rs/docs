@@ -1,15 +1,20 @@
 ---
 // Custom TableOfContents that renders backticks as inline code
-import TableOfContentsList from './TableOfContentsList.astro';
+import TableOfContentsList from "./TableOfContentsList.astro";
 
 const { toc } = Astro.locals.starlightRoute;
 ---
 
 {
   toc && (
-    <starlight-toc data-min-h={toc.minHeadingLevel} data-max-h={toc.maxHeadingLevel}>
+    <starlight-toc
+      data-min-h={toc.minHeadingLevel}
+      data-max-h={toc.maxHeadingLevel}
+    >
       <nav aria-labelledby="starlight__on-this-page">
-        <h2 id="starlight__on-this-page">{Astro.locals.t('tableOfContents.onThisPage')}</h2>
+        <h2 id="starlight__on-this-page">
+          {Astro.locals.t("tableOfContents.onThisPage")}
+        </h2>
         <TableOfContentsList toc={toc.items} />
       </nav>
     </starlight-toc>
@@ -18,22 +23,24 @@ const { toc } = Astro.locals.starlightRoute;
 
 <script is:inline>
   // Sync ToC links with actual heading content to preserve <code> tags
-  (function() {
+  (function () {
     function syncTocWithHeadings() {
-      document.querySelectorAll('starlight-toc').forEach(function(toc) {
-        var links = toc.querySelectorAll('a');
-        links.forEach(function(link) {
-          var href = link.getAttribute('href');
+      document.querySelectorAll("starlight-toc").forEach(function (toc) {
+        var links = toc.querySelectorAll("a");
+        links.forEach(function (link) {
+          var href = link.getAttribute("href");
           // Skip the #_top link (Overview) - it's intentionally different from page title
-          if (href && href.startsWith('#') && href !== '#_top') {
+          if (href && href.startsWith("#") && href !== "#_top") {
             var id = decodeURIComponent(href.slice(1));
             var heading = document.getElementById(id);
             if (heading) {
               // Clone to avoid modifying original
               var clone = heading.cloneNode(true);
               // Remove anchor links that might be inside headings
-              var anchors = clone.querySelectorAll('a');
-              anchors.forEach(function(a) { a.remove(); });
+              var anchors = clone.querySelectorAll("a");
+              anchors.forEach(function (a) {
+                a.remove();
+              });
               var content = clone.innerHTML.trim();
               if (content) {
                 link.innerHTML = content;
@@ -44,8 +51,8 @@ const { toc } = Astro.locals.starlightRoute;
       });
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', syncTocWithHeadings);
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", syncTocWithHeadings);
     } else {
       syncTocWithHeadings();
     }

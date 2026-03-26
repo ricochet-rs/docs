@@ -1,7 +1,7 @@
 set dotenv-load := true
 
 # renovate: datasource=docker depName=lycheeverse/lychee
-lychee_version := "0.22-alpine"
+lychee_version := "0.23-alpine"
 
 default:
     @just --list
@@ -14,13 +14,13 @@ preview:
 
 # check for broken links (builds first, runs lychee via docker)
 links: build
-    docker run --rm -v {{justfile_directory()}}:/app -w /app lycheeverse/lychee:{{lychee_version}} dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d
+    docker run --rm -v {{justfile_directory()}}:/app -w /app lycheeverse/lychee:{{lychee_version}} dist/ --root-dir dist/ -t 40 --max-redirects 10 --exclude-loopback --insecure --cache --max-cache-age 1d --config lychee-predeploy.toml
 
 install:
     bun install
 
 # lint using prettier
-lint:
+lint: install
     bun prettier --check .
 
 # fix lints using prettier and format prose (semantic line breaks)

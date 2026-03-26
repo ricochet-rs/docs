@@ -1,0 +1,17 @@
+# Lychee link checker configuration for pre-deploy checks
+# https://lychee.cli.rs/configuration
+#
+# Extends the base excludes with canonical/og:url self-references that
+# point to docs.ricochet.rs — these won't resolve until after deploy.
+# The post-deploy check uses lychee.toml (without these) so it can
+# validate all versioned paths on the live site.
+
+# Exclude patterns
+exclude = [
+    # 404 page is expected to return 404
+    "https://docs.ricochet.rs/404/",
+    # Trial instance may be down
+    "https://try.ricochet.rs.*",
+    # Canonical/og:url self-references won't resolve until deployed
+    "https://docs\\.ricochet\\.rs/v0-\\d+/.*",
+]

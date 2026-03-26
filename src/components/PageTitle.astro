@@ -1,15 +1,13 @@
 ---
 // Custom PageTitle that renders backticks as inline code
-import { parseBackticks } from '../utils/parseBackticks';
+import { parseBackticks } from "../utils/parseBackticks";
 
 const title = Astro.locals.starlightRoute.entry.data.title;
 const parts = parseBackticks(title);
 ---
 
 <h1 id="_top">
-  {parts.map((part) =>
-    part.isCode ? <code>{part.text}</code> : part.text
-  )}
+  {parts.map((part) => (part.isCode ? <code>{part.text}</code> : part.text))}
 </h1>
 
 <style>

@@ -104,3 +104,11 @@ h6 code {
     display: flex !important;
   }
 }
+
+/* Align mobile search icon size with other header icons */
+@media (max-width: 767px) {
+  button[data-open-modal] {
+    height: 2rem !important;
+    font-size: 1rem !important;
+  }
+}

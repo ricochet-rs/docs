@@ -1,0 +1,140 @@
+---
+title: Quarto
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+This page covers the requirements and internals of deploying Quarto content to ricochet.
+
+## Project requirements
+
+Quarto content items share the same dependency requirements as their underlying language runtime.
+Refer to the relevant language page for details:
+
+| Language | Required files | Reference |
+| -------- | -------------- | --------- |
+| R        | `renv.lock`    | [R deployment](../4-r) |
+| Julia    | `Manifest.toml` | [Julia deployment](../5-julia) |
+| Python   | `.python-version`, `uv.lock` | [Python deployment](../6-python) |
+
+### Example `_ricochet.toml`
+
+```toml
+[content]
+name = "My Quarto Site"
+entrypoint = "_quarto.yml"
+access_type = "external"
+content_type = "quarto-r"
+
+[language]
+name = "r"
+packages = "renv.lock"
+
+[static]
+index = "index.html"
+output_dir = "_docs"
+```
+
+## Supported content types
+
+Quarto content items can be deployed as **apps** or **tasks**.
+
+### Apps
+
+| `Content Type`    | Language | Description                                               |
+| ----------------- | -------- | --------------------------------------------------------- |
+| `quarto-r-shiny`  | R        | A Quarto document using a [Shiny](https://shiny.posit.co/r/) runtime. |
+
+### Tasks
+
+| `Content Type` | Language | Description                                           |
+| -------------- | -------- | ----------------------------------------------------- |
+| `quarto-r`     | R        | A Quarto document rendered using an R runtime.        |
+| `quarto-jl`    | Julia    | A Quarto document rendered using a Julia runtime.     |
+| `quarto-py`    | Python   | A Quarto document rendered using a Python runtime.    |
+
+## Serving rendered output as a static site
+
+Quarto content items do not automatically serve their rendered output.
+To expose the rendered HTML, add a `[static]` section to your `_ricochet.toml`:
+
+```toml
+[static]
+index = "index.html"
+output_dir = "_docs"
+```
+
+The site will be available at `/static/{item-id}`.
+See the [Static Sites](../tasks/3-static-sites) page for full configuration details.
+
+## How ricochet runs Quarto content
+
+### Quarto discovery
+
+Ricochet locates the Quarto binary on the host in the following order:
+
+1. **`PATH`** — if `quarto` is found on the system `PATH`, it is used directly.
+2. **`/opt/quarto`** — checked as a standard installation location.
+3. **`/opt/quarto-{version}`** — broader search under `/opt/` for versioned Quarto installations.
+
+<Aside type="caution">
+  Ricochet does not support pinning Quarto versions per content item or running multiple Quarto versions simultaneously.
+  Quarto version pinning is on the roadmap.
+</Aside>
+
+### Quarto sites and project entrypoints
+
+When the entrypoint is `_quarto.yml`, ricochet renders the parent directory rather than the file itself.
+This supports Quarto projects such as websites and books.
+
+### Running `quarto-r`
+
+Ricochet runs:
+
+```sh
+quarto render <entrypoint>
+```
+
+The `QUARTO_R` environment variable is set to the R binary discovered via [R version discovery](../4-r#r-version-discovery).
+
+### Running `quarto-r-shiny`
+
+Ricochet runs:
+
+```sh
+quarto serve <entrypoint>
+```
+
+The `QUARTO_R` environment variable is set to the R binary discovered via [R version discovery](../4-r#r-version-discovery).
+
+### Running `quarto-jl`
+
+Ricochet runs:
+
+```sh
+quarto render <entrypoint>
+```
+
+The `QUARTO_JULIA` environment variable is set to the Julia binary discovered via [Julia version discovery](../5-julia#julia-version-discovery).
+
+### Running `quarto-py`
+
+Ricochet runs:
+
+```sh
+quarto render <entrypoint>
+```
+
+Python version matching follows the same rules as other Python content, using `.python-version` and the environment restored by `uv sync`.
+See [Python deployment](../6-python#python-version-discovery) for details on version discovery and environment restoration.
+
+Ricochet points Quarto at the restored virtual environment by setting the following environment variables:
+
+| Variable         | Value                          |
+| ---------------- | ------------------------------ |
+| `QUARTO_PYTHON`  | Path to the virtual env Python binary (`<bundle>/.venv/bin/python`) |
+| `VIRTUAL_ENV`    | Path to the virtual environment directory |
+| `UV_PYTHON`      | Path to the matched system Python binary |
+| `PYTHONUNBUFFERED` | `1`                          |
+
+The virtual environment's `bin/` directory is also prepended to `PATH`.

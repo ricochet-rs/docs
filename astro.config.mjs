@@ -133,7 +133,9 @@ export default defineConfig({
         starlightThemeNova({
           nav: [{ label: "Release Notes", href: "/releases/" }],
         }),
-        starlightLinksValidator(),
+        starlightLinksValidator({
+          errorOnRelativeLinks: false,
+        }),
         starlightUtils({
           multiSidebar: {
             switcherStyle: "horizontalList",

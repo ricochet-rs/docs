@@ -11,7 +11,7 @@ template: splash
 ### Features
 
 - **Server-Sent Events**: Added deployment SSE support and improved content SSE functionality
-- **Content Thumbnails**: New API endpoint for retrieving content thumbnails, plus thumbnail upload with aspect-ratio-aware rendering
+- **Content Thumbnails**: New API endpoint for retrieving content thumbnails.
 - **User Avatars**: Added support for user avatars with Gravatar/Libravatar integration, custom upload, and OIDC picture sync
 - **Public Profiles**: Enhanced explore page cards and added public user profile pages
 - **Environment Variables**: Content environment variables are now passed to the restore process
@@ -24,14 +24,9 @@ template: splash
 
 ### Fixes
 
-- **Quarto Support**: Fixed Quarto discovery and container bind mount issues
-- **Python Environments**: Resolved Python environment restoration problems on hardened systemd services
-- **Deployments**: Fixed issue where all running instances would be killed when environment variables were added or deleted
-- **Kubernetes**: Corrected deployment name usage when deleting content items
-- **Container Isolation**: Added PID namespace and procfs mount to libcontainers for improved isolation
+- **Quarto Support**: ricochet no longer relies on quarto existing on the PATH.
+- **Python Environments**: Python path discovery is now not limited to only UV managed python installations.
+- **Deployments**: all running instances are now terminated when environment variables are added or deleted.
+- **Kubernetes**: fixed a bug where kubernetes deployments were not properly deleted
 - **Error Handling**: Return proper 400 error code when deployment is missing packages file, plus added .python-version file checking
-- **Authentication**: Replaced AuthGate with Leptos protected route for better auth handling
 
-### Security
-
-- **Dependency Update**: Updated Rust tar crate to v0.4.45 to address security vulnerability

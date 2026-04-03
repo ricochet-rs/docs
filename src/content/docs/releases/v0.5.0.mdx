@@ -10,23 +10,23 @@ template: splash
 
 ### Features
 
-- **Server-Sent Events**: Added deployment SSE support and improved content SSE functionality
+- **Server-Sent Events**: Added deployment SSE support and improved content SSE functionality.
 - **Content Thumbnails**: New API endpoint for retrieving content thumbnails.
-- **User Avatars**: Added support for user avatars with Gravatar/Libravatar integration, custom upload, and OIDC picture sync
-- **Public Profiles**: Enhanced explore page cards and added public user profile pages
-- **Environment Variables**: Content environment variables are now passed to the restore process
+- **User Avatars**: Added support for user avatars with Gravatar/Libravatar integration, custom upload, and OIDC picture sync.
+- **Public Profiles**: Enhanced explore page cards and added public user profile pages.
+- **Environment Variables**: Content environment variables are now passed to the restore process.
 
 ### Improvements
 
-- **Profile Layout**: Improved user profile page layout and design
-- **Sidebar**: Reduced expanded sidebar width for better space utilization
-- **Log Panels**: Standardized panel width for tasks and application logs
+- **Profile Layout**: Improved user profile page layout and design.
+- **Sidebar**: Reduced expanded sidebar width for better space utilization.
+- **Log Panels**: Standardized panel width for tasks and application logs.
 
 ### Fixes
 
-- **Quarto Support**: ricochet no longer relies on quarto existing on the PATH.
+- **Quarto Support**: Ricochet no longer relies on Quarto existing on `PATH`.
 - **Python Environments**: Python path discovery is now not limited to only UV managed python installations.
-- **Deployments**: all running instances are now terminated when environment variables are added or deleted.
-- **Kubernetes**: fixed a bug where kubernetes deployments were not properly deleted
-- **Error Handling**: Return proper 400 error code when deployment is missing packages file, plus added .python-version file checking
+- **Deployments**: All running instances are now terminated when environment variables are added or deleted.
+- **Kubernetes**: Fixed a bug where Kubernetes deployments were not properly deleted.
+- **Error Handling**: Return proper 400 error code when deployment is missing packages file, plus added `.python-version` file checking.
 

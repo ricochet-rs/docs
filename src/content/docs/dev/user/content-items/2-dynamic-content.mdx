@@ -174,17 +174,6 @@ entrypoint = "app.jl"
 content_type = "julia-service"
 ```
 
-### Serverless Julia
-
-The `serverless-jl` content type lets you deploy plain Julia functions as a REST API without writing any web framework code.
-
-```toml
-[content]
-name = "My Julia API"
-entrypoint = "api.jl"
-content_type = "serverless-jl"
-```
-
 ## Deployment and configuration
 
 See the [deployment guide](/dev/user/deployment/1-ricochet-cli) for how to deploy apps using the CLI or via git integration, and the language-specific guides for project requirements:

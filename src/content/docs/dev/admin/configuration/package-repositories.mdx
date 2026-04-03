@@ -1,0 +1,52 @@
+---
+title: Package Repositories
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+R, Python, and Julia rely on external sources for packages.
+Ricochet can override the default package repositories used when restoring the package environment for a content item.
+
+By default, no overrides are applied — the sources defined in `renv.lock`, `uv.lock`, and `Manifest.toml` are used as-is.
+Add a `[package]` section to `ricochet-config.toml` to set server-wide defaults.
+
+## Configuration
+
+```toml title="ricochet-config.toml"
+[package]
+allow_overrides = true
+r = { CRAN = "https://cran.rpkgs.com", RSPM = "https://p3m.dev/cran/__linux__/noble/latest" }
+python = ["https://pypi.org"]
+```
+
+| Field              | Description                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `allow_overrides`  | When `true`, individual content items can define their own package sources in `_ricochet.toml`. Default `false`. |
+| `r`                | A table of named repository URLs. Keys must consist of uppercase letters and underscores only (e.g. `CRAN`, `RSPM`). |
+| `python`           | An array of index URLs passed to `uv sync --index`. Order matters — earlier entries take priority.              |
+
+<Aside type="note" title="Julia">
+Custom Julia package sources are not yet supported.
+If you would like to provide guidance on this, please email contact@ricochet.rs.
+</Aside>
+
+## Precedence rules
+
+How package sources are resolved depends on the `[package]` configuration:
+
+| Server `[package]` set? | `allow_overrides` | Behavior                                                                                      |
+| ----------------------- | ----------------- | --------------------------------------------------------------------------------------------- |
+| No                      | —                 | Lock file sources are used. Items may set their own overrides.                                |
+| Yes                     | `false`           | Server repositories are enforced for all items. Item-level overrides are ignored.             |
+| Yes                     | `true`            | Server repositories are merged with item-level overrides. Item sources take precedence on conflict. |
+
+## How overrides are applied
+
+### R
+
+R package repository overrides are passed to `renv` via the `RENV_CONFIG_REPOS_OVERRIDE` environment variable during environment restoration.
+
+### Python
+
+Python index overrides are passed as `--index` arguments to `uv sync`.
+The order of URLs in the `python` array matters — earlier entries are checked first.

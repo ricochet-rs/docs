@@ -1,0 +1,32 @@
+---
+title: v0.5.0
+docs: release notes for Ricochet v0.5.0
+slug: releases/v0.5.0
+tableOfContents: false
+template: splash
+---
+
+**Released: April 2, 2026**
+
+### Features
+
+- **Server-Sent Events**: Added deployment SSE support and improved content SSE functionality.
+- **Content Thumbnails**: New API endpoint for retrieving content thumbnails.
+- **User Avatars**: Added support for user avatars with Gravatar/Libravatar integration, custom upload, and OIDC picture sync.
+- **Public Profiles**: Enhanced explore page cards and added public user profile pages.
+- **Environment Variables**: Content environment variables are now passed to the restore process.
+
+### Improvements
+
+- **Profile Layout**: Improved user profile page layout and design.
+- **Sidebar**: Reduced expanded sidebar width for better space utilization.
+- **Log Panels**: Standardized panel width for tasks and application logs.
+
+### Fixes
+
+- **Quarto Support**: Ricochet no longer relies on Quarto existing on `PATH`.
+- **Python Environments**: Python path discovery is now not limited to only UV managed python installations.
+- **Deployments**: All running instances are now terminated when environment variables are added or deleted.
+- **Kubernetes**: Fixed a bug where Kubernetes deployments were not properly deleted.
+- **Error Handling**: Return proper 400 error code when deployment is missing packages file, plus added `.python-version` file checking.
+

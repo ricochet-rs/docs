@@ -19,13 +19,17 @@ endpoint = "http://localhost:4317"
 
 Jaeger is an open source OTLP collector and works directly with ricochet.
 
+:::tip[Get the current Jaeger version]
+Replace `<version>` with the current recommended version from the [Jaeger getting started guide](https://www.jaegertracing.io/docs/latest/getting-started/).
+:::
+
 Start the Jaeger container:
 
 ```bash
 docker run -d --name jaeger \
   -p 4317:4317 \
   -p 16686:16686 \
-  jaegertracing/jaeger:2
+  cr.jaegertracing.io/jaegertracing/jaeger:<version>
 ```
 
 Add the following to `ricochet-config.toml`:

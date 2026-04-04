@@ -2,6 +2,8 @@
 title: Using `_ricochet.toml`
 ---
 
+import { Aside } from "@astrojs/starlight/components";
+
 Each deployment to ricochet is accompanied by a `_ricochet.toml` file.
 The `_ricochet.toml` file is used to set and keep track of metadata about your content item.
 
@@ -107,6 +109,46 @@ These specify which language the content item is using as well as how the depend
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`     | The language of the content item. Must be `"r"`, `"julia"`, or `"python"`.                                                                                                              |
 | `packages` | For `"r"` must be `"renv.lock"`. For `"julia"` must be `"Manifest.toml"`. For `"python"` must be `"uv.lock"`. No other dependency management tools are supported at the moment. |
+
+## `repositories` settings
+
+The optional `[repositories]` section lets you override the default package repository sources for your content item.
+This is useful when your packages are hosted on a private registry or a specific mirror.
+
+<Aside type="note">
+Item-level repository overrides are enabled by default.
+A server administrator can disable them by setting `allow_overrides = false` in the server configuration.
+See the [admin package repositories guide](/dev/admin/configuration/package-repositories/) for details on precedence rules.
+</Aside>
+
+### R
+
+R repositories are specified as a table of named URLs.
+Keys must consist of uppercase letters and underscores only.
+
+```toml
+[repositories]
+r = { CRAN = "https://cran.rpkgs.com", RSPM = "https://p3m.dev/cran/__linux__/noble/latest" }
+```
+
+R package repositories can also be configured in the ricochet web UI under the **Runtime** tab for each content item.
+Python and Julia package sources are TOML-only at present.
+
+### Python
+
+Python index sources are specified as an array of URLs.
+Order matters — earlier entries take priority.
+
+```toml
+[repositories]
+python = ["https://my-private-index.example.com", "https://pypi.org"]
+```
+
+### Julia
+
+<Aside type="note" title="Coming Soon">
+Custom Julia package sources are not yet supported.
+</Aside>
 
 ## `schedule` settings
 

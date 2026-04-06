@@ -24,7 +24,7 @@ Both are optional and can be combined:
 | `max_age_days` | Delete bundles older than this many days | No limit |
 
 <Aside type="note">
-The latest successful deployment is always protected — it will never be deleted regardless of policy.
+The latest successful deployment is always protected—it will never be deleted regardless of policy.
 Pending deployments are also excluded from cleanup.
 </Aside>
 
@@ -32,8 +32,8 @@ Pending deployments are also excluded from cleanup.
 
 Retention settings can be configured at two levels:
 
-1. **Server-wide** — in `ricochet-config.toml`, under the `[retention]` section. Applies to all content items.
-2. **Per-content** — in the content item's `_ricochet.toml`, under the `[retention]` section. Overrides the server default for that item.
+1. **Server-wide**: in `ricochet-config.toml`, under the `[retention]` section. Applies to all content items.
+2. **Per-content**: in the content item's `_ricochet.toml`, under the `[retention]` section. Overrides the server default for that item.
 
 When both are configured, ricochet applies the **stricter** of the two values.
 A per-content policy can tighten the server default but cannot relax it.

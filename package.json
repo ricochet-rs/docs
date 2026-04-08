@@ -23,7 +23,7 @@
     "pagefind": "^1.4.0",
     "sharp": "^0.34.5",
     "starlight-links-validator": "^0.22.0",
-    "starlight-scroll-to-top": "^0.4.0",
+    "starlight-scroll-to-top": "^1.0.0",
     "starlight-theme-nova": "^0.11.7",
     "starlight-versions": "^0.8.1",
     "tailwindcss": "^4.2.2"

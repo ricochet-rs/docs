@@ -1,0 +1,61 @@
+---
+title: Deployment Retention
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Every time you deploy content to ricochet, the source code and dependencies are packaged together into a **bundle**.
+Bundles persist across deployments so ricochet can roll back, redeploy, or inspect past versions.
+
+Over time, accumulated bundles consume disk space.
+Retention policies let you control how many bundles are kept and for how long.
+
+## How retention works
+
+ricochet runs a cleanup process once daily at **05:00 UTC**.
+It evaluates every content item against the configured retention policy and deletes bundles that exceed the defined limits.
+
+Two limits are available.
+Both are optional and can be combined:
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `max_deployments` | Maximum number of bundles to keep per content item | `20` |
+| `max_age_days` | Delete bundles older than this many days | No limit |
+
+<Aside type="note">
+The latest successful deployment is always protected—it will never be deleted regardless of policy.
+Pending deployments are also excluded from cleanup.
+</Aside>
+
+## Policy resolution
+
+Retention settings can be configured at two levels:
+
+1. **Server-wide**: in `ricochet-config.toml`, under the `[retention]` section. Applies to all content items.
+2. **Per-content**: in the content item's `_ricochet.toml`, under the `[retention]` section. Overrides the server default for that item.
+
+When both are configured, ricochet applies the **stricter** of the two values.
+A per-content policy can tighten the server default but cannot relax it.
+
+If no retention settings are configured at either level, bundles accumulate without limit.
+
+### Server-wide configuration
+
+Set defaults for all content items in `ricochet-config.toml`:
+
+```toml
+[retention]
+max_deployments = 20
+max_age_days = 90
+```
+
+### Per-content configuration
+
+Override the server default for a specific content item in its `_ricochet.toml`:
+
+```toml
+[retention]
+max_deployments = 5
+max_age_days = 30
+```

@@ -13,5 +13,5 @@ exclude = [
     # Trial instance may be down
     "https://try.ricochet.rs.*",
     # Canonical/og:url self-references won't resolve until deployed
-    "https://docs\\.ricochet\\.rs/v0-\\d+/.*",
+    "https://docs\\.ricochet\\.rs/releases/v[\\d.]+/.*",
 ]

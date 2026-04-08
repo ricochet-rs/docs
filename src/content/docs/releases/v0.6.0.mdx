@@ -1,0 +1,27 @@
+---
+title: v0.6.0
+docs: release notes for Ricochet v0.6.0
+slug: releases/v0.6.0
+tableOfContents: false
+template: splash
+---
+
+**Released: April 8, 2026**
+
+### Features
+
+- **Preflight Dependency Checks**: Automatically checks dependencies before operations and supports auto-restore functionality to ensure system readiness
+- **Bundle Retention Policy**: Configure how long bundles are kept in storage with customizable retention policies
+- **Julia and Python Support**: Added execution environment support for Julia and Python programming languages
+- **OpenShift Compatibility**: Containers now run as non-root users with support for OpenShift's arbitrary UID assignment for enhanced security
+- **Unified Credentials Management**: API keys and Git credentials are now managed together in a single, streamlined credentials page
+
+### Features (Kubernetes)
+
+- **Execution Environment Drift Detection**: Automatically detects when Kubernetes execution environments drift from their expected configuration
+
+### Fixes
+
+- **Database Migration Handling**: Improved migration state reconciliation and error reporting during application startup
+- **Systemd Installation**: Fixed issue where the Ricochet home directory was being recursively changed during systemd setup, improving installation performance
+- **UI Hydration**: Resolved script loading issues and eliminated hydration warnings in the user interface

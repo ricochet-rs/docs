@@ -75,3 +75,80 @@ You can also install R from [CRAN](https://cran.r-project.org/) or your distribu
 
 Ricochet vendors `renv` at `$RICOCHET_HOME/vendor`.
 When a bundle is deployed, ricochet restores R package dependencies from the `renv.lock` file using the vendored `renv`.
+
+## Using the API
+
+You can deploy and manage R content programmatically using the ricochet REST API.
+The examples below use [`{httr2}`](https://httr2.r-lib.org/).
+API keys are created in the ricochet UI under **Credentials → API Keys**.
+
+### Deploy a bundle
+
+Bundle your project as a `.tar.gz` archive and upload it with the `_ricochet.toml` config.
+
+```r
+library(httr2)
+
+server <- "https://try.ricochet.rs"
+api_key <- Sys.getenv("RICOCHET_API_KEY")
+
+# Create a tar.gz bundle of the project directory
+bundle_path <- tempfile(fileext = ".tar.gz")
+tar(bundle_path, files = ".", compression = "gzip")
+
+# Deploy new content
+resp <- request(server) |>
+  req_url_path_append("api", "v0", "content", "upload") |>
+  req_headers(Authorization = paste("Key", api_key)) |>
+  req_body_multipart(
+    bundle = curl::form_file(bundle_path, type = "application/gzip"),
+    config = curl::form_file("_ricochet.toml", type = "application/toml")
+  ) |>
+  req_perform()
+
+result <- resp_body_json(resp)
+result$id
+#> "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+```
+
+To redeploy existing content, pass `id` instead of `config`:
+
+```r
+resp <- request(server) |>
+  req_url_path_append("api", "v0", "content", "upload") |>
+  req_headers(Authorization = paste("Key", api_key)) |>
+  req_body_multipart(
+    bundle = curl::form_file(bundle_path, type = "application/gzip"),
+    id = "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+  ) |>
+  req_perform()
+```
+
+### Invoke a task
+
+```r
+content_id <- "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+
+resp <- request(server) |>
+  req_url_path_append("api", "v0", "content", content_id, "invoke") |>
+  req_headers(Authorization = paste("Key", api_key)) |>
+  req_body_json(list(params = list(n = 100))) |>
+  req_perform()
+
+resp_body_json(resp)
+```
+
+### List your content
+
+```r
+resp <- request(server) |>
+  req_url_path_append("api", "v0", "user", "items") |>
+  req_headers(Authorization = paste("Key", api_key)) |>
+  req_perform()
+
+items <- resp_body_json(resp)
+```
+
+<Aside type="tip">
+  See the full [API reference](https://try.ricochet.rs/api/docs) for all available endpoints.
+</Aside>

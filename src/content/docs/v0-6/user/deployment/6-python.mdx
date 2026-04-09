@@ -98,3 +98,80 @@ The `--no-python-downloads` flag prevents `uv` from downloading Python versions 
 Resolved packages are cached at `$RICOCHET_HOME/.cache/uv`.
 This directory is created automatically during the first Python deployment.
 The cache is shared across all Python content items on the server.
+
+## Using the API
+
+You can deploy and manage Python content programmatically using the ricochet REST API.
+The examples below use [`requests`](https://requests.readthedocs.io/).
+API keys are created in the ricochet UI under **Credentials → API Keys**.
+
+### Deploy a bundle
+
+Bundle your project as a `.tar.gz` archive and upload it with the `_ricochet.toml` config.
+
+```python
+import os
+import tarfile
+import tempfile
+import requests
+
+server = "https://try.ricochet.rs"
+api_key = os.environ["RICOCHET_API_KEY"]
+headers = {"Authorization": f"Key {api_key}"}
+
+# Create a tar.gz bundle of the project directory
+bundle_path = tempfile.mktemp(suffix=".tar.gz")
+with tarfile.open(bundle_path, "w:gz") as tar:
+    tar.add(".", arcname=".")
+
+# Deploy new content
+resp = requests.post(
+    f"{server}/api/v0/content/upload",
+    headers=headers,
+    files={
+        "bundle": ("bundle.tar.gz", open(bundle_path, "rb"), "application/gzip"),
+        "config": ("_ricochet.toml", open("_ricochet.toml", "rb"), "application/toml"),
+    },
+)
+result = resp.json()
+result["id"]
+#> "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+```
+
+To redeploy existing content, pass `id` instead of `config`:
+
+```python
+resp = requests.post(
+    f"{server}/api/v0/content/upload",
+    headers=headers,
+    files={"bundle": ("bundle.tar.gz", open(bundle_path, "rb"), "application/gzip")},
+    data={"id": "01JSZAXZ3TSTAYXP56ARDVFJCJ"},
+)
+```
+
+### Invoke a task
+
+```python
+content_id = "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+
+resp = requests.post(
+    f"{server}/api/v0/content/{content_id}/invoke",
+    headers=headers,
+    json={"params": {"n": 100}},
+)
+resp.json()
+```
+
+### List your content
+
+```python
+resp = requests.get(
+    f"{server}/api/v0/user/items",
+    headers=headers,
+)
+items = resp.json()
+```
+
+<Aside type="tip">
+  See the full [API reference](https://try.ricochet.rs/api/docs) for all available endpoints.
+</Aside>

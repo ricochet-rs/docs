@@ -67,3 +67,73 @@ When a deployment is received, ricochet uses `juliaup` to discover installed Jul
 ### Environment restoration
 
 When a bundle is deployed, ricochet restores Julia package dependencies from the `Manifest.toml` file using Julia's built-in package manager.
+
+## Using the API
+
+You can deploy and manage Julia content programmatically using the ricochet REST API.
+The examples below use [`HTTP.jl`](https://juliaweb.github.io/HTTP.jl/).
+API keys are created in the ricochet UI under **Credentials → API Keys**.
+
+### Deploy a bundle
+
+Bundle your project as a `.tar.gz` archive and upload it with the `_ricochet.toml` config.
+
+```julia
+using HTTP, JSON3, Tar, CodecZlib
+
+server = "https://try.ricochet.rs"
+api_key = ENV["RICOCHET_API_KEY"]
+headers = ["Authorization" => "Key $api_key"]
+
+# Create a tar.gz bundle of the project directory
+bundle_path = tempname() * ".tar.gz"
+open(bundle_path, "w") do io
+    gz = GzipCompressorStream(io)
+    Tar.create(".", gz)
+    close(gz)
+end
+
+# Deploy new content
+body = HTTP.Form(Dict(
+    "bundle" => HTTP.Multipart("bundle.tar.gz", open(bundle_path), "application/gzip"),
+    "config" => HTTP.Multipart("_ricochet.toml", open("_ricochet.toml"), "application/toml"),
+))
+resp = HTTP.post("$server/api/v0/content/upload", headers, body)
+result = JSON3.read(resp.body)
+result.id
+#> "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+```
+
+To redeploy existing content, pass `id` instead of `config`:
+
+```julia
+body = HTTP.Form(Dict(
+    "bundle" => HTTP.Multipart("bundle.tar.gz", open(bundle_path), "application/gzip"),
+    "id" => "01JSZAXZ3TSTAYXP56ARDVFJCJ",
+))
+resp = HTTP.post("$server/api/v0/content/upload", headers, body)
+```
+
+### Invoke a task
+
+```julia
+content_id = "01JSZAXZ3TSTAYXP56ARDVFJCJ"
+
+resp = HTTP.post(
+    "$server/api/v0/content/$content_id/invoke",
+    ["Authorization" => "Key $api_key", "Content-Type" => "application/json"],
+    JSON3.write(Dict("params" => Dict("n" => 100))),
+)
+JSON3.read(resp.body)
+```
+
+### List your content
+
+```julia
+resp = HTTP.get("$server/api/v0/user/items", headers)
+items = JSON3.read(resp.body)
+```
+
+<Aside type="tip">
+  See the full [API reference](https://try.ricochet.rs/api/docs) for all available endpoints.
+</Aside>

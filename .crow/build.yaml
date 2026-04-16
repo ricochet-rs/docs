@@ -32,18 +32,17 @@ steps:
   - name: "Upload to S3"
     image: reg.ricochet.rs/docker.io/woodpeckerci/plugin-s3:1.5.3
     settings:
+      acl: ""
       bucket: ricochet-docs
       region: eu-central-003
       endpoint: https://s3.eu-central-003.backblazeb2.com
       access_key:
         from_secret:
-          from_secret:
           integration: 1
           path: backblaze/tokens/cicd
           key: keyID
       secret_key:
         from_secret:
-          from_secret:
           integration: 1
           path: backblaze/tokens/cicd
           key: applicationKey

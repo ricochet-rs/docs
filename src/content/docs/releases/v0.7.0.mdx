@@ -1,0 +1,30 @@
+---
+title: v0.7.0
+docs: release notes for Ricochet v0.7.0
+slug: releases/v0.7.0
+tableOfContents: false
+template: splash
+---
+
+**Released: April 23, 2026**
+
+### Features
+
+- **Environment page**: Added a new UI page for viewing and managing environment settings
+- **Cancel restore jobs**: Added UI option to cancel running restore jobs
+- **User management**: Added CLI subcommand for listing users and setting user roles
+- **Manual git sync**: Added manual sync button with last-synced timestamp display in the UI
+- **Package restore improvements**: Set HTTP user agent for R restore to enable rpkgs.com binaries
+
+### Fixes
+
+- **Proxy improvements**: Fixed R_LIBS_USER environment variable to match restore process behavior
+- **Proxy improvements**: Fixed entrypoint handling for Shiny applications by passing appDir correctly
+- **Proxy improvements**: Changed to use vendored renv from R_LIBS_USER instead of requireNamespace
+- **Proxy improvements**: Updated thread naming conventions
+- **UI fixes**: Resolved various minor UI bugs
+- **API security**: Removed environment variables from TOML API endpoint
+
+### Security
+
+- **Process management**: Improved init process to properly handle SIGTERM with PID 1 and fallback to SIGKILL to prevent zombie processes

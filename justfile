@@ -1,7 +1,7 @@
 set dotenv-load := true
 
 # renovate: datasource=docker depName=lycheeverse/lychee
-lychee_version := "0.23-alpine"
+lychee_version := "0.24-alpine"
 
 default:
     @just --list

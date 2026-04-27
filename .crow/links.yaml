@@ -19,7 +19,7 @@ steps:
   # The post-deploy check uses lychee.toml (without version excludes) so
   # it can validate all links on the live site.
   - name: Pre-deploy link check
-    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.23-alpine
+    image: reg.ricochet.rs/docker.io/lycheeverse/lychee:0.24-alpine
     environment:
       GITHUB_TOKEN:
         from_secret: github_token

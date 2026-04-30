@@ -11,7 +11,7 @@ template: splash
 ### Fixes
 
 - **Database Migration Handling**: Improved tolerance for partially applied migrations during upgrades, preventing potential errors when updating Ricochet
-- **Database Checksum Corruption**: Removed reconcile_migrations process that was causing database checksum corruption issues
-- **R Environment Caching**: Fixed renv restore failures caused by mismatching cache states
+- **Database Checksum Corruption**: Removed migration reconciliation process that was causing database checksum corruption between dev and release builds.
+- **R Environment Restoration**: Fixed renv restore in kubernetes and linux by having separate restore commands for each environment.
 - **Startup Performance**: Startup no longer blocks while gathering environment information from filesystem walks—this operation now happens in the background
 - **Container Builds**: Added unprefixed musl-g++ wrapper to fix compilation issues in same-architecture container builds

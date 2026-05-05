@@ -9,6 +9,7 @@ import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
+import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,6 +18,7 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     markdoc(),
+    latestVersionRedirectsIntegration("src/content/docs"),
     starlight({
       title: "ricochet",
       customCss: [

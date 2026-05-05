@@ -9,16 +9,16 @@ import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
-import { generateLatestVersionRedirects } from "./scripts/latest-version-redirects.mjs";
+import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://docs.ricochet.rs",
   output: "static",
   trailingSlash: "ignore",
-  redirects: generateLatestVersionRedirects("src/content/docs"),
   integrations: [
     markdoc(),
+    latestVersionRedirectsIntegration("src/content/docs"),
     starlight({
       title: "ricochet",
       customCss: [

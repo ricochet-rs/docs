@@ -1,5 +1,6 @@
-import { existsSync, readdirSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join, relative, sep } from "node:path";
 
 const VERSION_REGEX = /^v(\d+)-(\d+)$/;
 
@@ -57,4 +58,38 @@ export function generateLatestVersionRedirects(contentDir) {
     redirects[`/${path}`] = `/${latest}/${path}/`;
   }
   return redirects;
+}
+
+function renderRedirectHtml(destination) {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0; url=${destination}">
+    <link rel="canonical" href="${destination}">
+    <meta name="robots" content="noindex">
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    Redirecting to <a href="${destination}">${destination}</a>.
+  </body>
+</html>
+`;
+}
+
+export function latestVersionRedirectsIntegration(contentDir) {
+  return {
+    name: "latest-version-redirects",
+    hooks: {
+      "astro:build:done": ({ dir }) => {
+        const distDir = fileURLToPath(dir);
+        const redirects = generateLatestVersionRedirects(contentDir);
+        for (const [source, destination] of Object.entries(redirects)) {
+          const filePath = join(distDir, source.slice(1), "index.html");
+          mkdirSync(dirname(filePath), { recursive: true });
+          writeFileSync(filePath, renderRedirectHtml(destination));
+        }
+      },
+    },
+  };
 }

@@ -1,4 +1,5 @@
 import { readdirSync } from "node:fs";
+import { join, relative, sep } from "node:path";
 
 const VERSION_REGEX = /^v(\d+)-(\d+)$/;
 
@@ -22,4 +23,30 @@ export function findLatestVersion(contentDir) {
   }
   versions.sort((a, b) => b.major - a.major || b.minor - a.minor);
   return versions[0].name;
+}
+
+function* walkPages(dir, baseDir = dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      yield* walkPages(fullPath, baseDir);
+    } else if (entry.isFile() && /\.mdx?$/.test(entry.name)) {
+      yield relative(baseDir, fullPath).split(sep).join("/");
+    }
+  }
+}
+
+export function generateLatestVersionRedirects(contentDir) {
+  const latest = findLatestVersion(contentDir);
+  const versionDir = join(contentDir, latest);
+  const redirects = {};
+  for (const rel of walkPages(versionDir)) {
+    const noExt = rel.replace(/\.mdx?$/, "");
+    if (noExt === "index") continue;
+    const path = noExt.endsWith("/index")
+      ? noExt.slice(0, -"/index".length)
+      : noExt;
+    redirects[`/${path}`] = `/${latest}/${path}/`;
+  }
+  return redirects;
 }

@@ -2,7 +2,10 @@ import { test, expect } from "bun:test";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { findLatestVersion } from "./latest-version-redirects.mjs";
+import {
+  findLatestVersion,
+  generateLatestVersionRedirects,
+} from "./latest-version-redirects.mjs";
 
 function makeFixture(layout) {
   const root = mkdtempSync(join(tmpdir(), "lvr-"));
@@ -72,6 +75,85 @@ test("findLatestVersion throws when no version dirs exist", () => {
   });
   try {
     expect(() => findLatestVersion(root)).toThrow(/No version directories/);
+  } finally {
+    cleanup();
+  }
+});
+
+test("generates redirect for a regular page", () => {
+  const { root, cleanup } = makeFixture({
+    files: { "v0-7/admin/pricing/5-community-edition.mdx": "" },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin/pricing/5-community-edition":
+        "/v0-7/admin/pricing/5-community-edition/",
+    });
+  } finally {
+    cleanup();
+  }
+});
+
+test("walks nested directories", () => {
+  const { root, cleanup } = makeFixture({
+    files: {
+      "v0-7/admin/foo.mdx": "",
+      "v0-7/admin/bar/baz.mdx": "",
+      "v0-7/user/quickstart.md": "",
+    },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin/foo": "/v0-7/admin/foo/",
+      "/admin/bar/baz": "/v0-7/admin/bar/baz/",
+      "/user/quickstart": "/v0-7/user/quickstart/",
+    });
+  } finally {
+    cleanup();
+  }
+});
+
+test("maps section index to its parent path", () => {
+  const { root, cleanup } = makeFixture({
+    files: { "v0-7/admin/index.mdx": "" },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin": "/v0-7/admin/",
+    });
+  } finally {
+    cleanup();
+  }
+});
+
+test("skips top-level <latest>/index.mdx", () => {
+  const { root, cleanup } = makeFixture({
+    files: {
+      "v0-7/index.mdx": "",
+      "v0-7/admin/foo.mdx": "",
+    },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin/foo": "/v0-7/admin/foo/",
+    });
+  } finally {
+    cleanup();
+  }
+});
+
+test("ignores non-markdown files in version dir", () => {
+  const { root, cleanup } = makeFixture({
+    files: {
+      "v0-7/admin/foo.mdx": "",
+      "v0-7/admin/data.json": "",
+      "v0-7/admin/image.png": "",
+    },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin/foo": "/v0-7/admin/foo/",
+    });
   } finally {
     cleanup();
   }

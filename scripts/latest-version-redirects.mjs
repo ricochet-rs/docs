@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 const VERSION_REGEX = /^v(\d+)-(\d+)$/;
@@ -46,6 +46,14 @@ export function generateLatestVersionRedirects(contentDir) {
     const path = noExt.endsWith("/index")
       ? noExt.slice(0, -"/index".length)
       : noExt;
+    const topSegment = path.split("/")[0];
+    if (
+      existsSync(join(contentDir, topSegment)) ||
+      existsSync(join(contentDir, `${topSegment}.mdx`)) ||
+      existsSync(join(contentDir, `${topSegment}.md`))
+    ) {
+      continue;
+    }
     redirects[`/${path}`] = `/${latest}/${path}/`;
   }
   return redirects;

@@ -158,3 +158,50 @@ test("ignores non-markdown files in version dir", () => {
     cleanup();
   }
 });
+
+test("skips redirects whose top segment shadows a root directory", () => {
+  const { root, cleanup } = makeFixture({
+    dirs: ["releases"],
+    files: {
+      "v0-7/admin/foo.mdx": "",
+      "v0-7/releases/0.7.0.mdx": "",
+    },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin/foo": "/v0-7/admin/foo/",
+    });
+  } finally {
+    cleanup();
+  }
+});
+
+test("skips redirects whose top segment shadows a root file", () => {
+  const { root, cleanup } = makeFixture({
+    files: {
+      "shadowed.mdx": "",
+      "v0-7/admin/foo.mdx": "",
+      "v0-7/shadowed.mdx": "",
+    },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/admin/foo": "/v0-7/admin/foo/",
+    });
+  } finally {
+    cleanup();
+  }
+});
+
+test("includes single-segment paths that don't shadow root content", () => {
+  const { root, cleanup } = makeFixture({
+    files: { "v0-7/quickstart.mdx": "" },
+  });
+  try {
+    expect(generateLatestVersionRedirects(root)).toEqual({
+      "/quickstart": "/v0-7/quickstart/",
+    });
+  } finally {
+    cleanup();
+  }
+});

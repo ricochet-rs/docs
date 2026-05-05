@@ -14,11 +14,6 @@
     {
       "matchPackageNames": ["starlight-theme-nova"],
       "automerge": false
-    },
-    {
-      "matchPackageNames": ["starlight-links-validator"],
-      "allowedVersions": "<0.24.0",
-      "description": "0.24.0 added Astro redirects support but crashes in CI on `astro:build:done`; pin until upstream fixes."
     }
   ],
   "statusCheckNames": {

@@ -85,6 +85,14 @@ export function latestVersionRedirectsIntegration(contentDir) {
         const distDir = fileURLToPath(dir);
         const redirects = generateLatestVersionRedirects(contentDir);
         for (const [source, destination] of Object.entries(redirects)) {
+          // Skip when the destination wasn't built (e.g. draft pages) — a
+          // redirect stub pointing at a missing page would 404 in production.
+          const destPath = join(
+            distDir,
+            destination.slice(1).replace(/\/$/, ""),
+            "index.html",
+          );
+          if (!existsSync(destPath)) continue;
           const filePath = join(distDir, source.slice(1), "index.html");
           mkdirSync(dirname(filePath), { recursive: true });
           writeFileSync(filePath, renderRedirectHtml(destination));

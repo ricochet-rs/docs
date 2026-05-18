@@ -1,0 +1,183 @@
+---
+title: Dynamic Apps
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Apps are content items that stay running to serve requests.
+Unlike [tasks](/dev/user/content-items/3-tasks), which execute once and then stop, an app keeps a process alive to handle incoming HTTP traffic — for example a Shiny dashboard, a Plumber API, or a FastAPI service.
+Ricochet automatically manages the lifecycle of app processes, including [scaling](/dev/user/managing-content/2-scaling) them up and down based on demand.
+
+See the [content items overview](/dev/user/content-items/1-content-items-overview) for the full list of supported app types.
+
+## How apps work
+
+When an app is deployed, ricochet starts its entrypoint script and expects the process to bind to a port.
+Ricochet routes incoming HTTP requests to the running process.
+If the app crashes, ricochet restarts it automatically.
+
+Apps scale horizontally by spawning additional instances when connection thresholds are reached.
+Configure scaling behavior in the ricochet web UI or via the `[serve]` settings in your [`_ricochet.toml`](/dev/user/deployment/2-ricochet-toml#serve-settings).
+
+## R apps
+
+### Shiny
+
+[Shiny](https://shiny.posit.co/r/) apps are interactive web applications.
+Use the content type `shiny` (or `shiny-r`).
+
+The entrypoint can be a single `app.R` file or a directory containing `ui.R` and `server.R`.
+
+```toml
+[content]
+name = "My Shiny App"
+entrypoint = "app.R"
+content_type = "shiny"
+```
+
+### Shiny documents
+
+R Markdown and Quarto documents that use a Shiny runtime are deployed as apps rather than tasks because they require a live R process.
+
+| Content Type    | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| `rmd-shiny`     | An R Markdown document with `runtime: shiny` in its YAML header. |
+| `quarto-r-shiny`| A Quarto document with a Shiny runtime.                      |
+
+```toml
+[content]
+name = "Interactive Report"
+entrypoint = "report.Rmd"
+content_type = "rmd-shiny"
+```
+
+### Plumber
+
+[Plumber](https://rplumber.io) converts R functions into RESTful API endpoints using special comments.
+
+```toml
+[content]
+name = "My Plumber API"
+entrypoint = "plumber.R"
+content_type = "plumber"
+```
+
+### Ambiorix
+
+[Ambiorix](https://ambiorix.dev) is a web framework for R inspired by Express.js.
+It can serve both web applications and APIs.
+
+```toml
+[content]
+name = "My Ambiorix App"
+entrypoint = "app.R"
+content_type = "ambiorix"
+```
+
+### Serverless R
+
+The `serverless-r` content type lets you deploy plain R functions as a REST API without writing any web framework code.
+
+### R Service
+
+The `r-service` content type is a generic option for R web apps or APIs that don't fit the other categories.
+Your entrypoint script is run directly and must bind to the port specified by the `PORT` environment variable.
+
+```toml
+[content]
+name = "Custom R App"
+entrypoint = "app.R"
+content_type = "r-service"
+```
+
+## Python apps
+
+### FastAPI
+
+[FastAPI](https://fastapi.tiangolo.com/) is a modern Python web framework for building APIs.
+Ricochet launches FastAPI apps with `uvicorn`.
+
+```toml
+[content]
+name = "My FastAPI App"
+entrypoint = "app.py"
+content_type = "fast-api"
+```
+
+### Flask
+
+[Flask](https://flask.palletsprojects.com/) is a lightweight Python web framework for building web apps and APIs.
+
+```toml
+[content]
+name = "My Flask App"
+entrypoint = "app.py"
+content_type = "flask"
+```
+
+### Streamlit
+
+[Streamlit](https://streamlit.io/) is a framework for building data apps in Python with minimal code.
+
+```toml
+[content]
+name = "My Streamlit App"
+entrypoint = "app.py"
+content_type = "streamlit"
+```
+
+### Dash
+
+[Dash](https://dash.plotly.com/) is a framework for building analytical web applications in Python.
+
+```toml
+[content]
+name = "My Dash App"
+entrypoint = "app.py"
+content_type = "dash"
+```
+
+### Shiny for Python
+
+[Shiny for Python](https://shiny.posit.co/py/) brings the Shiny framework to Python for building interactive web apps.
+
+```toml
+[content]
+name = "My Shiny App"
+entrypoint = "app.py"
+content_type = "shiny-py"
+```
+
+### Python Service
+
+The `python-service` content type is a generic option for Python web apps or APIs.
+Your entrypoint script is run directly and must bind to the port specified by the `PORT` environment variable.
+
+```toml
+[content]
+name = "Custom Python App"
+entrypoint = "app.py"
+content_type = "python-service"
+```
+
+## Julia apps
+
+### Julia Service
+
+The `julia-service` content type deploys Julia web apps and APIs such as those built with [Dash.jl](https://github.com/plotly/Dash.jl).
+Your entrypoint script must bind to the port specified by the `PORT` environment variable.
+
+```toml
+[content]
+name = "My Dash.jl App"
+entrypoint = "app.jl"
+content_type = "julia-service"
+```
+
+## Deployment and configuration
+
+See the [deployment guide](/dev/user/deployment/1-ricochet-cli) for how to deploy apps using the CLI or via git integration, and the language-specific guides for project requirements:
+
+- [R](/dev/user/deployment/4-r)
+- [Julia](/dev/user/deployment/5-julia)
+- [Python](/dev/user/deployment/6-python)

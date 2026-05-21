@@ -58,26 +58,30 @@ See [Host vs container on a single host](/dev/admin/configuration/execution-back
 
 ### Container backend (sibling containers)
 
-To spawn each piece of user content as its own container on the host, configure the [container backend](/dev/admin/configuration/execution-backend/#container-backend) and mount the host's container daemon socket into ricochet-server:
+To spawn each piece of user content as its own container on the host, configure the [container backend](/dev/admin/configuration/execution-backend/#container-backend), mount the host's container daemon socket into ricochet-server, and make sure ricochet-server can reach the host network so it can proxy to spawned containers:
 
 ```sh
 docker run -d \
   --name ricochet-server \
   -p 6188:6188 \
+  --add-host=host.docker.internal:host-gateway \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/ricochet:/var/lib/ricochet \
   ghcr.io/ricochet-rs/ricochet-server:latest
 ```
 
-Set `content_path` and `cache_path` in `ricochet-config.toml` to paths that exist on the **host**.
-With the example mount above, `content_path = "/var/lib/ricochet/data/content"` resolves to the same physical directory from both ricochet-server's view and the host daemon's view — sibling containers see the deployment bundles ricochet-server wrote.
+Set in `ricochet-config.toml`:
+
+- `content_path` and `cache_path` to paths that exist on the **host**.
+  With the example mount above, `content_path = "/var/lib/ricochet/data/content"` resolves to the same physical directory from both ricochet-server's view and the host daemon's view — sibling containers see the deployment bundles ricochet-server wrote.
+- `proxy_host = "host.docker.internal"` so pingora reaches the host's published ports instead of ricochet-server's own loopback.
 
 <Aside type="caution" title="Paths are host paths">
   The daemon resolves `content_path` and `cache_path` against the host filesystem, not the ricochet-server container's view.
   Mount the host data directory into the ricochet-server container at the **same path** used in the config, or sibling containers will mount empty directories and content will fail to start.
 </Aside>
 
-See the [execution backend reference](/dev/admin/configuration/execution-backend/) for the full field reference and image-resolution semantics.
+See the [execution backend reference](/dev/admin/configuration/execution-backend/#reachability) for `proxy_host` alternatives (`--network host`, explicit host IP) and the full field reference.
 
 ### Kubernetes backend
 
@@ -92,8 +96,10 @@ services:
     container_name: ricochet-server
     ports:
       - "6188:6188"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # only for container backend
     volumes:
       - /var/lib/ricochet:/var/lib/ricochet
-      - /var/run/docker.sock:/var/run/docker.sock   # only for container backend
+      - /var/run/docker.sock:/var/run/docker.sock # only for container backend
     restart: unless-stopped
 ```

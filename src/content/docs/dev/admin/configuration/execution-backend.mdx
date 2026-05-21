@@ -58,8 +58,18 @@ cache_path = "/var/lib/ricochet/data/.cache"
 | `exec_env_config_path` | yes      | Path to the exec-env config TOML. Absolute, or relative to `RICOCHET_HOME`.                                                                                  |
 | `content_path`         | yes      | Host path bind-mounted into every spawned container at `/opt/ricochet/data/content`. Must contain ricochet's deployment bundles.                             |
 | `cache_path`           | yes      | Host path bind-mounted into every spawned container at `/opt/ricochet/cache`. Stores R, Julia, and Python package caches shared across content.              |
+| `proxy_host`           | no       | Hostname ricochet's reverse proxy uses to reach spawned content containers. Defaults to `localhost`. See [Reachability](#reachability) below.                |
 
 ricochet refuses to start if `exec_env_config_path`, `content_path`, or `cache_path` is missing — silently launching containers with broken mounts would corrupt deployments.
+
+### Reachability
+
+Each spawned content container publishes its app port to the host's `0.0.0.0`.
+ricochet's pingora reverse proxy then connects to that port to route incoming traffic.
+The hostname pingora uses is `proxy_host` — `localhost` by default.
+
+That default works in the **systemd-on-host** scenario because ricochet-server and the published port share the host's network namespace.
+It does **not** work for **Docker-out-of-Docker**: `localhost` inside the ricochet-server container is that container's loopback, not the host, so the published port is unreachable. See [Deployment scenarios](#deployment-scenarios) below for the fix.
 
 ### Image resolution
 
@@ -112,7 +122,7 @@ Because both processes see the same filesystem, the host path in `content_path` 
 ricochet-server itself runs as a container and uses the host's daemon to spawn sibling containers for user content.
 This is sometimes called "Docker-out-of-Docker" (DooD).
 
-Two things must line up.
+Three things must line up.
 
 **1. The daemon socket must be reachable from inside the ricochet container.**
 Bind-mount `/var/run/docker.sock` into the ricochet container.
@@ -121,13 +131,31 @@ Bind-mount `/var/run/docker.sock` into the ricochet container.
 The daemon resolves `content_path` and `cache_path` against the **host** filesystem, not the ricochet container's view.
 The simplest correct setup is to mount the host data directory into the ricochet container at the same path used in `content_path` / `cache_path`.
 
-```sh
+**3. `proxy_host` must point to an address ricochet-server can reach.**
+Sibling content containers publish their app port to the host's `0.0.0.0`, not to the ricochet-server container's loopback.
+Pick one of these (in rough order of preference):
+
+- `--network host` for the ricochet-server container — `localhost` becomes the host's localhost, the default `proxy_host` works without further config. Trades container network isolation for the simplest setup.
+- `proxy_host = "host.docker.internal"` — works on Docker Desktop (macOS, Windows) and on Linux Docker when you pass `--add-host=host.docker.internal:host-gateway` to the ricochet-server container.
+- `proxy_host = "<host-ip>"` — the host's bridge or LAN IP. Stable but environment-specific.
+
+```sh title="Bridge network with host-gateway alias"
 docker run -d \
   --name ricochet-server \
   -p 6188:6188 \
+  --add-host=host.docker.internal:host-gateway \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/ricochet:/var/lib/ricochet \
   ghcr.io/ricochet-rs/ricochet-server:latest
+```
+
+```toml title="ricochet-config.toml (DooD)"
+[backend]
+engine = "container"
+exec_env_config_path = "ricochet-exec-env.toml"
+content_path = "/var/lib/ricochet/data/content"
+cache_path = "/var/lib/ricochet/data/.cache"
+proxy_host = "host.docker.internal"
 ```
 
 With matching paths inside and outside, the same `content_path = "/var/lib/ricochet/data/content"` works from either perspective.
@@ -136,6 +164,11 @@ With matching paths inside and outside, the same `content_path = "/var/lib/ricoc
   If `content_path` points to a path that does not exist on the host, the daemon will still launch the sibling container — but bind-mount the wrong (or empty) directory.
   Content items will appear to deploy but fail at runtime because their bundles are not visible.
   Always verify that `ls $content_path` works on the **host**, not just inside the ricochet container.
+</Aside>
+
+<Aside type="caution" title="Wrong `proxy_host` is silent too">
+  If `proxy_host` resolves but does not actually reach the host (typo, wrong IP, missing `--add-host`), spawned content containers will start and pass health checks at the container layer, but pingora will get a connection refused or timeout when it tries to proxy a request.
+  You will see this as 502s in the ricochet UI for the affected content.
 </Aside>
 
 See [Container installation](/dev/admin/installation/2-container/) for the full ricochet-server-in-a-container setup.

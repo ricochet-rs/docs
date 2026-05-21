@@ -2,8 +2,96 @@
 title: Container
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 
-<Aside type="note" title="Coming Soon">
-  This documentation is under construction.
+Run ricochet-server itself as a container.
+This is the same `ricochet-server` binary as the [host install](/dev/admin/installation/1-host/), packaged as an image.
+
+## Image
+
+```
+ghcr.io/ricochet-rs/ricochet-server:<version>
+```
+
+Tags follow the ricochet release version (e.g. `v0.7.3`).
+A `latest` tag tracks the most recent stable release.
+
+## Required volumes
+
+Two host directories must be persisted across container restarts:
+
+| Mount target            | Purpose                                                                     |
+| ----------------------- | --------------------------------------------------------------------------- |
+| `/var/lib/ricochet`     | Database, deployment bundles, encryption keys, file logs.                   |
+| `/var/lib/ricochet/data/.cache` | R, Julia, and Python package caches. Share across content runs.     |
+
+The cache directory lives under `RICOCHET_HOME` by default, so mounting `/var/lib/ricochet` covers both.
+Separate them only if you want the cache on a different volume (e.g. faster local disk vs. networked storage).
+
+## Ports
+
+ricochet-server listens on **6188** by default.
+
+## Minimal run
+
+```sh
+docker run -d \
+  --name ricochet-server \
+  -p 6188:6188 \
+  -v /var/lib/ricochet:/var/lib/ricochet \
+  ghcr.io/ricochet-rs/ricochet-server:latest
+```
+
+Place your `ricochet-config.toml` at `/var/lib/ricochet/ricochet-config.toml` on the host.
+ricochet-server reads it on startup from the bind-mounted location.
+
+## Spawning user content
+
+The execution backend ricochet uses for spawning user content (apps, tasks) is independent of how ricochet-server itself runs.
+
+### Native (default)
+
+With no `[backend]` block in `ricochet-config.toml`, ricochet-server runs content as child processes **inside** its own container.
+Suitable for small single-tenant setups; content shares the ricochet image's interpreters.
+
+### Container backend (sibling containers)
+
+To spawn each piece of user content as its own container on the host, configure the [container backend](/dev/admin/configuration/execution-backend/#container-backend) and mount the host's container daemon socket into ricochet-server:
+
+```sh
+docker run -d \
+  --name ricochet-server \
+  -p 6188:6188 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/ricochet:/var/lib/ricochet \
+  ghcr.io/ricochet-rs/ricochet-server:latest
+```
+
+Set `content_path` and `cache_path` in `ricochet-config.toml` to paths that exist on the **host**.
+With the example mount above, `content_path = "/var/lib/ricochet/data/content"` resolves to the same physical directory from both ricochet-server's view and the host daemon's view — sibling containers see the deployment bundles ricochet-server wrote.
+
+<Aside type="caution" title="Paths are host paths">
+  The daemon resolves `content_path` and `cache_path` against the host filesystem, not the ricochet-server container's view.
+  Mount the host data directory into the ricochet-server container at the **same path** used in the config, or sibling containers will mount empty directories and content will fail to start.
 </Aside>
+
+See the [execution backend reference](/dev/admin/configuration/execution-backend/) for the full field reference and image-resolution semantics.
+
+### Kubernetes backend
+
+For multi-node setups, do not run ricochet-server as a standalone container — use the [Kubernetes installation](/dev/admin/installation/3-kubernetes/) instead.
+
+## Compose example
+
+```yaml title="compose.yml"
+services:
+  ricochet-server:
+    image: ghcr.io/ricochet-rs/ricochet-server:latest
+    container_name: ricochet-server
+    ports:
+      - "6188:6188"
+    volumes:
+      - /var/lib/ricochet:/var/lib/ricochet
+      - /var/run/docker.sock:/var/run/docker.sock   # only for container backend
+    restart: unless-stopped
+```

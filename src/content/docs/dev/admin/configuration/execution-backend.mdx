@@ -2,8 +2,145 @@
 title: Execution Backend
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 
-<Aside type="note" title="Coming Soon">
-  This documentation is under construction.
+ricochet runs user content — apps and tasks — in an **execution backend**.
+Two backends are supported:
+
+| Backend      | `engine` value | Use when                                                                 |
+| ------------ | -------------- | ------------------------------------------------------------------------ |
+| Native       | (omitted)      | Single host, no isolation needed, interpreters installed directly.       |
+| Container    | `container`    | Single host with Docker or Podman, content runs in isolated containers.  |
+| Kubernetes   | `k8s`          | Multi-node cluster, content scheduled as Pods.                           |
+
+If `[backend]` is omitted entirely, ricochet runs content as native child processes using the interpreters installed on the host.
+This page documents the `container` and `k8s` backends.
+
+## Container backend
+
+Set `engine = "container"` to spawn content as containers via a local Docker- or Podman-compatible daemon.
+ricochet talks to the daemon over its Unix socket (`/var/run/docker.sock` by default, or whatever `DOCKER_HOST` points to).
+
+```toml title="ricochet-config.toml"
+[backend]
+engine = "container"
+default_image = "r-default"
+exec_env_config_path = "ricochet-exec-env.toml"
+content_path = "/var/lib/ricochet/data/content"
+cache_path = "/var/lib/ricochet/data/.cache"
+```
+
+| Field                  | Required | Description                                                                                                                                                  |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `engine`               | yes      | Must be `"container"`.                                                                                                                                       |
+| `default_image`        | no       | Image category name from `exec_env_config_path`. Used when a content item does not specify its own exec environment.                                         |
+| `exec_env_config_path` | yes      | Path to the exec-env config TOML. Absolute, or relative to `RICOCHET_HOME`.                                                                                  |
+| `content_path`         | yes      | Host path bind-mounted into every spawned container at `/opt/ricochet/data/content`. Must contain ricochet's deployment bundles.                             |
+| `cache_path`           | yes      | Host path bind-mounted into every spawned container at `/opt/ricochet/cache`. Stores R, Julia, and Python package caches shared across content.              |
+
+ricochet refuses to start if `exec_env_config_path`, `content_path`, or `cache_path` is missing — silently launching containers with broken mounts would corrupt deployments.
+
+### Image resolution
+
+`default_image` and per-content `exec_env` values are looked up in the exec-env config.
+A category like `r-default` resolves to a concrete image reference (`registry.example.com/ricochet/exec-env-r:4.5`).
+If the value does not match a category, ricochet treats it as a full image reference and uses it as-is.
+
+### Daemon access
+
+ricochet uses [`bollard`](https://docs.rs/bollard) to talk to the daemon.
+Connection target follows standard `DOCKER_HOST` semantics:
+
+- Unset: connects to `/var/run/docker.sock`.
+- `unix:///path/to/socket`: connects to that Unix socket.
+- `tcp://host:port`: connects over TCP (TLS is not yet configurable — local daemons only).
+
+The user running `ricochet-server` must have read/write access to the socket.
+On Linux this typically means adding the user to the `docker` group (or running as root, as the systemd service does by default).
+
+## Deployment scenarios
+
+### ricochet-server via systemd (on the host)
+
+The container daemon and ricochet-server both run on the same host.
+ricochet writes deployment bundles to `content_path` on its filesystem, then asks the daemon to bind-mount that same path into spawned containers.
+Because both processes see the same filesystem, the host path in `content_path` resolves consistently.
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    sudo apt install docker.io
+    sudo usermod -aG docker ricochet     # only if ricochet-server runs as a non-root user
+    sudo systemctl enable --now docker
+    sudo systemctl restart ricochet-server
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    sudo dnf install podman-docker
+    sudo systemctl enable --now podman.socket
+    sudo systemctl restart ricochet-server
+    ```
+    Podman exposes a Docker-compatible socket at `/run/podman/podman.sock`.
+    Set `DOCKER_HOST=unix:///run/podman/podman.sock` in `ricochet-server.service` if it is not the default socket on your distribution.
+  </TabItem>
+</Tabs>
+
+### ricochet-server in a container (sibling containers)
+
+ricochet-server itself runs as a container and uses the host's daemon to spawn sibling containers for user content.
+This is sometimes called "Docker-out-of-Docker" (DooD).
+
+Two things must line up.
+
+**1. The daemon socket must be reachable from inside the ricochet container.**
+Bind-mount `/var/run/docker.sock` into the ricochet container.
+
+**2. Bind-mount paths must resolve to the same physical location on host and inside ricochet.**
+The daemon resolves `content_path` and `cache_path` against the **host** filesystem, not the ricochet container's view.
+The simplest correct setup is to mount the host data directory into the ricochet container at the same path used in `content_path` / `cache_path`.
+
+```sh
+docker run -d \
+  --name ricochet-server \
+  -p 6188:6188 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/ricochet:/var/lib/ricochet \
+  ghcr.io/ricochet-rs/ricochet-server:latest
+```
+
+With matching paths inside and outside, the same `content_path = "/var/lib/ricochet/data/content"` works from either perspective.
+
+<Aside type="caution" title="Path mismatch is silent">
+  If `content_path` points to a path that does not exist on the host, the daemon will still launch the sibling container — but bind-mount the wrong (or empty) directory.
+  Content items will appear to deploy but fail at runtime because their bundles are not visible.
+  Always verify that `ls $content_path` works on the **host**, not just inside the ricochet container.
+</Aside>
+
+See [Container installation](/dev/admin/installation/2-container/) for the full ricochet-server-in-a-container setup.
+
+## Kubernetes backend
+
+For multi-node clusters, use `engine = "k8s"`.
+ricochet creates a Deployment per app and a Job per task using the cluster's API.
+
+```toml title="ricochet-config.toml"
+[backend]
+engine = "k8s"
+namespace = "ricochet"
+default_image = "r-default"
+exec_env_config_path = "/etc/ricochet/exec-env.toml"
+pvc_content_name = "ricochet-content"
+pvc_cache_name = "ricochet-cache"
+image_pull_policy = "IfNotPresent"
+```
+
+See [Kubernetes installation](/dev/admin/installation/3-kubernetes/) for cluster prerequisites, Helm chart values, and PVC sizing guidance.
+
+## Remote daemon execution
+
+<Aside type="note" title="Planned">
+  Spawning content on a **remote** container daemon — a separate host from where ricochet-server runs — is on the roadmap.
+  This requires (a) TLS material configuration for `bollard::Docker::connect_with_ssl`, and (b) a deliberate strategy for `content_path` / `cache_path` since bind mounts resolve on the daemon's host (likely via shared NFS, named volumes, or per-content image baking).
+  Until then, use the Kubernetes backend for multi-host execution.
 </Aside>

@@ -5,16 +5,37 @@ title: Execution Backend
 import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 
 ricochet runs user content — apps and tasks — in an **execution backend**.
-Two backends are supported:
+Three backends are supported:
 
-| Backend      | `engine` value | Use when                                                                 |
-| ------------ | -------------- | ------------------------------------------------------------------------ |
-| Native       | (omitted)      | Single host, no isolation needed, interpreters installed directly.       |
-| Container    | `container`    | Single host with Docker or Podman, content runs in isolated containers.  |
-| Kubernetes   | `k8s`          | Multi-node cluster, content scheduled as Pods.                           |
+| Backend      | `engine` value | Use when                                                                                                          |
+| ------------ | -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Host         | (omitted)      | Single host, no container daemon. Content runs as isolated processes on the host via [libcontainer][libcontainer]. |
+| Container    | `container`    | Single host with a Docker- or Podman-compatible daemon. Content runs as full containers spawned through the daemon. |
+| Kubernetes   | `k8s`          | Multi-node cluster, content scheduled as Pods.                                                                    |
 
-If `[backend]` is omitted entirely, ricochet runs content as native child processes using the interpreters installed on the host.
-This page documents the `container` and `k8s` backends.
+[libcontainer]: https://docs.rs/libcontainer/
+
+If `[backend]` is omitted, ricochet uses the **host** backend.
+Content runs as isolated processes managed in-process by `libcontainer` (an OCI-runtime implementation, no daemon required), using the language interpreters installed on the host.
+This page documents the `container` and `k8s` backends; the host backend has no configuration knobs of its own.
+
+## Host vs container on a single host
+
+Both backends run content on the same machine as ricochet-server.
+The difference is **how** content is isolated and **where** the runtime environment comes from.
+
+| Dimension                | Host backend (`libcontainer`)                                          | Container backend (`container`)                                  |
+| ------------------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Isolation mechanism      | `libcontainer` namespaces/cgroups, set up in-process by ricochet-server | OCI containers, spawned by the host's Docker/Podman daemon       |
+| Daemon required          | No                                                                     | Yes (Docker, Podman, or compatible)                              |
+| Runtime / interpreters   | Whatever is installed on the host (system R, Python, Julia)            | Whatever the chosen image provides; arbitrary per content item   |
+| Per-content exec env     | Single shared host environment                                         | Per-item via `exec_env` → image, like the Kubernetes backend     |
+| Observability            | Processes are not visible to `docker ps` / container metrics tooling   | Each app/task is a real container — visible to standard tooling  |
+| Setup cost               | None — works on a fresh ricochet-server install                        | Install and run a container daemon, grant socket access          |
+
+Pick the **host** backend for simple single-tenant deployments where the host already has the interpreters you need and you do not want to operate a container daemon.
+
+Pick the **container** backend when you need different runtime environments per content item (e.g. R 4.3 vs R 4.5, conflicting system libraries), or when you want each running app and task to be a visible, individually observable container.
 
 ## Container backend
 

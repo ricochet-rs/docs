@@ -49,10 +49,12 @@ ricochet-server reads it on startup from the bind-mounted location.
 
 The execution backend ricochet uses for spawning user content (apps, tasks) is independent of how ricochet-server itself runs.
 
-### Native (default)
+### Host (default)
 
-With no `[backend]` block in `ricochet-config.toml`, ricochet-server runs content as child processes **inside** its own container.
-Suitable for small single-tenant setups; content shares the ricochet image's interpreters.
+With no `[backend]` block in `ricochet-config.toml`, ricochet-server runs content as [libcontainer](https://docs.rs/libcontainer/)-managed isolated processes **inside** its own container, using the interpreters baked into the ricochet-server image.
+Suitable for small single-tenant setups where every content item can share the same runtime environment.
+
+See [Host vs container on a single host](/dev/admin/configuration/execution-backend/#host-vs-container-on-a-single-host) for the tradeoff.
 
 ### Container backend (sibling containers)
 

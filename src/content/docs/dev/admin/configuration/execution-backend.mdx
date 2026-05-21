@@ -99,10 +99,10 @@ r = [
 ]
 
 [image.python-default]
-image = "docker.io/ricochetrs/python-ubuntu:3.12"
-os = "ubuntu-22.04"
+image = "docker.io/ricochetrs/python-ubuntu:3.13"
+os = "ubuntu-26.04"
 arch = ["linux/amd64", "linux/arm64"]
-description = "Default Python 3.12 environment (Ubuntu)"
+description = "Default Python 3.13 environment (Ubuntu)"
 python = [
   { version = "3.12", bin = "/usr/local/bin/python3" },
 ]
@@ -186,6 +186,5 @@ See [Kubernetes installation](/dev/admin/installation/3-kubernetes/) for cluster
 
 <Aside type="note" title="Remote daemons not yet supported">
   ricochet currently only talks to a daemon on the same host as ricochet-server.
-  Remote daemon support is on the roadmap and requires TLS configuration plus a deliberate strategy for `content_path` / `cache_path` (bind mounts resolve on the daemon's host — shared NFS, named volumes, or per-content image baking).
-  Until then, use the Kubernetes backend for multi-host execution.
+  Remote daemon support is on the roadmap.
 </Aside>

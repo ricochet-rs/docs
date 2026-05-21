@@ -19,6 +19,12 @@ If `[backend]` is omitted, ricochet uses the **host** backend.
 Content runs as isolated processes managed in-process by `libcontainer` (an OCI-runtime implementation, no daemon required), using the language interpreters installed on the host.
 This page documents the `container` and `k8s` backends; the host backend has no configuration knobs of its own.
 
+<Aside type="tip" title="Default exec-env images">
+  The container and Kubernetes backends pull an OCI image per content item.
+  ricochet publishes a continuously-updated set of production-ready images at [ricochet-rs/exec-envs](https://github.com/ricochet-rs/exec-envs) — R on Alpine, Ubuntu, and AlmaLinux; Python on Ubuntu and AlmaLinux — rebuilt weekly and suitable as defaults for `default_image` and per-content `exec_env` references.
+  Bring your own images when you need additional system libraries or a different language/version combination.
+</Aside>
+
 ## Host vs container on a single host
 
 Both backends run content on the same machine as ricochet-server.
@@ -64,7 +70,7 @@ ricochet refuses to start if `exec_env_config_path`, `content_path`, or `cache_p
 ### Image resolution
 
 `default_image` and per-content `exec_env` values are looked up in the exec-env config.
-A category like `r-default` resolves to a concrete image reference (`registry.example.com/ricochet/exec-env-r:4.5`).
+A category like `r-default` resolves to a concrete image reference (`docker.io/ricochetrs/r-alpine:4.5`).
 If the value does not match a category, ricochet treats it as a full image reference and uses it as-is.
 
 ### Exec-env config
@@ -72,31 +78,33 @@ If the value does not match a category, ricochet treats it as a full image refer
 The exec-env config TOML maps category names to concrete container images and declares the language runtimes inside each image.
 Content items pick a category via their `exec_env` setting; ricochet falls back to `default_image` when none is set.
 
+The example below references the [official ricochet exec-env images](https://github.com/ricochet-rs/exec-envs) — adjust the image and tag, or substitute your own.
+
 ```toml title="ricochet-exec-env.toml"
 [image.r-default]
-image = "reg.ricochet.rs/ricochet/exec-env-r:4.5-alpine"
-os = "alpine-3.22"
+image = "docker.io/ricochetrs/r-alpine:4.5"
+os = "alpine-3.23"
 arch = ["linux/amd64", "linux/arm64"]
-description = "Default R 4.5 environment"
+description = "Default R 4.5 environment (Alpine)"
 r = [
-  { version = "4.5.1", bin = "/opt/R/4.5.1/bin/R" },
+  { version = "4.5.3", bin = "/usr/bin/R" },
 ]
 
-[image.r-4-4]
-image = "reg.ricochet.rs/ricochet/exec-env-r:4.4-alpine"
-os = "alpine-3.21"
+[image.r-44]
+image = "docker.io/ricochetrs/r-alpine:4.4"
+os = "alpine-3.23"
 arch = ["linux/amd64", "linux/arm64"]
 r = [
-  { version = "4.4.1", bin = "/opt/R/4.4.1/bin/R" },
-  { version = "4.4.2", bin = "/opt/R/4.4.2/bin/R" },
+  { version = "4.4.3", bin = "/usr/bin/R" },
 ]
 
 [image.python-default]
-image = "reg.ricochet.rs/ricochet/exec-env-python:3.12"
+image = "docker.io/ricochetrs/python-ubuntu:3.12"
 os = "ubuntu-22.04"
 arch = ["linux/amd64", "linux/arm64"]
+description = "Default Python 3.12 environment (Ubuntu)"
 python = [
-  { version = "3.12.0", bin = "/usr/local/bin/python3" },
+  { version = "3.12", bin = "/usr/local/bin/python3" },
 ]
 ```
 
@@ -159,6 +167,8 @@ pvc_content_name = "ricochet-content"
 pvc_cache_name = "ricochet-cache"
 image_pull_policy = "IfNotPresent"
 ```
+
+The same [`ricochet-exec-env.toml`](#exec-env-config) format applies, and the [official exec-env images](https://github.com/ricochet-rs/exec-envs) work unchanged as Pod images — they're built multi-arch (amd64/arm64) and ship with the same runtimes used by the container backend.
 
 See [Kubernetes installation](/dev/admin/installation/3-kubernetes/) for cluster prerequisites, Helm chart values, and PVC sizing guidance.
 

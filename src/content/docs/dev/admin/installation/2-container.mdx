@@ -10,7 +10,7 @@ This is the same `ricochet-server` binary as the [host install](/dev/admin/insta
 ## Image
 
 ```
-ghcr.io/ricochet-rs/ricochet-server:<version>
+docker.io/ricochetrs/ricochet-server:<version>
 ```
 
 Tags follow the ricochet release version (e.g. `v0.7.3`).
@@ -39,7 +39,7 @@ docker run -d \
   --name ricochet-server \
   -p 6188:6188 \
   -v /var/lib/ricochet:/var/lib/ricochet \
-  ghcr.io/ricochet-rs/ricochet-server:latest
+  docker.io/ricochetrs/ricochet-server:latest
 ```
 
 Place your `ricochet-config.toml` at `/var/lib/ricochet/ricochet-config.toml` on the host.
@@ -67,7 +67,7 @@ docker run -d \
   --add-host=host.docker.internal:host-gateway \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/ricochet:/var/lib/ricochet \
-  ghcr.io/ricochet-rs/ricochet-server:latest
+  docker.io/ricochetrs/ricochet-server:latest
 ```
 
 Set in `ricochet-config.toml`:
@@ -92,7 +92,7 @@ For multi-node setups, do not run ricochet-server as a standalone container — 
 ```yaml title="compose.yml"
 services:
   ricochet-server:
-    image: ghcr.io/ricochet-rs/ricochet-server:latest
+    image: docker.io/ricochetrs/ricochet-server:latest
     container_name: ricochet-server
     ports:
       - "6188:6188"

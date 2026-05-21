@@ -110,9 +110,12 @@ python = [
 
 `r`, `python`, and `julia` arrays declare the interpreter versions present in the image and the path to their binaries — ricochet uses these to match a content item's required version against an available runtime.
 
-## Deployment scenarios
+### Deployment scenarios
 
-### ricochet-server via systemd (on the host)
+How ricochet-server itself is deployed shapes the container-backend setup.
+The ricochet-server install is covered on its own page — only the container-backend specifics are below.
+
+#### ricochet-server via systemd (on the host)
 
 Set up ricochet-server first — see [Host installation](/dev/admin/installation/1-host/).
 
@@ -122,7 +125,7 @@ Container-backend specifics:
 - The user running ricochet-server needs read/write access to the daemon socket (typically by adding it to the `docker` group, or running as root as the default systemd unit does).
 - `proxy_host` can stay at its default `localhost` since both processes share the host's network namespace.
 
-### ricochet-server in a container (sibling containers)
+#### ricochet-server in a container (sibling containers)
 
 Set up ricochet-server in a container first — see [Container installation](/dev/admin/installation/2-container/).
 
@@ -140,7 +143,7 @@ docker run -d \
   --add-host=host.docker.internal:host-gateway \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/ricochet:/var/lib/ricochet \
-  ghcr.io/ricochet-rs/ricochet-server:latest
+  docker.io/ricochetrs/ricochet-server:latest
 ```
 
 ```toml title="ricochet-config.toml (DooD)"
@@ -175,16 +178,22 @@ See [Kubernetes installation](/dev/admin/installation/3-kubernetes/) for cluster
 ## Known issues
 
 <Aside type="caution" title="Path mismatch is silent">
+  Applies to the [container backend](#container-backend) — most often in the [DooD scenario](#ricochet-server-in-a-container-sibling-containers) where ricochet-server's filesystem view differs from the host's.
+
   If `content_path` points to a path that does not exist on the host, the daemon still launches the spawned container — but bind-mounts the wrong (or empty) directory.
   Content items will appear to deploy but fail at runtime because their bundles are not visible.
   Verify `ls $content_path` works on the **host**, not just inside the ricochet-server container.
 </Aside>
 
-<Aside type="caution" title="Wrong `proxy_host` is silent too">
+<Aside type="caution" title="Wrong proxy_host is silent too">
+  Applies to the [container backend](#container-backend) in the [DooD scenario](#ricochet-server-in-a-container-sibling-containers) only — see [Field reference](#container-backend) for the `proxy_host` setting.
+
   If `proxy_host` resolves but does not actually reach the host (typo, wrong IP, missing `--add-host`), spawned content containers start and pass health checks at the container layer, but ricochet's reverse proxy gets a connection refused or timeout when it tries to route a request — surfacing as 502s in the UI.
 </Aside>
 
 <Aside type="note" title="Remote daemons not yet supported">
+  Applies to the [container backend](#container-backend). The [Kubernetes backend](#kubernetes-backend) is the supported path for multi-host execution today.
+
   ricochet currently only talks to a daemon on the same host as ricochet-server.
   Remote daemon support is on the roadmap.
 </Aside>

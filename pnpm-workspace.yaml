@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - astro@6.3.7

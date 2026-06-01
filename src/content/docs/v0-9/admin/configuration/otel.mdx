@@ -1,0 +1,42 @@
+---
+title: OpenTelemetry
+---
+
+Ricochet supports exporting traces to any [OpenTelemetry](https://opentelemetry.io/) (OTel) compatible backend via the OpenTelemetry Protocol (OTLP) such as [Jaeger](https://www.jaegertracing.io/) or [Grafana](https://grafana.com/).
+
+Ricochet registers itself as a `ricochet-server` service and exports spans using batch async flushing.
+
+## Configuration
+
+Add an `[otel]` section to `ricochet-config.toml` with the `endpoint` field pointing to an OTLP collector:
+
+```toml
+[otel]
+endpoint = "http://localhost:4317"
+```
+
+## Example Jaeger setup
+
+Jaeger is an open source OTLP collector and works directly with ricochet.
+
+:::tip[Get the current Jaeger version]
+Replace `<version>` with the current recommended version from the [Jaeger getting started guide](https://www.jaegertracing.io/docs/latest/getting-started/).
+:::
+
+Start the Jaeger container:
+
+```bash
+docker run -d --name jaeger \
+  -p 4317:4317 \
+  -p 16686:16686 \
+  cr.jaegertracing.io/jaegertracing/jaeger:<version>
+```
+
+Add the following to `ricochet-config.toml`:
+
+```toml
+[otel]
+endpoint = "http://localhost:4317"
+```
+
+Start ricochet and navigate to `http://localhost:16686` to view traces in the Jaeger UI.

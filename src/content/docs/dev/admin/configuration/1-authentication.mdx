@@ -27,6 +27,7 @@ client_id = "your_client_id"
 client_secret = "your_client_secret"
 redirect_url = "https://your-ricochet-domain.com/oauth/callback"
 display_name_claim = "preferred_username"  # Optional, defaults to "preferred_username"
+groups_claim = "groups"  # Optional, defaults to "groups"
 ```
 
 <Aside type="caution">
@@ -42,8 +43,22 @@ display_name_claim = "preferred_username"  # Optional, defaults to "preferred_us
 | `client_secret`      | Yes      | OAuth client secret from your OIDC provider                                                                    |
 | `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
 | `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
+| `groups_claim`       | No       | OIDC claim that carries the user's group memberships. Defaults to `groups`. Accepts an array of strings, a single string, or a comma-delimited string. |
+
+## SSO Groups
+
+When `groups_claim` is set (defaulted to `"groups"`), ricochet reads the user's group memberships from the configured claim of every ID token at login and mirrors them into the local `user_groups` table.
+You can then grant a role on a content item to a group name via the collaborators dialog, and any user whose ID token carried that group at their last login inherits the role.
+
+A few practical points:
+
+- **Group memberships refresh on every login.** A user who was added to a group in your IdP after their last ricochet login will not pick up the role until they sign in again.
+- **Names are byte-equal and case-sensitive.** The group name typed in the collaborators dialog must match the string in the ID token exactly.
+- **No directory pull yet.** A group only "exists" in ricochet once at least one of its members has logged in. The collaborators dialog accepts arbitrary free-text and does not validate against the IdP.
 
 ## Microsoft Entra ID (Azure AD)
+
+### Issuer URL
 
 When using Microsoft Entra ID, you must use the v2.0 issuer URL.
 The v1 issuer (`https://sts.windows.net/{tenant-id}/`) returns a non-standard discovery document that is incompatible with ricochet's OIDC client.
@@ -57,6 +72,23 @@ redirect_url = "https://your-ricochet-domain.com/oauth/callback"
 ```
 
 Replace `{tenant-id}` with your Azure tenant ID.
+
+### Groups claim
+
+Entra does not emit a `groups` claim by default — enable it explicitly on the app registration under *Token configuration → Add groups claim*.
+Pick *Group ID* (the default) or *sAMAccountName* depending on what your tenant supports.
+
+<Aside type="caution">
+  Entra emits **group object IDs (GUIDs)** for cloud-only groups, even when `sAMAccountName` format is selected — `sAMAccountName` is only populated for groups synchronized from on-premises Active Directory via Entra Connect.
+  If your groups were created directly in Entra, the value in the `groups` claim will be a GUID like `a3f2c1e8-...` and you must use that GUID in the collaborators dialog.
+  A future ricochet release will resolve GUIDs to display names via Microsoft Graph.
+</Aside>
+
+<Aside type="note">
+  Entra applies a "group overage" limit at roughly 200 group memberships per user.
+  Beyond that point Entra stops embedding the groups array in the token and references it via Microsoft Graph instead, which ricochet does not currently follow.
+  Users with very large group memberships will appear to have no groups until this is implemented.
+</Aside>
 
 ## Requiring Authentication
 

@@ -125,9 +125,15 @@ ricochet start --config /path/to/ricochet-config.toml
 ```
 
 The `--config` flag specifies the path to your `ricochet-config.toml`.
-If omitted, Ricochet looks for `ricochet-config.toml` in the current working directory.
+If omitted, ricochet looks for `ricochet-config.toml` in the current working directory, so it is recommended to always pass `--config` with an explicit path.
+
+The `home` field in your `ricochet-config.toml` must be set to an absolute path.
+This controls where ricochet stores its database, content bundles, and logs.
 
 ### Daemon mode
+
+Use `--daemon` when you want ricochet to keep running after your terminal session ends.
+This is useful on remote servers where you do not want the process tied to your SSH connection.
 
 Pass `--daemon` to detach the process and run it in the background:
 
@@ -147,7 +153,10 @@ When running as a daemon, ricochet writes the following files under `RICOCHET_HO
 | `ricochet.stdout` | Standard output from the process |
 | `ricochet.err` | Standard error from the process |
 
-These files are separate from any file-based logging configured via tracing settings.
+`ricochet.stdout` and `ricochet.err` capture raw process output such as startup errors, panics, and anything printed before the logging system initializes.
+They are separate from the structured log files written by the `[logs]` configuration.
+For operational logging, configure `[logs]` in your `ricochet-config.toml`.
+See [File Logging](/dev/admin/configuration/file-logging/) for configuration options.
 
 ### Stopping the daemon
 

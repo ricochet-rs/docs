@@ -112,6 +112,53 @@ sudo chown root:root /var/lib/ricochet/ricochet-config.toml
 
 Ricochet Server listens on port **6188** by default.
 
+## Using the standalone binary
+
+The standalone binary can run either as a blocking foreground process or as a daemonized background process.
+
+### Foreground mode
+
+By default, `ricochet start` runs in the foreground and prints logs to stdout/stderr:
+
+```sh
+ricochet start --config /path/to/ricochet-config.toml
+```
+
+The `--config` flag specifies the path to your `ricochet-config.toml`. If omitted, Ricochet looks for `ricochet-config.toml` in the current working directory.
+
+### Daemon mode
+
+Pass `--daemon` to detach the process and run it in the background:
+
+```sh
+ricochet start --config /path/to/ricochet-config.toml --daemon
+```
+
+<Aside type="note">
+  The `--daemon` flag is only available on Unix-like operating systems.
+</Aside>
+
+When running as a daemon, Ricochet writes the following files under `RICOCHET_HOME`:
+
+| File | Purpose |
+| --- | --- |
+| `ricochet.pid` | Process ID of the running daemon |
+| `ricochet.stdout` | Standard output from the process |
+| `ricochet.err` | Standard error from the process |
+
+These files are separate from any file-based logging configured via tracing settings.
+
+### Stopping the daemon
+
+Use `ricochet stop` to gracefully stop a daemonized process:
+
+```sh
+ricochet stop --config /path/to/ricochet-config.toml
+```
+
+If you passed a custom `--config` path to `ricochet start`, pass the same path to `ricochet stop` so it can locate the correct `ricochet.pid` file.
+
+
 ## Upgrade
 
 To upgrade to a new version, download the new package and install it over the existing one.

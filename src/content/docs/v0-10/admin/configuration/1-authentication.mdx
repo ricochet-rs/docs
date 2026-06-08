@@ -75,27 +75,54 @@ redirect_url = "https://your-ricochet-domain.com/oauth/callback"
 
 Replace `{tenant-id}` with your Azure tenant ID.
 
-### Groups claim
+### Group support requires two separate Entra grants
 
-Entra does not emit a `groups` claim by default — enable it explicitly on the app registration under *Token configuration → Add groups claim*.
-Pick *Group ID* (the default) or *sAMAccountName* depending on what your tenant supports.
+Group-based access on Entra needs **two distinct pieces of configuration that serve different purposes**. Configure both.
+
+| Grant                                  | Where in Entra                                                                                                     | Purpose                                                                                                                                                                          |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Groups claim, format _Group ID_**    | App registration → *Token configuration → Add groups claim*                                                        | Puts the user's group **object IDs** into the ID token at login, so ricochet can match them against group grants on content. This is what controls **access**.                  |
+| **`Group.Read.All`, _Application_**    | App registration → *API permissions* → Microsoft Graph → *Application permissions*, then **Grant admin consent**   | Lets ricochet's directory sync resolve group **display names** and list groups in the collaborators picker. Without it, access still works but groups show as raw GUIDs.        |
+
+The display-name sync additionally requires `provider = "entra"` in your config (see above) — that is what enables ricochet to call Microsoft Graph at all.
+
+#### Grant 1 — Groups claim (format: Group ID)
+
+Entra does not emit a `groups` claim by default. Enable it under *Token configuration → Add groups claim* and set the format to **Group ID**.
+
+<Aside type="danger">
+  Use **Group ID**. Do **not** select `sAMAccountName`, `NetBIOSDomain\sAMAccountName`, or `DNSDomain\sAMAccountName`.
+  Those on-premises formats only cover groups synced from on-prem Active Directory. For a **hybrid user** (an account synchronized from on-prem AD), selecting an on-prem format makes Entra emit *only* that user's on-prem groups and **drop their cloud-only group memberships from the token entirely** — so membership in a cloud group (the common case) silently never reaches ricochet and the user is denied access even though they are a member.
+  *Group ID* emits the stable object-ID GUID for **every** group, cloud and on-prem alike, which is also what ricochet stores on group grants.
+</Aside>
+
+ricochet matches access on the group's **object-ID GUID**, never on the display name — GUIDs are stable and unique, whereas names can be renamed or collide.
+The GUID is written to the `user_groups` table at login and must equal the GUID recorded on the content's group grant.
+
+#### Grant 2 — Microsoft Graph `Group.Read.All` (Application)
+
+Add the **`Group.Read.All`** Microsoft Graph permission to the app registration, then **grant admin consent**.
 
 <Aside type="caution">
-  Entra emits **group object IDs (GUIDs)** for cloud-only groups, even when `sAMAccountName` format is selected — `sAMAccountName` is only populated for groups synchronized from on-premises Active Directory via Entra Connect.
-  If your groups were created directly in Entra, the value in the `groups` claim will be a GUID like `a3f2c1e8-...`.
-  ricochet resolves these GUIDs to display names via Microsoft Graph when `provider = "entra"` is set.
+  It must be the **Application** permission, not the **Delegated** one.
+  ricochet's directory sync runs as the application via the OAuth client-credentials flow, which only honors *Application* permissions — a *Delegated* `Group.Read.All` grant has no effect, and the sync fails with `Authorization_RequestDenied`.
 </Aside>
 
-<Aside type="note">
-  Background directory sync requires the app registration to have the **`Group.Read.All`** Microsoft Graph application permission granted by an administrator.
-  Without it, ricochet can still sync group memberships at login from the ID token but cannot pull display names from the Graph API.
-</Aside>
+Once it is granted (and with `provider = "entra"` set), ricochet syncs the group catalog on startup and on the `sync_interval` schedule, replacing the GUIDs in the collaborators dialog with real group names.
 
 <Aside type="note">
   Entra applies a "group overage" limit at roughly 200 group memberships per user.
   Beyond that point Entra stops embedding the groups array in the token and references it via Microsoft Graph instead, which ricochet does not currently follow.
   Users with very large group memberships will appear to have no groups until this is implemented.
 </Aside>
+
+### Troubleshooting groups
+
+| Symptom                                                                                            | Likely cause                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Groups appear as raw GUIDs in the collaborators dialog instead of names                           | The Graph **`Group.Read.All` _Application_** permission is missing or unconsented, or `provider = "entra"` is not set — so the catalog sync never resolves names.                         |
+| A confirmed group member is denied access, or a group shows "No members have logged in yet" after the user has signed in | The groups claim uses an **on-premises format** (sAMAccountName/NetBIOS/DNS) instead of **Group ID**, so the user's cloud-group membership was dropped from their token. Switch to *Group ID* and have the user sign in again. |
+| A membership change in Entra is not reflected in ricochet                                         | Memberships refresh only at login — the user must sign out and back in.                                                                                                                  |
 
 ## Requiring Authentication
 

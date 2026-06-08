@@ -124,7 +124,8 @@ By default, `ricochet start` runs in the foreground and prints logs to stdout/st
 ricochet start --config /path/to/ricochet-config.toml
 ```
 
-The `--config` flag specifies the path to your `ricochet-config.toml`. If omitted, Ricochet looks for `ricochet-config.toml` in the current working directory.
+The `--config` flag specifies the path to your `ricochet-config.toml`.
+If omitted, Ricochet looks for `ricochet-config.toml` in the current working directory.
 
 ### Daemon mode
 
@@ -157,7 +158,6 @@ ricochet stop --config /path/to/ricochet-config.toml
 ```
 
 If you passed a custom `--config` path to `ricochet start`, pass the same path to `ricochet stop` so it can locate the correct `ricochet.pid` file.
-
 
 ## Upgrade
 

@@ -120,14 +120,6 @@ Once it is granted (and with `provider = "entra"` set), ricochet syncs the group
   Users with very large group memberships will appear to have no groups until this is implemented.
 </Aside>
 
-### Troubleshooting groups
-
-| Symptom                                                                                            | Likely cause                                                                                                                                                                              |
-| ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Groups appear as raw GUIDs in the collaborators dialog instead of names                           | The Graph **`Group.Read.All` _Application_** permission is missing or unconsented, or `provider = "entra"` is not set — so the catalog sync never resolves names.                         |
-| A confirmed group member is denied access, or a group shows "No members have logged in yet" after the user has signed in | The groups claim uses an **on-premises format** (sAMAccountName/NetBIOS/DNS) instead of **Group ID**, so the user's cloud-group membership was dropped from their token. Switch to *Group ID* and have the user sign in again. |
-| A membership change in Entra is not reflected in ricochet                                         | Memberships refresh only at login — the user must sign out and back in.                                                                                                                  |
-
 ## Requiring Authentication
 
 By default, unauthenticated users can browse the "Explore" page and view public content.

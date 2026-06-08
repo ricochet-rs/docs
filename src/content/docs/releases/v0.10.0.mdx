@@ -1,0 +1,39 @@
+---
+title: v0.10.0
+docs: release notes for Ricochet v0.10.0
+slug: releases/v0.10.0
+tableOfContents: false
+template: splash
+---
+
+**Released: June 8, 2026**
+
+### Features
+
+**UI: Smooth Page Transitions**: Pages now transition smoothly with a persistent shell and cross-fade animation for a more polished user experience.
+
+**Auth: Global Admin Override**: Global administrators can now override collaborator mutations for better access management.
+
+**Auth: OIDC Group Sync**: Added support for synchronizing groups from Microsoft Graph via OIDC, enabling seamless integration with Microsoft Entra ID.
+
+**Proxy: Container Backend Improvements**: The Docker backend has been renamed to "container" and now supports execution environments with bind mounts for more flexible deployment options.
+
+### Fixes
+
+**Auth: OIDC Group Access**: Fixed OIDC group access to work correctly with Microsoft Entra and improved error diagnostics.
+
+**UI: Edge Browser Freeze**: Resolved an issue that caused Microsoft Edge to freeze on the app loading page.
+
+**UI: Script Loading**: Fixed basecoat scripts to load correctly from the shell head.
+
+**Proxy: Deployment Cancellation**: Unblocked deployment cancellation so users can stop deployments as expected.
+
+**Proxy: Image Alias Validation**: Fixed image alias passing to execution environment validation.
+
+**Proxy: Kubernetes HOME Variable**: Set the HOME environment variable correctly for Kubernetes pods.
+
+**Container: OpenShift Permissions**: Pinned primary GID to 0 to ensure OpenShift permissions work properly under plain Docker.
+
+**API: Connection Failure Handling**: Ricochet no longer attempts to start if the API fails to connect, preventing startup issues.
+
+**API/Proxy: Default Binding**: Changed default Leptos binding to 127.0.0.1 and fixed infinite error loop at /app//error.

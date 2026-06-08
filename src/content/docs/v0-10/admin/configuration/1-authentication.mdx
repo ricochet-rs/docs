@@ -77,7 +77,8 @@ Replace `{tenant-id}` with your Azure tenant ID.
 
 ### Group support requires two separate Entra grants
 
-Group-based access on Entra needs **two distinct pieces of configuration that serve different purposes**. Configure both.
+Group-based access on Entra needs **two distinct pieces of configuration that serve different purposes**.
+Configure both.
 
 | Grant                                  | Where in Entra                                                                                                     | Purpose                                                                                                                                                                          |
 | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -88,11 +89,14 @@ The display-name sync additionally requires `provider = "entra"` in your config 
 
 #### Grant 1 — Groups claim (format: Group ID)
 
-Entra does not emit a `groups` claim by default. Enable it under *Token configuration → Add groups claim* and set the format to **Group ID**.
+Entra does not emit a `groups` claim by default.
+Enable it under *Token configuration → Add groups claim* and set the format to **Group ID**.
 
 <Aside type="danger">
-  Use **Group ID**. Do **not** select `sAMAccountName`, `NetBIOSDomain\sAMAccountName`, or `DNSDomain\sAMAccountName`.
-  Those on-premises formats only cover groups synced from on-prem Active Directory. For a **hybrid user** (an account synchronized from on-prem AD), selecting an on-prem format makes Entra emit *only* that user's on-prem groups and **drop their cloud-only group memberships from the token entirely** — so membership in a cloud group (the common case) silently never reaches ricochet and the user is denied access even though they are a member.
+  Use **Group ID**.
+  Do **not** select `sAMAccountName`, `NetBIOSDomain\sAMAccountName`, or `DNSDomain\sAMAccountName`.
+  Those on-premises formats only cover groups synced from on-prem Active Directory.
+  For a **hybrid user** (an account synchronized from on-prem AD), selecting an on-prem format makes Entra emit *only* that user's on-prem groups and **drop their cloud-only group memberships from the token entirely** — so membership in a cloud group (the common case) silently never reaches ricochet and the user is denied access even though they are a member.
   *Group ID* emits the stable object-ID GUID for **every** group, cloud and on-prem alike, which is also what ricochet stores on group grants.
 </Aside>
 

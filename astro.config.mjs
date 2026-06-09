@@ -12,6 +12,7 @@ import starlightVersions from "starlight-versions";
 import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
 import rehypeMermaid from "rehype-mermaid";
 import rehypeFigure from "rehype-figure";
+import rehypeTrailingSlash from "./scripts/rehype-trailing-slash.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -182,7 +183,11 @@ export default defineConfig({
     // Astro 6.4.2 regressed the default for `gfm` from true to false;
     // see https://github.com/withastro/astro/issues/16971
     gfm: true,
-    rehypePlugins: [[rehypeMermaid, { strategy: "pre-mermaid" }], rehypeFigure],
+    rehypePlugins: [
+      [rehypeMermaid, { strategy: "pre-mermaid" }],
+      rehypeFigure,
+      rehypeTrailingSlash,
+    ],
   },
   vite: {
     plugins: [tailwindcss()],

@@ -48,8 +48,10 @@ The default location of `RICOCHET_HOME` is the current working directory unless 
 `home = "/path/to/ricochet/home"` or environment variable.
 In the case of the **systemd service**, the default location is `/var/lib/ricochet/data`.
 
-When using the standalone binary with `--config`, the `home` field is required in your `ricochet-config.toml`.
-Always set `home` to an absolute path to ensure consistent behavior regardless of the directory you launch from.
+<Aside type="tip">
+  When using the standalone binary, it is recommended to set `home` to an absolute path in your `ricochet-config.toml`.
+  This ensures consistent behavior regardless of the directory you launch from.
+</Aside>
 
 Alternatively, use the `RICOCHET_HOME` environment variable to specify where ricochet should use the home directory.
 

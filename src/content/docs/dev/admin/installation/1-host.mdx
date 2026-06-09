@@ -127,13 +127,18 @@ ricochet start --config /path/to/ricochet-config.toml
 The `--config` flag specifies the path to your `ricochet-config.toml`.
 If omitted, ricochet looks for `ricochet-config.toml` in the current working directory, so it is recommended to always pass `--config` with an explicit path.
 
-The `home` field in your `ricochet-config.toml` must be set to an absolute path.
-This controls where ricochet stores its database, content bundles, and logs.
+<Aside type="tip">
+  Set `home` to an absolute path in your `ricochet-config.toml`.
+  This controls where ricochet stores its database, content bundles, and logs.
+  If omitted, it defaults to the current working directory at start time.
+</Aside>
 
 ### Daemon mode
 
 Use `--daemon` when you want ricochet to keep running after your terminal session ends.
 This is useful on remote servers where you do not want the process tied to your SSH connection.
+This is similar to running ricochet through systemd, which is what the `.rpm` and `.deb` installers do by default.
+For production use, the prepackaged installers are recommended over the standalone binary.
 
 Pass `--daemon` to detach the process and run it in the background:
 

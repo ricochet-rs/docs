@@ -1,0 +1,51 @@
+---
+title: Overview
+---
+
+`ricochet` supports deploying R, Julia, and Python based content.
+Content items are categorized as either an [**App**](/dev/user/content-items/2-dynamic-content) or a [**Task**](/dev/user/content-items/3-tasks).
+
+An **App** stays running to serve requests: web applications, APIs, and interactive dashboards.
+
+A **Task** executes once and then stops: scripts, reports, and document renders.
+
+All tasks can be [scheduled](/dev/user/tasks/2-scheduling) (or [invoked via API](/dev/user/tasks/1-invoke)).
+A subset of tasks can be served as a [**static html** website](/dev/user/tasks/3-static-sites)—for example R Markdown and Quarto documents or websites.
+
+The content types supported by ricochet are listed below.
+
+## R
+
+| Content Type         | Category | Description                                                                    |
+| -------------------- | -------- | ------------------------------------------------------------------------------ |
+| `shiny` / `shiny-r`  | App      | A web app developed using [`{shiny}`](https://shiny.posit.co/r/).              |
+| `plumber`            | App      | An API developed using [`{plumber}`](https://rplumber.io).                     |
+| `ambiorix`           | App      | An API or web app developed using [`{ambiorix}`](https://ambiorix.dev).        |
+| `rmd-shiny`          | App      | An [R Markdown](https://rmarkdown.rstudio.com/) document using a Shiny runtime.|
+| `quarto-r-shiny`     | App      | A [Quarto](https://quarto.org/) document using a Shiny runtime.               |
+| `serverless-r`       | App      | R functions deployed as an API.                                                |
+| `r-service`          | App      | A generic web app or API using an R runtime.                                   |
+| `r`                  | Task     | An R script with the extension `.R` or `.r`.                                   |
+| `rmd`                | Task     | An [R Markdown](https://rmarkdown.rstudio.com/) document.                     |
+| `quarto-r`           | Task     | A [Quarto](https://quarto.org/) document using an R runtime.                  |
+
+## Python
+
+| Content Type     | Category | Description                                                                                                          |
+| ---------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| `fast-api`       | App      | An API developed using [FastAPI](https://fastapi.tiangolo.com/). Launched with `uvicorn`.                            |
+| `flask`          | App      | A web app or API developed using [Flask](https://flask.palletsprojects.com/).                                        |
+| `streamlit`      | App      | A data app developed using [Streamlit](https://streamlit.io/).                                                       |
+| `dash`           | App      | A data app developed using [Dash](https://dash.plotly.com/).                                                         |
+| `shiny-py`       | App      | A web app developed using [Shiny for Python](https://shiny.posit.co/py/).                                            |
+| `python-service` | App      | A generic Python web app or API. Must bind to `PORT`.                                                                |
+| `python`         | Task     | A Python script with the extension `.py`.                                                                            |
+| `quarto-py`      | Task     | A [Quarto](https://quarto.org/) document using a Python runtime.                                                     |
+
+## Julia
+
+| Content Type     | Category | Description                                                                                  |
+| ---------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `julia-service`  | App      | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
+| `julia`          | Task     | A Julia script.                                                                              |
+| `quarto-jl`      | Task     | A [Quarto](https://quarto.org/) document using a Julia runtime.                              |

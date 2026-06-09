@@ -1,0 +1,131 @@
+---
+title: "Audit Logging"
+---
+
+Ricochet writes an audit log for security-related and administrative operations, including any actions that affect infrastructure or execute code.
+Audit logging is always enabled and cannot be disabled.
+Logs are written to both a database (`audit_logs` table) and a JSON Lines file.
+
+Records are written in batches every 200ms or every 256 events, whichever comes first.
+The database is written first, followed by the log file.
+
+## File location
+
+```
+RICOCHET_HOME/
+└── logs/
+    └── audit/
+        ├── audit.log              # current day (active)
+        ├── audit-2026-02-22.log.gz
+        └── audit-2026-02-21.log.gz
+```
+
+Logs rotate daily.
+The previous day's log is compressed with gzip and renamed to `audit-YYYY-MM-DD.log.gz`.
+Archived logs are never automatically deleted.
+
+## Record format
+
+Each line is a JSON object:
+
+```json
+{
+  "id": "01KJNKR4KXV8FCT1432D2CZG0V",
+  "timestamp": "2026-03-01T21:09:26.781568Z",
+  "actor": { "api_key": { "short_token": "Pm93AJQNSTG", "owner_id": "344509059241640593" } },
+  "event": { "api_key_created": { "short_token": "Pm93AJQNSTG", "name": "CLI Authentication" } }
+}
+```
+
+| Field       | Description                                              |
+| ----------- | -------------------------------------------------------- |
+| `id`        | Unique ID per record (ULID)                              |
+| `timestamp` | UTC timestamp (ISO 8601)                                 |
+| `actor`     | Who performed the action (see [Actors](#actors))         |
+| `event`     | What happened and any associated details (see [Events](#events)) |
+
+## Actors
+
+The `actor` field identifies who initiated the audited action.
+
+| Actor       | Example                                                      | Description                                               |
+| ----------- | ------------------------------------------------------------ | --------------------------------------------------------- |
+| `user`      | `{ "user": { "id": "<user_id>" } }`                         | An authenticated user, identified by their IDP subject ID |
+| `api_key`   | `{ "api_key": { "short_token": "...", "owner_id": "..." } }` | An API key, identified by its short token and owning user |
+| `"system"`  | `"system"`                                                   | Any action initiated by the Ricochet server               |
+| `"anonymous"` | `"anonymous"`                                              | An unauthenticated request with no identifiable actor     |
+
+## Events
+
+Events with no associated data are serialized as a plain string.
+Events with data are serialized as a single-key object.
+
+### Authentication
+
+Authentication events cover user login, logout, and account provisioning.
+
+| Event             | Example                                               | Description                                        |
+| ----------------- | ----------------------------------------------------- | -------------------------------------------------- |
+| `user_created`    | `"user_created"`                                      | A new user account was provisioned                 |
+| `login_succeeded` | `"login_succeeded"`                                   | A login completed successfully                     |
+| `logout`          | `"logout"`                                            | A user session was terminated                      |
+| `login_failed`    | `{ "login_failed": { "reason": "..." } }`             | A login attempt failed                             |
+| `first_admin`     | `{ "first_admin": { "user_id": "..." } }`             | The first user was automatically promoted to Admin |
+
+### API keys
+
+API key events are recorded when keys are created or deleted.
+
+| Event             | Example                                                            | Description            |
+| ----------------- | ------------------------------------------------------------------ | ---------------------- |
+| `api_key_created` | `{ "api_key_created": { "short_token": "...", "name": "..." } }`  | An API key was created |
+| `api_key_deleted` | `{ "api_key_deleted": { "short_token": "..." } }`                  | An API key was deleted |
+
+### Access control
+
+Access control events track permission changes and denied requests.
+
+| Event           | Example                                                                                   | Description                                          |
+| --------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `role_changed`  | `{ "role_changed": { "target_user_id": "...", "old_role": "...", "new_role": "..." } }`   | A user's system role was changed                     |
+| `acl_granted`   | `{ "acl_granted": { "id": "...", "target_user_id": "...", "role": "..." } }`              | A user was granted access to a content item          |
+| `acl_revoked`   | `{ "acl_revoked": { "id": "...", "target_user_id": "..." } }`                             | A user's access to a content item was revoked        |
+| `access_denied` | `{ "access_denied": { "resource": { ... } } }`                                            | A request was denied due to insufficient permissions |
+
+### Content
+
+Content events are recorded whenever content is deployed, modified, invoked, or removed.
+
+| Event                    | Example                                                                                 | Description                                           |
+| ------------------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                               | Content was deployed                                  |
+| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                                | Content was deleted                                   |
+| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                                | A content item was invoked                            |
+| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                               | Environment variables for a content item were updated |
+| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed  |
+| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                 |
+| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed               |
+| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                    |
+
+### Git credentials
+
+Git credential events are recorded when credentials used for content deployment are created or deleted.
+
+| Event                    | Example                                              | Description                   |
+| ------------------------ | ---------------------------------------------------- | ----------------------------- |
+| `git_credential_created` | `{ "git_credential_created": { "id": "..." } }`      | A git credential was created  |
+| `git_credential_deleted` | `{ "git_credential_deleted": { "id": "..." } }`      | A git credential was deleted  |
+
+## Protected resources
+
+The `access_denied` event includes a `resource` field identifying what was being accessed.
+
+| Resource   | Example                              | Description              |
+| ---------- | ------------------------------------ | ------------------------ |
+| `api_key`  | `"api_key"`                          | An API key               |
+| `content`  | `{ "content": { "id": "..." } }`     | A content item           |
+| `exec_env` | `{ "exec_env": { "id": "..." } }`    | An execution environment |
+| `user`     | `{ "user": { "id": "..." } }`        | A user account           |
+
+The `id` field is `null` when the resource ID is not available (e.g.
+listing operations).

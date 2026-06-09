@@ -1,0 +1,155 @@
+---
+title: Authentication
+---
+
+import { Aside, LinkCard } from "@astrojs/starlight/components";
+
+ricochet uses OpenID Connect (OIDC) for authentication, allowing you to integrate with any OIDC-compliant identity provider.
+
+## Requirements
+
+The OIDC provider must support:
+
+- **Claims**: `email` and `profile`
+- **Grant Type**: Authorization Code Flow
+
+ricochet uses the subject identifier (`sub`) as the unique user ID.
+The `email` claim is collected for future SMTP integrations.
+
+## Configuration
+
+Add the following to your `ricochet-config.toml`:
+
+```toml
+[auth.oidc]
+issuer_url = "https://auth.example.com/"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+display_name_claim = "preferred_username"  # Optional, defaults to "preferred_username"
+groups_claim = "groups"  # Optional, defaults to "groups"
+```
+
+<Aside type="caution">
+  The redirect URL **must** use the `/oauth/callback` path for compatibility with the ricochet cli.
+</Aside>
+
+#### Configuration Fields
+
+| Field                | Required | Description                                                                                                    |
+| -------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| `issuer_url`         | Yes      | Your OIDC provider's issuer URL. Must start with `https://`                                                    |
+| `client_id`          | Yes      | OAuth client ID from your OIDC provider                                                                        |
+| `client_secret`      | Yes      | OAuth client secret from your OIDC provider                                                                    |
+| `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
+| `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
+| `groups_claim`       | No       | Name of the OIDC claim that carries the user's group memberships. The claim value may be an array of strings, a single string, or a comma-delimited string. Omit to disable group sync at login. |
+| `provider`           | No       | Identity provider variant. Set to `"entra"` for Microsoft Entra ID; omit or set to `"oidc"` for all other providers. When `"entra"`, `groups_claim` defaults to `"groups"` and background directory sync is enabled. |
+| `sync_interval`      | No       | How often (in minutes) to run background group sync from the IdP directory. Only supported when `provider = "entra"`. Omit to sync group memberships at login only. |
+
+## SSO Groups
+
+When `groups_claim` is set (defaulted to `"groups"`), ricochet reads the user's group memberships from the configured claim of every ID token at login and mirrors them into the local `user_groups` table.
+You can then grant a role on a content item to a group name via the collaborators dialog, and any user whose ID token carried that group at their last login inherits the role.
+
+A few practical points:
+
+- **Group memberships refresh on every login.** A user who was added to a group in your IdP after their last ricochet login will not pick up the role until they sign in again.
+- **Names are byte-equal and case-sensitive.** The group name typed in the collaborators dialog must match the string in the ID token exactly.
+
+## Microsoft Entra ID (Azure AD)
+
+### Issuer URL
+
+When using Microsoft Entra ID, you must use the v2.0 issuer URL.
+The v1 issuer (`https://sts.windows.net/{tenant-id}/`) returns a non-standard discovery document that is incompatible with ricochet's OIDC client.
+
+```toml
+[auth.oidc]
+provider = "entra"
+issuer_url = "https://login.microsoftonline.com/{tenant-id}/v2.0"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+```
+
+Replace `{tenant-id}` with your Azure tenant ID.
+
+### Group support requires two separate Entra grants
+
+Group-based access on Entra needs **two distinct pieces of configuration that serve different purposes**.
+Configure both.
+
+| Grant                                  | Where in Entra                                                                                                     | Purpose                                                                                                                                                                          |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Groups claim, format _Group ID_**    | App registration → *Token configuration → Add groups claim*                                                        | Puts the user's group **object IDs** into the ID token at login, so ricochet can match them against group grants on content. This is what controls **access**.                  |
+| **`Group.Read.All`, _Application_**    | App registration → *API permissions* → Microsoft Graph → *Application permissions*, then **Grant admin consent**   | Lets ricochet's directory sync resolve group **display names** and list groups in the collaborators picker. Without it, access still works but groups show as raw GUIDs.        |
+
+The display-name sync additionally requires `provider = "entra"` in your config (see above) — that is what enables ricochet to call Microsoft Graph at all.
+
+#### Grant 1 — Groups claim (format: Group ID)
+
+Entra does not emit a `groups` claim by default.
+Enable it under *Token configuration → Add groups claim* and set the format to **Group ID**.
+
+<Aside type="danger">
+  Use **Group ID**.
+  Do **not** select `sAMAccountName`, `NetBIOSDomain\sAMAccountName`, or `DNSDomain\sAMAccountName`.
+  Those on-premises formats only cover groups synced from on-prem Active Directory.
+  For a **hybrid user** (an account synchronized from on-prem AD), selecting an on-prem format makes Entra emit *only* that user's on-prem groups and **drop their cloud-only group memberships from the token entirely** — so membership in a cloud group (the common case) silently never reaches ricochet and the user is denied access even though they are a member.
+  *Group ID* emits the stable object-ID GUID for **every** group, cloud and on-prem alike, which is also what ricochet stores on group grants.
+</Aside>
+
+ricochet matches access on the group's **object-ID GUID**, never on the display name — GUIDs are stable and unique, whereas names can be renamed or collide.
+The GUID is written to the `user_groups` table at login and must equal the GUID recorded on the content's group grant.
+
+#### Grant 2 — Microsoft Graph `Group.Read.All` (Application)
+
+Add the **`Group.Read.All`** Microsoft Graph permission to the app registration, then **grant admin consent**.
+
+<Aside type="caution">
+  It must be the **Application** permission, not the **Delegated** one.
+  ricochet's directory sync runs as the application via the OAuth client-credentials flow, which only honors *Application* permissions — a *Delegated* `Group.Read.All` grant has no effect, and the sync fails with `Authorization_RequestDenied`.
+</Aside>
+
+Once it is granted (and with `provider = "entra"` set), ricochet syncs the group catalog on startup and on the `sync_interval` schedule, replacing the GUIDs in the collaborators dialog with real group names.
+
+<Aside type="note">
+  Entra applies a "group overage" limit at roughly 200 group memberships per user.
+  Beyond that point Entra stops embedding the groups array in the token and references it via Microsoft Graph instead, which ricochet does not currently follow.
+  Users with very large group memberships will appear to have no groups until this is implemented.
+</Aside>
+
+## Requiring Authentication
+
+By default, unauthenticated users can browse the "Explore" page and view public content.
+To require authentication for all access, enable the `require_authentication` option:
+
+```toml
+[auth]
+require_authentication = true
+```
+
+Or via environment variable:
+
+```bash
+RICOCHET_AUTH__REQUIRE_AUTHENTICATION=true
+```
+
+### Behavior
+
+| Setting                        | Unauthenticated User Access                          |
+| ------------------------------ | ---------------------------------------------------- |
+| `require_authentication=false` | Can view Explore page and public content only        |
+| `require_authentication=true`  | Redirected to sign-in page on all routes             |
+
+When `require_authentication` is enabled, users see a full-screen login page with SSO sign-in.
+When disabled (the default), unauthenticated users can browse public content but see a sign-in prompt in the sidebar to access protected features like deployment, API keys, and settings.
+
+## Next Steps
+
+<LinkCard
+  title="Learn about user roles"
+  href="/v0-1/admin/configuration/2-user-roles"
+  description="Configure user roles and default permissions."
+/>

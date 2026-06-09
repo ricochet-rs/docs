@@ -12,7 +12,7 @@ labels:
 
 steps:
   editor-config:
-    image: reg.ricochet.rs/docker.io/mstruebing/editorconfig-checker:v3.6.1
+    image: reg.ricochet.rs/docker.io/mstruebing/editorconfig-checker:v3.7.0
     depends_on: []
 
   prettier:
@@ -26,6 +26,6 @@ steps:
     when:
       - event: pull_request
       - event: pull_request_edited
-    image: reg.ricochet.rs/docker.io/commitlint/commitlint:21.0.1
+    image: reg.ricochet.rs/docker.io/commitlint/commitlint:21.0.2
     commands:
       - echo $${CI_COMMIT_PULL_REQUEST_TITLE} | commitlint

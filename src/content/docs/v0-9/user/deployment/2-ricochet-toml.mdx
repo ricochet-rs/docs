@@ -1,0 +1,160 @@
+---
+title: Using `_ricochet.toml`
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Each deployment to ricochet is accompanied by a `_ricochet.toml` file.
+The `_ricochet.toml` file is used to set and keep track of metadata about your content item.
+
+```toml
+[content]
+name = "Ambiorix API"
+entrypoint = "app.R"
+access_type = "external"
+content_type = "ambiorix"
+id = "01JSSAQA559K7AS1M1X3WCJFV5"
+
+[language]
+name = "r"
+packages = "renv.lock"
+
+[serve]
+min_instances = 0
+max_instances = 5
+spawn_threshold = 80
+max_connections = 10
+```
+
+A `_ricochet.toml` has two required sections
+
+- `content`
+- `language`
+
+and the following optional settings (depending on the content type):
+
+- `schedule`
+- `serve`
+- `static`
+
+## `content` settings
+
+The `[content]` section of the `_ricochet.toml` is required.
+It has the following required fields:
+
+| Field          | Description                                                                                                                                                                                                                                                                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`         | The display name of your content item.                                                                                                                                                                                                                                                                                                                                |
+| `entrypoint`   | The file that starts your content item for example `"app.R"`.                                                                                                                                                                                                                                                                                                         |
+| `access_type`  | Determines the visibility of the content item. It must be one of `private`, `internal`, or `external`. Defaults to `private`.                                                                                                                                                                                                                                         |
+| `content_type` | Specifies the content type to be deployed. See [Content Items Overview](/dev/user/content-items/1-content-items-overview) for the full list. Valid values: `"r"`, `"rmd"`, `"plumber"`, `"ambiorix"`, `"shiny"` / `"shiny-r"`, `"rmd-shiny"`, `"r-service"`, `"serverless-r"`, `"quarto-r"`, `"quarto-r-shiny"`, `"julia"`, `"julia-service"`, `"quarto-jl"`, `"python"`, `"python-service"`, `"quarto-py"`, `"fast-api"`, `"flask"`, `"streamlit"`, `"dash"`, `"shiny-py"`. |
+| `slug`         | A unique suffix to view your content item from. It must contain only numbers, letters, or the characters `-` or `_`. For example `slug: "my-shiny-app"` will be accessible via `https://<domain>/my-shiny-app`                                                                                                                                                        |
+| `summary`      | A text summary for the content item. This is visible under the content item's card.                                                                                                                                                                                                                                                                                   |
+| `thumbnail`    | The relative path to an image to use as a thumbnail. Must be a png, jpg, or gif and 5mb or smaller.                                                                                                                                                                                                                                                                   |
+| `tags`         | An array of tags to be associated with the content item.                                                                                                                                                                                                                                                                                                              |
+
+Upon your first successful deployment, a unique content ID is created.
+The content ID is tracked in the `id` field.
+
+## `static` settings
+
+Some items such as R Markdown or Quarto may create static html websites.
+The `[static]` content settings can be used to specify which directory should be served from your content item.
+
+| Field        | Description                                                   |
+| ------------ | ------------------------------------------------------------- |
+| `output_dir` | The directory to serve.                                       |
+| `index`      | The file to server from `ouput_dir`. Default of `index.html`. |
+
+### Example
+
+```toml
+[static]
+index = "index.html"
+output_dir = "_site"
+```
+
+## `serve` settings
+
+Content items that require a running background process such as Shiny, Plumber, FastAPI, Flask, Streamlit, or Dash are considered services.
+Use the `[serve]` settings to determine how the content scales.
+
+The following settings can be set:
+
+| Field                | Description                                                                                                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `min_instances`      | The minimum number instances to always be available for a service.                                                                                                                                                                                |
+| `max_instances`      | The maximum number of instances that a content item can spawn.                                                                                                                                                                                    |
+| `spawn_threshold`    | The percent of the number of active connections divided by the maxinum number of instances. When this number is reached, a new instance is spawned.                                                                                               |
+| `max_connections`    | This is the maximum number of connections that a single service can handle. When this number is reached, a new instance is spawned. However, if `max_instances` is reached an all instances are at `max_connections`, then this field is ignored. |
+| `max_connection_age` | The maximum age (in seconds) of a connection before it is closed. If not set, instances will be terminated when there are no more connections to instance.                                                                                        |
+
+### Example
+
+```toml
+[serve]
+min_instances = 0
+max_instances = 5
+spawn_threshold = 80
+max_connections = 10
+```
+
+## `language` settings
+
+The language section of the `_ricochet.toml` is required.
+It contains two fields: `name` and `packages`.
+These specify which language the content item is using as well as how the dependencies are specified.
+
+| Field      | Description                                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`     | The language of the content item. Must be `"r"`, `"julia"`, or `"python"`.                                                                                                              |
+| `packages` | For `"r"` must be `"renv.lock"`. For `"julia"` must be `"Manifest.toml"`. For `"python"` must be `"uv.lock"`. No other dependency management tools are supported at the moment. |
+
+## `repositories` settings
+
+The optional `[repositories]` section lets you override the default package repository sources for your content item.
+This is useful when your packages are hosted on a private registry or a specific mirror.
+
+<Aside type="note">
+Item-level repository overrides are enabled by default.
+A server administrator can disable them by setting `allow_overrides = false` in the server configuration.
+See the [admin package repositories guide](/dev/admin/configuration/package-repositories/) for details on precedence rules.
+</Aside>
+
+### R
+
+R repositories are specified as a table of named URLs.
+Keys must consist of uppercase letters and underscores only.
+
+```toml
+[repositories]
+r = { CRAN = "https://cran.rpkgs.com", RSPM = "https://p3m.dev/cran/__linux__/noble/latest" }
+```
+
+R package repositories can also be configured in the ricochet web UI under the **Runtime** tab for each content item.
+Python and Julia package sources are TOML-only at present.
+
+### Python
+
+Python index sources are specified as an array of URLs.
+Order matters — earlier entries take priority.
+
+```toml
+[repositories]
+python = ["https://my-private-index.example.com", "https://pypi.org"]
+```
+
+### Julia
+
+<Aside type="note" title="Coming Soon">
+Custom Julia package sources are not yet supported.
+</Aside>
+
+## `schedule` settings
+
+All tasks items can be scheduled by specifying the `cron` field.
+
+```toml
+[schedule]
+cron = "0 0 * * *"
+```

@@ -10,6 +10,8 @@ import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
 import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
+import rehypeMermaid from "rehype-mermaid";
+import rehypeFigure from "rehype-figure";
 
 // https://astro.build/config
 export default defineConfig({

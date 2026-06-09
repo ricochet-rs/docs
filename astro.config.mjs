@@ -176,7 +176,12 @@ export default defineConfig({
       sidebar: [],
     }),
   ],
-
+  markdown: {
+    // Astro 6.4.2 regressed the default for `gfm` from true to false;
+    // see https://github.com/withastro/astro/issues/16971
+    gfm: true,
+    rehypePlugins: [[rehypeMermaid, { strategy: "pre-mermaid" }], rehypeFigure],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

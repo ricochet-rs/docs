@@ -17,22 +17,22 @@
     "@astrojs/starlight-markdoc": "^0.6.0",
     "@astrojs/starlight-tailwind": "^5.0.0",
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
-    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/vite": "^4.3.0",
     "add": "^2.0.6",
     "astro": "6.4.5",
-    "pagefind": "^1.4.0",
+    "pagefind": "^1.5.2",
     "rehype-figure": "^1.0.1",
     "rehype-mermaid": "^3.0.0",
     "sharp": "^0.34.5",
     "starlight-links-validator": "^0.24.0",
-    "starlight-scroll-to-top": "^1.0.0",
-    "starlight-theme-nova": "^0.11.7",
+    "starlight-scroll-to-top": "^1.0.1",
+    "starlight-theme-nova": "^0.11.11",
     "starlight-versions": "^0.9.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "playwright": "^1.60.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1"
   }
 }

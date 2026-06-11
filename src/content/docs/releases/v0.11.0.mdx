@@ -1,0 +1,23 @@
+---
+title: v0.11.0
+docs: release notes for Ricochet v0.11.0
+slug: releases/v0.11.0
+tableOfContents: false
+template: splash
+---
+
+**Released: June 11, 2026**
+
+### Features
+
+- **Admin Deployment Management**: Admins can now view all deployments and manually retrigger them from the UI
+- **Avatar Sync**: User avatars are now automatically synced from Microsoft Entra via Graph API
+- **Daemon Control**: Added `ricochet stop` command to gracefully stop daemonized Ricochet instances
+
+### Fixes
+
+- **Background Services**: Fixed shutdown handling to ensure all background proxy services respond correctly to termination signals
+- **User Management UI**: Connected user search functionality and role filtering in the admin interface
+- **Log Noise Reduction**: Client SSE disconnects are no longer incorrectly logged as proxy failures
+- **Navigation Stability**: Resolved an intermittent panic that could occur during page navigation in the UI
+- **Pod Recovery**: Fixed issue where pods weren't properly respawned after a successful force-restore operation

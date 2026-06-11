@@ -1,0 +1,82 @@
+---
+title: File Logging
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+Ricochet provides configurable file-based logging with automatic rotation and compression.
+Log configuration is managed through the `[logs]` section in `ricochet-config.toml`.
+
+If `[logs]` is not configured in `ricochet-config.toml`, ricochet automatically selects sensible defaults based on your installation method:
+
+- **Kubernetes backend**: File logging is disabled; logs are sent to stdout for container log aggregation
+- **Host & Container**: File logging is enabled with daily rotation and gzip compression
+
+## Configuration
+
+Add a `[logs]` section to `ricochet-config.toml` to customize logging behavior.
+The following configuration enables hourly log rotation with compression.
+It ensures that no log files older than a week exist and no more than 100 files are retained.
+
+```toml
+[logs]
+level = "debug"
+file_logging = true
+rotation = "hourly"
+compress = true
+max_files = 100
+max_age_days = 7
+```
+
+### Configuration Options
+
+- `level`: Log verbosity level (default: `"info"`)
+  - `"trace"`: Most verbose, includes all debug information
+  - `"debug"`: Detailed diagnostic information
+  - `"info"`: General informational messages (default)
+  - `"warn"`: Warning messages
+  - `"error"`: Least verbose, only error messages
+
+- `file_logging`: Enable or disable file-based logging (default: `true` for non-Kubernetes installations)
+
+- `rotation`: Log rotation schedule (default: `"daily"`)
+  - `"hourly"`: Rotate logs every hour
+  - `"daily"`: Rotate logs daily
+  - `"never"`: Disable rotation (single log file)
+
+- `compress`: Compress rotated logs with gzip (default: `true`)
+
+- `max_files`: Maximum number of rotated log files to keep (default: unlimited)
+
+- `max_age_days`: Maximum age in days for rotated log files (default: unlimited)
+
+## Logs Location
+
+Log files are stored in `RICOCHET_HOME/logs/` with names based on the rotation schedule:
+
+- **Daily rotation**: `ricochet.log-yyyy-MM-dd` (e.g., `ricochet.log-2026-02-21`)
+- **Hourly rotation**: `ricochet.log-yyyy-MM-dd-HH` (e.g., `ricochet.log-2026-02-21-08`)
+- **No rotation**: `ricochet.log`
+
+<Aside type="tip">
+The default `RICOCHET_HOME` location is `/var/lib/ricochet/data` when using the systemd service.
+See the [Configuration Overview](/dev/admin/configuration/0-overview/) for details on setting `RICOCHET_HOME`.
+</Aside>
+
+## Log Rotation and Cleanup
+
+When ricochet rotates logs, it performs cleanup in the following order:
+
+1. Delete all log files older than `max_age_days` (if configured)
+2. Delete oldest files beyond the `max_files` limit (if configured)
+3. Compress any uncompressed rotated files with gzip (excluding the current log file)
+
+This ensures old logs are cleaned up before compression runs, minimizing disk usage.
+
+Consider combining file logging with OpenTelemetry tracing for comprehensive observability:
+
+<LinkCard
+  title="OpenTelemetry Integration"
+  href="/dev/admin/configuration/otel/"
+  description="Export traces to Jaeger, Grafana, or other OTLP-compatible backends."
+/>

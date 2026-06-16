@@ -19,7 +19,7 @@
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
     "@tailwindcss/vite": "^4.3.0",
     "add": "^2.0.6",
-    "astro": "6.4.6",
+    "astro": "6.4.7",
     "pagefind": "^1.5.2",
     "rehype-figure": "^1.0.1",
     "rehype-mermaid": "^3.0.0",

@@ -10,6 +10,7 @@ import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
 import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
+import { unified } from "@astrojs/markdown-remark";
 import rehypeMermaid from "rehype-mermaid";
 import rehypeFigure from "rehype-figure";
 import rehypeTrailingSlash from "./scripts/rehype-trailing-slash.mjs";
@@ -181,14 +182,18 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    // Astro 6.4.2 regressed the default for `gfm` from true to false;
-    // see https://github.com/withastro/astro/issues/16971
-    gfm: true,
-    rehypePlugins: [
-      [rehypeMermaid, { strategy: "pre-mermaid" }],
-      rehypeFigure,
-      rehypeTrailingSlash,
-    ],
+    // Astro 7 moved markdown options onto a processor; the top-level
+    // `rehypePlugins`/`gfm` keys are deprecated. `unified()` keeps the classic
+    // pipeline (`gfm`/smart punctuation default to on). `gfm: true` is explicit
+    // to keep GFM tables/strikethrough guaranteed regardless of future defaults.
+    processor: unified({
+      gfm: true,
+      rehypePlugins: [
+        [rehypeMermaid, { strategy: "pre-mermaid" }],
+        rehypeFigure,
+        rehypeTrailingSlash,
+      ],
+    }),
   },
   vite: {
     plugins: [tailwindcss()],

@@ -6,12 +6,20 @@ tableOfContents: false
 template: splash
 ---
 
-**Released: June 10, 2026**
+**Released: June 28, 2026**
+
+### Breaking Changes
+
+- **CLI command reorganization**: Command lists have been tidied and reorganized for better usability
 
 ### Features
 
-- **Default Content ID for Init**: The `init` subcommand now accepts a default content ID parameter for easier initialization
-- **App Instance Management**: New commands added to manage application instances:
-  - `ricochet app instances {id}` - List instances for an app
-  - `ricochet app stop-instance {id} {pid}` - Stop a specific app instance
-- **Deployment Endpoints**: Added support for deployment endpoints to enable more flexible deployment configurations
+- **Dry run mode for updates**: Added `--dry-run` flag to `self update` command to preview updates without applying them
+- **Configuration file support**: App and task settings can now be updated from `_ricochet.toml` configuration file
+- **Default content ID**: The `init` subcommand now accepts a default content ID parameter
+- **App instance management**: Added `ricochet app instances {id}` command to view instances and `ricochet app stop-instance {id} {pid}` command to stop specific instances
+- **Deployment endpoints**: Added support for deployment endpoints
+
+### Fixes
+
+- **API compatibility**: Adapted to ContentType method renames in ricochet-core

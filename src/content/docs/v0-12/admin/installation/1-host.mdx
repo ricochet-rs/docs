@@ -161,7 +161,7 @@ When running as a daemon, ricochet writes the following files under `RICOCHET_HO
 `ricochet.stdout` and `ricochet.err` capture raw process output such as startup errors, panics, and anything printed before the logging system initializes.
 They are separate from the structured log files written by the `[logs]` configuration.
 For operational logging, configure `[logs]` in your `ricochet-config.toml`.
-See [File Logging](/dev/admin/configuration/file-logging/) for configuration options.
+See [File Logging](/v0-12/admin/configuration/file-logging/) for configuration options.
 
 ### Stopping the daemon
 
@@ -215,7 +215,7 @@ The `.deb` and `.rpm` packages bundle the following tools so that ricochet can m
 | [renv](https://rstudio.github.io/renv/) | `RICOCHET_HOME/vendor/r/renv` | R package environment restoration |
 
 When using the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
-See the [storage configuration](/dev/admin/configuration/0-overview/#storage) for more details.
+See the [storage configuration](/v0-12/admin/configuration/0-overview/#storage) for more details.
 
 <Aside type="note">
 The standalone binary does not include vendored dependencies.

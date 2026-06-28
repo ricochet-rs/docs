@@ -5,10 +5,10 @@ title: Dynamic Apps
 import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 
 Apps are content items that stay running to serve requests.
-Unlike [tasks](/dev/user/content-items/3-tasks), which execute once and then stop, an app keeps a process alive to handle incoming HTTP traffic — for example a Shiny dashboard, a Plumber API, or a FastAPI service.
-Ricochet automatically manages the lifecycle of app processes, including [scaling](/dev/user/managing-content/2-scaling) them up and down based on demand.
+Unlike [tasks](/v0-12/user/content-items/3-tasks), which execute once and then stop, an app keeps a process alive to handle incoming HTTP traffic — for example a Shiny dashboard, a Plumber API, or a FastAPI service.
+Ricochet automatically manages the lifecycle of app processes, including [scaling](/v0-12/user/managing-content/2-scaling) them up and down based on demand.
 
-See the [content items overview](/dev/user/content-items/1-content-items-overview) for the full list of supported app types.
+See the [content items overview](/v0-12/user/content-items/1-content-items-overview) for the full list of supported app types.
 
 ## How apps work
 
@@ -17,7 +17,7 @@ Ricochet routes incoming HTTP requests to the running process.
 If the app crashes, ricochet restarts it automatically.
 
 Apps scale horizontally by spawning additional instances when connection thresholds are reached.
-Configure scaling behavior in the ricochet web UI or via the `[serve]` settings in your [`_ricochet.toml`](/dev/user/deployment/2-ricochet-toml#serve-settings).
+Configure scaling behavior in the ricochet web UI or via the `[serve]` settings in your [`_ricochet.toml`](/v0-12/user/deployment/2-ricochet-toml#serve-settings).
 
 ## R apps
 
@@ -176,8 +176,8 @@ content_type = "julia-service"
 
 ## Deployment and configuration
 
-See the [deployment guide](/dev/user/deployment/1-ricochet-cli) for how to deploy apps using the CLI or via git integration, and the language-specific guides for project requirements:
+See the [deployment guide](/v0-12/user/deployment/1-ricochet-cli) for how to deploy apps using the CLI or via git integration, and the language-specific guides for project requirements:
 
-- [R](/dev/user/deployment/4-r)
-- [Julia](/dev/user/deployment/5-julia)
-- [Python](/dev/user/deployment/6-python)
+- [R](/v0-12/user/deployment/4-r)
+- [Julia](/v0-12/user/deployment/5-julia)
+- [Python](/v0-12/user/deployment/6-python)

@@ -20,6 +20,7 @@ import {
   removeLycheeExcludes,
   updateRootRedirect,
   updateVersionIndex,
+  rewriteDevLinks,
   releaseDocsVersion,
 } from "./release-docs-version.mjs";
 
@@ -125,6 +126,14 @@ test("updateVersionIndex rewrites slug and paths copied from dev", () => {
   );
 });
 
+test("rewriteDevLinks repoints absolute /dev/ links, leaving others alone", () => {
+  const src =
+    'href="/dev/admin/configuration/otel/"\nsee [x](/dev/user/quickstart/)\nkeep /v0-9/user/ and the word dev';
+  expect(rewriteDevLinks(src, "v0-10")).toBe(
+    'href="/v0-10/admin/configuration/otel/"\nsee [x](/v0-10/user/quickstart/)\nkeep /v0-9/user/ and the word dev',
+  );
+});
+
 function makeRepo() {
   const root = mkdtempSync(join(tmpdir(), "rel-"));
   const docs = join(root, "src/content/docs");
@@ -133,6 +142,11 @@ function makeRepo() {
   mkdirSync(versions, { recursive: true });
   writeFileSync(join(versions, "dev.json"), '{ "sidebar": [] }\n');
   writeFileSync(join(docs, "dev", "index.mdx"), 'slug: "dev"\nlink /dev/x/\n');
+  mkdirSync(join(docs, "dev", "admin"), { recursive: true });
+  writeFileSync(
+    join(docs, "dev", "admin", "page.mdx"),
+    "See [otel](/dev/admin/otel/) for details.\n",
+  );
   for (let minor = 1; minor <= 9; minor++) {
     const slug = `v0-${minor}`;
     mkdirSync(join(docs, slug), { recursive: true });
@@ -188,6 +202,11 @@ test("releaseDocsVersion creates v0-10 and prunes down to newest 5 + dev", () =>
       'slug: "v0-10"',
     );
     expect(existsSync(join(versions, "v0-10.json"))).toBe(true);
+
+    // Deep content links copied from dev are repointed at the new version.
+    expect(readFileSync(join(docs, "v0-10", "admin", "page.mdx"), "utf8")).toBe(
+      "See [otel](/v0-10/admin/otel/) for details.\n",
+    );
 
     // Kept: v0-6..v0-10 + dev. Pruned: v0-1..v0-5.
     for (const minor of [6, 7, 8, 9, 10]) {

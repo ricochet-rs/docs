@@ -6,12 +6,20 @@ tableOfContents: false
 template: splash
 ---
 
-**Released: June 10, 2026**
+**Released: June 28, 2026**
+
+### Breaking Changes
+
+- **Tidier CLI command organization**: Command lists have been reorganized for better usability and consistency
 
 ### Features
 
-- **Default Content ID for Init**: The `init` subcommand now accepts a default content ID parameter for easier initialization
-- **App Instance Management**: New commands added to manage application instances:
-  - `ricochet app instances {id}` - List instances for an app
-  - `ricochet app stop-instance {id} {pid}` - Stop a specific app instance
-- **Deployment Endpoints**: Added support for deployment endpoints to enable more flexible deployment configurations
+- **Dry-run mode for self-updates**: Added `--dry-run` flag to `self update` command to preview updates without applying them
+- **Configuration file support**: App and task settings can now be updated from `_ricochet.toml` configuration file
+- **Default content ID for initialization**: The `init` subcommand now accepts a default content ID parameter
+- **Instance management commands**: New commands `ricochet app instances {id}` to list app instances and `ricochet app stop-instance {id} {pid}` to stop specific instances
+- **Deployment endpoint support**: Added support for configuring and using deployment endpoints
+
+### Fixes
+
+- **Core API compatibility**: Adapted to method renames in ricochet-core ContentType API

@@ -11,27 +11,27 @@ template: splash
 ### Features
 
 #### UI
-- **Deployment Linking**: You can now navigate directly to triggered deployments from the redeploy screen
-- **Smarter Page Transitions**: Page loads now use fade-in transitions for a smoother experience
-- **Branch Selection**: The default branch is now selectable in the deploy branch picker
+- You can now navigate directly to triggered deployments from the redeploy screen
+- Page loads now use fade-in transitions for a smoother experience
+- The default branch is now selectable in the deploy branch picker
 
 #### Auth
-- **Enhanced OIDC Security**: Added PKCE (Proof Key for Code Exchange) to the OIDC authorization-code flow for improved security
+- Added PKCE (Proof Key for Code Exchange) to the OIDC authorization-code flow for improved security
 
 #### General
-- **Browser Tab Improvements**: Content apps now display custom page titles and favicons for better tab identification
+- Content apps now display custom page titles and favicons for better tab identification
 
 #### Proxy
-- **Memory Limit Enforcement**: Memory cgroup limits are now enforced on the host backend to prevent resource overuse
+- Memory cgroup limits are now enforced on the host backend to prevent resource overuse
 
 ### Fixes
 
 #### Proxy
-- **Improved Startup**: Orphaned container cgroups are now cleaned up automatically on startup
-- **Installation Reliability**: Added locking mechanism to prevent conflicts during renv installations
-- **Graceful Shutdown**: Managed processes are now properly terminated on SIGTERM before Pingora shutdown
-- **Container Stability**: Fixed child process panics by making container stdout/stderr blocking
-- **Memory Management**: Reduced memory usage by capping uv concurrency during Python package restoration
+- Orphaned container cgroups are now cleaned up automatically on startup
+- Added locking mechanism to prevent conflicts during renv installations
+- Managed processes are now properly terminated on SIGTERM
+- Fixed child process panics by making container `stdout/stderr` blocking
+- Reduced memory usage by capping uv concurrency during Python package restoration
 
 #### Auth
-- **API Key Validation**: Fixed 500 errors when validating API keys with BLOB-stored scopes
+- Fixed 500 errors when validating API keys with BLOB-stored scopes

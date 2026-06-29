@@ -104,10 +104,8 @@
 :root:not([data-has-sidebar]) .sl-markdown-content h4 {
   font-size: 0.8rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--sl-color-gray-3);
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 }
 

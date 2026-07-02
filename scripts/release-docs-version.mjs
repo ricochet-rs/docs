@@ -13,6 +13,7 @@ import {
   readFileSync,
   readdirSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -124,6 +125,32 @@ export function updateVersionIndex(src, slug) {
     .replace(/\/(?:dev|v[0-9]+-[0-9]+)\//g, `/${slug}/`);
 }
 
+// Rewrite absolute `/dev/...` links to `/<slug>/...`. A version is copied from
+// `dev`, so its content is littered with absolute `/dev/` links that must point
+// at the version itself — otherwise readers of a released version get sent into
+// the dev docs, and the links break the moment dev is restructured.
+export function rewriteDevLinks(src, slug) {
+  return src.replace(/\/dev\//g, `/${slug}/`);
+}
+
+function walkFiles(dir) {
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) out.push(...walkFiles(path));
+    else out.push(path);
+  }
+  return out;
+}
+
+// Apply rewriteDevLinks to every markdown file under a freshly-copied version.
+export function rewriteVersionLinks(versionDir, slug) {
+  for (const file of walkFiles(versionDir)) {
+    if (!/\.mdx?$/.test(file)) continue;
+    edit(file, (src) => rewriteDevLinks(src, slug));
+  }
+}
+
 function readCurrentLabel(src) {
   const m = src.match(/current:\s*\{\s*label:\s*"([0-9]+\.[0-9]+)/);
   return m ? m[1] : null;
@@ -183,6 +210,7 @@ export function releaseDocsVersion(
 
   edit(join(docsDir, "index.mdx"), (s) => updateRootRedirect(s, slug));
   edit(join(versionDir, "index.mdx"), (s) => updateVersionIndex(s, slug));
+  rewriteVersionLinks(versionDir, slug);
   edit(join(root, "lychee.toml"), (s) => addLycheeExclude(s, slug));
 
   const pruned = versionsToPrune(readdirSync(docsDir), keep);

@@ -61,7 +61,8 @@ The examples below use [`jose`](https://r-lib.r-universe.dev/jose) in R and [PyJ
 ```r
 library(jose)
 
-ricochet_url <- Sys.getenv("RICOCHET_HOST")
+# replace with your ricochet host
+ricochet_url <- "https://try.ricochet.rs"
 content_id <- Sys.getenv("RICOCHET_CONTENT_ID")
 
 # fetch the public key
@@ -90,7 +91,8 @@ import os
 import jwt
 from jwt import PyJWKClient
 
-ricochet_url = os.environ["RICOCHET_HOST"]
+# replace with your ricochet host
+ricochet_url = "https://try.ricochet.rs"
 content_id = os.environ["RICOCHET_CONTENT_ID"]
 
 # fetch the public key
@@ -100,7 +102,7 @@ jwks_client = PyJWKClient(jwks_url)
 # token is the value of the X-Ricochet-User header
 signing_key = jwks_client.get_signing_key_from_jwt(token)
 
-# audience verifies aud, exp is checked automatically
+# verify the jwt
 claims = jwt.decode(
     token,
     signing_key.key,

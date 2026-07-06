@@ -1,0 +1,28 @@
+---
+title: v0.13.0
+docs: release notes for Ricochet v0.13.0
+slug: releases/v0.13.0
+tableOfContents: false
+template: splash
+---
+
+**Released: July 6, 2026**
+
+### Security
+
+- Fixed vulnerabilities in thumbnail serving and tar unbundle operations that could allow unauthorized file access
+- Restored ACL role checks that were previously not being applied, ensuring proper authorization
+- Added validation for OIDC redirect URIs on authenticated shortcut paths to prevent open redirect attacks
+
+### Features
+
+- Proxy now injects `X-Ricochet-User` header containing user JWT for downstream services
+- Added ability to configure maximum bundle size limits
+
+### Fixes
+
+- List view filter selections now persist across page reloads
+- Fixed authentication requirement for `get_all_users` endpoint and properly bound log streams to content
+- Resolved a memory leak by removing dead instances from the proxy connection map
+- Fixed session affinity cookie persistence issues
+- Moved download-log button into log header for better accessibility

@@ -10,21 +10,19 @@ template: splash
 
 ### Security
 
-- **Path Traversal Protection**: Fixed vulnerabilities in thumbnail serving and tar unbundle operations that could allow unauthorized file access (C6–C7, #1118)
-- **Access Control Enforcement**: Restored ACL role checks that were previously not being applied, ensuring proper authorization (C1–C3, #1118)
-- **OIDC Redirect Validation**: Added validation for OIDC redirect URIs on authenticated shortcut paths to prevent open redirect attacks (C8, #1118)
-- **API Key Protection**: Redacted API keys in debug output to prevent accidental exposure in logs (C9, #1118)
+- Fixed vulnerabilities in thumbnail serving and tar unbundle operations that could allow unauthorized file access
+- Restored ACL role checks that were previously not being applied, ensuring proper authorization
+- Added validation for OIDC redirect URIs on authenticated shortcut paths to prevent open redirect attacks
 
 ### Features
 
-- **User Identity Headers**: Proxy now injects X-Ricochet-User header containing user JWT for downstream services
-- **Bundle Size Limits**: Added ability to configure maximum bundle size limits
-- **Persistent Filters**: List view filter selections now persist across page reloads
+- Proxy now injects `X-Ricochet-User` header containing user JWT for downstream services
+- Added ability to configure maximum bundle size limits
 
 ### Fixes
 
-- **User Authentication**: Fixed authentication requirement for get_all_users endpoint and properly bound log streams to content (C4–C5, #1118)
-- **Database Operations**: Corrected insert_row column handling, fixed api_keys JSONB storage, and made deletes properly transactional (C11–C13, #1118)
-- **Proxy Cleanup**: Resolved memory leak by removing dead instances from the proxy connection map
-- **Session Persistence**: Fixed session affinity cookie persistence issues
-- **UI Layout**: Moved download-log button into log header for better accessibility
+- List view filter selections now persist across page reloads
+- Fixed authentication requirement for `get_all_users` endpoint and properly bound log streams to content
+- Resolved a memory leak by removing dead instances from the proxy connection map
+- Fixed session affinity cookie persistence issues
+- Moved download-log button into log header for better accessibility

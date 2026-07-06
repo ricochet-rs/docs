@@ -9,10 +9,10 @@ This guide covers manual installation on a single Linux server.
 
 ## Supported platforms
 
-| Distribution              | Architecture | Package format |
-| ------------------------- | ------------ | -------------- |
-| Debian / Ubuntu           | amd64        | `.deb`         |
-| AlmaLinux / RHEL / EL  | x86_64       | `.rpm`         |
+| Distribution          | Architecture | Package format |
+| --------------------- | :----------- | :------------- |
+| Debian / Ubuntu       | amd64        | `.deb`         |
+| AlmaLinux / RHEL / EL | x86_64       | `.rpm`         |
 
 ## Install the package
 
@@ -112,6 +112,67 @@ sudo chown root:root /var/lib/ricochet/ricochet-config.toml
 
 Ricochet Server listens on port **6188** by default.
 
+## Using the standalone binary
+
+The standalone binary can run either as a blocking foreground process or as a daemonized background process.
+
+### Foreground mode
+
+By default, `ricochet start` runs in the foreground and prints logs to stdout/stderr:
+
+```sh
+ricochet start --config /path/to/ricochet-config.toml
+```
+
+The `--config` flag specifies the path to your `ricochet-config.toml`.
+If omitted, ricochet looks for `ricochet-config.toml` in the current working directory, so it is recommended to always pass `--config` with an explicit path.
+
+<Aside type="tip">
+  Set `home` to an absolute path in your `ricochet-config.toml`.
+  This controls where ricochet stores its database, content bundles, and logs.
+  If omitted, it defaults to the current working directory at start time.
+</Aside>
+
+### Daemon mode
+
+Use `--daemon` when you want ricochet to keep running after your terminal session ends.
+This is useful on remote servers where you do not want the process tied to your SSH connection.
+This is similar to running ricochet through systemd, which is what the `.rpm` and `.deb` installers do by default.
+For production use, the prepackaged installers are recommended over the standalone binary.
+
+Pass `--daemon` to detach the process and run it in the background:
+
+```sh
+ricochet start --config /path/to/ricochet-config.toml --daemon
+```
+
+<Aside type="note">
+  The `--daemon` flag is only available on Unix-like operating systems.
+</Aside>
+
+When running as a daemon, ricochet writes the following files under `RICOCHET_HOME`:
+
+| File | Purpose |
+| --- | --- |
+| `ricochet.pid` | Process ID of the running daemon |
+| `ricochet.stdout` | Standard output from the process |
+| `ricochet.err` | Standard error from the process |
+
+`ricochet.stdout` and `ricochet.err` capture raw process output such as startup errors, panics, and anything printed before the logging system initializes.
+They are separate from the structured log files written by the `[logs]` configuration.
+For operational logging, configure `[logs]` in your `ricochet-config.toml`.
+See [File Logging](/v0-13/admin/configuration/file-logging/) for configuration options.
+
+### Stopping the daemon
+
+Use `ricochet stop` to gracefully stop a daemonized process:
+
+```sh
+ricochet stop --config /path/to/ricochet-config.toml
+```
+
+If you passed a custom `--config` path to `ricochet start`, pass the same path to `ricochet stop` so it can locate the correct `ricochet.pid` file.
+
 ## Upgrade
 
 To upgrade to a new version, download the new package and install it over the existing one.
@@ -154,7 +215,7 @@ The `.deb` and `.rpm` packages bundle the following tools so that ricochet can m
 | [renv](https://rstudio.github.io/renv/) | `RICOCHET_HOME/vendor/r/renv` | R package environment restoration |
 
 When using the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
-See the [storage configuration](/v0-8/admin/configuration/0-overview/#storage) for more details.
+See the [storage configuration](/v0-13/admin/configuration/0-overview/#storage) for more details.
 
 <Aside type="note">
 The standalone binary does not include vendored dependencies.

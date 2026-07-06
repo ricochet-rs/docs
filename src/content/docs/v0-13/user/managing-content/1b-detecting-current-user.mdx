@@ -1,0 +1,143 @@
+---
+title: Detecting the Current User
+---
+
+import { Aside, Steps, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+Ricochet lets your apps and APIs identify the user making each request.
+Each request, ricochet injects an `X-Ricochet-User` HTTP header containing a signed [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) with a claim containing that user's information.
+
+An app deployed to ricochet can use this JWT to tailor its behavior based on the authenticated user.
+
+## The user claim
+
+The `X-Ricochet-User` token is a JWT whose claims describe the current user:
+
+| Claim    | Description                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------ |
+| `sub`    | User ID as provided by your configured identity provider (IdP).                                         |
+| `name`   | User display name as configured in ricochet.                                                           |
+| `email`  | User email, if provided by the configured IdP.                                                          |
+| `role`   | User role on the ricochet server, one of: `admin`, `developer`, or `consumer`.                          |
+| `groups` | Array of group IDs the user belongs to.                                                                |
+| `aud`    | Content ID of the item the token was generated for.                                                    |
+| `iat`    | Time the token was issued, in UTC.                                                                      |
+| `exp`    | Time the token expires, in UTC.                                                                         |
+
+<Aside type="note">
+  Identity providers and groups are configured by your server administrator.
+  See [authentication configuration](/v0-13/admin/configuration/1-authentication) for details.
+</Aside>
+
+## Verifying the token
+Each JWT has an expiry and is issued for a specific content item, stored in the `exp` and `aud` claims respectively.
+Verify the token before you accept it: `aud` must match the `RICOCHET_CONTENT_ID` environment variable, `exp` must not have passed, and the signature must be valid.
+
+Ricochet signs each token and publishes the corresponding public key as a [JSON Web Key Set (JWKS)](https://datatracker.ietf.org/doc/html/rfc7517) at `RICOCHET_HOST/.well-known/jwks.json`.
+Ricochet strips any inbound `X-Ricochet-User` header before issuing its own, so clients cannot spoof the token.
+
+The verification flow is the same in any language:
+
+<Steps>
+1. Fetch the JWKS from `RICOCHET_HOST/.well-known/jwks.json`.
+
+2. Read the `X-Ricochet-User` header from the incoming request.
+
+3. Decode and verify the token's signature using the public key.
+
+4. Confirm the `aud` claim matches your content's ID, read from the `RICOCHET_CONTENT_ID` environment variable.
+
+5. Confirm the token has not expired (`exp`).
+</Steps>
+
+## Decoding the token
+
+Use a maintained JWT library rather than parsing the token by hand.
+The examples below use [`jose`](https://r-lib.r-universe.dev/jose) in R and [PyJWT](https://pyjwt.readthedocs.io/en/stable/) in Python.
+
+<Tabs syncKey="lang">
+<TabItem label="R">
+
+```r
+library(jose)
+
+# replace with your ricochet host
+ricochet_url <- "https://try.ricochet.rs"
+content_id <- Sys.getenv("RICOCHET_CONTENT_ID")
+
+# fetch the public key
+jwks <- yyjsonr::read_json_conn(
+  file.path(ricochet_url, ".well-known", "jwks.json"),
+  arr_of_objs_to_df = FALSE
+)
+pubkey <- read_jwk(jwks$keys[[1]])
+
+# token is the value of the X-Ricochet-User header
+claims <- jwt_decode_sig(token, pubkey)
+
+# verify the audience matches this content item
+if (!identical(claims$aud, content_id)) {
+  stop("Invalid `aud` claim.")
+}
+
+claims$name
+```
+
+</TabItem>
+<TabItem label="Python">
+
+```python
+import os
+import jwt
+from jwt import PyJWKClient
+
+# replace with your ricochet host
+ricochet_url = "https://try.ricochet.rs"
+content_id = os.environ["RICOCHET_CONTENT_ID"]
+
+# fetch the public key
+jwks_url = f"{ricochet_url}/.well-known/jwks.json"
+jwks_client = PyJWKClient(jwks_url)
+
+# token is the value of the X-Ricochet-User header
+signing_key = jwks_client.get_signing_key_from_jwt(token)
+
+# verify the jwt
+claims = jwt.decode(
+    token,
+    signing_key.key,
+    algorithms=[signing_key.algorithm_name or "RS256"],
+    audience=content_id,
+)
+
+claims["name"]
+```
+
+</TabItem>
+</Tabs>
+
+How you read the `X-Ricochet-User` header depends on your framework.
+
+
+## Examples
+
+<CardGrid>
+  <LinkCard
+    title="Shiny (R)"
+    href="https://github.com/ricochet-rs/test-apps/tree/main/r/user-jwt-shiny"
+    description="Decode the current user in a Shiny for R app."
+  />
+  <LinkCard
+    title="Shiny (Python)"
+    href="https://github.com/ricochet-rs/test-apps/tree/main/python/user-jwt-shiny"
+    description="Decode the current user in a Shiny for Python app."
+  />
+  <LinkCard
+    title="Plumber (R)"
+    href="https://github.com/ricochet-rs/test-apps/tree/main/r/user-jwt-plumber"
+    description="Read and verify the user token in a Plumber API."
+  />
+</CardGrid>
+
+Have questions?
+[Start a discussion](https://github.com/orgs/ricochet-rs/discussions/new/choose) on GitHub.

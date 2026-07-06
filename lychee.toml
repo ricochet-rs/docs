@@ -7,9 +7,9 @@ exclude = [
     "https://docs.ricochet.rs/404/",
     # Trial instance may be down
     "https://try.ricochet.rs.*",
-    "https://docs.ricochet.rs/v0-8/.*",
     "https://docs.ricochet.rs/v0-9/.*",
     "https://docs.ricochet.rs/v0-10/.*",
     "https://docs.ricochet.rs/v0-11/.*",
     "https://docs.ricochet.rs/v0-12/.*",
+    "https://docs.ricochet.rs/v0-13/.*",
 ]

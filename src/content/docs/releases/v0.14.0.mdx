@@ -10,5 +10,8 @@ template: splash
 
 ### Fixes
 
+- Improved the robustness of preflight dependency checks for R items
+- Execution environments now support an optional Quarto key: `quarto = { version = "...", bin = "/path/to/quarto" }`
+  - If `bin` is specified, Quarto is called from the provided path, otherwise it is assumed to be on the `PATH`
 - Container images for `ricochet` now properly make uv available
-- Improved robustness of preflight dependency checks for R items
+- Minor UI enhancements

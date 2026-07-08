@@ -1,0 +1,178 @@
+---
+title: "Dependency Management"
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Deploying a content item to ricochet follows the same lifecycle regardless of language:
+
+<Steps>
+
+1. The bundle is uploaded to the REST API.
+
+2. The bundle is unpacked into the item's source code.
+
+3. The content environment's dependencies are installed.
+
+4. If the environment restores successfully, the deployment succeeds.
+
+</Steps>
+
+<Aside type="note">
+  ricochet makes no guarantee that an app is free of bugs or errors.
+  It only
+  guarantees that the specified dependencies can be installed.
+</Aside>
+
+## R
+
+R content items use `renv` to restore the package environment.
+
+When using the standalone installers or Helm charts, renv is vendored from `RICOCHET_HOME/vendor/r/renv.tar.gz`.
+
+renv is restored with the following commands (abbreviated for brevity):
+
+```r
+renv::init(bare = TRUE)
+renv::record(sprintf("renv@%s", as.character(packageVersion("renv"))))
+renv::restore(prompt = FALSE)
+renv::activate()
+```
+
+The vendored renv version is recorded to prevent renv from bootstrapping an out-of-date, incompatible version of itself for the content item.
+
+### Bootstrapping `{renv}`
+
+On startup, ricochet copies the tarball to `RICOCHET_HOME/.cache/vendor/r/renv.tar.gz`.
+This avoids masking from the PVC path in Kubernetes.
+
+<Steps>
+
+1. ricochet reads the requested R version from the `renv.lock` file and finds the closest matching version of R on the host.
+
+2. For that R version, ricochet checks whether renv is installed at `RICOCHET_HOME/r/{major}.{minor}`. On the Kubernetes backend, it checks `RICOCHET_HOME/r/{major}.{minor}/{os}/{arch}/`.
+
+3. If renv is not yet installed, ricochet installs it while holding a lock, ensuring no other R process contends for the same installation location.
+
+4. Once renv is installed, the dependency restore continues.
+
+</Steps>
+
+### Multi-arch Kubernetes clusters
+
+In Kubernetes environments, ricochet detects all available node types and runs the restore job for both `amd64` and `arm64` architectures when both are present.
+The restore succeeds only if it succeeds on both architectures.
+
+## Julia
+
+Julia content items are restored as follows:
+
+<Steps>
+
+1. ricochet vendors juliaup to detect Julia versions.
+
+2. The requested Julia version is determined from the `Manifest.toml` file.
+
+3. Packages are installed by running the command below.
+
+</Steps>
+
+```bash
+julia --quiet --history-file=no -e "using Pkg; Pkg.activate(\".\"); Pkg.instantiate()"
+```
+
+The `JULIA_DEPOT_PATH` is stored at `RICOCHET_HOME/.julia`.
+
+## Python
+
+Python content items are restored with `uv`:
+
+<Steps>
+
+1. The requested Python version is determined from the `.python-version` file.
+
+2. Packages are synced by running the command below.
+
+</Steps>
+
+```bash
+uv sync --python {python_path} --no-python-downloads --frozen
+```
+
+The following environment variables are set to limit resource usage:
+
+- `UV_CONCURRENT_DOWNLOADS`: `8`
+- `UV_CONCURRENT_INSTALLS`: `4`
+- `UV_CONCURRENT_BUILDS`: `2`
+
+## Preflight dependency checks
+
+Before spawning any apps, documents, or scripts, ricochet verifies that the package environment has not drifted.
+This is done through a preflight dependency check, shown below for each language.
+
+<Tabs>
+<TabItem label="R">
+```r
+user_lib <- Sys.getenv("R_LIBS_USER")
+if (!requireNamespace("renv", quietly = TRUE)) {
+  install.packages("RICOCHET_HOME/.cache/vendor/r/renv.tar.gz", repos = NULL, lib = user_lib)
+}
+renv::load()
+if (renv::status()$synchronized) {
+  quit(status = 0L)
+} else {
+  quit(status = 2L)
+}
+```
+</TabItem>
+<TabItem label="Julia">
+```julia
+using Pkg
+has_missing = let buf = IOBuffer()
+    Pkg.status(io = buf)
+    occursin("are not downloaded", String(take!(buf)))
+end
+
+exit(has_missing ? 0 : 2)
+```
+</TabItem>
+<TabItem label="Python">
+```bash
+uv sync --frozen --check --python {python-path}
+```
+</TabItem>
+</Tabs>
+
+If a check fails, the deployment is invalidated and a new deployment is triggered.
+If the check fails a second time, no further action is taken, avoiding an endless redeploy cycle.
+
+## Version matching
+
+ricochet applies the same compatible-version-matching logic across all languages.
+
+The requested version is first determined from your project's lockfile (`renv.lock`, `Manifest.toml`, or `.python-version`).
+ricochet then discovers the interpreters installed on your host.
+It uses internal logic for R, juliaup for Julia, and uv for Python.
+
+Matching is best-effort.
+If the exact requested version isn't available, ricochet resolves to the closest compatible one rather than failing.
+Versions are selected in the following order:
+
+<Steps>
+
+1. **Exact match.** If the requested version is available, it is used.
+
+2. **Nearest within the same major.minor release.** Otherwise, the highest available version that is at or below the requested version.
+
+3. **Nearest available.** If none qualify, the closest available version.
+
+4. **Newer major requested.** If the requested version's major is ahead of everything available, the largest available version is used.
+
+</Steps>
+
+<Aside type="note">
+  Python additionally honors the `requires-python` constraint in your
+  `uv.lock`.
+  Incompatible versions are filtered out before matching, and the
+  version in your `.python-version` file must satisfy that constraint.
+</Aside>

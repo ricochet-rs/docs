@@ -48,6 +48,11 @@ The default location of `RICOCHET_HOME` is the current working directory unless 
 `home = "/path/to/ricochet/home"` or environment variable.
 In the case of the **systemd service**, the default location is `/var/lib/ricochet/data`.
 
+<Aside type="tip">
+  When using the standalone binary, it is recommended to set `home` to an absolute path in your `ricochet-config.toml`.
+  This ensures consistent behavior regardless of the directory you launch from.
+</Aside>
+
 Alternatively, use the `RICOCHET_HOME` environment variable to specify where ricochet should use the home directory.
 
 ## Environment Variables
@@ -72,22 +77,22 @@ ricochet uses the below precedence for configuration values:
 
 <LinkCard
   title="Authentication"
-  href="/v0-9/admin/configuration/1-authentication/"
+  href="/v0-14/admin/configuration/1-authentication/"
   description="Configure OIDC authentication with your identity provider."
 />
 
 <LinkCard
   title="User Roles"
-  href="/v0-9/admin/configuration/2-user-roles/"
+  href="/v0-14/admin/configuration/2-user-roles/"
   description="Configure default user roles and understand ricochet's permission system."
 />
 <LinkCard
   title="Package Repositories"
-  href="/v0-9/admin/configuration/package-repositories/"
+  href="/v0-14/admin/configuration/package-repositories/"
   description="Override default package sources for R and Python content items."
 />
 <LinkCard
   title="Execution Backend"
-  href="/v0-9/admin/configuration/execution-backend/"
+  href="/v0-14/admin/configuration/execution-backend/"
   description="Use Kubernetes, Docker, or Podman as an execution backend."
 />

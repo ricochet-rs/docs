@@ -4,6 +4,196 @@ title: Execution Backend
 
 import { Aside } from "@astrojs/starlight/components";
 
-<Aside type="note" title="Coming Soon">
-  This documentation is under construction.
+ricochet runs user content — apps and tasks — in an **execution backend**.
+Three backends are supported:
+
+| Backend      | `engine` value | Use when                                                                                                          |
+| ------------ | -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Host         | (omitted)      | Single host, no container daemon. Content runs as isolated processes on the host via [libcontainer][libcontainer]. |
+| Container    | `container`    | Single host with a Docker- or Podman-compatible daemon. Content runs as full containers spawned through the daemon. |
+| Kubernetes   | `k8s`          | Multi-node cluster, content scheduled as Pods.                                                                    |
+
+[libcontainer]: https://docs.rs/libcontainer/
+
+If `[backend]` is omitted, ricochet uses the **host** backend.
+Content runs as isolated processes managed in-process by `libcontainer` (an OCI-runtime implementation, no daemon required), using the language interpreters installed on the host.
+This page documents the `container` and `k8s` backends; the host backend has no configuration knobs of its own.
+
+<Aside type="tip" title="Default exec-env images">
+  The container and Kubernetes backends pull an OCI image per content item.
+  ricochet publishes a continuously-updated set of production-ready images at [ricochet-rs/exec-envs](https://github.com/ricochet-rs/exec-envs) — R on Alpine, Ubuntu, and AlmaLinux; Python on Ubuntu and AlmaLinux — rebuilt weekly and suitable as defaults for `default_image` and per-content `exec_env` references.
+  Bring your own images when you need additional system libraries or a different language/version combination.
+</Aside>
+
+## Host vs container on a single host
+
+Both backends run content on the same machine as ricochet-server.
+The difference is **how** content is isolated and **where** the runtime environment comes from.
+
+| Dimension                | Host backend (`libcontainer`)                                          | Container backend (`container`)                                  |
+| ------------------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Isolation mechanism      | `libcontainer` namespaces/cgroups, set up in-process by ricochet-server | OCI containers, spawned by the host's Docker/Podman daemon       |
+| Daemon required          | No                                                                     | Yes (Docker, Podman, or compatible)                              |
+| Runtime / interpreters   | Whatever is installed on the host (system R, Python, Julia)            | Whatever the chosen image provides; arbitrary per content item   |
+| Per-content exec env     | Single shared host environment                                         | Per-item via `exec_env` → image, like the Kubernetes backend     |
+| Observability            | Processes are not visible to `docker ps` / container metrics tooling   | Each app/task is a real container — visible to standard tooling  |
+| Setup cost               | None — works on a fresh ricochet-server install                        | Install and run a container daemon, grant socket access          |
+
+Pick the **host** backend for simple single-tenant deployments where the host already has the interpreters you need and you do not want to operate a container daemon.
+
+Pick the **container** backend when you need different runtime environments per content item (e.g. R 4.3 vs R 4.5, conflicting system libraries), or when you want each running app and task to be a visible, individually observable container.
+
+## Container backend
+
+Set `engine = "container"` to spawn content as containers via a local Docker- or Podman-compatible daemon.
+
+```toml title="ricochet-config.toml"
+[backend]
+engine = "container"
+default_image = "r-default"
+exec_env_config_path = "ricochet-exec-env.toml"
+content_path = "/var/lib/ricochet/data/content"
+cache_path = "/var/lib/ricochet/data/.cache"
+```
+
+| Field                  | Required | Description                                                                                                                                                  |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `engine`               | yes      | Must be `"container"`.                                                                                                                                       |
+| `default_image`        | no       | Image category name from `exec_env_config_path`. Used when a content item does not specify its own exec environment.                                         |
+| `exec_env_config_path` | yes      | Path to the exec-env config TOML. Absolute, or relative to `RICOCHET_HOME`.                                                                                  |
+| `content_path`         | yes      | Host path bind-mounted into every spawned container at `/opt/ricochet/data/content`. Must contain ricochet's deployment bundles.                             |
+| `cache_path`           | yes      | Host path bind-mounted into every spawned container at `/opt/ricochet/cache`. Stores R, Julia, and Python package caches shared across content.              |
+| `proxy_host`           | no       | Hostname ricochet's reverse proxy uses to reach spawned content containers. Defaults to `localhost`; override when running ricochet-server in a container (see [Deployment scenarios](#deployment-scenarios)). |
+
+ricochet refuses to start if `exec_env_config_path`, `content_path`, or `cache_path` is missing.
+
+### Image resolution
+
+`default_image` and per-content `exec_env` values are looked up in the exec-env config.
+A category like `r-default` resolves to a concrete image reference (`docker.io/ricochetrs/r-alpine:4.5`).
+If the value does not match a category, ricochet treats it as a full image reference and uses it as-is.
+
+### Exec-env config
+
+The exec-env config TOML maps category names to concrete container images and declares the language runtimes inside each image.
+Content items pick a category via their `exec_env` setting; ricochet falls back to `default_image` when none is set.
+
+The example below references the [official ricochet exec-env images](https://github.com/ricochet-rs/exec-envs) — adjust the image and tag, or substitute your own.
+
+```toml title="ricochet-exec-env.toml"
+[image.r-default]
+image = "docker.io/ricochetrs/r-alpine:4.5"
+os = "alpine-3.23"
+arch = ["linux/amd64", "linux/arm64"]
+description = "Default R 4.5 environment (Alpine)"
+r = [
+  { version = "4.5.3", bin = "/usr/bin/R" },
+]
+
+[image.r-44]
+image = "docker.io/ricochetrs/r-alpine:4.4"
+os = "alpine-3.23"
+arch = ["linux/amd64", "linux/arm64"]
+r = [
+  { version = "4.4.3", bin = "/usr/bin/R" },
+]
+
+[image.python-default]
+image = "docker.io/ricochetrs/python-ubuntu:3.13"
+os = "ubuntu-26.04"
+arch = ["linux/amd64", "linux/arm64"]
+description = "Default Python 3.13 environment (Ubuntu)"
+python = [
+  { version = "3.13", bin = "/usr/local/bin/python3" },
+]
+```
+
+`r`, `python`, and `julia` arrays declare the interpreter versions present in the image and the path to their binaries — ricochet uses these to match a content item's required version against an available runtime.
+
+### Deployment scenarios
+
+How ricochet-server itself is deployed shapes the container-backend setup.
+The ricochet-server install is covered on its own page — only the container-backend specifics are below.
+
+#### ricochet-server via systemd (on the host)
+
+Set up ricochet-server first — see [Host installation](/dev/admin/installation/1-host/).
+
+Container-backend specifics:
+
+- The daemon and ricochet-server share the host's filesystem, so `content_path` and `cache_path` resolve consistently on both sides — nothing to translate.
+- The user running ricochet-server needs read/write access to the daemon socket (typically by adding it to the `docker` group, or running as root as the default systemd unit does).
+- `proxy_host` can stay at its default `localhost` since both processes share the host's network namespace.
+
+#### ricochet-server in a container (sibling containers)
+
+Set up ricochet-server in a container first — see [Container installation](/dev/admin/installation/2-container/).
+
+ricochet-server runs as a container and uses the host's daemon to spawn sibling containers for user content — sometimes called "Docker-out-of-Docker" (DooD).
+Three container-backend specifics apply:
+
+1. **Bind-mount the daemon socket** (`/var/run/docker.sock`) into the ricochet-server container.
+2. **Match host and ricochet-server paths for `content_path` and `cache_path`.** The daemon resolves these against the **host** filesystem, not ricochet-server's view, so the simplest correct setup mounts the host data directory at the same path inside the ricochet-server container.
+3. **Set `proxy_host` to an address ricochet-server can reach.** Sibling content containers publish their app ports to the host, not to ricochet-server's loopback. Either run ricochet-server with `--network host` (default `proxy_host` works), or use `--add-host=host.docker.internal:host-gateway` together with `proxy_host = "host.docker.internal"`, or set `proxy_host` to the host's IP.
+
+```sh title="Bridge network with host-gateway alias"
+docker run -d \
+  --name ricochet-server \
+  -p 6188:6188 \
+  --add-host=host.docker.internal:host-gateway \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/ricochet:/var/lib/ricochet \
+  docker.io/ricochetrs/ricochet-server:latest
+```
+
+```toml title="ricochet-config.toml (DooD)"
+[backend]
+engine = "container"
+exec_env_config_path = "ricochet-exec-env.toml"
+content_path = "/var/lib/ricochet/data/content"
+cache_path = "/var/lib/ricochet/data/.cache"
+proxy_host = "host.docker.internal"
+```
+
+## Kubernetes backend
+
+For multi-node clusters, use `engine = "k8s"`.
+ricochet creates a Deployment per app and a Job per task using the cluster's API.
+
+```toml title="ricochet-config.toml"
+[backend]
+engine = "k8s"
+namespace = "ricochet"
+default_image = "r-default"
+exec_env_config_path = "/etc/ricochet/exec-env.toml"
+pvc_content_name = "ricochet-content"
+pvc_cache_name = "ricochet-cache"
+image_pull_policy = "IfNotPresent"
+```
+
+The same [`ricochet-exec-env.toml`](#exec-env-config) format applies, and the [official exec-env images](https://github.com/ricochet-rs/exec-envs) work unchanged as Pod images — they're built multi-arch (amd64/arm64) and ship with the same runtimes used by the container backend.
+
+See [Kubernetes installation](/dev/admin/installation/3-kubernetes/) for cluster prerequisites, Helm chart values, and PVC sizing guidance.
+
+## Known issues
+
+<Aside type="caution" title="Path mismatch is silent">
+  Applies to the [container backend](#container-backend) — most often in the [DooD scenario](#ricochet-server-in-a-container-sibling-containers) where ricochet-server's filesystem view differs from the host's.
+
+  If `content_path` points to a path that does not exist on the host, the daemon still launches the spawned container — but bind-mounts the wrong (or empty) directory.
+  Content items will appear to deploy but fail at runtime because their bundles are not visible.
+  Verify `ls $content_path` works on the **host**, not just inside the ricochet-server container.
+</Aside>
+
+<Aside type="caution" title="Wrong proxy_host is silent too">
+  Applies to the [container backend](#container-backend) in the [DooD scenario](#ricochet-server-in-a-container-sibling-containers) only — see [Field reference](#container-backend) for the `proxy_host` setting.
+
+  If `proxy_host` resolves but does not actually reach the host (typo, wrong IP, missing `--add-host`), spawned content containers start and pass health checks at the container layer, but ricochet's reverse proxy gets a connection refused or timeout when it tries to route a request — surfacing as 502s in the UI.
+</Aside>
+
+<Aside type="note" title="Remote daemons not yet supported">
+  Applies to the [container backend](#container-backend). The [Kubernetes backend](#kubernetes-backend) is the supported path for multi-host execution today.
+
+  ricochet currently only talks to a daemon on the same host as ricochet-server.
+  Remote daemon support is on the roadmap.
 </Aside>

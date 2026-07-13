@@ -85,6 +85,30 @@
   margin-top: 1.5rem;
 }
 
+/*
+ * Release notes heading hierarchy.
+ * Scoped to splash-template pages (no sidebar), which only the release
+ * notes use. Creates three clearly distinct tiers:
+ *   h1  -> version (untouched, largest)
+ *   h3  -> section (Features / Fixes): bold, ruled divider
+ *   h4  -> category (UI / Auth / ...): small-caps "eyebrow" label
+ */
+:root:not([data-has-sidebar]) .sl-markdown-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+:root:not([data-has-sidebar]) .sl-markdown-content h4 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-3);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
 /* Style inline code in headings */
 h1 code,
 h2 code,

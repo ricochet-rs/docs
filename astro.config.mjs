@@ -10,6 +10,9 @@ import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
 import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
+import rehypeMermaid from "rehype-mermaid";
+import rehypeFigure from "rehype-figure";
+import rehypeTrailingSlash from "./scripts/rehype-trailing-slash.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -123,19 +126,14 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightVersions({
-          current: { label: "0.10 (latest)", redirect: "root" },
+          current: { label: "0.14 (latest)", redirect: "root" },
           versions: [
+            { slug: "v0-14", label: "0.14" },
+            { slug: "v0-13", label: "0.13" },
+            { slug: "v0-12", label: "0.12" },
+            { slug: "v0-11", label: "0.11" },
             { slug: "v0-10", label: "0.10" },
-            { slug: "v0-9", label: "0.9" },
-            { slug: "v0-8", label: "0.8" },
-            { slug: "v0-7", label: "0.7" },
-            { slug: "v0-6", label: "0.6" },
-            { slug: "v0-5", label: "0.5" },
-            { slug: "v0-4", label: "0.4" },
-            { slug: "v0-3", label: "0.3" },
             { slug: "dev", label: "dev" },
-            { slug: "v0-2", label: "0.2" },
-            { slug: "v0-1", label: "0.1" },
           ],
         }),
         starlightThemeNova({
@@ -176,7 +174,16 @@ export default defineConfig({
       sidebar: [],
     }),
   ],
-
+  markdown: {
+    // Astro 6.4.2 regressed the default for `gfm` from true to false;
+    // see https://github.com/withastro/astro/issues/16971
+    gfm: true,
+    rehypePlugins: [
+      [rehypeMermaid, { strategy: "pre-mermaid" }],
+      rehypeFigure,
+      rehypeTrailingSlash,
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

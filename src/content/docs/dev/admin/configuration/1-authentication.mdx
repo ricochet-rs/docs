@@ -91,6 +91,17 @@ Pick *Group ID* (the default) or *sAMAccountName* depending on what your tenant 
   Without it, ricochet can still sync group memberships at login from the ID token but cannot pull display names from the Graph API.
 </Aside>
 
+### User avatars
+
+Standard OIDC providers populate user avatars from the `picture` claim, but Entra omits that claim and serves photos only from Microsoft Graph.
+When `provider = "entra"` is set, ricochet fetches each user's photo at login from `GET /users/{id}/photo/$value`, resizes it to a 128×128 PNG, and stores it without overwriting a user-uploaded avatar.
+
+<Aside type="note">
+  Fetching avatars requires the app registration to have the **`User.Read.All`** Microsoft Graph application permission granted by an administrator (admin consent).
+  The group permissions above do not cover `/users/{id}/photo`.
+  Avatar fetching is best-effort — a missing permission, missing photo, or missing `oid` claim never blocks login.
+</Aside>
+
 <Aside type="note">
   Entra applies a "group overage" limit at roughly 200 group memberships per user.
   Beyond that point Entra stops embedding the groups array in the token and references it via Microsoft Graph instead, which ricochet does not currently follow.
@@ -127,6 +138,6 @@ When disabled (the default), unauthenticated users can browse public content but
 
 <LinkCard
   title="Learn about user roles"
-  href="/v0-1/admin/configuration/2-user-roles"
+  href="/dev/admin/configuration/2-user-roles"
   description="Configure user roles and default permissions."
 />

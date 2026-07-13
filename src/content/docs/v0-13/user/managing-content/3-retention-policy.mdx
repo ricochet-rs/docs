@@ -1,0 +1,31 @@
+---
+title: Deployment Retention
+---
+
+import { Aside, LinkCard } from "@astrojs/starlight/components";
+
+Retention policies control how many bundles are kept for a content item and for how long.
+You can override the server-wide defaults for an individual content item in its `_ricochet.toml`.
+
+Refer to the [Deployment Retention](/v0-13/admin/configuration/deployment-retention/) docs in the admin guide for guidance on how retention works, cleanup behavior, and server-wide configuration.
+
+<LinkCard
+  title="Deployment Retention"
+  href="/v0-13/admin/configuration/deployment-retention/"
+  description="How retention works, cleanup behavior, and server-wide configuration."
+/>
+
+## Per-content configuration
+
+Override the server default for a specific content item in its `_ricochet.toml`:
+
+```toml
+[retention]
+max_deployments = 5
+max_age_days = 30
+```
+
+<Aside type="note">
+When both a server-wide and a per-content policy are configured, ricochet applies the **stricter** of the two values.
+A per-content policy can tighten the server default but cannot relax it.
+</Aside>

@@ -24,6 +24,10 @@ lint: install
     bun prettier --check .
 
 # fix lints using prettier and format prose (semantic line breaks)
-fmt:
+fmt: install
     bun run scripts/semantic-breaks.mjs
     bun prettier --write .
+
+
+pr-review pr_num:
+    gh pr-review review view -R ricochet-rs/docs --pr {{ pr_num }} | jq

@@ -10,16 +10,16 @@ template: splash
 
 ### Features
 
-- **Actionable error toasts**: Error messages are now persistent, copyable, and include a resync action to help recover from issues more easily.
-- **Memory tracking**: The application now monitors memory usage and can identify when crashes are caused by out-of-memory conditions on the native backend.
-- **Quarto environment discovery**: Quarto installations are now automatically discovered and displayed in the environment view.
+- **Improved toasts**: Error messages are now persistent, copyable, and include a resync action to help recover from issues more easily.
+- **Memory tracking**: ricochet monitors memory usage and identifies when crashes are caused by out-of-memory on a best effort basis on the host backend.
+- **Quarto environment discovery**: Quarto installations are now automatically discovered and displayed in the environment view. Note that the newest version of quarto will always be used. A future release will support specifying a specific version of Quarto.
 
 ### Fixes
 
-- **Security**: Fixed a critical issue where the full server configuration, including the OIDC client_secret, was being exposed to clients.
+- **Security**: Fixed a critical issue where OIDC credentials could be accessed.
 - **Quarto Python sync improvements**: Eliminated false-positive out-of-sync warnings when rerunning Quarto documents with Python.
-- **Static content deny list**: Implemented proper access controls for static content to prevent unauthorized access.
+- **Static content deny list**: Implemented a strict deny list to prevent unauthorized access to files files being served from the item's output directory.
 - **Static URL redirects**: Fixed incorrect redirects from `/static/{id}` to `/static/{id}/` to ensure proper resource loading.
 - **Kubernetes**: Interpreters are now correctly hidden in the UI when running on Kubernetes environments.
 - **Tasks**: The View option now appears for rendered tasks without requiring manual static content configuration.
-- **API: Fixed display issues in Scalar API documentation for Key objects.
+- **API**: Fixed display issues in Scalar API documentation for Key objects.

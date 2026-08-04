@@ -4,6 +4,90 @@ title: Container
 
 import { Aside } from "@astrojs/starlight/components";
 
-<Aside type="note" title="Coming Soon">
-  This documentation is under construction.
+Run ricochet-server itself as a container.
+This is the same `ricochet-server` binary as the [host install](/dev/admin/installation/1-host/), packaged as an image.
+
+## Image
+
+```
+docker.io/ricochetrs/ricochet-server:<version>
+```
+
+Tags follow the ricochet release version, for example `v0.16.0`.
+A `latest` tag tracks the most recent stable release.
+
+## Security options
+
+ricochet runs content items as rootless OCI containers.
+Inside a container, that needs access to `/proc`, which container runtimes mask by default.
+
+| Option                                  | Required                | Purpose                                                                       |
+| --------------------------------------- | ----------------------- | ------------------------------------------------------------------------------- |
+| `--security-opt systempaths=unconfined` | always                  | Unmasks `/proc` so ricochet can set up its rootless containers.                |
+| `--security-opt seccomp=unconfined`     | always                  | Allows the syscalls used to create namespaces and mounts.                      |
+| `--security-opt apparmor=ricochet`      | hosts running AppArmor  | Applies ricochet's AppArmor profile instead of the runtime's default.          |
+
+<Aside type="caution" title="Prefer targeted options over --privileged">
+  Running with `--privileged` also works and is the shortest path, but it hands the container full access to the host.
+  The options above grant only what ricochet needs.
 </Aside>
+
+<Aside type="note" title="Seccomp profile">
+  A curated seccomp profile that replaces `seccomp=unconfined` is in progress and will be documented here once available.
+</Aside>
+
+## Required volumes
+
+Two host directories must be persisted across container restarts:
+
+| Mount target                    | Purpose                                                         |
+| ------------------------------- | ----------------------------------------------------------------- |
+| `/var/lib/ricochet`             | Database, deployment bundles, encryption keys, file logs.       |
+| `/var/lib/ricochet/data/.cache` | R, Julia, and Python package caches. Share across content runs. |
+
+The cache directory lives under `RICOCHET_HOME` by default, so mounting `/var/lib/ricochet` covers both.
+Separate them only if you want the cache on a different volume, for example a faster local disk instead of networked storage.
+
+## Ports
+
+ricochet-server listens on **6188** by default.
+
+## Minimal run
+
+```sh
+docker run -d \
+  --name ricochet-server \
+  -p 6188:6188 \
+  --security-opt systempaths=unconfined \
+  --security-opt seccomp=unconfined \
+  -v /var/lib/ricochet:/var/lib/ricochet \
+  docker.io/ricochetrs/ricochet-server:latest
+```
+
+Place your `ricochet-config.toml` at `/var/lib/ricochet/ricochet-config.toml` on the host.
+ricochet-server reads it on startup from the bind-mounted location.
+
+## Compose example
+
+```yaml title="compose.yml"
+services:
+  ricochet-server:
+    image: docker.io/ricochetrs/ricochet-server:latest
+    container_name: ricochet-server
+    ports:
+      - "6188:6188"
+    security_opt:
+      - systempaths=unconfined
+      - seccomp=unconfined
+    volumes:
+      - /var/lib/ricochet:/var/lib/ricochet
+    restart: unless-stopped
+```
+
+## Spawning user content
+
+With no `[backend]` block in `ricochet-config.toml`, ricochet-server runs content as rootless OCI containers **inside** its own container, using the interpreters in the ricochet-server image.
+This is the [host backend](/dev/admin/configuration/execution-backend/) and needs no further configuration.
+
+The [container backend](/dev/admin/configuration/execution-backend/#container-backend) is for ricochet-server running on the host next to a container daemon, not for ricochet-server in a container.
+For multi-node setups, use the [Kubernetes installation](/dev/admin/installation/3-kubernetes/) instead of a standalone container.

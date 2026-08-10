@@ -4,25 +4,24 @@ title: Container
 
 import { Aside } from "@astrojs/starlight/components";
 
-Run ricochet-server itself as a container.
-This is the same `ricochet-server` binary as the [host install](/dev/admin/installation/1-host/), packaged as an image with the interpreters and vendored tooling baked in.
+Run ricochet in a container.
 
 For multi-node setups, use the [Kubernetes installation](/dev/admin/installation/3-kubernetes/) instead of a standalone container.
 
 ## Image
 
+We provide standard images for Ubuntu and Alpine variants.
+
 ```
 reg.ricochet.rs/ricochet/ricochet-server:<tag>
 ```
-
-Two variants are published, identical in behaviour and differing only in base image.
 
 | Variant | Base   | Tag suffix |
 | ------- | ------ | ---------- |
 | Ubuntu  | Ubuntu | `-ubuntu`  |
 | Alpine  | Alpine | `-alpine`  |
 
-Each release publishes a full version tag plus moving minor and major tags, with and without the variant suffix.
+Each release publishes a full version tag plus moving minor and major tags, with and without the OS-variant suffix.
 
 ```
 reg.ricochet.rs/ricochet/ricochet-server:<major>.<minor>.<patch>-ubuntu
@@ -30,8 +29,8 @@ reg.ricochet.rs/ricochet/ricochet-server:<major>.<minor>-ubuntu
 reg.ricochet.rs/ricochet/ricochet-server:<major>-ubuntu
 ```
 
-Pin to a full version tag in production.
-There is no `latest` tag.
+We recommend pinning to a full version tag in production environments.
+Note that there is no `latest` tag.
 
 ## Security options
 
@@ -48,7 +47,7 @@ Doing that from inside a container needs both a wider capability set and an unma
 `SYS_ADMIN` is the only capability missing from the runtime's default set.
 Without it, the server starts normally and every content deployment then fails during environment restore with an `intermediate process error EINVAL` that names no syscall.
 
-<Aside type="caution" title="Prefer targeted options over --privileged">
+<Aside type="caution" title="Avoid using --privileged">
   Running with `--privileged` also works and is the shortest path, but it hands the container full access to the host.
   The options above grant only what ricochet needs.
 </Aside>
@@ -95,13 +94,7 @@ Dropping any of them fails identically, so the error message will not tell you w
 | `SETUID` / `SETGID` | Writing the multi-range `uid_map`/`gid_map` for the nested container. `newuidmap`/`newgidmap` are setuid-root, but a setuid binary's capabilities are capped by the bounding set, so `--cap-drop=ALL` alone leaves them unable to write the maps. |
 | `DAC_OVERRIDE`      | Traversing and mounting host paths whose ownership does not match the container user.                                                                                                                                                         |
 
-Twelve of the runtime's default capabilities are dropped and stay dropped: `CHOWN`, `FOWNER`, `FSETID`, `MKNOD`, `SETFCAP`, `SETPCAP`, `SYS_CHROOT`, `KILL`, `AUDIT_WRITE`, `NET_RAW`, `NET_BIND_SERVICE`, and `SYS_PTRACE`.
-
 ### Security posture
-
-<Aside type="tip" title="This is not --privileged">
-  There is no device access, no writable `/sys`, and the container filesystem is not root-owned.
-</Aside>
 
 It is still a meaningful widening of the default sandbox, and you should expect to justify it to a security review:
 

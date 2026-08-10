@@ -126,23 +126,12 @@ Note that we recommend dropping every default capability and adding only what is
   A curated seccomp profile that replaces `seccomp=unconfined` is in progress and will be documented here once available.
 </Aside>
 
-### Rootless in rootless
-
-- The images we provide run rootless.
-- ricochet itself spawns [Open Container Initiative](https://opencontainers.org/)-compatible rootless containers to run content.
-- In essence, this means rootless containers running inside a rootless container.
-- One consequence: memory limits can't be enforced on a per-app basis when ricochet itself runs in a container — see [Memory limits are not enforced](#memory-limits-are-not-enforced).
-
 ## Required volumes
 
-Mount a named volume at `/var/lib/ricochet/data` — ricochet's `RICOCHET_HOME`.
+Mount a named volume at `/var/lib/ricochet/data`.
 It holds the database, deployment bundles, encryption keys, file logs, the package caches under `.cache`, and the configuration file.
-
-Split the cache onto its own volume at `/var/lib/ricochet/data/.cache` only if you want it on a different disk, for example a fast local disk instead of networked storage.
-
 Prefer a **named volume** over a bind mount.
 Docker populates an empty named volume from the image, so the vendored `uv` and `juliaup` binaries under `data/vendor/` and the default `ricochet-config.toml` are carried over.
-A bind mount of an empty host directory copies nothing, so Python and Julia environment restores fail on missing tooling.
 
 If you need a bind mount to a host path, copy the image's data onto it first:
 
@@ -152,24 +141,6 @@ docker create --name ricochet-init reg.ricochet.rs/ricochet/ricochet-server:${VE
 docker cp ricochet-init:/var/lib/ricochet/data/. /srv/ricochet/
 docker rm ricochet-init
 ```
-
-<Aside type="caution" title="Never mount anything at /work">
-  `/work` is where ricochet binds the deployment bundle inside each content container.
-  A volume there collides with it, and the symptom is unrelated-looking, such as R reporting `'lib = "/work/.cache/r/<version>"' is not writable`.
-</Aside>
-
-## Configuration
-
-ricochet doesn't change its behavior for the container.
-The image runs `ricochet start`, which reads configuration the same way a [host install](/dev/admin/installation/1-host/) does.
-Bind-mounting `ricochet-config.toml` onto `/var/lib/ricochet/data/ricochet-config.toml`, as shown in [Quickstart](#quickstart), keeps the file on the host.
-Edit it there and restart:
-
-```sh
-docker restart ricochet-server
-```
-
-Setting `RICOCHET_CONFIG` to a different path works too, but then persisting that path is on you.
 
 ## Limitations
 

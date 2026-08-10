@@ -5,27 +5,48 @@ title: Container
 import { Aside } from "@astrojs/starlight/components";
 
 Run ricochet-server itself as a container.
-This is the same `ricochet-server` binary as the [host install](/dev/admin/installation/1-host/), packaged as an image.
+This is the same `ricochet-server` binary as the [host install](/dev/admin/installation/1-host/), packaged as an image with the interpreters and vendored tooling baked in.
+
+For multi-node setups, use the [Kubernetes installation](/dev/admin/installation/3-kubernetes/) instead of a standalone container.
 
 ## Image
 
 ```
-docker.io/ricochetrs/ricochet-server:<version>
+reg.ricochet.rs/ricochet/ricochet-server:<tag>
 ```
 
-Tags follow the ricochet release version, for example `v0.16.0`.
-A `latest` tag tracks the most recent stable release.
+Two variants are published, identical in behaviour and differing only in base image.
+
+| Variant | Base   | Tag suffix |
+| ------- | ------ | ---------- |
+| Ubuntu  | Ubuntu | `-ubuntu`  |
+| Alpine  | Alpine | `-alpine`  |
+
+Each release publishes a full version tag plus moving minor and major tags, with and without the variant suffix.
+
+```
+reg.ricochet.rs/ricochet/ricochet-server:<major>.<minor>.<patch>-ubuntu
+reg.ricochet.rs/ricochet/ricochet-server:<major>.<minor>-ubuntu
+reg.ricochet.rs/ricochet/ricochet-server:<major>-ubuntu
+```
+
+Pin to a full version tag in production.
+There is no `latest` tag.
 
 ## Security options
 
 ricochet runs content items as rootless OCI containers.
-Inside a container, that needs access to `/proc`, which container runtimes mask by default.
+Doing that from inside a container needs both a wider capability set and an unmasked `/proc`.
 
-| Option                                  | Required                | Purpose                                                                       |
-| --------------------------------------- | ----------------------- | ------------------------------------------------------------------------------- |
-| `--security-opt systempaths=unconfined` | always                  | Unmasks `/proc` so ricochet can set up its rootless containers.                |
-| `--security-opt seccomp=unconfined`     | always                  | Allows the syscalls used to create namespaces and mounts.                      |
-| `--security-opt apparmor=ricochet`      | hosts running AppArmor  | Applies ricochet's AppArmor profile instead of the runtime's default.          |
+| Option                                  | Required               | Purpose                                                                                                            |
+| --------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `--cap-add=SYS_ADMIN`                   | always                 | Nested user and mount namespaces, `pivot_root`, and mounting a fresh procfs. Not part of the default capability set. |
+| `--security-opt systempaths=unconfined` | always                 | Unmasks `/proc` so ricochet can set up its rootless containers.                                                    |
+| `--security-opt seccomp=unconfined`     | always                 | Allows the syscalls used to create namespaces and mounts.                                                          |
+| `--security-opt apparmor=<profile>`     | hosts running AppArmor | Grants the `userns` permission that Ubuntu 23.10+ withholds by default. See [AppArmor](#apparmor).                 |
+
+`SYS_ADMIN` is the only capability missing from the runtime's default set.
+Without it, the server starts normally and every content deployment then fails during environment restore with an `intermediate process error EINVAL` that names no syscall.
 
 <Aside type="caution" title="Prefer targeted options over --privileged">
   Running with `--privileged` also works and is the shortest path, but it hands the container full access to the host.
@@ -36,52 +57,141 @@ Inside a container, that needs access to `/proc`, which container runtimes mask 
   A curated seccomp profile that replaces `seccomp=unconfined` is in progress and will be documented here once available.
 </Aside>
 
-## Required volumes
-
-Two host directories must be persisted across container restarts:
-
-| Mount target                    | Purpose                                                         |
-| ------------------------------- | ----------------------------------------------------------------- |
-| `/var/lib/ricochet`             | Database, deployment bundles, encryption keys, file logs.       |
-| `/var/lib/ricochet/data/.cache` | R, Julia, and Python package caches. Share across content runs. |
-
-The cache directory lives under `RICOCHET_HOME` by default, so mounting `/var/lib/ricochet` covers both.
-Separate them only if you want the cache on a different volume, for example a faster local disk instead of networked storage.
-
 ## Ports
 
 ricochet-server listens on **6188** by default.
 
-## Minimal run
+## Run
+
+Dropping the default capabilities and adding back only the four ricochet uses is narrower than adding `SYS_ADMIN` on top of the defaults, and is the recommended form.
 
 ```sh
+VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+
+docker volume create ricochet-data
+
 docker run -d \
   --name ricochet-server \
   -p 6188:6188 \
-  --security-opt systempaths=unconfined \
+  -v ricochet-data:/var/lib/ricochet/data \
+  --cap-drop=ALL \
+  --cap-add=SYS_ADMIN \
+  --cap-add=SETUID \
+  --cap-add=SETGID \
+  --cap-add=DAC_OVERRIDE \
   --security-opt seccomp=unconfined \
-  -v /var/lib/ricochet:/var/lib/ricochet \
-  docker.io/ricochetrs/ricochet-server:latest
+  --security-opt systempaths=unconfined \
+  reg.ricochet.rs/ricochet/ricochet-server:${VERSION#v}-ubuntu
 ```
 
-Place your `ricochet-config.toml` at `/var/lib/ricochet/ricochet-config.toml` on the host.
-ricochet-server reads it on startup from the bind-mounted location.
+### Why each capability is needed
+
+Each of the four was measured against a real content deployment, and each one is necessary.
+Dropping any of them fails identically, so the error message will not tell you which one is missing.
+
+| Capability          | Reason                                                                                                                                                                                                                                        |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SYS_ADMIN`         | Nested user and mount namespaces, `pivot_root`, and mounting a fresh procfs. No narrower capability covers these.                                                                                                                             |
+| `SETUID` / `SETGID` | Writing the multi-range `uid_map`/`gid_map` for the nested container. `newuidmap`/`newgidmap` are setuid-root, but a setuid binary's capabilities are capped by the bounding set, so `--cap-drop=ALL` alone leaves them unable to write the maps. |
+| `DAC_OVERRIDE`      | Traversing and mounting host paths whose ownership does not match the container user.                                                                                                                                                         |
+
+Twelve of the runtime's default capabilities are dropped and stay dropped: `CHOWN`, `FOWNER`, `FSETID`, `MKNOD`, `SETFCAP`, `SETPCAP`, `SYS_CHROOT`, `KILL`, `AUDIT_WRITE`, `NET_RAW`, `NET_BIND_SERVICE`, and `SYS_PTRACE`.
+
+### Security posture
+
+<Aside type="tip" title="This is not --privileged">
+  There is no device access, no writable `/sys`, and the container filesystem is not root-owned.
+</Aside>
+
+It is still a meaningful widening of the default sandbox, and you should expect to justify it to a security review:
+
+- These capabilities live in the **initial** user namespace unless the daemon itself runs with `--userns-remap` or as rootless Docker.
+  `SYS_ADMIN` in the initial user namespace is routinely described as equivalent to root.
+- `seccomp=unconfined` removes the syscall filter for the entire container, not only for the code that spawns nested containers.
+
+If that trade is unacceptable, run ricochet on a [host install](/dev/admin/installation/1-host/) instead, where content is isolated by the same rootless containers without the daemon needing these options.
+
+## Required volumes
+
+Mount a volume at `/var/lib/ricochet/data`.
+This is `RICOCHET_HOME`, and it holds the database, deployment bundles, encryption keys, file logs, the package caches under `.cache`, and the configuration file.
+
+Split the cache onto its own volume at `/var/lib/ricochet/data/.cache` only if you want it on a different disk, for example a fast local disk instead of networked storage.
+
+<Aside type="danger" title="Do not mount at /var/lib/ricochet">
+  The parent directory also contains the server binary (`bin/`) and the vendored renv tarball (`vendor/`), which are baked into the image.
+  Mounting a volume over `/var/lib/ricochet` hides them, and the container exits immediately with:
+
+```
+[FATAL tini (7)] exec /var/lib/ricochet/bin/ricochet-server failed: No such file or directory
+```
+
+</Aside>
+
+Prefer a **named volume** over a bind mount.
+Docker seeds an empty named volume from the image, so the vendored `uv` and `juliaup` binaries under `data/vendor/` and the default `ricochet-config.toml` are carried over.
+A bind mount of an empty host directory copies nothing, so Python and Julia environment restores fail on missing tooling.
+
+If you need a bind mount to a host path, seed it first:
+
+```sh
+# copy the image's RICOCHET_HOME to the host before mounting over it
+docker create --name ricochet-seed reg.ricochet.rs/ricochet/ricochet-server:${VERSION#v}-ubuntu
+docker cp ricochet-seed:/var/lib/ricochet/data/. /srv/ricochet/
+docker rm ricochet-seed
+```
+
+<Aside type="caution" title="Never mount anything at /work">
+  `/work` is where ricochet binds the deployment bundle inside each content container.
+  A volume there collides with it, and the symptom is unrelated-looking, such as R reporting `'lib = "/work/.cache/r/<version>"' is not writable`.
+</Aside>
+
+## Configuration
+
+The image reads its configuration from `/var/lib/ricochet/data/ricochet-config.toml`, inside the persisted volume.
+
+At a minimum you need to configure OIDC authentication:
+
+```toml title="/var/lib/ricochet/data/ricochet-config.toml"
+[auth.oidc]
+issuer_url = "https://your-idp.example.com/"
+client_id = "your-client-id"
+client_secret = "your-client-secret"
+redirect_url = "https://your-ricochet-host.example.com/oauth/callback"
+```
+
+With a named volume, edit it in place once the container has started:
+
+```sh
+docker exec -it ricochet-server vi /var/lib/ricochet/data/ricochet-config.toml
+docker restart ricochet-server
+```
 
 ## Compose example
 
 ```yaml title="compose.yml"
 services:
   ricochet-server:
-    image: docker.io/ricochetrs/ricochet-server:latest
+    image: reg.ricochet.rs/ricochet/ricochet-server:<version>-ubuntu
     container_name: ricochet-server
     ports:
       - "6188:6188"
+    cap_drop:
+      - ALL
+    cap_add:
+      - SYS_ADMIN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
     security_opt:
-      - systempaths=unconfined
       - seccomp=unconfined
+      - systempaths=unconfined
     volumes:
-      - /var/lib/ricochet:/var/lib/ricochet
+      - ricochet-data:/var/lib/ricochet/data
     restart: unless-stopped
+
+volumes:
+  ricochet-data:
 ```
 
 ## Spawning user content
@@ -90,4 +200,38 @@ With no `[backend]` block in `ricochet-config.toml`, ricochet-server runs conten
 This is the [host backend](/dev/admin/configuration/execution-backend/) and needs no further configuration.
 
 The [container backend](/dev/admin/configuration/execution-backend/#container-backend) is for ricochet-server running on the host next to a container daemon, not for ricochet-server in a container.
-For multi-node setups, use the [Kubernetes installation](/dev/admin/installation/3-kubernetes/) instead of a standalone container.
+
+## Limitations
+
+### Memory limits are not enforced
+
+Per-app and global memory limits are silently ignored when ricochet itself runs in a container.
+
+Applying a limit means delegating the cgroup v2 memory controller to a child cgroup, which requires writing `cgroup.subtree_control`.
+A container cannot do that: its cgroupfs is read-only, and the rule that would otherwise permit it exempts only the real cgroup v2 root, not the root a cgroup namespace presents.
+ricochet detects this at spawn time and logs a warning rather than failing the deployment.
+
+Bound the container as a whole instead:
+
+```sh
+docker run --memory=32g --memory-swap=32g ...
+```
+
+For enforced per-app limits, use a [host install](/dev/admin/installation/1-host/) or [Kubernetes](/dev/admin/installation/3-kubernetes/).
+
+### AppArmor
+
+Ubuntu 23.10 and newer restrict unprivileged user namespaces through AppArmor, which the rootless content containers need.
+The `.deb` package installs and loads a `ricochet` profile granting `userns` as part of its post-install step, so a host install handles this for you.
+
+A container-only install has no such step: the profile has to exist on the machine running the container runtime before `--security-opt apparmor=ricochet` will resolve.
+This path has not been validated against the runtime's default `docker-default` profile.
+If deployments fail during environment restore on an AppArmor host, confirm AppArmor is the cause with `--security-opt apparmor=unconfined` before writing a tailored profile.
+
+### OpenShift
+
+Deploying content is not supported on OpenShift.
+
+OpenShift assigns each container an arbitrary UID with no matching entry in `/etc/passwd` or `/etc/subuid`.
+Rootless content containers need a subordinate UID range for that user, so there is nothing for the runtime to map to.
+The server itself starts, but every content deployment fails during environment restore.

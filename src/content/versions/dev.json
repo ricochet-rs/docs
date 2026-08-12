@@ -4,6 +4,7 @@
       "label": "User",
       "items": [
         "user/quickstart",
+        "user/time-zone",
         {
           "label": "Content Items",
           "autogenerate": { "directory": "user/content-items" }

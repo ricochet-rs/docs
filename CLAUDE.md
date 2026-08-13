@@ -17,7 +17,7 @@ Read their `SKILL.md` files directly from the shared checkout and follow them fo
 If authentication, synchronization, HEAD validation, or a required read fails, stop before modifying the repository and report the failure clearly.
 Do not silently continue with missing or stale shared instructions.
 
-# Repository instructions
+## Repository instructions
 
 The phrase "You're absolutely right" is banned.
 

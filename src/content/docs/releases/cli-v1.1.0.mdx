@@ -1,0 +1,34 @@
+---
+title: CLI v1.1.0
+docs: release notes for Ricochet CLI v1.1.0
+slug: releases/cli-v1.1.0
+tableOfContents: false
+template: splash
+---
+
+**Released: August 14, 2026**
+
+### Features
+
+#### Deployments
+
+- `ricochet deploy --git` deploys content from a Git repository.
+
+#### Authentication
+
+- `ricochet user credentials` manages authentication credentials.
+- The first login defaults to the hosted trial.
+
+#### Environment variables
+
+- You can fetch, add, delete, update, and overwrite environment variables from the CLI.
+
+### Fixes
+
+#### Command output
+
+- `ricochet invoke` and `ricochet settings update` produce valid JSON and YAML output.
+
+#### Deployments
+
+- Deployment bundles exclude Python `__pycache__` directories.

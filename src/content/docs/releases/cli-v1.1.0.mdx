@@ -10,13 +10,25 @@ template: splash
 
 ### Features
 
-- **Git deployment support**: Add `--git` flag to `ricochet deploy` command for Git-based deployments
-- **User credentials management**: New `ricochet user credentials` command to manage authentication credentials
-- **Environment variable management**: Fetch, add, delete, update, and overwrite environment variables directly from the CLI
-- **Default trial login**: Authentication now defaults to hosted trial on first login
+#### Deployments
+
+- `ricochet deploy --git` deploys content from a Git repository.
+
+#### Authentication
+
+- `ricochet user credentials` manages authentication credentials.
+- The first login defaults to the hosted trial.
+
+#### Environment variables
+
+- You can fetch, add, delete, update, and overwrite environment variables from the CLI.
 
 ### Fixes
 
-- **Parseable output formats**: JSON and YAML output now remains properly parseable for `invoke` and `settings update` commands
-- **Cleaner deployments**: Python cache directories (`__pycache__`) are now excluded from deployment bundles
-- **Table rendering**: Updated to use supported table styling API for better compatibility
+#### Command output
+
+- `ricochet invoke` and `ricochet settings update` produce valid JSON and YAML output.
+
+#### Deployments
+
+- Deployment bundles exclude Python `__pycache__` directories.

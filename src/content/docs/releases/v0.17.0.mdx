@@ -1,0 +1,47 @@
+---
+title: v0.17.0
+docs: release notes for Ricochet v0.17.0
+slug: releases/v0.17.0
+tableOfContents: false
+template: splash
+---
+
+**Released: August 14, 2026**
+
+### Features
+
+#### Deployments
+
+- Create new deployments from Git repositories through the REST API.
+- Fetch and update deployment environment variables through the REST API.
+
+#### Authentication
+
+- Switch between authenticated SSO accounts without signing out first.
+- Retrieve the current user's stored Git credentials through the REST API.
+
+#### UI
+
+- Ricochet configures the interface timezone from the browser automatically.
+
+### Fixes
+
+#### Deployments
+
+- Apps configured with minimum instances are restored automatically when workers stop.
+- Ricochet records why a worker stopped and surfaces that reason to the user.
+- Rootless container-in-container deployments now resolve subordinate user and group IDs correctly.
+
+#### UI
+
+- Environment variable names and values are limited to the size supported by encryption, preventing invalid submissions.
+- File uploads provide clearer progress and feedback.
+
+#### Core
+
+- Read-only commands no longer initialize a new Ricochet instance unexpectedly.
+- Ricochet resolves its home and content directories consistently across commands.
+
+#### API
+
+- API errors now interpolate their details correctly instead of returning placeholder text.

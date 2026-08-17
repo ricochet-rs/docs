@@ -3,11 +3,15 @@ title: "Environment Variables"
 ---
 
 Environment variables are key-value pairs that can be used to customize behavior at runtime.
+Set them in the `ricochet` UI or through the REST API.
 
 During development you may use a `.Renviron` or `.env` file to keep track of secrets.
 These files **should not** be deployed alongside your content item.
-Instead, set environment in the `ricochet` UI.
-Note that environment variables are encrypted at rest and only decrypted before starting an R or Julia process.
+Note that environment variables are encrypted at rest and only decrypted before starting a process.
+
+Changing a variable replaces the item's running instances, so the new value applies to the next request without a redeploy.
+
+## Using the UI
 
 To add environment variables navigate to your content item's setting page at `https://ricochet.rs/content/{ID}/settings/env`.
 The `Key` is the name of the environment variable.
@@ -15,6 +19,55 @@ The `Key` is the name of the environment variable.
 Press save after adding new environment variables.
 
 The new environment variables will be available to any new processes.
+
+## Using the REST API
+
+Names and values are encrypted before they leave the client, so no secret is ever sent in plain text.
+Fetch the server's public key, encrypt each name and value against it, then send them as a JSON object:
+
+```shell
+# fetch the server's public key
+curl -s https://try.ricochet.rs/api/v0/public-key -o ricochet.pub
+
+# encrypt one name or value
+encrypt() {
+  printf '%s' "$1" | openssl pkeyutl -encrypt -pubin -inkey ricochet.pub \
+    -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 | openssl base64 -A
+}
+
+# add or update API_TOKEN and leave the other variables in place
+curl -X PATCH \
+  'https://try.ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/env-vars' \
+  -H 'Authorization: Key rico_AJFFXAaFVcw_LjrcKuB10gJ34cL9mS9mQu4oGjrafG56k' \
+  -H 'Content-Type: application/json' \
+  -d "{\"$(encrypt API_TOKEN)\": \"$(encrypt s3cr3t)\"}"
+```
+
+Each name and value is RSA-OAEP encrypted with SHA-256 and then base64 encoded.
+The request body maps an encrypted name to its encrypted value.
+
+| Method   | Path                                   | Effect                                             |
+| -------- | -------------------------------------- | -------------------------------------------------- |
+| `GET`    | `/api/v0/content/{id}/env-vars`        | List the names                                     |
+| `PATCH`  | `/api/v0/content/{id}/env-vars`        | Add or update the variables sent and keep the rest |
+| `PUT`    | `/api/v0/content/{id}/env-vars`        | Replace the whole set and delete anything not sent |
+| `DELETE` | `/api/v0/content/{id}/env-vars/{name}` | Remove one variable                                |
+
+Every endpoint answers with the item's environment variable names, sorted.
+Values are never returned, by design, so a `GET` cannot be used to read a secret back.
+
+`DELETE` takes the plain name in the path, not an encrypted one.
+
+### Limits
+
+A name or a value may be at most 190 bytes, which is the most a 2048 bit RSA key carries under OAEP with SHA-256.
+Longer strings cannot be encrypted at all.
+
+Names take ASCII letters, digits and underscores, and may not start with a digit.
+
+:::note[Permissions]
+Changing environment variables requires an API key with the content settings scope, held by the item owner, an editor, or an admin.
+:::
 
 ## Accessing environment variables
 

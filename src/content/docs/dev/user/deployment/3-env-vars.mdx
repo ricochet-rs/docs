@@ -46,19 +46,24 @@ curl -X PATCH \
 Each name and value is RSA-OAEP encrypted with SHA-256 and then base64 encoded.
 The request body maps an encrypted name to its encrypted value.
 
-| Method   | Path                                   | Effect                                             |
-| -------- | -------------------------------------- | -------------------------------------------------- |
-| `GET`    | `/api/v0/content/{id}/env-vars`        | List the names                                     |
-| `PATCH`  | `/api/v0/content/{id}/env-vars`        | Add or update the variables sent and keep the rest |
-| `PUT`    | `/api/v0/content/{id}/env-vars`        | Replace the whole set and delete anything not sent |
-| `DELETE` | `/api/v0/content/{id}/env-vars/{name}` | Remove one variable                                |
+| Method   | Path                                          | Effect                                             |
+| -------- | --------------------------------------------- | -------------------------------------------------- |
+| `GET`    | [`/api/v0/content/{id}/env-vars`][get]        | List the names                                     |
+| `PATCH`  | [`/api/v0/content/{id}/env-vars`][patch]      | Add or update the variables sent and keep the rest |
+| `PUT`    | [`/api/v0/content/{id}/env-vars`][put]        | Replace the whole set and delete anything not sent |
+| `DELETE` | [`/api/v0/content/{id}/env-vars/{name}`][del] | Remove one variable                                |
 
 Every endpoint answers with the item's environment variable names, sorted.
 Values are never returned, by design, so a `GET` cannot be used to read a secret back.
 
 `DELETE` takes the plain name in the path, not an encrypted one.
 
-Try the endpoints and read their full request and response bodies in the [API reference](https://try.ricochet.rs/api/docs).
+Each path links to the API reference, where the endpoint can be tried against your own content item.
+
+[get]: https://try.ricochet.rs/api/docs#tag/content/GET/api/v0/content/%7Bulid%7D/env-vars
+[patch]: https://try.ricochet.rs/api/docs#tag/content/PATCH/api/v0/content/%7Bulid%7D/env-vars
+[put]: https://try.ricochet.rs/api/docs#tag/content/PUT/api/v0/content/%7Bulid%7D/env-vars
+[del]: https://try.ricochet.rs/api/docs#tag/content/DELETE/api/v0/content/%7Bulid%7D/env-vars/%7Bname%7D
 
 ### Limits
 

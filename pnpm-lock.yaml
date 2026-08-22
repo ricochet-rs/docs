@@ -54,8 +54,8 @@ importers:
         specifier: ^0.12.0
         version: 0.12.2(@astrojs/starlight@0.41.7(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))(supports-color@10.2.2)(typescript@6.0.3))(satteri@0.9.5)(supports-color@10.2.2)(typescript@6.0.3)
       starlight-versions:
-        specifier: ^0.9.0
-        version: 0.9.1(@astrojs/starlight@0.41.7(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))(supports-color@10.2.2)(typescript@6.0.3))(supports-color@10.2.2)
+        specifier: ^0.10.0
+        version: 0.10.0(@astrojs/starlight@0.41.7(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))(supports-color@10.2.2)(typescript@6.0.3))(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.3
@@ -2730,8 +2730,8 @@ packages:
       '@astrojs/starlight':
         optional: true
 
-  starlight-versions@0.9.1:
-    resolution: {integrity: sha512-wtYZhlcWcKsnyTO0BZoWXHzHUrNIvSr5ukEMLg3RFKesFEEcMepngn15Igw5pj8DBlkKMo7bBhF2fR0bfiXcpA==}
+  starlight-versions@0.10.0:
+    resolution: {integrity: sha512-1sWlH9/rM/CkCGNqzQy3F5CT2450l7/pOtccKq8D7J9JXi70JCDhuCiym2w2wHqlawdmugNgF6jrCP9HxX0hHA==}
     engines: {node: '>=22.12.0'}
     peerDependencies:
       '@astrojs/starlight': '>=0.39.0'
@@ -6308,7 +6308,7 @@ snapshots:
       - supports-color
       - typescript
 
-  starlight-versions@0.9.1(@astrojs/starlight@0.41.7(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))(supports-color@10.2.2)(typescript@6.0.3))(supports-color@10.2.2):
+  starlight-versions@0.10.0(@astrojs/starlight@0.41.7(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))(supports-color@10.2.2)(typescript@6.0.3))(supports-color@10.2.2):
     dependencies:
       '@astrojs/starlight': 0.41.7(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))(supports-color@10.2.2)(typescript@6.0.3)
       '@pagefind/default-ui': 1.5.2

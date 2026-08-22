@@ -27,7 +27,7 @@
     "starlight-links-validator": "^0.25.1",
     "starlight-scroll-to-top": "^1.0.1",
     "starlight-theme-nova": "^0.12.0",
-    "starlight-versions": "^0.9.0",
+    "starlight-versions": "^0.10.0",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {

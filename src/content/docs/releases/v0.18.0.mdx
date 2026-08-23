@@ -1,0 +1,33 @@
+---
+title: v0.18.0
+docs: release notes for Ricochet v0.18.0
+slug: releases/v0.18.0
+tableOfContents: false
+template: splash
+---
+
+**Released: August 23, 2026**
+
+### Features
+
+- Connect to PostgreSQL databases in addition to the existing database options.
+- Community edition now enforces usage limits to ensure compliance with the license.
+
+### Fixes
+
+#### Authentication
+
+- Signed-out visitors are returned to the original app link they opened after authenticating.
+- Gate sign-in now works on the first click instead of requiring multiple attempts.
+
+#### Permissions
+
+- The deploy wizard server functions now correctly require the publish role before allowing deployments.
+
+### API
+
+- The Scalar API client picker is limited to four languages for a cleaner interface.
+
+### Security
+
+- Updated `git2` and `anyhow` Rust dependencies to address security vulnerabilities.

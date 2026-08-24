@@ -9,7 +9,7 @@ During development you may use a `.Renviron` or `.env` file to keep track of sec
 These files **should not** be deployed alongside your content item.
 Note that environment variables are encrypted at rest and only decrypted before starting a process.
 
-Changing a variable replaces the item's running instances, so the new value applies to the next request without a redeploy.
+Any change to an environment variable terminates all existing instances to ensure the new value is honored in future requests.
 
 ## Using the UI
 
@@ -22,8 +22,9 @@ The new environment variables will be available to any new processes.
 
 ## Using the REST API
 
-Names and values are encrypted before they leave the client, so no secret is ever sent in plain text.
-Fetch the server's public key, encrypt each name and value against it, then send them as a JSON object:
+To ensure that no values are ever sent in plain text, both names and values of environment variables need to be encrypted before being sent to the API endpoint.
+Encrypting values is done by fetching the server's public key, using it to RSA encrypt values, then using the resultant values in the JSON body.
+
 
 ```shell
 # fetch the server's public key
@@ -43,8 +44,7 @@ curl -X PATCH \
   -d "{\"$(encrypt API_TOKEN)\": \"$(encrypt s3cr3t)\"}"
 ```
 
-Each name and value is RSA-OAEP encrypted with SHA-256 and then base64 encoded.
-The request body maps an encrypted name to its encrypted value.
+When sending environment variables to the API for any endpoint, they must first be encrypted.
 
 | Method   | Path                                          | Effect                                             |
 | -------- | --------------------------------------------- | -------------------------------------------------- |
@@ -53,24 +53,24 @@ The request body maps an encrypted name to its encrypted value.
 | `PUT`    | [`/api/v0/content/{id}/env-vars`][put]        | Replace the whole set and delete anything not sent |
 | `DELETE` | [`/api/v0/content/{id}/env-vars/{name}`][del] | Remove one variable                                |
 
-Every endpoint answers with the item's environment variable names, sorted.
-Values are never returned, by design, so a `GET` cannot be used to read a secret back.
+Note that it is not possible to retrieve the raw environment variable values through the API—only the names of the keys via the GET endpoint.
 
-`DELETE` takes the plain name in the path, not an encrypted one.
 
 Each path links to the API reference, where the endpoint can be tried against your own content item.
 
-[get]: https://try.ricochet.rs/api/docs#tag/content/GET/api/v0/content/%7Bulid%7D/env-vars
-[patch]: https://try.ricochet.rs/api/docs#tag/content/PATCH/api/v0/content/%7Bulid%7D/env-vars
-[put]: https://try.ricochet.rs/api/docs#tag/content/PUT/api/v0/content/%7Bulid%7D/env-vars
-[del]: https://try.ricochet.rs/api/docs#tag/content/DELETE/api/v0/content/%7Bulid%7D/env-vars/%7Bname%7D
+### API reference
 
-### Limits
+[GET]: https://try.ricochet.rs/api/docs#tag/content/GET/api/v0/content/%7Bulid%7D/env-vars
+[PATCH]: https://try.ricochet.rs/api/docs#tag/content/PATCH/api/v0/content/%7Bulid%7D/env-vars
+[PUT]: https://try.ricochet.rs/api/docs#tag/content/PUT/api/v0/content/%7Bulid%7D/env-vars
+[DELETE]: https://try.ricochet.rs/api/docs#tag/content/DELETE/api/v0/content/%7Bulid%7D/env-vars/%7Bname%7D
+
+### Limitations
 
 A name or a value may be at most 190 bytes, which is the most a 2048 bit RSA key carries under OAEP with SHA-256.
 Longer strings cannot be encrypted at all.
 
-Names take ASCII letters, digits and underscores, and may not start with a digit.
+Keys may only consist of ASCII letters, numbers, and underscores.
 
 :::note[Permissions]
 Changing environment variables requires an API key with the content settings scope, held by the item owner, an editor, or an admin.

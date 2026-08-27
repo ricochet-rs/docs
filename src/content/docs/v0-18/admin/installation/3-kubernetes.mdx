@@ -99,11 +99,10 @@ Before installing Ricochet, provide:
     Replace the example hostnames, ingress class, certificate issuer, and `rwx-storage` storage class with values for your cluster.
     If TLS terminates outside Kubernetes, disable `ingress` and expose the chart's `ClusterIP` service through your existing gateway.
 
-4. Install a pinned chart version:
+4. Install the latest chart:
 
     ```sh
     helm install ricochet oci://ghcr.io/ricochet-rs/ricochet-helm \
-      --version 1.1.10 \
       --namespace ricochet \
       --values values.yaml
     ```
@@ -112,7 +111,7 @@ Before installing Ricochet, provide:
     Check the chart's `appVersion` before upgrading:
 
     ```sh
-    helm show chart oci://ghcr.io/ricochet-rs/ricochet-helm --version 1.1.10
+    helm show chart oci://ghcr.io/ricochet-rs/ricochet-helm
     ```
 
 5. Wait for Ricochet to become ready:
@@ -196,7 +195,6 @@ Review the new chart's values and `appVersion`, then reuse the installation valu
 
 ```sh
 helm upgrade ricochet oci://ghcr.io/ricochet-rs/ricochet-helm \
-  --version <chart-version> \
   --namespace ricochet \
   --values values.yaml
 ```

@@ -19,6 +19,7 @@
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
     "@tailwindcss/vite": "^4.3.0",
     "add": "^2.0.6",
+    "astro-markdown-for-agents": "^0.1.1",
     "astro": "7.2.9",
     "pagefind": "^1.5.2",
     "rehype-figure": "^1.0.1",

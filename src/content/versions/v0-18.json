@@ -24,7 +24,7 @@
       ]
     },
     {
-      "label": "Admin",
+      "label": "Self-Host",
       "items": [
         {
           "label": "Installation",

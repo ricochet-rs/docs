@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import markdownForAgents from "astro-markdown-for-agents";
 import starlightThemeNova from "starlight-theme-nova";
 import tailwindcss from "@tailwindcss/vite";
 // https://docs.astro.build/en/guides/integrations-guide/markdoc //
@@ -21,6 +22,7 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     markdoc(),
+    markdownForAgents(),
     latestVersionRedirectsIntegration("src/content/docs"),
     starlight({
       title: "ricochet",
@@ -126,13 +128,13 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightVersions({
-          current: { label: "0.17 (latest)", redirect: "root" },
+          current: { label: "0.18 (latest)", redirect: "root" },
           versions: [
+            { slug: "v0-18", label: "0.18" },
             { slug: "v0-17", label: "0.17" },
             { slug: "v0-16", label: "0.16" },
             { slug: "v0-15", label: "0.15" },
             { slug: "v0-14", label: "0.14" },
-            { slug: "v0-13", label: "0.13" },
             { slug: "dev", label: "dev" },
           ],
         }),

@@ -137,7 +137,7 @@ Install `newuidmap` and `newgidmap`:
   </TabItem>
 </Tabs>
 
-Grant the account that runs Ricochet at least 65,536 subordinate user and group IDs.
+Grant the account that runs ricochet at least 65,536 subordinate user and group IDs.
 The following example configures `root`, which is the account used by the packaged systemd service.
 Choose an unused range if `100000-165535` is already allocated in `/etc/subuid` or `/etc/subgid`:
 
@@ -146,7 +146,7 @@ sudo usermod --add-subuids 100000-165535 root
 sudo usermod --add-subgids 100000-165535 root
 ```
 
-On Ubuntu 23.10 and later, create and load an AppArmor profile that permits Ricochet to create unprivileged user namespaces:
+On Ubuntu 23.10 and later, create and load an AppArmor profile that permits ricochet to create unprivileged user namespaces:
 
 ```sh
 sudo ricochet setup-apparmor
@@ -154,7 +154,7 @@ sudo ricochet setup-apparmor
 
 The command exits without making changes on systems that do not use AppArmor or do not restrict unprivileged user namespaces.
 
-Verify that user namespaces, subordinate ID mappings, and AppArmor are configured for the account that will run Ricochet:
+Verify that user namespaces, subordinate ID mappings, and AppArmor are configured for the account that will run ricochet:
 
 ```sh
 sudo ricochet check-security

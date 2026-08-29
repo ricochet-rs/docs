@@ -1,0 +1,38 @@
+---
+title: Audit Log
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Every change to an organization is recorded.
+Owners and admins read the trail under **Audit log**.
+Members never see it.
+
+## What is recorded
+
+Each entry holds who did it, what they did, what it affected, and when.
+
+| Category | Examples |
+| --- | --- |
+| Organization | Created, settings updated, logo changed. |
+| Membership | Role changed, member removed, member provisioned via SSO. |
+| Invitation | Invited, accepted, declined, revoked. |
+| Instance | Created, upgraded, deleted, opened, access granted or revoked, version pinned. |
+| SSO | Connection created, updated, deleted. |
+| Domain | Added, verified, removed. |
+| Billing | Checkout completed, resources changed, invoice issued, charged, paid, or failed, invoicing requested or approved. |
+| Subscription | Status changed, escalated. |
+
+Actions taken by the platform itself are recorded the same way, so an instance stopped by billing shows up alongside the changes your team made.
+
+## Filter and export
+
+Filter the trail by action to narrow it to one kind of change.
+
+**Export** downloads the entries, as a CSV spreadsheet or as JSON.
+The export follows the filter you have applied and covers the whole trail, not just the page on screen.
+
+<Aside type="note">
+This log covers your organization in ricochet Cloud.
+Activity inside an instance is recorded by that instance, in its own [audit log](/dev/admin/technical/audit-logging/).
+</Aside>

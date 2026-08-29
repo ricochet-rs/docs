@@ -1,0 +1,43 @@
+---
+title: Custom Domains
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An instance can answer on your own domain instead of its default `cloud.ricochet.rs` address.
+The domain carries both application traffic and sign-in callbacks.
+
+## Point a domain at an instance
+
+<Steps>
+
+1. Create a CNAME record for the domain, pointing at `cloud.ricochet.rs`.
+
+    ```
+    analysis.example.com.  CNAME  cloud.ricochet.rs.
+    ```
+
+2. Open the instance card, select **Domain**, and enter the domain.
+
+3. Save.
+
+</Steps>
+
+Create the DNS record before saving.
+Saving updates the routing and the sign-in redirect together, and if the redirect cannot be updated the whole change is rolled back rather than left half applied.
+
+<Aside type="caution">
+Changing the domain changes the address your users and your CLI use.
+Run `ricochet login -S https://<new-domain>` again after the change.
+</Aside>
+
+## Revert to the default
+
+Select **Domain**, then **Reset to default**.
+The instance goes back to `https://<instance-name>-<organization-slug>.cloud.ricochet.rs`.
+
+## Rules
+
+An instance has exactly one hostname at a time, whether default or custom.
+Two instances cannot share a hostname, and a domain already claimed elsewhere is refused.
+Enter the domain on its own, with no protocol, path, or port.

@@ -1,0 +1,46 @@
+---
+title: Instance Access
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Membership of an organization does not give access to its instances.
+Access is granted per member, per instance, by an owner or admin.
+
+## Grant or revoke access
+
+<Steps>
+
+1. Open the instance card and select **Manage access**.
+
+2. Toggle each member on or off.
+
+</Steps>
+
+The person who creates an instance is assigned to it automatically.
+Everyone else, including other owners, starts with no access.
+
+## Opening an instance
+
+**Open application** sends an assigned member to the instance, already signed in through the shared session.
+No token or credential is ever placed in the URL, and the instance re-checks the assignment itself.
+
+A member who is not assigned sees a message telling them to ask an owner or admin, rather than a broken page.
+
+<Aside type="note">
+Access inside the instance is separate again.
+Once a user is in, [content item permissions](/dev/user/managing-content/1-access-and-permissions/) decide what they can see and deploy.
+</Aside>
+
+## When an instance cannot be opened
+
+| Status | What you are told |
+| --- | --- |
+| Provisioning | The instance is still being created and will be ready shortly. |
+| Upgrading | Try again once the upgrade finishes. |
+| Read-only | The instance opens, with a warning that it is read-only. |
+| Suspended | Contact an organization owner to restore it. |
+| Deleting or Deleted | The instance can no longer be opened. |
+| Failed | Provisioning failed. Contact support if it persists. |
+
+Removing a member from the organization revokes their instance access with their membership.

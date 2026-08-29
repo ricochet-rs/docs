@@ -1,0 +1,60 @@
+---
+title: Members and Roles
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Members are managed per organization under **Members**.
+Owners and admins can invite people and change roles.
+Members can see the roster but cannot change it.
+
+## Roles
+
+| Capability | Owner | Admin | Member |
+| --- | :---: | :---: | :---: |
+| View members and instances | ✅ | ✅ | ✅ |
+| Open an instance they are assigned to | ✅ | ✅ | ✅ |
+| Invite, remove, and re-role members | ✅ | ✅ | ❌ |
+| Grant the owner role | ✅ | ❌ | ❌ |
+| Administer an owner | ✅ | ❌ | ❌ |
+| Create, upgrade, and delete instances | ✅ | ✅ | ❌ |
+| Grant instance access | ✅ | ✅ | ❌ |
+| Manage billing | ✅ | ✅ | ❌ |
+| Read the audit log | ✅ | ✅ | ❌ |
+| Configure single sign-on | ✅ | ✅ | ❌ |
+| Delete the organization | ✅ | ❌ | ❌ |
+
+An admin can administer members and other admins, but never an owner.
+An organization must always keep at least one owner, so the last owner cannot be demoted or removed.
+
+## Invite a member
+
+<Steps>
+
+1. Go to **Members** and enter the person's email address.
+
+2. Choose the role they should get.
+
+3. Send the invitation.
+
+</Steps>
+
+Invitations expire after 7 days.
+The invited person accepts under **Organizations** the next time they sign in, whether or not the email reached them.
+
+<Aside type="note">
+An invitation is addressed to an email address, not to an account.
+Only the person who signs in with that address can accept it.
+</Aside>
+
+## Change a role or remove a member
+
+Use the row menu next to a member.
+
+Anyone can remove themselves, which is how you leave an organization.
+Removing a member revokes their instance access with their membership.
+
+## Revoke an invitation
+
+Pending invitations are listed under the member roster.
+Revoking one stops it being accepted, even if the recipient still holds the email.

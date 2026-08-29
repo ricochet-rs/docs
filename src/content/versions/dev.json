@@ -43,6 +43,25 @@
           "autogenerate": { "directory": "admin/technical" }
         }
       ]
+    },
+    {
+      "label": "Cloud",
+      "items": [
+        "cloud/quickstart",
+        {
+          "label": "Organizations",
+          "autogenerate": { "directory": "cloud/organizations" }
+        },
+        {
+          "label": "Instances",
+          "autogenerate": { "directory": "cloud/instances" }
+        },
+        {
+          "label": "Billing",
+          "autogenerate": { "directory": "cloud/billing" }
+        },
+        "cloud/audit-log"
+      ]
     }
   ]
 }

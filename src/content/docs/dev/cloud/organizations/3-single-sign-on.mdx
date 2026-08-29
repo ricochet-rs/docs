@@ -1,0 +1,84 @@
+---
+title: Single Sign-On
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Single sign-on lets your members sign in through your own identity provider, such as Okta, Entra, or any OIDC or SAML provider.
+Configure it under **Settings**, as an owner or admin.
+
+ricochet Cloud does not hold your provider's client secret.
+Your provider is federated into ricochet Cloud's identity layer, and the organization only records which provider a sign-in should use.
+
+<Aside type="note">
+Federating your provider is a setup step we do with you.
+Get in touch before you start, so the connection ids below exist for you to enter.
+</Aside>
+
+## Set up a connection
+
+<Steps>
+
+1. Open **Settings** and find **Single sign-on**.
+
+2. Enter a login path slug.
+
+    Your members sign in at `https://cloud.ricochet.rs/sso/<slug>`.
+    The path is unlisted, so keep it as an internal link rather than a public one.
+
+3. Enter the organization id we gave you, and an identity provider id if you want to skip the provider chooser.
+
+4. Create the connection.
+
+    It starts as **Draft** and routes nothing until you set it **Active**.
+
+</Steps>
+
+## Verify a domain
+
+A connection only routes users once a domain is verified.
+This is what stops someone claiming your domain and intercepting your sign-ins.
+
+<Steps>
+
+1. Add your email domain under **Email domains**, for example `acme.com`.
+
+2. Select **Show record** and publish the TXT record it displays at `_ricochet-challenge.acme.com`.
+
+3. Select **Verify**.
+
+    DNS changes take a while to propagate, so retry if the first check does not find the record.
+
+</Steps>
+
+A domain can be claimed by one organization only.
+
+## How members sign in
+
+There are two routes into your provider, and both end up in the same place.
+
+**Home-realm discovery.**
+A member enters their work email on the normal sign-in page.
+If the domain is verified and your connection is active, they are sent to your provider.
+Any other address falls through to the standard sign-in.
+
+**The private path.**
+A member goes straight to `https://cloud.ricochet.rs/sso/<slug>`.
+An unknown or inactive slug behaves exactly like the normal sign-in page, so the path never reveals which organizations use SSO.
+
+A member who signs in this way is added to the organization automatically, with the **Member** role.
+
+## Enforce SSO
+
+Turning on **Enforce SSO** stops members on a verified domain from using the generic sign-in.
+It applies to verified domains only.
+
+## Connection states
+
+| State | Effect |
+| --- | --- |
+| Draft | Nothing is routed. Use this while you are still configuring. |
+| Active | The private path and home-realm discovery both work. |
+| Disabled | The connection is kept but routes nothing. |
+
+Deleting a connection leaves your verified domains in place.

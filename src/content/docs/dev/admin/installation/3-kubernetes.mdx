@@ -2,113 +2,201 @@
 title: Kubernetes
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Steps } from "@astrojs/starlight/components";
 
-## Installation
+Ricochet supports amd64, arm64, and mixed-architecture Kubernetes clusters.
+The Helm chart installs one `ricochet-server` replica, the service account and RBAC used to launch workloads, and optional persistent storage and ingress resources.
 
-Install ricochet using the OCI Helm chart:
+## Prerequisites
 
-```sh
-helm install ricochet oci://ghcr.io/ricochet-rs/ricochet-helm
-```
+Before installing Ricochet, provide:
 
-## Architecture
+- Kubernetes 1.27 or newer
+- Helm 3.8 or newer with OCI registry support
+- An OIDC client for the public Ricochet URL
+- A default `ReadWriteOnce` storage class for the server home volume
+- A `ReadWriteMany` storage class for shared content and dependency caches
+- An ingress controller and TLS certificate issuer when exposing Ricochet through the chart
 
-The ricochet server creates Kubernetes resources for your workloads:
-
-- Each ricochet app runs as a Kubernetes Deployment
-- Each ricochet task runs as a Kubernetes Job
-
-Configure deployment specs for apps using the `launcher.deployment` settings.
-
-<Aside type="tip">
-  For advanced deployment customization, see [Custom Deployment Config per
-  App](#custom-deployment-config-per-app).
+<Aside type="note">
+  A single-node cluster can use a storage class that supports `ReadWriteOnce` for every volume.
+  Multi-node clusters need `ReadWriteMany` content and cache volumes so workloads scheduled on different nodes see the same files.
 </Aside>
 
-### App Deployment Flow
+## Install
 
-When you deploy a new app, ricochet creates a `deploy-<ulid>` job that installs all required dependency packages.
+<Steps>
+1. Create a namespace:
 
-When an app starts, an init-container (`check-dependencies`) verifies that all dependencies are installed.
-This is necessary for every app start because the initial dependency installation runs on a node with a specific architecture.
-If the app pod starts on a node with a different architecture, the dependencies may not (yet) be available.
-In this case, the init-container installs the dependencies for that architecture.
+    ```sh
+    kubectl create namespace ricochet
+    ```
+
+2. Store the OIDC credentials in a Secret:
+
+    ```sh
+    kubectl --namespace ricochet create secret generic ricochet-oidc \
+      --from-literal=RICOCHET_AUTH__OIDC__CLIENT_ID='your-client-id' \
+      --from-literal=RICOCHET_AUTH__OIDC__CLIENT_SECRET='your-client-secret'
+    ```
+
+3. Save the following configuration as `values.yaml`:
+
+    ```yaml title="values.yaml"
+    replicaCount: 1
+
+    envFrom:
+      - secretRef:
+          name: ricochet-oidc
+
+    config:
+      "auth.oidc":
+        issuer_url: "https://your-idp.example.com/"
+        redirect_url: "https://ricochet.example.com/oauth/callback"
+
+    persistence:
+      home:
+        enabled: true
+        size: 25Gi
+
+    apps:
+      deployment:
+        persistence:
+          content:
+            enabled: true
+            storageClass: "rwx-storage"
+            accessMode: ReadWriteMany
+            size: 20Gi
+          cache:
+            enabled: true
+            storageClass: "rwx-storage"
+            accessMode: ReadWriteMany
+            size: 20Gi
+
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+        - host: ricochet.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: ricochet-tls
+          hosts:
+            - ricochet.example.com
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        memory: 2Gi
+    ```
+
+    Replace the example hostnames, ingress class, certificate issuer, and `rwx-storage` storage class with values for your cluster.
+    If TLS terminates outside Kubernetes, disable `ingress` and expose the chart's `ClusterIP` service through your existing gateway.
+
+4. Install the latest chart:
+
+    ```sh
+    helm install ricochet oci://ghcr.io/ricochet-rs/ricochet-helm \
+      --namespace ricochet \
+      --values values.yaml
+    ```
+
+    The chart version is independent from the `ricochet-server` version.
+    Check the chart's `appVersion` before upgrading:
+
+    ```sh
+    helm show chart oci://ghcr.io/ricochet-rs/ricochet-helm
+    ```
+
+5. Wait for Ricochet to become ready:
+
+    ```sh
+    kubectl --namespace ricochet rollout status deployment/ricochet
+    kubectl --namespace ricochet get pods,pvc,ingress
+    ```
+</Steps>
 
 ## Persistence
 
-Ricochet requires two persistent volumes:
+The example creates three volumes:
 
-- "Data": `/opt/ricochet/data`
-- "Cache": `/opt/ricochet/cache`
+| Volume | Default mount path | Access mode | Purpose |
+| --- | --- | --- | --- |
+| Home | `/var/lib/ricochet/data` | `ReadWriteOnce` | Database, encryption keys, configuration, logs, and server state |
+| Content | `/var/lib/ricochet/data/content` | `ReadWriteMany` | Deployment bundles shared with app and task workloads |
+| Cache | `/var/lib/ricochet/data/.cache` | `ReadWriteMany` | R, Python, and Julia dependency caches shared across workloads |
 
-Both volumes must use "ReadWriteMany" access mode to be mounted across multiple pods.
+Back up the home and content volumes together.
+The cache volume can be recreated, but doing so makes subsequent deployments restore their dependencies again.
 
-### Recommended PVC Sizes
+The chart disables persistence by default.
+Running the one-line `helm install` command without values creates an ephemeral installation and is not recommended outside testing.
 
-Here are some recommendations for your volumes based on the expected number of active apps:
+## Multi-architecture clusters
 
-| # of Apps | Cache | Data  |
-| --------- | ----- | ----- |
-| < 5       | 10 Gi | 20 Gi |
-| 5 - 20    | 25 Gi | 50 Gi |
-| 20+       | 30 Gi | 75Gi  |
+Ricochet can restore dependencies for both amd64 and arm64 nodes.
+Allow the server to discover node architectures by adding this value:
 
-The "cache" PVC does not scale linearly because apps share dependencies.
-The more apps deployed, the more overlap in packages.
+```yaml title="values.yaml"
+rbac:
+  clusterRole:
+    enabled: true
+```
 
-The "data" PVC scales more linearly but depends on bundle sizes.
-Each bundle can be several megabytes, and a single app can accumulate many deployments during development.
+This creates cluster-scoped permission to list nodes.
+Leave it disabled on single-architecture clusters when you do not want to grant that permission.
 
-### Storage Details
+## Architecture
 
-- The "cache" PVC stores all R, Julia, and Python packages across apps and tasks.
-  It grows over time as different interpreter versions are used.
+The `ricochet-server` creates Kubernetes resources for deployed content:
 
-- The "data" PVC stores all app and user content.
-  Size depends on bundle sizes and deployment frequency.
-  You can start with smaller volumes and expand as needed, though resizing may involve some operational overhead.
+- Each app runs as a Kubernetes Deployment.
+- Each task invocation runs as a Kubernetes Job.
+- Dependency restoration runs in a separate Job before the deployment becomes active.
 
-<Aside type="caution">
-  Ensure you have proper backups for your data PVC.
-  Loss of this volume means
-  loss of all app and user content.
-</Aside>
+When an app starts, an init container verifies that its dependencies are available for the node architecture.
+If necessary, the init container restores dependencies before starting the app.
 
-## App Scaling
+## App scaling
 
-Ricochet includes built-in horizontal scaling for app deployments.
+Ricochet scales app deployments using the settings in each content item's `_ricochet.toml`:
 
-Each app deployment can scale across multiple replicas based on these parameters:
+- `min_instances` sets the minimum replicas.
+- `max_instances` sets the maximum replicas.
+- `spawn_threshold` sets the connection occupancy percentage that triggers scale-up.
+- `max_connections` sets the connection capacity of each replica.
+- `max_connection_age` sets the maximum connection lifetime.
+- `inactive_timeout` sets how long an idle replica remains active.
 
-- `min_instances`: Minimum number of replicas to maintain
-- `max_instances`: Maximum number of replicas to run
-- `spawn_threshold`: Connection occupancy percentage that triggers scale-up
-- `max_connections`: Maximum connections per app replica
-- `max_connection_age`: Maximum duration before closing a connection
-- `inactive_timeout`: Maximum idle time before closing a connection
+## Custom deployment configuration
 
-These parameters together determine scaling behavior.
+Administrators can allow content owners to extend the Kubernetes deployment specification for an individual app.
+This capability is disabled by default because arbitrary pod configuration can weaken cluster security.
 
-### Apps
+Enable it only when content owners are trusted:
 
-Apps run as Kubernetes deployments with support for multiple replicas, providing high availability.
-You can strengthen this by enforcing a minimum replica count distributed across multiple nodes.
+```yaml title="values.yaml"
+config:
+  launcher:
+    allow_custom_k8s_config: true
+```
 
-## Custom Deployment Config per App
+Do not override `imagePullPolicy`, `imagePullSecrets`, or `strategy` in per-app configuration because the chart supplies those fields instance-wide.
 
-You can extend the deployment spec per app with custom YAML configurations.
-This is an advanced feature.
-Care must be taken to avoid modifying sections that already exist through instance-wide configuration set via the Helm chart.
+## Upgrade
 
-The following fields can be set instance-wide through the Helm chart and should **not** be overwritten on a per-app basis:
+Review the new chart's values and `appVersion`, then reuse the installation values:
 
-- imagePullPolicy
-- imagePullSecrets
-- strategy
+```sh
+helm upgrade ricochet oci://ghcr.io/ricochet-rs/ricochet-helm \
+  --namespace ricochet \
+  --values values.yaml
+```
 
-<Aside type="note">
-  This feature is disabled by default for security.
-  Enable it by setting
-  `allow_custom_k8s_config` to `true` in the Helm chart values.
-</Aside>
+Back up persistent data before upgrading.

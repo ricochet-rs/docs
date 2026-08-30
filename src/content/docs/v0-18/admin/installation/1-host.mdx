@@ -4,33 +4,38 @@ title: Host
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
-Ricochet Server is distributed as native `.deb` and `.rpm` packages and runs as a systemd service.
-This guide covers manual installation on a single Linux server.
+`ricochet-server` is distributed as native Linux packages and standalone binaries.
+This guide covers manual installation on a single host.
 
 ## Supported platforms
 
 | Distribution          | Architecture | Package format |
 | --------------------- | :----------- | :------------- |
-| Debian / Ubuntu       | amd64        | `.deb`         |
-| AlmaLinux / RHEL / EL | x86_64       | `.rpm`         |
+| Debian / Ubuntu       | amd64, arm64 | `.deb`         |
+| AlmaLinux / RHEL / EL | x86_64, aarch64 | `.rpm`      |
+| Other Linux           | x86_64, aarch64 | `.tar.gz`   |
+| macOS                 | Apple Silicon | `.tar.gz`      |
+| Windows               | x86_64, arm64 | `.zip`         |
 
 ## Install the package
 
-Ricochet Server packages are published to object storage.
+`ricochet-server` packages are published to S3 buckets.
 
 <Tabs>
   <TabItem label="Debian / Ubuntu">
     ```sh
     VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
-    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_amd64.deb
-    sudo apt install ./ricochet-server_${VERSION#v}-1_amd64.deb
+    ARCH=$(dpkg --print-architecture)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_${ARCH}.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_${ARCH}.deb
     ```
   </TabItem>
   <TabItem label="RHEL / AlmaLinux">
     ```sh
     VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
-    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
-    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.x86_64.rpm
+    ARCH=$(uname -m)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
     ```
   </TabItem>
   <TabItem label="Standalone binary">
@@ -50,20 +55,20 @@ Ricochet Server packages are published to object storage.
     # Or for aarch64
     # curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64.tar.gz
 
-    # Extract and install
+    # Extract and install as ricochet
     tar -xzf ricochet-${VERSION#v}-*.tar.gz
-    chmod +x ricochet
-    sudo mv ricochet /usr/local/bin/
+    chmod +x ricochet-server
+    sudo mv ricochet-server /usr/local/bin/ricochet
     ```
 
   </TabItem>
 </Tabs>
 
-The package installs the `ricochet` binary and a `ricochet-server.service` systemd unit.
+The `.deb` and `.rpm` packages install the `ricochet` binary and a `ricochet-server.service` systemd unit.
 
 ## Configure
 
-Ricochet reads its configuration from `/var/lib/ricochet/ricochet-config.toml`.\
+In packaged `.rpm` and `.deb` installations of ricochet, the configuration file is stored at `/var/lib/ricochet/ricochet-config.toml`.\
 Create or edit this file with your deployment's settings.
 
 At a minimum you need to configure OIDC authentication:
@@ -79,7 +84,7 @@ redirect_url = "https://your-ricochet-host.example.com/oauth/callback"
 Ensure appropriate permissions are set on the config file:
 
 ```sh
-sudo chmod 0644 /var/lib/ricochet/ricochet-config.toml
+sudo chmod 0600 /var/lib/ricochet/ricochet-config.toml
 sudo chown root:root /var/lib/ricochet/ricochet-config.toml
 ```
 
@@ -110,7 +115,7 @@ sudo chown root:root /var/lib/ricochet/ricochet-config.toml
     ```
 </Steps>
 
-Ricochet Server listens on port **6188** by default.
+`ricochet-server` listens on port **6188** by default.
 
 ## Using the standalone binary
 
@@ -152,8 +157,6 @@ On Ubuntu 23.10 and later, create and load an AppArmor profile that permits rico
 sudo ricochet setup-apparmor
 ```
 
-The command exits without making changes on systems that do not use AppArmor or do not restrict unprivileged user namespaces.
-
 Verify that user namespaces, subordinate ID mappings, and AppArmor are configured for the account that will run ricochet:
 
 ```sh
@@ -162,7 +165,7 @@ sudo ricochet check-security
 
 ### Foreground mode
 
-By default, `ricochet start` runs in the foreground and prints logs to stdout/stderr:
+By default, `ricochet start` runs in the foreground and prints logs to stdout and stderr:
 
 ```sh
 ricochet start --config /path/to/ricochet-config.toml
@@ -224,23 +227,81 @@ To upgrade to a new version, download the new package and install it over the ex
 <Tabs>
   <TabItem label="Debian / Ubuntu">
     ```sh
-    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION}/ricochet-server_${VERSION}-1_amd64.deb
-    sudo apt install ./ricochet-server_${VERSION}-1_amd64.deb
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    ARCH=$(dpkg --print-architecture)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_${ARCH}.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_${ARCH}.deb
     sudo systemctl restart ricochet-server.service
     ```
   </TabItem>
   <TabItem label="RHEL / AlmaLinux">
     ```sh
-    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION}/ricochet-server-${VERSION}-1.el10.x86_64.rpm
-    sudo dnf install ./ricochet-server-${VERSION}-1.el10.x86_64.rpm
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    ARCH=$(uname -m)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
     sudo systemctl restart ricochet-server.service
     ```
 
     <Aside type="note">
-      Use `dnf install` (not `dnf upgrade`) — it handles both fresh installs and version changes, including downgrades.
+      Use `dnf install` instead of `dnf upgrade` because it handles fresh installs, upgrades, and downgrades.
     </Aside>
   </TabItem>
 </Tabs>
+
+## macOS
+
+`ricochet-server` is distributed as a standalone binary for Apple Silicon Macs.
+Intel Macs are not supported.
+
+Download and install the latest release:
+
+```sh
+VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64-macos.tar.gz
+tar -xzf ricochet-${VERSION#v}-aarch64-macos.tar.gz
+chmod +x ricochet-server
+sudo mv ricochet-server /usr/local/bin/ricochet-server
+```
+
+Keep the `ricochet-server` name so that the server does not shadow the [`ricochet` CLI](/v0-18/user/deployment/1-ricochet-cli/), which is commonly installed on the same machine.
+
+Create a configuration file as described in [Configure](#configure), set `home` to an absolute writable path, and start the server in the foreground:
+
+```sh
+ricochet-server start --config /path/to/ricochet-config.toml
+```
+
+The macOS binary does not include a service definition or vendored language dependencies.
+Install `uv`, `juliaup`, and `renv` separately when you need the corresponding runtimes.
+
+## Windows
+
+`ricochet-server` is distributed as a standalone executable for x86_64 and arm64 Windows.
+Run these commands in PowerShell, replacing `x86_64` with `aarch64` on Windows arm64:
+
+```powershell
+$Version = (Invoke-RestMethod https://ricochet.rs/releases.json).latest.TrimStart("v")
+Invoke-WebRequest "https://s3.eu-central-003.backblazeb2.com/ricochet-server/$Version/ricochet-$Version-x86_64-windows.zip" -OutFile "ricochet-$Version-x86_64-windows.zip"
+Expand-Archive "ricochet-$Version-x86_64-windows.zip" -DestinationPath . -Force
+New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\Programs\Ricochet" | Out-Null
+Move-Item .\ricochet-server.exe "$env:LOCALAPPDATA\Programs\Ricochet\ricochet-server.exe" -Force
+```
+
+Keep the `ricochet-server.exe` name so that the server does not shadow the [`ricochet` CLI](/v0-18/user/deployment/1-ricochet-cli/), which is commonly installed on the same machine.
+
+Add `%LOCALAPPDATA%\Programs\Ricochet` to your user `PATH`, then create a configuration file as described in [Configure](#configure).
+Set `home` to an absolute writable Windows path.
+
+Start the server in the foreground:
+
+```powershell
+ricochet-server start --config C:\path\to\ricochet-config.toml
+```
+
+Windows does not support `ricochet-server start --daemon` or `ricochet-server stop`.
+Stop the foreground server with Ctrl+C, or configure it with a Windows service manager.
+The Windows binary does not include vendored language dependencies.
 
 ## Data science interpreters
 

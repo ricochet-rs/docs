@@ -1,0 +1,54 @@
+---
+title: Deploy from Git
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Deploy an app or task directly from a public or private Git repository.
+The repository must contain a valid [`_ricochet.toml`](./2-ricochet-toml) file.
+
+## Add a credential for a private repository
+
+Skip this section when deploying a public repository.
+
+<Steps>
+
+1. Open **Credentials** in ricochet.
+
+2. Select **Git Credentials**, then select **Add Credential**.
+
+3. Enter a unique **Name** and choose the credential **Type**:
+
+    - Choose `ssh` and paste an **SSH Private Key** for an SSH repository URL.
+    - Choose `https` and enter the **Username** and **Password or Token** supplied by your Git provider for an HTTPS repository URL.
+
+4. Select **Add Credential**.
+
+</Steps>
+
+<Aside type="caution">
+  Use a credential with read-only access to the repository whenever your Git provider supports it.
+</Aside>
+
+## Deploy the repository
+
+<Steps>
+
+1. Open **Deploy** in ricochet.
+
+2. Enter the **Git Repository URL**.
+
+3. Select **Public** for a public repository or choose the saved **Git Credential** for a private repository.
+
+4. Select the **Branch** to deploy.
+
+5. If the project is in a subdirectory, enter its repository-relative **Path**.
+
+6. Continue to **Configure** and review the settings loaded from `_ricochet.toml`.
+
+7. Continue through **Packages** and **Review**, then select **Deploy**.
+
+</Steps>
+
+Ricochet clones the selected revision and starts the deployment.
+Open the deployment from the resulting content item to monitor its logs and status.

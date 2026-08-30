@@ -3,18 +3,79 @@ title: "Environment Variables"
 ---
 
 Environment variables are key-value pairs that can be used to customize behavior at runtime.
+They can be set in the `ricochet` UI or through via REST API.
 
 During development you may use a `.Renviron` or `.env` file to keep track of secrets.
-These files **should not** be deployed alongside your content item.
-Instead, set environment in the `ricochet` UI.
-Note that environment variables are encrypted at rest and only decrypted before starting an R or Julia process.
+These files **should not** be deployed alongside your content item and the `ricochet` cli will not include them in a deployment.
+Note that environment variables are encrypted at rest and only decrypted before starting a process.
 
-To add environment variables navigate to your content item's setting page at `https://ricochet.rs/content/{ID}/settings/env`.
+Any change to an environment variable terminates all existing instances to ensure the new value is honored in future requests.
+
+## Using the UI
+
+Navigate to your content item and then select the the "Envrionment Variables" tab.
+This is where environment variables can be added or removed.
+
 The `Key` is the name of the environment variable.
 `Value` is the value of the environment variable.
-Press save after adding new environment variables.
+
+Press "+ Add Variable" to save the environment variable.
 
 The new environment variables will be available to any new processes.
+
+## Using the REST API
+
+To ensure that no values are ever sent in plain text, both names and values of environment variables need to be encrypted before being sent to the API endpoint.
+Encrypting values is done by fetching the server's public key, using it to RSA encrypt values, then using the resultant values in the JSON body.
+
+
+```shell
+# fetch the server's public key
+curl -s https://try.ricochet.rs/api/v0/public-key -o ricochet.pub
+
+# encrypt one name or value
+encrypt() {
+  printf '%s' "$1" | openssl pkeyutl -encrypt -pubin -inkey ricochet.pub \
+    -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 | openssl base64 -A
+}
+
+# add or update ENV_NAME and leave the other variables in place
+curl -X PATCH \
+  'https://try.ricochet.rs/api/v0/content/01JSZAXZ3TSTAYXP56ARDVFJCJ/env-vars' \
+  -H 'Authorization: Key rico_xxxxx' \
+  -H 'Content-Type: application/json' \
+  -d "{\"$(encrypt ENV_NAME)\": \"$(encrypt ENV_VALUE)\"}"
+```
+
+When sending environment variables to the API for any endpoint, they must first be encrypted.
+
+| Method   | Path                                             | Effect                                             |
+| -------- | ------------------------------------------------ | -------------------------------------------------- |
+| `GET`    | [`/api/v0/content/{id}/env-vars`][get]           | List the names                                     |
+| `PATCH`  | [`/api/v0/content/{id}/env-vars`][patch]         | Add or update the variables sent and keep the rest |
+| `PUT`    | [`/api/v0/content/{id}/env-vars`][put]           | Replace the whole set and delete anything not sent |
+| `DELETE` | [`/api/v0/content/{id}/env-vars/{name}`][delete] | Remove one variable                                |
+
+Note that it is not possible to retrieve the raw environment variable values through the API—only the names of the keys via the GET endpoint.
+
+
+### API reference
+
+[GET]: https://try.ricochet.rs/api/docs#tag/content/GET/api/v0/content/%7Bulid%7D/env-vars
+[PATCH]: https://try.ricochet.rs/api/docs#tag/content/PATCH/api/v0/content/%7Bulid%7D/env-vars
+[PUT]: https://try.ricochet.rs/api/docs#tag/content/PUT/api/v0/content/%7Bulid%7D/env-vars
+[DELETE]: https://try.ricochet.rs/api/docs#tag/content/DELETE/api/v0/content/%7Bulid%7D/env-vars/%7Bname%7D
+
+### Limitations
+
+A name or a value may be at most 190 bytes, which is the most a 2048 bit RSA key carries under OAEP with SHA-256.
+Longer strings cannot be encrypted at all.
+
+Keys may only consist of ASCII letters, numbers, and underscores.
+
+:::note[Permissions]
+Changing environment variables requires an API key with the content settings scope, held by the item owner, an editor, or an admin.
+:::
 
 ## Accessing environment variables
 

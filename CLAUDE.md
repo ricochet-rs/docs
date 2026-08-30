@@ -35,3 +35,8 @@ It uses Astro starlight.
 - Never stack two or more callouts in a row
 - Be ruthlessly concise
 - Ensure that pages are organized linearly and logically
+
+## Formatting
+
+`just fmt` applies semantic line breaks to `src/content/docs/**/*.mdx`, but `.prettierignore` excludes `**/*.mdx` from prettier.
+Align Markdown tables in `.mdx` pages by hand, since no formatter or lint hook reformats them.

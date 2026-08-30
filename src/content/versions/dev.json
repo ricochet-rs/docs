@@ -4,7 +4,6 @@
       "label": "User",
       "items": [
         "user/quickstart",
-        "user/time-zone",
         {
           "label": "Content Items",
           "autogenerate": { "directory": "user/content-items" }
@@ -20,6 +19,10 @@
         {
           "label": "Managing Content",
           "autogenerate": { "directory": "user/managing-content" }
+        },
+        {
+          "label": "User",
+          "autogenerate": { "directory": "user/user" }
         }
       ]
     },

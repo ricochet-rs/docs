@@ -5,7 +5,7 @@ title: Kubernetes
 import { Aside, Steps } from "@astrojs/starlight/components";
 
 Ricochet supports amd64, arm64, and mixed-architecture Kubernetes clusters.
-The Helm chart installs one Ricochet Server replica, the service account and RBAC used to launch workloads, and optional persistent storage and ingress resources.
+The Helm chart installs one `ricochet-server` replica, the service account and RBAC used to launch workloads, and optional persistent storage and ingress resources.
 
 ## Prerequisites
 
@@ -107,7 +107,7 @@ Before installing Ricochet, provide:
       --values values.yaml
     ```
 
-    The chart version is independent from the Ricochet Server version.
+    The chart version is independent from the `ricochet-server` version.
     Check the chart's `appVersion` before upgrading:
 
     ```sh
@@ -154,7 +154,7 @@ Leave it disabled on single-architecture clusters when you do not want to grant 
 
 ## Architecture
 
-The Ricochet Server creates Kubernetes resources for deployed content:
+The `ricochet-server` creates Kubernetes resources for deployed content:
 
 - Each app runs as a Kubernetes Deployment.
 - Each task invocation runs as a Kubernetes Job.

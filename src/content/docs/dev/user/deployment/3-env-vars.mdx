@@ -28,7 +28,6 @@ The new environment variables will be available to any new processes.
 To ensure that no values are ever sent in plain text, both names and values of environment variables need to be encrypted before being sent to the API endpoint.
 Encrypting values is done by fetching the server's public key, using it to RSA encrypt values, then using the resultant values in the JSON body.
 
-
 ```shell
 # fetch the server's public key
 curl -s https://try.ricochet.rs/api/v0/public-key -o ricochet.pub
@@ -57,7 +56,6 @@ When sending environment variables to the API for any endpoint, they must first 
 | `DELETE` | [`/api/v0/content/{id}/env-vars/{name}`][delete] | Remove one variable                                |
 
 Note that it is not possible to retrieve the raw environment variable values through the API—only the names of the keys via the GET endpoint.
-
 
 ### API reference
 

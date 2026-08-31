@@ -136,3 +136,16 @@ h6 code {
     font-size: 1rem !important;
   }
 }
+
+/* Widen the sidebar so the three sidebar tabs fit on one line each.
+The tabs share the sidebar in equal columns, so the widest label
+("Self-Hosted") sets the minimum. */
+:root {
+  --sl-sidebar-width: 22rem;
+}
+
+/* A tab label must never break, so a hyphenated label cannot split in two.
+The tab list scrolls horizontally if a future label outgrows its column. */
+[role="tablist"] > .tab > [role="tab"] {
+  white-space: nowrap;
+}

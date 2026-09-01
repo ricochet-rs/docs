@@ -40,6 +40,20 @@
   border-bottom: 2px solid var(--sl-color-text-accent) !important;
 }
 
+/* Size each sidebar tab to its own label rather than to an equal share of the
+sidebar. Equal columns padded the short labels with empty space and still left
+"Self-Hosted" too narrow, so it broke onto a second line at its hyphen. */
+.tablist-wrapper [role="tablist"] {
+  grid-auto-columns: max-content;
+  justify-content: start;
+  column-gap: 1.25rem;
+}
+
+.tablist-wrapper [role="tablist"] > .tab > [role="tab"] {
+  padding-inline: 0;
+  white-space: nowrap;
+}
+
 /* Theme-responsive logo */
 .theme-logo {
   display: inline-block;
@@ -135,17 +149,4 @@ h6 code {
     height: 2rem !important;
     font-size: 1rem !important;
   }
-}
-
-/* Widen the sidebar so the three sidebar tabs fit on one line each.
-The tabs share the sidebar in equal columns, so the widest label
-("Self-Hosted") sets the minimum. */
-:root {
-  --sl-sidebar-width: 22rem;
-}
-
-/* A tab label must never break, so a hyphenated label cannot split in two.
-The tab list scrolls horizontally if a future label outgrows its column. */
-[role="tablist"] > .tab > [role="tab"] {
-  white-space: nowrap;
 }

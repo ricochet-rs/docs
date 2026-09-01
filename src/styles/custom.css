@@ -40,19 +40,24 @@
   border-bottom: 2px solid var(--sl-color-text-accent) !important;
 }
 
+/* Narrower than Starlight's 18.75rem default. The three tabs and the longest
+sidebar labels both still fit, and the content column gains the difference. */
+:root {
+  --sl-sidebar-width: 17.5rem;
+}
+
 /* Size each sidebar tab to its own label rather than to an equal share of the
-sidebar. Equal columns padded the short labels with empty space and still left
-"Self-Hosted" too narrow, so it broke onto a second line at its hyphen. */
+sidebar, then centre the row. Equal columns padded the short labels with empty
+space and still left "Self-Hosted" too narrow, so it broke at its hyphen. */
 .tablist-wrapper [role="tablist"] {
   grid-auto-columns: max-content;
-  justify-content: start;
+  justify-content: center;
   padding-inline: 0;
 }
 
 /* Space the tabs with their own padding rather than a gap between them, so the
 hover and active backgrounds reach the neighbouring tab instead of hugging the
-text. The inset matches the sidebar links below, which keeps the first tab's
-label on the same left edge as theirs. */
+text. */
 .tablist-wrapper [role="tablist"] > .tab > [role="tab"] {
   padding-inline: 0.5rem;
   white-space: nowrap;

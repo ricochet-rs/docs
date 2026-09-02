@@ -21,6 +21,18 @@ Do not silently continue with missing or stale shared instructions.
 
 The phrase "You're absolutely right" is banned.
 
+### Scope and assumptions
+
+Change only the files, sections, and lines named in the request.
+When a request names a subset, such as "only macOS and Windows", the rest of the page is out of scope even when it becomes inconsistent.
+Never widen a diff for consistency, coherence, or tidiness.
+List the adjacent spots at the end of the reply as a question and let the requester decide.
+
+Always err toward asking for clarification rather than assuming.
+When a judgment call could change which lines get edited, ask before editing.
+A question costs one round trip, and a wrong assumption costs a revert.
+Complete the requested work fully, and do not add to it.
+
 ## Project overview
 
 This is the documentation site for ricochet the universal data science deployment platform.
@@ -35,3 +47,8 @@ It uses Astro starlight.
 - Never stack two or more callouts in a row
 - Be ruthlessly concise
 - Ensure that pages are organized linearly and logically
+
+## Formatting
+
+`just fmt` applies semantic line breaks to `src/content/docs/**/*.mdx`, but `.prettierignore` excludes `**/*.mdx` from prettier.
+Align Markdown tables in `.mdx` pages by hand, since no formatter or lint hook reformats them.

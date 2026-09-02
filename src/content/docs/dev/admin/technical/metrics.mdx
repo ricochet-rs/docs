@@ -1,0 +1,58 @@
+---
+title: Metrics
+---
+
+Ricochet captures metrics that are exposed via a [Prometheus](https://prometheus.io/) server.
+The metrics are served at `/metrics` on port `6189` by default.
+
+For example, to access the metrics from localhost:
+
+```bash
+curl http://localhost:6189/metrics
+```
+
+These metrics are on a separate port than ricochet so that they can be kept on an internal network.
+
+## Configuration
+
+Set the `RICOCHET_PROMETHEUS_PORT` environment variable to serve metrics on a different port.
+
+```bash
+RICOCHET_PROMETHEUS_PORT=9100
+```
+
+Restart ricochet to apply the change.
+
+## Scrape configuration
+
+Add ricochet as a target in `prometheus.yml`:
+
+```yaml
+scrape_configs:
+  - job_name: ricochet
+    static_configs:
+      - targets: ["localhost:6189"]
+```
+
+## Counters and histograms
+
+| Metric | Type | Labels | Description |
+| ------ | ---- | ------ | ----------- |
+| `ricochet_requests_total` | Counter | `type`, `content_id`, `status`, `method` | Requests served. |
+| `ricochet_connections_total` | Counter | `type`, `content_id` | Connections opened. |
+| `ricochet_invocations_started_total` | Counter | `content_id` | Invocations started. |
+| `ricochet_invocations_completed_total` | Counter | `content_id`, `status` | Invocations completed. |
+| `ricochet_invocation_duration_seconds` | Histogram | `content_id` | Time an invocation took to complete. |
+| `ricochet_app_instances_started_total` | Counter | `content_id` | App instances started. |
+| `ricochet_app_instances_stopped_total` | Counter | `content_id` | App instances stopped. |
+
+## Gauges
+
+| Metric | Labels | Description |
+| ------ | ------ | ----------- |
+| `ricochet_active_processes` | `type`, `content_id` | Processes currently running. |
+| `ricochet_connections` | `type`, `content_id` | Connections currently open. |
+| `ricochet_memory_bytes` | `type`, `content_id` | Memory currently in use. |
+| `ricochet_peak_memory_bytes` | `type`, `content_id` | Highest memory use observed. |
+| `ricochet_longest_active_seconds` | `type`, `content_id` | Age of the longest running process. |
+| `ricochet_last_invocation_timestamp_seconds` | `content_id` | Unix time of the most recent invocation. |

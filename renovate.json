@@ -12,11 +12,14 @@
   ],
   "packageRules": [
     {
+      "description": "Wait three days before updating npm packages",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "3 days",
+      "internalChecksFilter": "strict"
+    },
+    {
       "matchPackageNames": ["starlight-theme-nova"],
       "automerge": false
     }
-  ],
-  "statusCheckNames": {
-    "minimumReleaseAge": null
-  }
+  ]
 }

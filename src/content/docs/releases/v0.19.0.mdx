@@ -12,7 +12,6 @@ template: splash
 
 #### Explore page
 - Browse content in a list view with sortable columns and the ability to filter by tags.
-- Columns stay visible and aligned when viewing the explore page.
 
 #### Apps and tasks
 - Copy the app URL directly from the overview page.
@@ -20,19 +19,15 @@ template: splash
 - View Prometheus metrics tracked across both apps and tasks in the proxy.
 
 #### API and administration
-- Instance admins can list all content items using a new read scope.
+- Instance admins can now list all content items using a new "read" scope.
 - The Scalar API reference tab displays a custom title and branding.
 
 #### Configuration and deployment
-- Read encryption keypairs from a configurable shared directory.
 - Community edition pages display a powered-by indicator.
-- Compute pool admission is enforced in cloud environments.
 
 ### Fixes
 
-- Python execution environments now include the uv field and resolve correctly for Kubernetes images.
+- Python execution environments now include the `uv` field and resolve correctly for Kubernetes images.
 - Mobile layouts display content more consistently.
 - The runtime selection process prefers compatible newer versions.
 - Navigation quick links collapse properly and breadcrumbs no longer wrap unexpectedly.
-- Kubernetes runners operate more reliably and audit flushes run quietly.
-- The environment variable restart callout displays the correct text.

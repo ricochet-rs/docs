@@ -9,25 +9,24 @@ template: splash
 **Released: September 2, 2026**
 
 ### Features
+- Prometheus metrics are exposed at `/metrics` on port 6189 capturing request information for both tasks and apps. See the [docs](https://docs.ricochet.rs/v0-19/admin/technical/metrics/index.html) for more.
 
 #### Explore page
-- Browse content in a list view with sortable columns and the ability to filter by tags.
+- The explore page has been reworked to be more easily navigable.
 
 #### Apps and tasks
 - Copy the app URL directly from the overview page.
 - Stop running tasks from the UI.
-- View Prometheus metrics tracked across both apps and tasks in the proxy.
+- In the community edition, apps and static sites now have a very small "powered-by" ricochet logo on the lower right hand side.
 
 #### API and administration
-- Instance admins can now list all content items using a new "read" scope.
-- The Scalar API reference tab displays a custom title and branding.
+- Server admins can now list all content items using a new "read" scope.
 
 #### Configuration and deployment
-- Community edition pages display a powered-by indicator.
 
 ### Fixes
 
-- Python execution environments now include the `uv` field and resolve correctly for Kubernetes images.
+- Python execution-environment configurations now have an optional `uv` field to specify the path to the `uv` binary. This defaults to `/usr/lib/uv` to match the provided [exec-envs](https://github.com/ricochet-rs/exec-envs).
 - Mobile layouts display content more consistently.
-- The runtime selection process prefers compatible newer versions.
+- When matching versions, a newer minor version is always used rather than the previous distance based metrics.
 - Navigation quick links collapse properly and breadcrumbs no longer wrap unexpectedly.

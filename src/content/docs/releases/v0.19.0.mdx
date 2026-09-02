@@ -1,0 +1,31 @@
+---
+title: v0.19.0
+docs: release notes for Ricochet v0.19.0
+slug: releases/v0.19.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 2, 2026**
+
+### Features
+- Prometheus metrics are exposed at `/metrics` on port 6189 capturing request information for both tasks and apps. See the [docs](https://docs.ricochet.rs/v0-19/admin/technical/metrics/index.html) for more.
+
+#### Explore page
+- The explore page has been reworked to be more easily navigable.
+
+#### Apps and tasks
+- Copy the app URL directly from the overview page.
+- Stop running tasks from the UI.
+- In the community edition, apps and static sites now have a very small "powered-by" ricochet logo on the lower right hand side.
+
+#### API and administration
+- Server admins can now list all content items using a new "read" scope.
+
+
+### Fixes
+
+- Python execution-environment configurations now have an optional `uv` field to specify the path to the `uv` binary. This defaults to `/usr/lib/uv` to match the provided [exec-envs](https://github.com/ricochet-rs/exec-envs).
+- Mobile layouts display content more consistently.
+- When matching versions, a newer minor version is always used rather than the previous distance based metrics.
+- Navigation quick links collapse properly and breadcrumbs no longer wrap unexpectedly.

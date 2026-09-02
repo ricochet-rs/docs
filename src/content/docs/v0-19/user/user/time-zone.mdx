@@ -1,0 +1,70 @@
+---
+title: Time Zone
+---
+
+import { Aside, LinkCard, Steps } from '@astrojs/starlight/components';
+
+Log timestamps are rendered in your own time zone, detected from your browser.
+
+<Steps>
+
+1. Open **Profile** from the user menu.
+
+2. Pick a zone from the **Time Zone** list, or press **Detect** to read it from this browser.
+
+</Steps>
+
+The new zone applies to log output immediately.
+
+## How the zone is chosen
+
+Precedence, highest first:
+
+| Source | Behavior |
+| --- | --- |
+| Profile setting | The zone you picked, kept in a `timezone` cookie for a year. |
+| Browser | The zone your browser reports, used until you pick one. |
+| `UTC` | Used when the browser reports no zone. |
+
+Only an explicit choice is stored.
+A zone that was merely detected is never written to the cookie, so opening ricochet from another location detects afresh instead of staying pinned to a stale one.
+
+<Aside type="note">
+The choice lives in a browser cookie rather than in your account, so another browser or device starts from its own detected zone.
+</Aside>
+
+## What the zone affects
+
+Log lines are written in UTC and converted as they stream, so the per-line clock in runtime logs, task run logs, and deployment logs follows your zone.
+
+Everything else stays in UTC and is labeled as such:
+
+- Run and deployment listings
+- Execution environment validation times
+- Timestamps stored in ricochet's database
+- Log files written to disk
+- ricochet's own server logs
+- Audit records
+
+Because stored data stays in UTC, changing your zone re-renders log output on the next load and rewrites nothing.
+
+## Scheduled tasks
+
+Cron schedules are evaluated in UTC and ignore this setting.
+A task scheduled for `0 9 * * *` runs at 09:00 UTC no matter which zone you display.
+
+<LinkCard
+  title="Scheduling Tasks"
+  href="/v0-19/user/tasks/2-scheduling/"
+  description="Configure cron schedules for tasks and reports."
+/>
+
+## Servers without a timezone database
+
+The zone list is read from the [IANA Time Zone Database](https://www.iana.org/time-zones) on the server.
+If the server has none, the picker reports that no database is available and log timestamps stay in UTC.
+
+<Aside type="caution">
+Alpine-based container images do not ship the database.
+Install the `tzdata` package in the image to make the zone list available.
+</Aside>

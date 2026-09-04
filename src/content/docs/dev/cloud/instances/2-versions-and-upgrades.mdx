@@ -1,0 +1,37 @@
+---
+title: Versions and Upgrades
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Each instance either follows the fleet or stays on a version you pick.
+Change this on the instance card, under **Version**, as an owner or admin.
+
+## Dynamic versus static
+
+**Dynamic** is the default and the recommendation.
+The instance updates whenever a newer version is published to the fleet.
+You do not have to do anything.
+
+**Static** pins the instance.
+It stays on the version you selected until you change it, and fleet updates pass it by.
+Use this when you need to hold a version for a validation window.
+
+Switching from static to dynamic hands the instance back to the fleet, and it moves to the current fleet target on the next pass.
+
+## Upgrade manually
+
+A pinned instance is upgraded by selecting a newer version on the card.
+You can only move forward.
+Choosing a version older than the one running is refused, so an upgrade never silently downgrades an instance.
+
+The status badge shows **Upgrading** while the change rolls out, and returns to **Running** when it finishes.
+
+<Aside type="note">
+The version list comes from ricochet's published releases, so a new release becomes selectable without any change on your side.
+</Aside>
+
+## When you can change it
+
+Version settings are editable while an instance is **Running** or **Read-only**.
+While it is provisioning, upgrading, suspended, or being deleted, the controls are hidden until it settles.

@@ -1,0 +1,69 @@
+---
+title: Quickstart
+tableOfContents: false
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+ricochet Cloud is the managed version of ricochet, at [cloud.ricochet.rs](https://cloud.ricochet.rs).
+You create an organization, provision an instance, and then deploy to it with the same CLI you would use against a self-hosted server.
+
+<Steps>
+
+1. Sign in
+
+    Open [cloud.ricochet.rs](https://cloud.ricochet.rs) and enter your work email.
+
+    If your company has [single sign-on](/dev/cloud/organizations/3-single-sign-on/) set up, your email domain routes you to your own identity provider.
+    Any other address continues with the standard sign-in.
+
+2. Create an organization
+
+    Every instance, member, and invoice belongs to an organization.
+    Pick **Organizations** in the sidebar, then **Create organization**, and give it a name and a slug.
+
+    You become its owner, and a free trial starts immediately.
+
+3. Create an instance
+
+    Go to **Instances** and select **Create instance**.
+
+    Give it a name, keep the version mode on **Dynamic**, and confirm.
+    Provisioning takes a few minutes, and the status badge moves from **Provisioning** to **Running**.
+
+4. Open the instance
+
+    Select **Open application** on the instance card.
+
+    You land in the ricochet web UI already signed in, at `https://<instance>-<organization>.cloud.ricochet.rs`.
+
+5. Deploy your first app
+
+    Install the [ricochet CLI](/dev/user/deployment/1-ricochet-cli/), then point it at your instance:
+
+    ```bash
+    ricochet login -S https://<instance>-<organization>.cloud.ricochet.rs
+    ricochet deploy
+    ```
+
+    From here on, deploying to a cloud instance works exactly like deploying to any other ricochet server.
+    Follow the [user quickstart](/dev/user/quickstart/) for a full walkthrough.
+
+</Steps>
+
+<Aside type="tip">
+Creating an organization does not give its members access to your instances.
+Instance access is granted per member, in [Manage access](/dev/cloud/instances/4-instance-access/).
+</Aside>
+
+## Where things live
+
+| Section | What you do there |
+| --- | --- |
+| Overview | Summary of the active organization. |
+| Organizations | Create organizations, switch between them, accept invitations. |
+| Members | Invite people, change roles, remove members. |
+| Instances | Provision, upgrade, and open instances, and grant access to them. |
+| Billing | Choose how many apps and how much memory you pay for, and read your statements. |
+| Audit log | Review what changed in the organization. Owners and admins only. |
+| Settings | Rename the organization, configure single sign-on, delete the organization. |

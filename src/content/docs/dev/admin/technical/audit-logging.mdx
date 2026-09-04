@@ -22,7 +22,29 @@ RICOCHET_HOME/
 
 Logs rotate daily.
 The previous day's log is compressed with gzip and renamed to `audit-YYYY-MM-DD.log.gz`.
-Archived logs are never automatically deleted.
+
+## Retention
+
+Records are kept for 365 days by default, in the database and in the archived log files alike.
+Set a different window under `[audit]` in `ricochet-config.toml`:
+
+```toml
+[audit]
+retention_days = 90
+```
+
+Omit the key to accept the default.
+TOML has no null, so keeping every record forever is spelled out:
+
+```toml
+[audit]
+retention_days = "forever"
+```
+
+Pruning runs once a day, after the log rotates.
+It deletes rows from `audit_logs` and removes any `audit-YYYY-MM-DD.log.gz` older than the window, and records what it removed as an `audit_pruned` event.
+The window in force, and the date of the oldest record still held, are shown above the table on the **Audit Log** page.
+`RICOCHET_HOME` is per replica, so on a multi-replica installation each replica prunes its own archived files while the shared database is pruned by whichever replica reaches it first.
 
 ## Record format
 
@@ -33,7 +55,8 @@ Each line is a JSON object:
   "id": "01KJNKR4KXV8FCT1432D2CZG0V",
   "timestamp": "2026-03-01T21:09:26.781568Z",
   "actor": { "api_key": { "short_token": "Pm93AJQNSTG", "owner_id": "344509059241640593" } },
-  "event": { "api_key_created": { "short_token": "Pm93AJQNSTG", "name": "CLI Authentication" } }
+  "event": { "api_key_created": { "short_token": "Pm93AJQNSTG", "name": "CLI Authentication" } },
+  "authority": "direct"
 }
 ```
 
@@ -43,6 +66,18 @@ Each line is a JSON object:
 | `timestamp` | UTC timestamp (ISO 8601)                                 |
 | `actor`     | Who performed the action (see [Actors](#actors))         |
 | `event`     | What happened and any associated details (see [Events](#events)) |
+| `authority` | Whether the actor held the permission or overrode it (see [Authority](#authority)) |
+
+## Authority
+
+The `authority` field says how the actor was entitled to act.
+
+| Authority                | Description                                                                        |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `direct`                 | The actor held the item-level permission for this action                           |
+| `global_admin_override`  | The actor held no item-level role and acted on their server-wide Admin role instead |
+
+A `global_admin_override` record is badged in the **Audit Log** page so a reviewer can find every action taken without an explicit role assignment.
 
 ## Actors
 
@@ -70,6 +105,7 @@ Authentication events cover user login, logout, and account provisioning.
 | `login_succeeded` | `"login_succeeded"`                                   | A login completed successfully                     |
 | `logout`          | `"logout"`                                            | A user session was terminated                      |
 | `login_failed`    | `{ "login_failed": { "reason": "..." } }`             | A login attempt failed                             |
+| `session_created` | `{ "session_created": { "session_id": "..." } }`      | A session was established for a signed-in user     |
 | `first_admin`     | `{ "first_admin": { "user_id": "..." } }`             | The first user was automatically promoted to Admin |
 
 ### API keys
@@ -105,7 +141,15 @@ Content events are recorded whenever content is deployed, modified, invoked, or 
 | `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed  |
 | `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                 |
 | `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed               |
+| `instance_started`       | `{ "instance_started": { "id": "...", "instance_id": "..." } }`                          | A worker was started to serve a content item          |
 | `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                    |
+| `bundle_deleted`         | `{ "bundle_deleted": { "id": "...", "deployment_id": "..." } }`                          | A deployment bundle was removed by the retention reaper |
+| `git_fetched`            | `{ "git_fetched": { "id": "...", "commit": "...", "previous_commit": "..." } }`          | A git-backed item was polled and its upstream commit read |
+
+An `instance_started` record names whoever's request caused the worker to start, so it is the record that says an app was rendered for a given user.
+Requests to an already-running worker are not audited; they are counted in the `req_metrics` table instead.
+A `git_fetched` record is written on every poll, whether or not the commit moved.
+`previous_commit` is `null` on the first deployment, and differs from `commit` exactly when the fetch produced a new deployment.
 
 ### Git credentials
 
@@ -115,6 +159,21 @@ Git credential events are recorded when credentials used for content deployment 
 | ------------------------ | ---------------------------------------------------- | ----------------------------- |
 | `git_credential_created` | `{ "git_credential_created": { "id": "..." } }`      | A git credential was created  |
 | `git_credential_deleted` | `{ "git_credential_deleted": { "id": "..." } }`      | A git credential was deleted  |
+
+### Audit log itself
+
+Reading and expiring the log are themselves audited.
+
+| Event            | Example                                                              | Description                                        |
+| ---------------- | -------------------------------------------------------------------- | -------------------------------------------------- |
+| `audit_pruned`   | `{ "audit_pruned": { "removed": 412, "retention_days": 365 } }`      | Records past the retention window were deleted     |
+| `audit_exported` | `{ "audit_exported": { "format": "csv", "records": 2048 } }`         | A server admin downloaded the log                  |
+
+## Exporting
+
+A server admin can download the log from the **Audit Log** page as CSV or JSON.
+Both carry the same columns, with the actor already resolved to a display name and email rather than an identity provider subject id.
+An export holds the newest 100,000 records; the page says so when the log is longer than that.
 
 ## Protected resources
 

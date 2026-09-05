@@ -138,6 +138,57 @@ The cache volume can be recreated, but doing so makes subsequent deployments res
 The chart disables persistence by default.
 Running the one-line `helm install` command without values creates an ephemeral installation and is not recommended outside testing.
 
+## Encryption keys
+
+Ricochet encrypts environment variables and git credentials with a keypair it stores in `.ricochet.json`.
+By default that file lives on the home volume, and losing it orphans every encrypted value in the database.
+Sourcing the keypair from a Kubernetes Secret keeps it independent of the volume, and is what lets more than one server replica read the same key.
+
+Generate the keypair once and load it into a Secret:
+
+```sh
+# a scratch directory only your user can read
+keydir=$(mktemp -d)
+# write a fresh keypair into it
+ricochet secrets-init --dir "$keydir"
+# load the private key into the namespace
+kubectl --namespace ricochet create secret generic ricochet-keys \
+  --from-file=.ricochet.json="$keydir/.ricochet.json"
+# remove the on-disk copy now that the Secret holds it
+rm -rf "$keydir"
+```
+
+Mount the Secret and point Ricochet at the mount:
+
+```yaml title="values.yaml"
+extraVolumes:
+  - name: ricochet-keys
+    secret:
+      secretName: ricochet-keys
+extraVolumeMounts:
+  - name: ricochet-keys
+    mountPath: /etc/ricochet/secrets
+    readOnly: true
+env:
+  - name: RICOCHET_SECRETS
+    value: /etc/ricochet/secrets
+```
+
+`RICOCHET_SECRETS` sets the `secrets` configuration key, which defaults to `RICOCHET_HOME` and resolves a relative path under it.
+Give a mounted Secret an absolute path.
+
+`secrets-init` also writes `.ricochet.pub` next to the private key.
+Ricochet derives the public key from the private one and never reads that file back, so the Secret does not need it.
+
+<Aside type="caution">
+  Do not run `ricochet secrets-init` for an instance that already holds data.
+  It writes a fresh keypair, and the key it replaces is the only thing that can decrypt the environment variables and git credentials already in the database.
+  To move an existing installation into a Secret, copy that instance's own `.ricochet.json` from its home volume instead.
+</Aside>
+
+An instance that already holds encrypted values refuses to start when the keypair is missing, rather than generating a replacement that would orphan them.
+For the same reason, `secrets-init` refuses to overwrite an existing keypair.
+
 ## Multi-architecture clusters
 
 Ricochet can restore dependencies for both amd64 and arm64 nodes.

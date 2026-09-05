@@ -55,8 +55,10 @@ In the case of the **systemd service**, the default location is `/var/lib/ricoch
 
 Alternatively, use the `RICOCHET_HOME` environment variable to specify where ricochet should use the home directory.
 
-The `secrets` configuration reads `.ricochet.json` and `.ricochet.pub` from a directory of your choice instead of `RICOCHET_HOME`, resolving a relative path under it.
-Use it to keep the encryption keypair in a Kubernetes Secret rather than on the home volume.
+To keep environment variables and credentials secure, ricochet uses a hybrid encryption mechanism.
+The keys are stored at `RICOCHET_HOME/.ricochet.json` and `RICOCHET_HOME/.ricochet.pub`.
+To specify an alternative location to set or source these variables, use the `secrets` field in the `ricochet-config.toml`.
+This can be useful particularly when used in kubernetes.
 See [Encryption keys](/dev/admin/installation/3-kubernetes/#encryption-keys).
 
 ## Environment Variables

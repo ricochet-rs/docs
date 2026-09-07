@@ -1,0 +1,36 @@
+---
+title: v0.20.0
+docs: release notes for Ricochet v0.20.0
+slug: releases/v0.20.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 7, 2026**
+
+### Features
+
+- Ricochet now supports the **server.yml** standard and plumber2 deployment configurations.
+- Dependency lockfile mismatches are detected and reported to help identify inconsistencies between declared and resolved dependencies.
+
+### Improvements
+
+#### User Interface
+
+- Settings rows can now be edited in place without navigating to a separate page.
+- Active tabs display with an underline to improve navigation clarity.
+- Help documentation routes automatically adjust based on the Ricochet edition in use.
+
+### Fixes
+
+#### Kubernetes
+
+- Service ports remain stable across application restarts instead of changing unexpectedly.
+- Version check jobs now wait on the correct scoped name, preventing premature timeout errors.
+- Validation and restore operations run outside workload quotas to prevent quota exhaustion from blocking administrative tasks.
+- Execution environment validation completes successfully after being interrupted.
+
+#### General
+
+- Deployment logs display without causing application crashes.
+- Package environments rebuild automatically when the execution environment changes, ensuring consistency.

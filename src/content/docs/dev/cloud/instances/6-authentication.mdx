@@ -4,14 +4,14 @@ title: Instance Authentication
 
 import { Steps } from "@astrojs/starlight/components";
 
-An organization owner or admin can connect an individual ricochet instance directly to an external OpenID Connect (OIDC) identity provider.
+An organization owner or admin can connect an individual ricochet instance directly to an external OpenID Connect (OIDC) or SAML 2.0 identity provider.
 Open **Instances**, then **Authentication** on that instance's card.
 Each instance can use its own provider.
 
 This controls sign-in at the instance's URL.
 You continue to sign in to the Cloud portal with your Ricochet Cloud account.
 
-## Connect your provider
+## Connect an OIDC provider
 
 <Steps>
 
@@ -51,6 +51,41 @@ You continue to sign in to the Cloud portal with your Ricochet Cloud account.
 Saving checks the configuration format and accepts the change.
 It does not test an OIDC sign-in or confirm that your provider accepts the client credentials.
 
+## Connect a SAML provider
+
+<Steps>
+
+1. Select **External SAML provider**.
+
+2. Register a SAML application with your identity provider using the **Entity ID / metadata URL** and **ACS URL** shown in the dialog.
+
+    The URLs are `https://<hostname>/saml/metadata` and `https://<hostname>/saml/acs`.
+    Require signed assertions and configure a stable, persistent NameID.
+    Leave request signing and assertion encryption disabled.
+
+3. Export the provider's metadata XML and paste it into **Identity provider metadata XML**.
+
+    Include an HTTPS HTTP-Redirect SSO endpoint and the signing certificate.
+    Metadata is limited to 32 KiB and is stored as an uploaded snapshot.
+    External entities and DTDs are rejected.
+
+4. Open **Attribute mapping** and set the optional email, display name, and groups attribute names to match your provider.
+
+    Group membership comes from all values of the configured attribute and refreshes at sign-in.
+    An absent groups attribute clears previous memberships when group mapping is configured.
+
+5. Save, wait for the instance to return to **Running**, and test sign-in from the instance in a fresh browser session.
+
+</Steps>
+
+SAML requires an instance release with native SAML support and platform enablement.
+If the portal reports that the instance version is unsupported, upgrade to a supported release or contact Cloud support.
+
+Sign-in starts from Ricochet and accepts signed HTTP-POST assertions in response to its HTTP-Redirect requests.
+Unsolicited IdP-initiated sign-in, signed AuthnRequests, encrypted assertions, and SAML Single Logout are not supported.
+Signing out ends the Ricochet session, leaving the provider session active.
+Pending sign-ins expire after five minutes and must be restarted after an instance restart.
+
 ## Who can sign in
 
 Configure application assignments or equivalent sign-in restrictions in your identity provider.
@@ -70,7 +105,9 @@ Leave **Client secret** blank to keep the saved secret when the issuer and clien
 Enter a new secret to rotate it, or select **Remove the saved secret** to switch to a public client.
 Changing the issuer or client ID clears the previous secret unless you supply a new one.
 
-When [changing the instance domain](/dev/cloud/instances/3-custom-domains/), register the new `https://<hostname>/oauth/callback` URI in your external provider too.
+For OIDC, when [changing the instance domain](/dev/cloud/instances/3-custom-domains/), register the new `https://<hostname>/oauth/callback` URI in your external provider too.
+For SAML, update both the Entity ID and ACS URL in your provider after a domain change.
+Replace the uploaded metadata when the IdP rotates its signing certificates, including both certificates during an overlap period.
 The portal cannot update an external provider's application registration for you.
 
 ## Restore managed sign-in
@@ -79,5 +116,6 @@ Open the instance's **Authentication** dialog, select **Managed Ricochet sign-in
 This removes the external provider configuration and restores the instance's managed identity provider and portal access assignments after restart.
 You can use the Cloud portal to make this change even when external instance sign-in is unavailable.
 
-If external sign-in fails, check the issuer, client credentials, PKCE support, and exact redirect URI in your provider.
+If OIDC sign-in fails, check the issuer, client credentials, PKCE support, and exact redirect URI in your provider.
+For SAML, check the signing certificate, stable NameID, attribute names, Entity ID, ACS URL, and provider clock.
 If the portal reports that it cannot encrypt or store a client secret, contact Cloud support.

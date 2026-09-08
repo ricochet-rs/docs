@@ -1,0 +1,83 @@
+---
+title: Instance Authentication
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+An organization owner or admin can connect an individual ricochet instance directly to an external OpenID Connect (OIDC) identity provider.
+Open **Instances**, then **Authentication** on that instance's card.
+Each instance can use its own provider.
+
+This controls sign-in at the instance's URL.
+[Organization single sign-on](/dev/cloud/organizations/3-single-sign-on/) controls sign-in to the Cloud portal separately.
+
+## Connect your provider
+
+<Steps>
+
+1. Select **External OpenID Connect provider**.
+
+2. Register an application in your identity provider.
+
+    Enable the authorization code flow with PKCE and the `openid`, `profile`, and `email` scopes.
+    Copy the **Redirect URI** from the dialog into the application's allowed redirect URIs.
+    It must match exactly, for example `https://analytics-acme.cloud.ricochet.rs/oauth/callback`.
+
+3. Enter the **Issuer URL** and **Client ID** from your provider.
+
+    Use the HTTPS issuer advertised by its OIDC discovery document, not the discovery document's URL or an authorization endpoint.
+    The issuer must not contain credentials, a query, or a fragment.
+    The provider's discovery and authentication endpoints must be reachable from the instance.
+
+4. Enter a **Client secret** if the application is a confidential client.
+
+    Leave it blank for a public client using PKCE.
+    Saved secrets are encrypted and never displayed again.
+
+5. Set **Claim mapping** if your tokens use different profile claims.
+
+    **Display name claim** defaults to `preferred_username` and also accepts `name`, `nickname`, `email`, or `sub`.
+    **Groups claim** is optional, for example `groups`.
+    The named ID-token claim may contain an array of group names, a single name, or a comma-separated list.
+    Group claims are read at sign-in, not continuously synchronized from the provider.
+
+6. Select **Save authentication**.
+
+    The change restarts this instance to apply the provider configuration.
+    Wait for it to return to **Running**, then open its URL in a fresh browser session and test sign-in.
+
+</Steps>
+
+Saving checks the configuration format and accepts the change.
+It does not test an OIDC sign-in or confirm that your provider accepts the client credentials.
+
+## Who can sign in
+
+Configure application assignments or equivalent sign-in restrictions in your identity provider.
+Users can visit the instance URL directly without a Cloud portal account.
+**Open application** in the portal still requires a portal access assignment, but the instance authenticates through the external provider.
+
+Portal membership and [instance access assignments](/dev/cloud/instances/4-instance-access/) do not grant or revoke access at an external provider.
+To revoke external sign-in, remove the user's application assignment there.
+Inside ricochet, [user roles](/dev/user/managing-content/0-user-roles/) and [content permissions](/dev/user/managing-content/1-access-and-permissions/) control what the user can do.
+
+Switching providers does not migrate existing instance accounts, roles, or content ownership to new identities.
+Test the required permissions as well as sign-in before moving users over.
+
+## Update credentials or the instance domain
+
+Leave **Client secret** blank to keep the saved secret when the issuer and client ID are unchanged.
+Enter a new secret to rotate it, or select **Remove the saved secret** to switch to a public client.
+Changing the issuer or client ID clears the previous secret unless you supply a new one.
+
+When [changing the instance domain](/dev/cloud/instances/3-custom-domains/), register the new `https://<hostname>/oauth/callback` URI in your external provider too.
+The portal cannot update an external provider's application registration for you.
+
+## Restore managed sign-in
+
+Open the instance's **Authentication** dialog, select **Managed Ricochet sign-in**, and save.
+This removes the external provider configuration and restores the instance's managed identity provider and portal access assignments after restart.
+You can use the Cloud portal to make this change even when external instance sign-in is unavailable.
+
+If external sign-in fails, check the issuer, client credentials, PKCE support, and exact redirect URI in your provider.
+If the portal reports that it cannot encrypt or store a client secret, contact Cloud support.

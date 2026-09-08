@@ -24,17 +24,21 @@ The domain carries both application traffic and sign-in callbacks.
 </Steps>
 
 Create the DNS record before saving.
-Saving updates the routing and the sign-in redirect together, and if the redirect cannot be updated the whole change is rolled back rather than left half applied.
+With managed sign-in, saving updates the routing and the sign-in redirect together, and if the redirect cannot be updated the whole change is rolled back rather than left half applied.
 
 <Aside type="caution">
 Changing the domain changes the address your users and your CLI use.
 Run `ricochet login -S https://<new-domain>` again after the change.
 </Aside>
 
+With an [external OIDC provider](/dev/cloud/instances/6-authentication/), register `https://<new-domain>/oauth/callback` in that provider before changing the domain.
+The portal updates the instance's callback URL but cannot change the external application registration.
+
 ## Revert to the default
 
 Select **Domain**, then **Reset to default**.
 The instance goes back to `https://<instance-name>-<organization-slug>.cloud.ricochet.rs`.
+If you use an external OIDC provider, register the callback URI for that default hostname too.
 
 ## Rules
 

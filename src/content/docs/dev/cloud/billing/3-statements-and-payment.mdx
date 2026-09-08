@@ -1,0 +1,66 @@
+---
+title: Statements and Payment
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+At the end of each month, ricochet Cloud writes a statement for your organization with one line per metered dimension.
+Statements are listed on the **Billing** page and can be downloaded.
+
+## How a statement is priced
+
+Billable hours are summed for the month and priced at the rates in force, in EUR by default.
+The rates and your billing address are snapshotted onto the statement when it is written.
+
+A later rate change never reprices a closed month.
+
+Hours inside your trial window are recorded but never billed.
+
+## Statement states
+
+| State | Meaning |
+| --- | --- |
+| Issued | The statement is final and ready to be charged. |
+| Waiting on billing | The month is computed, but billing is not set up yet. Set it up and the statement is issued on the next run. |
+| Void | The statement no longer applies. |
+
+Payment is tracked separately from the document, because a statement can be a complete record long before it is charged:
+
+| Payment | Meaning |
+| --- | --- |
+| Not charged | Issued, not yet charged. |
+| Charging | The charge is in flight. |
+| Invoiced | Billed on payment terms, and legitimately unpaid until they lapse. |
+| Paid | Settled. |
+| Payment failed | The charge did not go through. |
+
+## Paying by card
+
+Card is the default.
+Statements are charged against the payment method on your subscription.
+
+Update the card, and read your payment history, through the customer portal link on the **Billing** page.
+
+## Paying by invoice
+
+Net terms are credit we extend, so invoicing is requested by you and granted by us.
+
+<Steps>
+
+1. On the **Billing** page, request invoicing.
+
+2. Enter your registered company name and a company website or public registry URL.
+
+3. Submit the request.
+
+</Steps>
+
+Your organization keeps paying by card while the request is reviewed, so nothing is interrupted.
+You can withdraw a pending request at any time.
+
+Once granted, statements are billed on terms, 30 days by default.
+Only we can grant, decline, or revoke invoicing.
+
+<Aside type="note">
+If a request is declined, the reason is shown on the **Billing** page.
+</Aside>

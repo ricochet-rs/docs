@@ -1,0 +1,73 @@
+---
+title: Create an Instance
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An instance is a running ricochet server, managed for you.
+Owners and admins create instances under **Instances**.
+
+## Create one
+
+<Steps>
+
+1. Select **Create instance**.
+
+2. Give it a name.
+
+    The name becomes part of the hostname, so keep it short.
+
+3. Confirm the region.
+
+    ricochet Cloud currently runs in `eu-west`.
+    If you need another region, contact support and we will discuss it.
+
+4. Choose how it takes updates.
+
+    **Dynamic** follows the fleet and updates when a new version ships.
+    **Static** stays on the version you pick until you change it.
+    See [Versions and Upgrades](/dev/cloud/instances/2-versions-and-upgrades/).
+
+5. Create the instance.
+
+</Steps>
+
+Provisioning takes a few minutes.
+The card polls until the status settles on **Running**, and then **Open application** takes you into the instance, already signed in.
+
+## The instance address
+
+An instance answers on a single hostname:
+
+```
+https://<instance-name>-<organization-slug>.cloud.ricochet.rs
+```
+
+Both parts are slugified, and long names are shortened so the whole label stays within the DNS limit.
+The address is shown on the instance card, and you can replace it with your own domain.
+See [Custom Domains](/dev/cloud/instances/3-custom-domains/).
+
+<Aside type="note">
+Creating an instance does not grant anyone access to it, not even other owners.
+The person who created it is assigned automatically, and everyone else is assigned in [Manage access](/dev/cloud/instances/4-instance-access/).
+</Aside>
+
+## What blocks a create
+
+Provisioning requires an organization whose billing is in good standing.
+A trialing or active organization can provision.
+An organization that is past due, in its grace period, suspended, or cancelled cannot, and the create button explains why.
+
+Instances are not a billing dimension and are never capped.
+What you pay follows from the apps and Compute Pool you select in [Billing](/dev/cloud/billing/2-metered-resources/).
+
+## Deploy to it
+
+Once the instance is running, it behaves like any other ricochet server:
+
+```bash
+ricochet login -S https://<instance-name>-<organization-slug>.cloud.ricochet.rs
+ricochet deploy
+```
+
+The whole [Usage](/dev/user/quickstart/) section applies unchanged from here on.

@@ -1,7 +1,7 @@
 {
   "sidebar": [
     {
-      "label": "User",
+      "label": "Usage",
       "items": [
         "user/quickstart",
         {
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "label": "Admin",
+      "label": "Self-Hosted",
       "items": [
         {
           "label": "Installation",

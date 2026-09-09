@@ -2,16 +2,68 @@
 title: "Database"
 ---
 
-ricochet uses SQLite to store critical system data including deployed content, users, access controls, API keys, logs, and analytics.
-SQLite is bundled and statically linked within the ricochet binary.
-No external installation is required.
+import { Aside, Steps } from "@astrojs/starlight/components";
 
-:::note
-Postgres support is planned in a future release.
-:::
+ricochet stores deployed content, users, access controls, API keys, logs, and analytics in a database.
+The database is SQLite or Postgres, selected by the `[database]` section of `ricochet-config.toml`.
 
-The database file is located at `RICOCHET_HOME/ricochet.sqlite3`.
-If the file does not exist when ricochet starts, it will be created automatically.
+## SQLite
+
+Without a `[database]` section, ricochet uses SQLite.
+SQLite is bundled and statically linked within the ricochet binary, so no external installation is required.
+The database file is `RICOCHET_HOME/ricochet.sqlite3` and is created automatically on first start.
+
+## Postgres
+
+Point `[database] url` at an empty Postgres database whose role may create tables:
+
+```toml title="ricochet-config.toml"
+[database]
+url = "postgres://ricochet:secret@db.example.com:5432/ricochet"
+```
+
+The same setting is available as the `RICOCHET_DATABASE__URL` environment variable.
+Both `postgres://` and `postgresql://` URLs are accepted.
+ricochet creates the schema on first start and migrates it on every upgrade, exactly as it does for SQLite.
+
+Use Postgres when the database must outlive a single host, or when it must be shared by more than one ricochet instance.
+
+## Moving from SQLite to Postgres
+
+<Steps>
+
+1. Stop ricochet.
+
+2. Create an empty Postgres database and a role that owns it.
+
+3. Copy the data:
+
+   ```sh
+   ricochet db copy \
+     --from sqlite:///var/lib/ricochet/data/ricochet.sqlite3 \
+     --to postgres://ricochet:secret@db.example.com:5432/ricochet
+   ```
+
+   The command creates the schema on the target, refuses a target that already holds rows, copies every table inside one transaction, and prints the row count per table.
+   A row whose parent is gone, such as a log of a deployment that no longer exists, is left behind and counted as an orphan.
+
+4. Add the `[database]` section to `ricochet-config.toml`.
+
+5. Start ricochet.
+
+</Steps>
+
+Keep the same `RICOCHET_HOME` and secrets directory.
+Environment variables and git credentials are stored encrypted, and only the existing keypair can read them.
+Sessions are not copied, so users sign in again.
+The SQLite file is left untouched and serves as a backup.
+
+<Aside type="tip">
+  The copy works in either direction.
+  Pass a Postgres URL as `--from` and a new SQLite file as `--to`, for example `sqlite:///tmp/ricochet.sqlite3?mode=rwc`, to take a local copy of a Postgres-backed instance.
+</Aside>
+
+## Schema migrations
 
 ricochet automatically handles database schema migrations when upgrading to new versions.
 Under normal operation, the database should remain fairly small.

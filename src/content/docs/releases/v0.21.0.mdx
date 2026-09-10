@@ -11,8 +11,6 @@ template: splash
 ### Features
 
 - The public server URL is persisted for workloads and sign-in, ensuring consistent access across sessions.
-- Copy an installation between backends using the **ricochet db copy** command.
-- Edit managed-cloud execution environments directly from the UI.
 
 #### Audit log
 
@@ -32,8 +30,3 @@ template: splash
 - Persistent storage mounts correctly in application pods.
 - Ownership walks are skipped on prepared shared volumes, improving performance.
 - Pod logs stream only after scheduling completes, eliminating empty or incomplete log output.
-
-#### Proxy and networking
-
-- Docker DNS comments are ignored when the proxy selects resolvers, preventing configuration errors.
-- Launched workloads inherit the server URL from the parent process.

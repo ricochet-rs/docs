@@ -1,0 +1,39 @@
+---
+title: v0.21.0
+docs: release notes for Ricochet v0.21.0
+slug: releases/v0.21.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 10, 2026**
+
+### Features
+
+- The public server URL is persisted for workloads and sign-in, ensuring consistent access across sessions.
+- Copy an installation between backends using the **ricochet db copy** command.
+- Edit managed-cloud execution environments directly from the UI.
+
+#### Audit log
+
+- Actor names now appear in audit records, and you can export the log, configure retention-based pruning, and track a wider range of events.
+
+### Fixes
+
+- Deployments now select only compatible execution environments, preventing runtime mismatches.
+
+#### Julia
+
+- Julia containers resolve **juliaup** from vendored paths and use the correct **renv** path consistent with .deb and .rpm packages.
+- Julia runtime libraries are preserved during environment setup, and restore failures are reported clearly.
+
+#### Kubernetes
+
+- Persistent storage mounts correctly in application pods.
+- Ownership walks are skipped on prepared shared volumes, improving performance.
+- Pod logs stream only after scheduling completes, eliminating empty or incomplete log output.
+
+#### Proxy and networking
+
+- Docker DNS comments are ignored when the proxy selects resolvers, preventing configuration errors.
+- Launched workloads inherit the server URL from the parent process.

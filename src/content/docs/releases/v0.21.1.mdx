@@ -1,0 +1,25 @@
+---
+title: v0.21.1
+docs: release notes for Ricochet v0.21.1
+slug: releases/v0.21.1
+tableOfContents: false
+template: splash
+---
+
+**Released: September 11, 2026**
+
+### Features
+
+- Navigate directly to the first or last page of results in paginated views.
+
+### Fixes
+
+#### R environment management
+
+- The **renv** lockfile now tolerates minor drift and displays diagnostics instead of failing validation.
+- R version mismatches between environments are now permitted by recording the version information in the lockfile.
+
+#### Deployment
+
+- Entrypoints defined in **_server.yml** are now properly validated before deployment.
+- Clean process exits no longer incorrectly report a memory kill error when the process does not own the cgroup.

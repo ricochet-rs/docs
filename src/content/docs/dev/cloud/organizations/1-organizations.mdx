@@ -1,0 +1,61 @@
+---
+title: Organizations
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An organization owns instances, members, and billing.
+Any signed-in user can create one, and the creator becomes its owner.
+
+## Create an organization
+
+<Steps>
+
+1. Select **Organizations** in the sidebar, then **Create organization**.
+
+2. Enter a display name.
+
+3. Accept the suggested slug or type your own.
+
+    A slug is lowercase letters, numbers, and single hyphens, for example `acme-corp`.
+    It must be unique across ricochet Cloud.
+
+</Steps>
+
+A new organization starts on a [trial](/dev/cloud/billing/1-trial-and-subscription/) with a baseline resource selection, so you can provision an instance before setting billing up.
+
+## Why the slug matters
+
+The slug names your organization's namespace in the cluster and is baked into every instance hostname.
+An instance called `prod` in the organization `acme-corp` answers at `prod-acme-corp.cloud.ricochet.rs`.
+
+You can rename an organization at any time.
+You cannot change its slug while it still has instances, because the running instances would be left behind in the old namespace.
+Delete the instances first, or change only the display name.
+
+## Switch organizations
+
+The organization switcher sits at the top of the sidebar.
+Everything except the Organizations list itself is scoped to the organization you have active.
+
+## Organization logo
+
+Upload a logo under **Settings**.
+Until you do, the organization shows its initials.
+
+## Delete an organization
+
+Deleting is owner-only and permanent.
+It removes the organization, its instances, and its identity configuration.
+
+Two things block a deletion:
+
+- A live subscription. Cancel it first, so billing stops with the organization.
+- An instance that could not be torn down. The deletion stops rather than orphaning it.
+
+You must type the organization's slug to confirm.
+
+<Aside type="caution">
+Deleting an organization deletes its instances and the data on them.
+There is no undo.
+</Aside>

@@ -1,0 +1,43 @@
+---
+title: Instance Lifecycle
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The badge on an instance card always reflects what the platform is actually doing, not what was last requested.
+
+## Statuses
+
+| Status | Meaning |
+| --- | --- |
+| Provisioning | Being created. The card polls until it settles. |
+| Running | Healthy and reachable. |
+| Upgrading | A version change is rolling out. |
+| Read-only | Reachable, but writes are blocked. Set by billing, not by you. |
+| Suspended | Stopped by billing or by an operator. Not reachable. |
+| Deleting | Teardown is in progress. |
+| Deleted | Gone. |
+| Failed | Provisioning or a change did not complete. |
+
+Provisioning, Upgrading, and Deleting are transient, and the portal polls them until they resolve.
+
+## Read-only and suspended
+
+Neither is something you set.
+Both come from your organization's billing state, described in [Trial and Subscription](/dev/cloud/billing/1-trial-and-subscription/).
+
+An organization in its grace period has its instances forced read-only.
+An organization that is suspended or cancelled loses access to them entirely.
+Resolving the billing problem restores the instances.
+
+## Delete an instance
+
+Deleting is done by an owner or admin from the instance card.
+It tears the instance down in the cluster and removes its sign-in configuration.
+
+<Aside type="caution">
+Deleting an instance deletes its data.
+Take what you need off it first.
+</Aside>
+
+Deleting the organization deletes its instances first, in the same way.

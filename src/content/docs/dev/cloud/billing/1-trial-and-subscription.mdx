@@ -1,0 +1,63 @@
+---
+title: Trial and Subscription
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+A new organization starts on a trial, with a small resource selection already in place, so you can provision an instance before setting up payment.
+
+## The trial
+
+The trial runs for 14 days by default and starts with 2 apps and a 4 GB Compute Pool.
+
+While you are on trial you can raise each dimension up to a ceiling, by default 10 apps and 16 GB, without setting billing up.
+Hours you accrue during the trial are recorded, so you can see what you would have paid, and are never invoiced.
+
+The exact figures that apply to your organization are shown on the **Billing** page.
+
+## Setting billing up
+
+Setting billing up means completing checkout, so that we hold a customer record and a live subscription for your organization.
+
+That single fact does three things:
+
+- It lifts the trial ceiling, up to the self-service limit.
+- It lets your monthly statements be issued.
+- It keeps your apps running when the trial ends.
+
+Buying a subscription ends the trial immediately, and normal metering applies from then on.
+
+## If the trial ends without billing
+
+Your apps are stopped.
+Every live instance is suspended and your selection is set to zero, so a stopped organization accrues no charges for capacity it cannot use.
+
+Nothing is deleted.
+Setting billing up restores both the instances and the selection you last chose yourself.
+
+## Subscription states
+
+| State | Use instances | Provision new instances | Notes |
+| --- | :---: | :---: | --- |
+| Trialing | ✅ | ✅ | Trial ceiling applies until billing is set up. |
+| Active | ✅ | ✅ | Normal operation. |
+| Past due | ✅ | ❌ | A payment failed. Instances keep running. |
+| Grace period | Read-only | ❌ | Instances are forced read-only. |
+| Suspended | ❌ | ❌ | Instances are not reachable. |
+| Cancelled | ❌ | ❌ | Instances are not reachable. |
+
+## How a failed payment escalates
+
+A subscription that stays unpaid moves down the ladder on a timer, not on any single payment event.
+
+```
+active → past due → grace period → suspended → deleted
+```
+
+Past due becomes grace period once the grace window has passed since your paid period ended, 7 days by default.
+Each step after that takes the retention window, 14 days by default.
+
+<Aside type="tip">
+Fixing the payment at any point before deletion restores your instances.
+Update your payment method through the customer portal link on the **Billing** page.
+</Aside>

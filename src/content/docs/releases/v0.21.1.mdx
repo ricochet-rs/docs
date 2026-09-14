@@ -16,10 +16,10 @@ template: splash
 
 #### R environment management
 
-- The **renv** lockfile now tolerates minor drift and displays diagnostics instead of failing validation.
+- The `renv` lockfile now tolerates minor drift and displays diagnostics instead of failing validation.
 - R version mismatches between environments are now permitted by recording the version information in the lockfile.
 
 #### Deployment
 
-- Entrypoints defined in **_server.yml** are now properly validated before deployment.
+- Entrypoints defined in `_server.yml` are now properly validated before deployment.
 - Clean process exits no longer incorrectly report a memory kill error when the process does not own the cgroup.

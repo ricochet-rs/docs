@@ -15,25 +15,27 @@ if (!Astro.locals.starlightUtils?.multiSidebar) {
 }
 ---
 
-{config?.multiSidebar ? (
-  <>
-    {config.multiSidebar.switcherStyle === "horizontalList" && (
-      <HorizontalList />
-    )}
-    {config.multiSidebar.switcherStyle === "hidden" &&
-      Astro.locals.starlightUtils.multiSidebar.map(
-        ({ isCurrentSidebar, label, sidebar }) => (
-          <div
-            hidden={!isCurrentSidebar}
-            data-starlight-multi-sidebar-label={label.label}
-          >
-            <SidebarWrapper {sidebar} />
-          </div>
-        ),
+{
+  config?.multiSidebar ? (
+    <>
+      {config.multiSidebar.switcherStyle === "horizontalList" && (
+        <HorizontalList />
       )}
-    {config.multiSidebar.switcherStyle !== "horizontalList" &&
-      config.multiSidebar.switcherStyle !== "hidden" && <SidebarWrapper />}
-  </>
-) : (
-  <SidebarWrapper />
-)}
+      {config.multiSidebar.switcherStyle === "hidden" &&
+        Astro.locals.starlightUtils.multiSidebar.map(
+          ({ isCurrentSidebar, label, sidebar }) => (
+            <div
+              hidden={!isCurrentSidebar}
+              data-starlight-multi-sidebar-label={label.label}
+            >
+              <SidebarWrapper {sidebar} />
+            </div>
+          ),
+        )}
+      {config.multiSidebar.switcherStyle !== "horizontalList" &&
+        config.multiSidebar.switcherStyle !== "hidden" && <SidebarWrapper />}
+    </>
+  ) : (
+    <SidebarWrapper />
+  )
+}

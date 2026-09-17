@@ -7,29 +7,31 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 
 <div class="site-title-wrapper">
   <a href={siteTitleHref} class="site-title sl-flex">
-    {config.logo && logos.dark && (
-      <>
-        <img
-          class:list={{
-            "light:sl-hidden print:hidden": !("src" in config.logo),
-          }}
-          alt={config.logo.alt}
-          src={logos.dark.src}
-          width={logos.dark.width}
-          height={logos.dark.height}
-        />
-        {/* Show light alternate if a user configure both light and dark logos. */}
-        {!("src" in config.logo) && (
+    {
+      config.logo && logos.dark && (
+        <>
           <img
-            class="dark:sl-hidden print:block"
+            class:list={{
+              "light:sl-hidden print:hidden": !("src" in config.logo),
+            }}
             alt={config.logo.alt}
-            src={logos.light?.src}
-            width={logos.light?.width}
-            height={logos.light?.height}
+            src={logos.dark.src}
+            width={logos.dark.width}
+            height={logos.dark.height}
           />
-        )}
-      </>
-    )}
+          {/* Show light alternate if a user configure both light and dark logos. */}
+          {!("src" in config.logo) && (
+            <img
+              class="dark:sl-hidden print:block"
+              alt={config.logo.alt}
+              src={logos.light?.src}
+              width={logos.light?.width}
+              height={logos.light?.height}
+            />
+          )}
+        </>
+      )
+    }
     <span
       class:list={[
         "font-mono",

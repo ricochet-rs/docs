@@ -14,28 +14,26 @@ const { toc, isMobile = false, depth = 0, isFirst = true } = Astro.props;
 ---
 
 <ul class:list={{ isMobile }}>
-  {
-    toc.map((item, index) => (
-      <li>
-        <a
-          href={`#${item.slug}`}
-          style={!isMobile ? `--depth: ${depth};` : undefined}
-          aria-current={isFirst && index === 0 ? "true" : undefined}
-          set:html={parseBackticks(item.text)
-            .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
-            .join("")}
+  {toc.map((item, index) => (
+    <li>
+      <a
+        href={`#${item.slug}`}
+        style={!isMobile ? `--depth: ${depth};` : undefined}
+        aria-current={isFirst && index === 0 ? "true" : undefined}
+        set:html={parseBackticks(item.text)
+          .map((p) => (p.isCode ? `<code>${p.text}</code>` : p.text))
+          .join("")}
+      />
+      {item.children.length > 0 && (
+        <Astro.self
+          toc={item.children}
+          isMobile={isMobile}
+          depth={depth + 1}
+          isFirst={false}
         />
-        {item.children.length > 0 && (
-          <Astro.self
-            toc={item.children}
-            isMobile={isMobile}
-            depth={depth + 1}
-            isFirst={false}
-          />
-        )}
-      </li>
-    ))
-  }
+      )}
+    </li>
+  ))}
 </ul>
 
 <style>

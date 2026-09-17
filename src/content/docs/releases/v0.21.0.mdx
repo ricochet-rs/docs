@@ -1,0 +1,30 @@
+---
+title: v0.21.0
+docs: release notes for Ricochet v0.21.0
+slug: releases/v0.21.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 10, 2026**
+
+### Features
+
+- The environment variable `RICOCHET_URL` is now set automatically to the ricochet server host url. This can be defined by the `url` field in the `ricochet-config.toml`. Otherwise, it is inferred from incoming requests.
+- Audit logs can now be exported from the UI. 
+- Increased the number of events that are included in the audit log as well as improving recording of the actor in the audit logs.
+- Audit logs are now configured for 365 day retention and can be adjusted via the `ricochet-config.toml`
+
+### Fixes
+
+- Using the Kubernetes backend engine, deployments now select only compatible execution environments, preventing runtime mismatches.
+
+#### Julia
+
+- Julia containers resolve `juliaup` from vendored paths and use the correct `renv` path consistent with `.deb` and `.rpm` packages.
+
+#### Kubernetes
+
+- Persistent storage mounts correctly in application pods.
+- Ownership walks are skipped on prepared shared volumes, improving performance.
+- Pod logs stream only after scheduling completes, eliminating empty or incomplete log output.

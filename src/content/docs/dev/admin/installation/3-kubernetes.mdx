@@ -140,10 +140,8 @@ Running the one-line `helm install` command without values creates an ephemeral 
 
 ## Encryption keys
 
-Ricochet encrypts environment variables and git credentials with a keypair stored in `.ricochet.json` on the home volume.
-Store it in a Kubernetes Secret instead so multiple server replicas can share one key.
-
-Generate the keypair once and load it into a Secret:
+Ricochet encrypts environment variables and Git credentials with a keypair stored in `.ricochet.json` on the "`Home`" volume.
+When running in Kubernetes, store these in a Kubernetes Secret so multiple server replicas can share one key.
 
 ```sh
 # a scratch directory only your user can read
@@ -175,11 +173,8 @@ env:
 
 `RICOCHET_SECRETS` is the path to the directory that holds `.ricochet.json`.
 It sets the `secrets` configuration field, which defaults to `RICOCHET_HOME`.
-A relative path resolves under `RICOCHET_HOME`, so give a mounted Secret an absolute path.
-
-By default, ricochet creates credentials at startup.
-It is preferred to set the path so that the credentials are created by ricochet in the correct location.
-Do not run `ricochet secrets-init` after starting a new ricochet server.
+A relative path resolves under `RICOCHET_HOME`, so give the mounted Secret an absolute path.
+By default, Ricochet creates these credentials once during initial startup.
 
 <Aside type="caution">
   Do not run `ricochet secrets-init` for an instance that already holds data.

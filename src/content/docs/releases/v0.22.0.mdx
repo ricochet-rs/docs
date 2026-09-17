@@ -1,0 +1,41 @@
+---
+title: v0.22.0
+docs: release notes for Ricochet v0.22.0
+slug: releases/v0.22.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 17, 2026**
+
+### Features
+
+#### Database
+
+- Improvements to database query performance.
+- To support high-availability, avatar images are stored in the database instead of on-disk.
+
+#### Deployment
+
+- App instances that run out of memory or otherwise die are removed automatically. This ensures dead processes aren't routed to.
+- Queued deployments are persisted across restarts, and task runs are properly linked to their logs.
+
+### Enhancements
+
+- The "Explore", "My Apps", and "My Tasks" list views have been redesigned for improved readability.
+- Improved leader election to support multi-instance deployment.
+### Fixes
+
+#### Interface
+
+- The Git deployment form now restricts visibility options to those allowed by your current license.
+- Deployment log streams automatically reconnect and continue following running attempts beyond the idle timeout window.
+
+#### Deployment
+
+- Restarting an application no longer triggers a rolling update when the deployment specification has not changed.
+
+#### API
+
+- Every listed content item now includes the owner's identity in the response.
+

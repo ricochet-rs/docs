@@ -15,11 +15,11 @@ The database file is `RICOCHET_HOME/ricochet.sqlite3` and is created automatical
 
 ## Postgres
 
-Point `[database] url` at an empty Postgres database whose role may create tables:
+Point `[database] url` at an empty Postgres database whose role is allowed to create tables:
 
 ```toml title="ricochet-config.toml"
 [database]
-url = "postgres://ricochet:secret@db.example.com:5432/ricochet"
+url = "postgres://<user>:<password>@db.example.com:<port>/<db name>"
 ```
 
 The same setting is available as the `RICOCHET_DATABASE__URL` environment variable.
@@ -38,14 +38,13 @@ Use Postgres when the database must outlive a single host, or when it must be sh
 
 3. Copy the data:
 
-   ```sh
-   ricochet db copy \
-     --from sqlite:///var/lib/ricochet/data/ricochet.sqlite3 \
-     --to postgres://ricochet:secret@db.example.com:5432/ricochet
-   ```
+    ```sh
+    ricochet db copy \
+      --from sqlite:///var/lib/ricochet/data/ricochet.sqlite3 \
+      --to postgres://<user>:<password>@db.example.com:<port>/<db name>
+    ```
 
-   The command creates the schema on the target, refuses a target that already holds rows, copies every table inside one transaction, and prints the row count per table.
-   A row whose parent is gone, such as a log of a deployment that no longer exists, is left behind and counted as an orphan.
+    The command creates the schema on the target, refuses a target that already holds rows, copies every table inside one transaction, and prints the row count per table.
 
 4. Add the `[database]` section to `ricochet-config.toml`.
 
@@ -54,8 +53,8 @@ Use Postgres when the database must outlive a single host, or when it must be sh
 </Steps>
 
 Keep the same `RICOCHET_HOME` and secrets directory.
-Environment variables and git credentials are stored encrypted, and only the existing keypair can read them.
-Sessions are not copied, so users sign in again.
+Environment variables and Git credentials are stored encrypted, and only the existing keypair can read them.
+Sessions are not copied, so users must sign in again.
 The SQLite file is left untouched and serves as a backup.
 
 <Aside type="tip">
@@ -65,5 +64,4 @@ The SQLite file is left untouched and serves as a backup.
 
 ## Schema migrations
 
-ricochet automatically handles database schema migrations when upgrading to new versions.
-Under normal operation, the database should remain fairly small.
+ricochet automatically handles database schema migrations when up-or downgrading to new versions.

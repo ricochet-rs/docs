@@ -10,10 +10,6 @@ template: splash
 
 ### Features
 
-#### Settings
-
-- Access all settings from a new tabbed menu in the interface.
-
 #### Database
 
 - Transaction-pooled Postgres queries are now supported, improving database performance.
@@ -24,39 +20,24 @@ template: splash
 - Workers that run out of memory are identified and stopped automatically, preventing the server from routing requests to failed processes.
 - Queued deployments are persisted across restarts, and task runs are properly linked to their logs.
 
-#### Multi-instance
-
-- Events and content-map changes propagate between instances in a clustered deployment.
-
 ### Enhancements
 
-- The Explore, My Apps, and My Tasks list views have been redesigned for improved readability.
+- The "Explore", "My Apps", and "My Tasks" list views have been redesigned for improved readability.
 
 ### Fixes
 
 #### Interface
 
-- The git deployment form now restricts visibility options to those allowed by your current license.
+- The Git deployment form now restricts visibility options to those allowed by your current license.
 - Deployment log streams automatically reconnect and continue following running attempts beyond the idle timeout window.
-- The signed-in user indicator no longer flickers to a signed-out state while the user resource is loading.
-- The runtime tab remains selected after saving a scaling setting.
-
-#### Licensing
-
-- Perpetual licenses are now accepted and validated correctly.
 
 #### Deployment
 
 - Restarting an application no longer triggers a rolling update when the deployment specification has not changed.
-- Managed portal capacity errors are displayed during application startup rather than failing silently.
 
 #### API
 
 - Every listed content item now includes the owner's identity in the response.
-
-#### Database
-
-- TLS is enabled for Postgres connections, securing database communication.
 
 #### Clustering
 

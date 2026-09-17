@@ -27,52 +27,48 @@ const sidebars = Astro.locals.starlightUtils.multiSidebar.map((sidebar) => {
 <starlight-multi-sidebar-tabs>
   <div class="tablist-wrapper not-content">
     <ul role="tablist">
-      {
-        sidebars.map(({ label, isCurrentSidebar, panelId, tabId }) => (
-          <li role="presentation" class="tab">
-            {label.type === "link" && (
-              <a
-                role="tab"
-                href={"#" + panelId}
-                id={tabId}
-                aria-selected={isCurrentSidebar ? "true" : "false"}
-                tabindex={isCurrentSidebar ? 0 : -1}
-                {...label.attrs}
-              >
-                <span>{label.label}</span>
-                {label.badge && <Badge {...label.badge} />}
-              </a>
-            )}
-            {label.type !== "link" && (
-              <a
-                role="tab"
-                href={"#" + panelId}
-                id={tabId}
-                aria-selected={isCurrentSidebar ? "true" : "false"}
-                tabindex={isCurrentSidebar ? 0 : -1}
-              >
-                <span>{label.label}</span>
-                {label.badge && <Badge {...label.badge} />}
-              </a>
-            )}
-          </li>
-        ))
-      }
+      {sidebars.map(({ label, isCurrentSidebar, panelId, tabId }) => (
+        <li role="presentation" class="tab">
+          {label.type === "link" && (
+            <a
+              role="tab"
+              href={"#" + panelId}
+              id={tabId}
+              aria-selected={isCurrentSidebar ? "true" : "false"}
+              tabindex={isCurrentSidebar ? 0 : -1}
+              {...label.attrs}
+            >
+              <span>{label.label}</span>
+              {label.badge && <Badge {...label.badge} />}
+            </a>
+          )}
+          {label.type !== "link" && (
+            <a
+              role="tab"
+              href={"#" + panelId}
+              id={tabId}
+              aria-selected={isCurrentSidebar ? "true" : "false"}
+              tabindex={isCurrentSidebar ? 0 : -1}
+            >
+              <span>{label.label}</span>
+              {label.badge && <Badge {...label.badge} />}
+            </a>
+          )}
+        </li>
+      ))}
     </ul>
   </div>
-  {
-    sidebars.map(({ isCurrentSidebar, tabId, panelId, sidebar }) => (
-      <section
-        class="__collapse-content"
-        id={panelId}
-        aria-labelledby={tabId}
-        role="tabpanel"
-        hidden={!isCurrentSidebar}
-      >
-        <SidebarWrapper {sidebar} />
-      </section>
-    ))
-  }
+  {sidebars.map(({ isCurrentSidebar, tabId, panelId, sidebar }) => (
+    <section
+      class="__collapse-content"
+      id={panelId}
+      aria-labelledby={tabId}
+      role="tabpanel"
+      hidden={!isCurrentSidebar}
+    >
+      <SidebarWrapper {sidebar} />
+    </section>
+  ))}
 </starlight-multi-sidebar-tabs>
 <style>
   starlight-tabs {

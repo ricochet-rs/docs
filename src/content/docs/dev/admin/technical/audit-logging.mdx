@@ -4,14 +4,11 @@ title: "Audit Logging"
 
 Ricochet writes an audit log for security-related and administrative operations, including any actions that affect infrastructure or execute code.
 Audit logging is always enabled and cannot be disabled.
-Records are stored in the database, in the `audit_logs` table, and written in batches every 200ms or every 256 events, whichever comes first.
+Logs are stored in the database in the `audit_logs` table by default.
+To also write them to `RICOCHET_HOME/logs/audit`, set `file_logging = true` under `[audit]` in `ricochet-config.toml`.
+Records are written in batches every 200ms or every 256 events, whichever comes first.
 
-Read them on the **Audit Log** page, or [export](#exporting) them.
-
-:::note
-Earlier versions also wrote a JSON Lines file under `RICOCHET_HOME/logs/audit/`.
-That file is no longer written or read, and any archives already on disk are left alone for you to remove.
-:::
+View audit log summaries on the **Audit Log** page, or [export the logs](#exporting).
 
 ## Retention
 
@@ -21,6 +18,8 @@ Set a different window under `[audit]` in `ricochet-config.toml`:
 ```toml
 [audit]
 retention_days = 90
+# Enable file logging in addition to database writes.
+# file_logging = true
 ```
 
 To never prune audit logs, use:
@@ -31,7 +30,21 @@ retention_days = "forever"
 ```
 
 Pruning runs once a day and records what it removed as an `audit_pruned` event.
-The window in force, and the date of the oldest record still held, are shown above the table on the **Audit Log** page.
+
+## File location
+
+When file logging is enabled, logs are written here:
+
+```text
+RICOCHET_HOME/
+└── logs/
+    └── audit/
+        ├── audit.log
+        ├── audit-2026-02-22.log.gz
+        └── audit-2026-02-21.log.gz
+```
+
+The current day's log is `audit.log`.
 
 ## Record format
 
@@ -47,24 +60,23 @@ Each record is a JSON object:
 }
 ```
 
-| Field       | Description                                              |
-| ----------- | -------------------------------------------------------- |
-| `id`        | Unique ID per record (ULID)                              |
-| `timestamp` | UTC timestamp (ISO 8601)                                 |
-| `actor`     | Who performed the action (see [Actors](#actors))         |
-| `event`     | What happened and any associated details (see [Events](#events)) |
-| `authority` | Whether the actor held the permission or overrode it (see [Authority](#authority)) |
+| Field       | Description                                                            |
+| ----------- | ---------------------------------------------------------------------- |
+| `id`        | Unique ID per record (ULID)                                            |
+| `timestamp` | UTC timestamp (ISO 8601)                                               |
+| `actor`     | Who performed the action (see [Actors](#actors))                       |
+| `event`     | What happened and any associated details (see [Events](#events))       |
+| `authority` | Whether a global admin override was used (see [Authority](#authority)) |
 
 ## Authority
 
-The `authority` field says how the actor was entitled to act.
+The `authority` field records direct permissions as `direct` and admin override privileges as `global_admin_override`.
+Admin overrides have a visual indicator on the **Audit Log** page so you can quickly identify them.
 
-| Authority                | Description                                                                        |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| `direct`                 | The actor held the item-level permission for this action                           |
+| Authority                | Description                                                                         |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| `direct`                 | The actor held the item-level permission for this action                            |
 | `global_admin_override`  | The actor held no item-level role and acted on their server-wide Admin role instead |
-
-A `global_admin_override` record is badged in the **Audit Log** page so a reviewer can find every action taken without an explicit role assignment.
 
 ## Actors
 
@@ -119,19 +131,19 @@ Access control events track permission changes and denied requests.
 
 Content events are recorded whenever content is deployed, modified, invoked, or removed.
 
-| Event                    | Example                                                                                 | Description                                           |
-| ------------------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                               | Content was deployed                                  |
-| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                                | Content was deleted                                   |
-| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                                | A content item was invoked                            |
-| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                               | Environment variables for a content item were updated |
-| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed  |
-| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                 |
-| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed               |
-| `instance_started`       | `{ "instance_started": { "id": "...", "instance_id": "..." } }`                          | A worker was started to serve a content item          |
-| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                    |
-| `bundle_deleted`         | `{ "bundle_deleted": { "id": "...", "deployment_id": "..." } }`                          | A deployment bundle was removed by the retention reaper |
-| `git_fetched`            | `{ "git_fetched": { "id": "...", "commit": "...", "previous_commit": "..." } }`          | A git-backed item was polled and its upstream commit read |
+| Event                    | Example                                                                                 | Description                                               |
+| ------------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                               | Content was deployed                                      |
+| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                                | Content was deleted                                       |
+| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                                | A content item was invoked                                |
+| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                               | Environment variables for a content item were updated     |
+| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed      |
+| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                     |
+| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed                   |
+| `instance_started`       | `{ "instance_started": { "id": "...", "instance_id": "..." } }`                         | A worker was started to serve a content item              |
+| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                        |
+| `bundle_deleted`         | `{ "bundle_deleted": { "id": "...", "deployment_id": "..." } }`                         | A deployment bundle was removed by the retention reaper   |
+| `git_fetched`            | `{ "git_fetched": { "id": "...", "commit": "...", "previous_commit": "..." } }`         | A git-backed item was polled and its upstream commit read |
 
 An `instance_started` record names whoever's request caused the worker to start.
 Requests to an already-running worker are not audited.
@@ -146,7 +158,7 @@ Git credential events are recorded when credentials used for content deployment 
 | `git_credential_created` | `{ "git_credential_created": { "id": "..." } }`      | A git credential was created  |
 | `git_credential_deleted` | `{ "git_credential_deleted": { "id": "..." } }`      | A git credential was deleted  |
 
-### Audit log itself
+### Audit log modifications
 
 Reading and expiring the log are themselves audited.
 

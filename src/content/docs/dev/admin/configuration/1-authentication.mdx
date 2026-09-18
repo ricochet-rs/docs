@@ -4,7 +4,8 @@ title: Authentication
 
 import { Aside, LinkCard } from "@astrojs/starlight/components";
 
-ricochet uses OpenID Connect (OIDC) for authentication, allowing you to integrate with any OIDC-compliant identity provider.
+ricochet supports OpenID Connect (OIDC) and native SAML 2.0 authentication.
+Configure one provider per instance.
 
 ## Requirements
 
@@ -138,6 +139,48 @@ When disabled (the default), unauthenticated users can browse public content but
 
 <LinkCard
   title="Learn about user roles"
-  href="/dev/admin/configuration/2-user-roles"
+  href="/dev/user/managing-content/0-user-roles/"
   description="Configure user roles and default permissions."
 />
+
+## Native SAML 2.0
+
+Configure `[auth.saml]` instead of `[auth.oidc]` and restart the instance:
+
+```toml
+[auth.saml]
+entity_id = "https://your-ricochet-domain.com/saml/metadata"
+acs_url = "https://your-ricochet-domain.com/saml/acs"
+idp_metadata_xml = '''
+PASTE_YOUR_IDP_METADATA_XML_HERE
+'''
+email_attribute = "email"
+display_name_attribute = "displayName"
+groups_attribute = "groups"
+```
+
+Replace the metadata placeholder with the XML exported by your IdP, up to 32 KiB.
+It must include signing certificates and an HTTPS HTTP-Redirect SSO endpoint.
+Both provider sections configured together, malformed metadata, and missing signing certificates stop authentication startup.
+
+Register the Entity ID and ACS URL in the IdP's application configuration.
+After startup, `/saml/metadata` publishes the instance's service provider metadata.
+The ACS URL must use HTTPS and the `/saml/acs` path.
+
+Require signed assertions delivered by HTTP-POST and a stable NameID.
+The email, display name, and groups attribute mappings are optional and use exact attribute names.
+Mapped groups refresh at sign-in, and an absent mapped groups attribute removes previous memberships.
+Accounts are identified by the IdP entity ID and qualified NameID, and are separate from OIDC accounts.
+Existing roles and content ownership are not migrated when switching providers.
+
+This implementation supports SP-initiated login using unsigned HTTP-Redirect requests.
+It does not support signed AuthnRequests, encrypted assertions, IdP-initiated login, or SAML Single Logout.
+Local logout leaves the IdP session active.
+The CLI continues to use its existing browser-based sign-in endpoint.
+
+Pending logins are single-use, bound to the initiating browser, held in instance memory, and expire after five minutes.
+An instance restart invalidates pending logins.
+Run a single instance process or route the entire login round trip to the same process.
+Replace the metadata when signing certificates rotate and update the IdP registration when the instance domain changes.
+
+For managed instances, use the [instance Authentication dialog](/dev/cloud/instances/6-authentication/).

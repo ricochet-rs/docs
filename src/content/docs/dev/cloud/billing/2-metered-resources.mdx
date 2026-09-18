@@ -1,0 +1,64 @@
+---
+title: Metered Resources
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+You pay for two things, and you choose both on the **Billing** page:
+
+- **Apps**, the number of apps you may publish.
+- **Compute Pool**, the memory available to them, in whole gigabytes.
+
+Instances are not billed and are never capped.
+
+## Change your selection
+
+<Steps>
+
+1. Open **Billing** and select **Change resources**.
+
+2. Set the number of apps and the size of the pool.
+
+3. Apply.
+
+</Steps>
+
+Only owners and admins can change the selection.
+Any member can see it.
+
+## Sizing the pool
+
+Size the pool for the apps that run at the same time, at roughly 0.8 GB per running app.
+An idle app returns its memory to the pool, so the pool is usually much smaller than apps multiplied by 0.8 GB.
+
+## When a change takes effect
+
+The minimum billing period is one hour, and the hour in progress has already been reserved at the higher value.
+So the two directions are deliberately asymmetric, per dimension:
+
+| Direction | Takes effect |
+| --- | --- |
+| Increase | Immediately, and bills from the current hour. |
+| Decrease | At the next hour boundary. |
+
+A scheduled decrease is shown on the Billing page until it lands.
+Changing your selection again before then replaces it, so a pending decrease can never bring back a value you have since moved away from.
+
+<Aside type="note">
+Each hour bills at the highest value each dimension reached within it, whether or not the apps were running.
+</Aside>
+
+## Limits
+
+Your selection must stay within the self-service ceiling, by default 150 apps and 128 GB.
+Contact us if you need more than that.
+
+Before billing is set up, raising a dimension is capped at the trial ceiling.
+See [Trial and Subscription](/dev/cloud/billing/1-trial-and-subscription/).
+
+Lowering a dimension is never blocked.
+
+## Month-to-date usage
+
+The Billing page shows app-hours and GB-hours accrued so far this month, alongside your current selection.
+Those are the numbers your statement is built from.

@@ -212,8 +212,8 @@ const pageVersion = getVersionFromSlug(
     padding-inline: calc(var(--sl-versions-label-icon-size) + 0.375rem)
       calc(var(--sl-versions-caret-icon-size) + 0.25rem);
     text-overflow: ellipsis;
-    /* Fixed width to prevent flickering - fits "0.22.0" and "10.0.0" */
-    width: 7rem;
+    /* Size to the selected label so the caret sits next to the version */
+    width: fit-content;
   }
 
   option {

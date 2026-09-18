@@ -4,45 +4,79 @@ title: "Audit Logging"
 
 Ricochet writes an audit log for security-related and administrative operations, including any actions that affect infrastructure or execute code.
 Audit logging is always enabled and cannot be disabled.
-Logs are written to both a database (`audit_logs` table) and a JSON Lines file.
-
+Logs are stored in the database in the `audit_logs` table by default.
+To also write them to `RICOCHET_HOME/logs/audit`, set `file_logging = true` under `[audit]` in `ricochet-config.toml`.
 Records are written in batches every 200ms or every 256 events, whichever comes first.
-The database is written first, followed by the log file.
+
+View audit log summaries on the **Audit Log** page, or [export the logs](#exporting).
+
+## Retention
+
+Records are kept for 365 days by default.
+Set a different window under `[audit]` in `ricochet-config.toml`:
+
+```toml
+[audit]
+retention_days = 90
+# Enable file logging in addition to database writes.
+# file_logging = true
+```
+
+To never prune audit logs, use:
+
+```toml
+[audit]
+retention_days = "forever"
+```
+
+Pruning runs once a day and records what it removed as an `audit_pruned` event.
 
 ## File location
 
-```
+When file logging is enabled, logs are written here:
+
+```text
 RICOCHET_HOME/
 └── logs/
     └── audit/
-        ├── audit.log              # current day (active)
+        ├── audit.log
         ├── audit-2026-02-22.log.gz
         └── audit-2026-02-21.log.gz
 ```
 
-Logs rotate daily.
-The previous day's log is compressed with gzip and renamed to `audit-YYYY-MM-DD.log.gz`.
-Archived logs are never automatically deleted.
+The current day's log is `audit.log`.
 
 ## Record format
 
-Each line is a JSON object:
+Each record is a JSON object:
 
 ```json
 {
   "id": "01KJNKR4KXV8FCT1432D2CZG0V",
   "timestamp": "2026-03-01T21:09:26.781568Z",
   "actor": { "api_key": { "short_token": "Pm93AJQNSTG", "owner_id": "344509059241640593" } },
-  "event": { "api_key_created": { "short_token": "Pm93AJQNSTG", "name": "CLI Authentication" } }
+  "event": { "api_key_created": { "short_token": "Pm93AJQNSTG", "name": "CLI Authentication" } },
+  "authority": "direct"
 }
 ```
 
-| Field       | Description                                              |
-| ----------- | -------------------------------------------------------- |
-| `id`        | Unique ID per record (ULID)                              |
-| `timestamp` | UTC timestamp (ISO 8601)                                 |
-| `actor`     | Who performed the action (see [Actors](#actors))         |
-| `event`     | What happened and any associated details (see [Events](#events)) |
+| Field       | Description                                                            |
+| ----------- | ---------------------------------------------------------------------- |
+| `id`        | Unique ID per record (ULID)                                            |
+| `timestamp` | UTC timestamp (ISO 8601)                                               |
+| `actor`     | Who performed the action (see [Actors](#actors))                       |
+| `event`     | What happened and any associated details (see [Events](#events))       |
+| `authority` | Whether a global admin override was used (see [Authority](#authority)) |
+
+## Authority
+
+The `authority` field records direct permissions as `direct` and admin override privileges as `global_admin_override`.
+Admin overrides have a visual indicator on the **Audit Log** page so you can quickly identify them.
+
+| Authority                | Description                                                                         |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| `direct`                 | The actor held the item-level permission for this action                            |
+| `global_admin_override`  | The actor held no item-level role and acted on their server-wide Admin role instead |
 
 ## Actors
 
@@ -70,6 +104,7 @@ Authentication events cover user login, logout, and account provisioning.
 | `login_succeeded` | `"login_succeeded"`                                   | A login completed successfully                     |
 | `logout`          | `"logout"`                                            | A user session was terminated                      |
 | `login_failed`    | `{ "login_failed": { "reason": "..." } }`             | A login attempt failed                             |
+| `session_created` | `{ "session_created": { "session_id": "..." } }`      | A session was established for a signed-in user     |
 | `first_admin`     | `{ "first_admin": { "user_id": "..." } }`             | The first user was automatically promoted to Admin |
 
 ### API keys
@@ -96,16 +131,23 @@ Access control events track permission changes and denied requests.
 
 Content events are recorded whenever content is deployed, modified, invoked, or removed.
 
-| Event                    | Example                                                                                 | Description                                           |
-| ------------------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                               | Content was deployed                                  |
-| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                                | Content was deleted                                   |
-| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                                | A content item was invoked                            |
-| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                               | Environment variables for a content item were updated |
-| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed  |
-| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                 |
-| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed               |
-| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                    |
+| Event                    | Example                                                                                 | Description                                               |
+| ------------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                               | Content was deployed                                      |
+| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                                | Content was deleted                                       |
+| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                                | A content item was invoked                                |
+| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                               | Environment variables for a content item were updated     |
+| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed      |
+| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                     |
+| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed                   |
+| `instance_started`       | `{ "instance_started": { "id": "...", "instance_id": "..." } }`                         | A worker was started to serve a content item              |
+| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                        |
+| `bundle_deleted`         | `{ "bundle_deleted": { "id": "...", "deployment_id": "..." } }`                         | A deployment bundle was removed by the retention reaper   |
+| `git_fetched`            | `{ "git_fetched": { "id": "...", "commit": "...", "previous_commit": "..." } }`         | A git-backed item was polled and its upstream commit read |
+
+An `instance_started` record names whoever's request caused the worker to start.
+Requests to an already-running worker are not audited.
+A `git_fetched` record is written on every poll, whether or not the commit moved.
 
 ### Git credentials
 
@@ -115,6 +157,20 @@ Git credential events are recorded when credentials used for content deployment 
 | ------------------------ | ---------------------------------------------------- | ----------------------------- |
 | `git_credential_created` | `{ "git_credential_created": { "id": "..." } }`      | A git credential was created  |
 | `git_credential_deleted` | `{ "git_credential_deleted": { "id": "..." } }`      | A git credential was deleted  |
+
+### Audit log modifications
+
+Reading and expiring the log are themselves audited.
+
+| Event            | Example                                                              | Description                                        |
+| ---------------- | -------------------------------------------------------------------- | -------------------------------------------------- |
+| `audit_pruned`   | `{ "audit_pruned": { "removed": 412, "retention_days": 365 } }`      | Records past the retention window were deleted     |
+| `audit_exported` | `{ "audit_exported": { "format": "csv", "records": 2048 } }`         | A server admin downloaded the log                  |
+
+## Exporting
+
+A server admin can download the whole log from the **Audit Log** page as CSV or JSON.
+Both are served gzipped from `GET /api/audit/export?format=csv|json`.
 
 ## Protected resources
 

@@ -2,7 +2,7 @@
 title: Organizations
 ---
 
-import { Aside, Steps } from "@astrojs/starlight/components";
+import { Steps } from "@astrojs/starlight/components";
 
 An organization owns instances, members, and billing.
 Any signed-in user can create one, and the creator becomes its owner.
@@ -22,40 +22,24 @@ Any signed-in user can create one, and the creator becomes its owner.
 
 </Steps>
 
-A new organization starts on a [trial](/dev/cloud/billing/1-trial-and-subscription/) with a baseline resource selection, so you can provision an instance before setting billing up.
+A new organization starts on a [trial](/dev/cloud/billing/1-subscription/), so you can create an instance before setting billing up.
 
 ## Why the slug matters
 
-The slug names your organization's namespace in the cluster and is baked into every instance hostname.
+The slug is part of every instance hostname.
 An instance called `prod` in the organization `acme-corp` answers at `prod-acme-corp.cloud.ricochet.rs`.
 
 You can rename an organization at any time.
-You cannot change its slug while it still has instances, because the running instances would be left behind in the old namespace.
-Delete the instances first, or change only the display name.
-
-## Switch organizations
-
-The organization switcher sits at the top of the sidebar.
-Everything except the Organizations list itself is scoped to the organization you have active.
-
-## Organization logo
-
-Upload a logo under **Settings**.
-Until you do, the organization shows its initials.
+You cannot change its slug while it still has instances.
 
 ## Delete an organization
 
 Deleting is owner-only and permanent.
-It removes the organization, its instances, and its identity configuration.
+It removes the organization, its instances, and the data on them.
 
 Two things block a deletion:
 
-- A live subscription. Cancel it first, so billing stops with the organization.
-- An instance that could not be torn down. The deletion stops rather than orphaning it.
+- A live subscription. Cancel it first.
+- An instance that could not be torn down.
 
 You must type the organization's slug to confirm.
-
-<Aside type="caution">
-Deleting an organization deletes its instances and the data on them.
-There is no undo.
-</Aside>

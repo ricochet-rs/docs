@@ -1,0 +1,34 @@
+---
+title: v0.20.0
+docs: release notes for Ricochet v0.20.0
+slug: releases/v0.20.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 7, 2026**
+
+### Features
+
+- Ricochet now supports the [`_server.yml`](https://posit-dev.github.io/plumber2/articles/server_yml.html) standard and thereby [`{plumber2}`](https://posit-dev.github.io/plumber2), [`{fiery}`](https://fiery.data-imaginist.com/), and [`{mcptools}`](https://posit-dev.github.io/mcptools/) deployment configurations.
+
+### Improvements
+
+#### User Interface
+
+- Settings rows can now be edited in place without navigating to a separate page.
+- Active tabs display with an underline to improve navigation clarity.
+- Lockfile mismatches now have enhanced reporting in the UI.
+
+### Fixes
+
+#### Kubernetes
+
+- Service ports remain stable across application restarts instead of changing unexpectedly.
+- Version check jobs now wait on the correct scoped name, preventing premature timeout errors.
+- Execution environment validation completes successfully after being interrupted.
+
+#### General
+
+- Deployment logs display without causing application crashes.
+- Package environments rebuild automatically when the execution environment changes, ensuring consistency.

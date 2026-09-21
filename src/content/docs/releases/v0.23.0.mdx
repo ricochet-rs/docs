@@ -22,11 +22,11 @@ template: splash
 #### Proxy
 - Julia environments now precompile successfully and no longer recompile the standard library on each session start.
 - Backend delegation no longer incorrectly counts referer requests toward routing decisions.
-- Supervisor logs no longer emit a line per instrumented call on every tick, reducing log volume.
+- The Supervisor log volume output has been greatly reduced, ensuring logs are not flooded anymore by routine operation messages.
 
 #### User Interface
 - The user profile page displays an improved header, content list, and empty state.
 - The mobile sidebar now closes automatically when you navigate to a new page.
-- Fixed UI hydration bugs that prevented navigation.
+- Fixed UI hydration bugs that prevented navigation in the deployment history view.
 - Deployment logs listing is now collapsible.
 

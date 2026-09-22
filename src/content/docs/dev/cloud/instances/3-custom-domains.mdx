@@ -4,7 +4,7 @@ title: Custom Domains
 
 import { Aside, Steps } from "@astrojs/starlight/components";
 
-An instance can answer on your own domain instead of its default `cloud.ricochet.rs` address.
+An instance can moved onto your own domain instead of its default `cloud.ricochet.rs` address.
 
 ## Point a domain at an instance
 
@@ -27,9 +27,9 @@ Changing the domain changes the address your users and your CLI use.
 Run `ricochet login -S https://<new-domain>` again after the change.
 </Aside>
 
-With an [external OIDC provider](/dev/cloud/instances/6-authentication/), register `https://<new-domain>/oauth/callback` in that provider before changing the domain.
+With an [external OIDC provider](/dev/cloud/instances/4-authentication/), register `https://<new-domain>/oauth/callback` in that provider before changing the domain.
 
-## Revert to the default
+## Choosing a custom *.ricochet.cloud address
 
-Select **Domain**, then **Reset to default**.
-The instance goes back to `https://<instance-name>-<organization-slug>.cloud.ricochet.rs`.
+You can change the auto-generated `https://<instance-name>-<organization-slug>.cloud.ricochet.rs` address to an arbitrary name of your liking.
+We check internally if this address is still free and then reserve it for your instance.

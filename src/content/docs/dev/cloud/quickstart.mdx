@@ -5,7 +5,7 @@ tableOfContents: false
 
 import { Steps, Aside } from "@astrojs/starlight/components";
 
-ricochet Cloud is the managed version of ricochet, at [cloud.ricochet.rs](https://cloud.ricochet.rs).
+Ricochet Cloud is the managed version of Ricochet, at [cloud.ricochet.rs](https://cloud.ricochet.rs).
 You create an organization, provision an instance, and then deploy to it with the same CLI you would use against a self-hosted server.
 
 <Steps>
@@ -19,20 +19,20 @@ You create an organization, provision an instance, and then deploy to it with th
     Every instance, member, and invoice belongs to an organization.
     Pick **Organizations** in the sidebar, then **Create organization**, and give it a name and a slug.
 
-    You become its owner, and a free trial starts immediately.
+    You become its owner, and a free 14-day trial starts.
 
 3. Create an instance
 
     Go to **Instances** and select **Create instance**.
 
-    Give it a name, keep the version mode on **Dynamic**, and confirm.
-    Provisioning takes a few minutes, and the status badge moves from **Provisioning** to **Running**.
+    Provisioning takes around one minute.
 
 4. Open the instance
 
     Select **Open application** on the instance card.
 
-    You land in the ricochet web UI already signed in, at `https://<instance>-<organization>.cloud.ricochet.rs`.
+    You land in the Ricochet web UI already signed in, at `https://<instance>-<organization>.cloud.ricochet.rs`.
+    As the first user to sign in, you will be granted the Admin role.
 
 5. Deploy your first app
 
@@ -43,7 +43,7 @@ You create an organization, provision an instance, and then deploy to it with th
     ricochet deploy
     ```
 
-    From here on, deploying to a cloud instance works exactly like deploying to any other ricochet server.
+    From here on, deploying to a cloud instance works exactly like deploying to any other Ricochet server.
     Follow the [user quickstart](/dev/user/quickstart/) for a full walkthrough.
 
 </Steps>
@@ -51,17 +51,5 @@ You create an organization, provision an instance, and then deploy to it with th
 <Aside type="tip">
 Creating an organization does not give its members access to your instances.
 Managed instance access is granted per member, under [Access](/dev/cloud/instances/4-instance-access/).
-To use your own identity provider for an instance, configure [Instance Authentication](/dev/cloud/instances/6-authentication/).
+To use your own identity provider for an instance, configure [Instance Authentication](/dev/cloud/instances/4-authentication/).
 </Aside>
-
-## Where things live
-
-| Section       | What you do there                                                               |
-| ------------- | ------------------------------------------------------------------------------- |
-| Overview      | Summary of the active organization.                                             |
-| Organizations | Create organizations, switch between them, accept invitations.                  |
-| Members       | Invite people, change roles, remove members.                                    |
-| Instances     | Provision, upgrade, and open instances, and grant access to them.               |
-| Billing       | Choose how many apps and how much memory you pay for, and read your statements. |
-| Audit log     | Review what changed in the organization. Owners and admins only.                |
-| Settings      | Rename the organization, manage resources, delete the organization.             |

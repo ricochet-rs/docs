@@ -2,11 +2,14 @@
 title: Members and Roles
 ---
 
-import { Steps } from "@astrojs/starlight/components";
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+<Aside type="note">
+This page only applies to the Ricochet Cloud portal. If you are searching for the RBAC docs page for the Ricochet instance, see [the User Roles](/dev/user/managing-content/0-user-roles/) page.
+</Aside>
 
 Members are managed per organization under **Members**.
 Owners and admins can invite people and change roles.
-Members can see the roster but cannot change it.
 
 ## Roles
 
@@ -24,7 +27,7 @@ Members can see the roster but cannot change it.
 | Configure an instance's identity provider |  ✅   |  ✅   |   ❌   |
 | Delete the organization                   |  ✅   |  ❌   |   ❌   |
 
-An admin can administer members and other admins, but never an owner.
+An admin can administer members and other admins, but never an owner.  
 An organization must always keep at least one owner, so the last owner cannot be demoted or removed.
 
 ## Invite a member

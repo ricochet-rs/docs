@@ -2,13 +2,15 @@
 title: Instance Authentication
 ---
 
-import { Steps } from "@astrojs/starlight/components";
+import { Steps, Aside } from "@astrojs/starlight/components";
 
 By default, members sign in to an instance with their Ricochet Cloud account.
 An owner or admin can connect an instance to your own OpenID Connect (OIDC) provider instead, under **Instances**, then **Authentication** on the instance card.
 
-This only changes sign-in at the instance URL.
-You still sign in to the Cloud portal with your Ricochet Cloud account.
+<Aside type="note">
+  This only changes sign-in at the instance URL.
+  You still sign in to the Cloud portal with your Ricochet Cloud account.
+</Aside>
 
 ## Connect an OIDC provider
 
@@ -41,11 +43,6 @@ Restrict sign-in through application assignments in your identity provider.
 Inside the instance, [user roles](/dev/user/managing-content/0-user-roles/) and [content permissions](/dev/user/managing-content/1-access-and-permissions/) still apply.
 
 Existing accounts, roles, and content ownership are not migrated when you switch providers.
-
-## Rotate the secret or change the domain
-
-Leave **Client secret** blank to keep the saved secret, or enter a new one to rotate it.
-After [changing the instance domain](/dev/cloud/instances/3-custom-domains/), add the new `https://<hostname>/oauth/callback` redirect URI in your provider.
 
 ## Restore managed sign-in
 

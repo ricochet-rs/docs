@@ -1,0 +1,32 @@
+---
+title: v0.23.0
+docs: release notes for Ricochet v0.23.0
+slug: releases/v0.23.0
+tableOfContents: false
+template: splash
+---
+
+**Released: September 21, 2026**
+
+### Features
+
+#### Authentication
+- Connect native SAML identity providers for single sign-on.
+
+#### Administration
+- Administrators can lock or delete user accounts from the admin panel.
+- Configure restore concurrency on a per-instance basis to control parallel restore operations.
+
+### Fixes
+
+#### Proxy
+- Julia environments now precompile successfully and no longer recompile the standard library on each session start.
+- Backend delegation no longer incorrectly counts referer requests toward routing decisions.
+- The Supervisor log volume output has been greatly reduced, ensuring logs are not flooded anymore by routine operation messages.
+
+#### User Interface
+- The user profile page displays an improved header, content list, and empty state.
+- The mobile sidebar now closes automatically when you navigate to a new page.
+- Fixed UI hydration bugs that prevented navigation in the deployment history view.
+- Deployment logs listing is now collapsible.
+

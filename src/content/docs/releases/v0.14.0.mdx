@@ -1,0 +1,17 @@
+---
+title: v0.14.0
+docs: release notes for Ricochet v0.14.0
+slug: releases/v0.14.0
+tableOfContents: false
+template: splash
+---
+
+**Released: July 8, 2026**
+
+### Fixes
+
+- Improved the robustness of preflight dependency checks for R items
+- Execution environments now support an optional Quarto key: `quarto = { version = "...", bin = "/path/to/quarto" }`
+  - If `bin` is specified, Quarto is called from the provided path, otherwise it is assumed to be on the `PATH`
+- Container images for `ricochet` now properly make uv available
+- Minor UI enhancements

@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import markdownForAgents from "astro-markdown-for-agents";
 import starlightThemeNova from "starlight-theme-nova";
 import tailwindcss from "@tailwindcss/vite";
 // https://docs.astro.build/en/guides/integrations-guide/markdoc //
@@ -9,6 +10,10 @@ import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
+import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
+import rehypeMermaid from "rehype-mermaid";
+import rehypeFigure from "rehype-figure";
+import rehypeTrailingSlash from "./scripts/rehype-trailing-slash.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,6 +22,8 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     markdoc(),
+    markdownForAgents(),
+    latestVersionRedirectsIntegration("src/content/docs"),
     starlight({
       title: "ricochet",
       customCss: [
@@ -121,16 +128,14 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightVersions({
-          current: { label: "0.7 (latest)", redirect: "root" },
+          current: { label: "0.23 (latest)", redirect: "root" },
           versions: [
-            { slug: "v0-7", label: "0.7" },
-            { slug: "v0-6", label: "0.6" },
-            { slug: "v0-5", label: "0.5" },
-            { slug: "v0-4", label: "0.4" },
-            { slug: "v0-3", label: "0.3" },
+            { slug: "v0-23", label: "0.23" },
+            { slug: "v0-22", label: "0.22" },
+            { slug: "v0-21", label: "0.21" },
+            { slug: "v0-20", label: "0.20" },
+            { slug: "v0-19", label: "0.19" },
             { slug: "dev", label: "dev" },
-            { slug: "v0-2", label: "0.2" },
-            { slug: "v0-1", label: "0.1" },
           ],
         }),
         starlightThemeNova({
@@ -171,7 +176,16 @@ export default defineConfig({
       sidebar: [],
     }),
   ],
-
+  markdown: {
+    // Astro 6.4.2 regressed the default for `gfm` from true to false;
+    // see https://github.com/withastro/astro/issues/16971
+    gfm: true,
+    rehypePlugins: [
+      [rehypeMermaid, { strategy: "pre-mermaid" }],
+      rehypeFigure,
+      rehypeTrailingSlash,
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

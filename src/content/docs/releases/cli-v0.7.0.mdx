@@ -1,0 +1,20 @@
+---
+title: CLI v0.7.0
+docs: release notes for Ricochet CLI v0.7.0
+slug: releases/cli-v0.7.0
+tableOfContents: false
+template: splash
+---
+
+**Released: May 6, 2026**
+
+### Features
+
+- **Schedule subcommand**: Added new `schedule` subcommand and moved `invoke` to `task` subcommand for better organization
+- **Export to TOML**: New `ricochet app toml` and `ricochet task toml` commands to export configurations in TOML format
+
+### Fixes
+
+- **Credentials routing**: Fixed routing to correctly direct to `/credentials` instead of `/keys` in versions greater than 0.6.3
+- **Python entrypoint detection**: Improved Python entrypoint detection to filter out virtual environment files
+- **R Shiny support**: Now accepts any `.R` file as a valid Shiny entrypoint

@@ -1,0 +1,23 @@
+---
+title: CLI v1.0.0
+docs: release notes for Ricochet CLI v1.0.0
+slug: releases/cli-v1.0.0
+tableOfContents: false
+template: splash
+---
+
+**Released: July 1, 2026**
+
+### Breaking Changes
+
+- **Reorganized CLI commands**: The CLI command structure has been reorganized for better usability and clarity. Please review the updated command list with `ricochet --help` to familiarize yourself with the new structure.
+
+### Features
+
+- **Environment variables on deploy**: You can now set environment variables during deployment using the `--env` flag, making it easier to configure your applications at deploy time.
+- **Dry-run for self-updates**: Added `--dry-run` option to the `self update` command, allowing you to preview available updates without actually installing them.
+- **Configuration file support**: You can now update app and task settings directly from a `_ricochet.toml` configuration file, streamlining your deployment workflow.
+
+### Fixes
+
+- **API compatibility**: Updated to work with the latest version of ricochet-core, ensuring compatibility with recent API changes.

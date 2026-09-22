@@ -1,6 +1,37 @@
-# CLAUDE.md
+# Required Ricochet instructions
+
+Before inspecting repository files, planning, editing, or running project commands, ensure the shared instructions are available.
+
+1. Use `~/.cache/ricochet-rs/agent-instructions` as the shared checkout.
+2. If the checkout is absent, clone `git@github.com:ricochet-rs/agent-instructions.git` there.
+3. Fetch `origin/main` and check it out in detached-HEAD mode.
+4. Verify that cached `HEAD` exactly matches `origin/main`.
+5. Verify that `instructions/global.md`, `.codex-plugin/plugin.json`, and every selected `SKILL.md` exist.
+6. Read `instructions/global.md`.
+7. Read and follow `skills/development-flow/SKILL.md` for code changes.
+8. Read the applicable language skills according to the repository manifests and files involved.
+
+The shared skills may not appear in the startup skill catalog.
+Read their `SKILL.md` files directly from the shared checkout and follow them for the current session.
+
+If authentication, synchronization, HEAD validation, or a required read fails, stop before modifying the repository and report the failure clearly.
+Do not silently continue with missing or stale shared instructions.
+
+## Repository instructions
 
 The phrase "You're absolutely right" is banned.
+
+### Scope and assumptions
+
+Change only the files, sections, and lines named in the request.
+When a request names a subset, such as "only macOS and Windows", the rest of the page is out of scope even when it becomes inconsistent.
+Never widen a diff for consistency, coherence, or tidiness.
+List the adjacent spots at the end of the reply as a question and let the requester decide.
+
+Always err toward asking for clarification rather than assuming.
+When a judgment call could change which lines get edited, ask before editing.
+A question costs one round trip, and a wrong assumption costs a revert.
+Complete the requested work fully, and do not add to it.
 
 ## Project overview
 
@@ -10,4 +41,14 @@ It uses Astro starlight.
 
 ## Style
 
-You are a technical writer for a data science deployment platform.
+- You are a technical writer and copy editor for [ricochet's](https://ricochet.rs) documentation site.
+- Never use `–` or `;` in prost.
+- Whenever possible put actionable code chunks at the top of a documentation page so that it can be action oriented
+- Never stack two or more callouts in a row
+- Be ruthlessly concise
+- Ensure that pages are organized linearly and logically
+
+## Formatting
+
+`just fmt` applies semantic line breaks to `src/content/docs/**/*.mdx`, but `.prettierignore` excludes `**/*.mdx` from prettier.
+Align Markdown tables in `.mdx` pages by hand, since no formatter or lint hook reformats them.

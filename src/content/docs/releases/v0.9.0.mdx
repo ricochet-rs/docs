@@ -1,0 +1,44 @@
+---
+title: v0.9.0
+docs: release notes for Ricochet v0.9.0
+slug: releases/v0.9.0
+tableOfContents: false
+template: splash
+---
+
+**Released: June 1, 2026**
+
+### Features
+
+#### UI
+
+- **Search and filtering**: Added search and filtering capabilities to /apps, /tasks, and /deployments pages for easier navigation
+- **Syntax-highlighted REPL logs**: REPL logs now feature syntax highlighting with prettified timestamps for better readability
+- **Improved log timestamps**: Abbreviated timestamps for Kubernetes container log streams to reduce clutter
+
+#### Authentication
+
+- **OIDC groups support**: Added support for OIDC groups in collaborator access control, enabling group-based permissions management
+
+### Fixes
+
+#### Proxy
+
+- **Container cleanup**: Locally-managed containers are now properly torn down on shutdown
+- **Process management**: Fixed zombie process reaping to prevent resource leaks
+
+#### Kubernetes
+
+- **Pod security**: Added securityContext configuration to spawned pods for improved security compliance
+
+#### UI
+
+- **Deletion modal**: Fixed alignment issues and resolved looping console errors in deletion modals
+- **Deployment checkmark**: Corrected deployment status checkmark display
+
+#### General
+
+- **Launcher validation**: Fixed exec-env category passing to validator to use category instead of resolved URL
+- **Restore process**: Aligned restore process behavior between Linux and Kubernetes environments
+- **Content visibility**: Unblocked private content visibility issues
+- **Audit logging**: Added audit logging for collaborator role changes

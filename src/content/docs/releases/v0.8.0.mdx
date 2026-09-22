@@ -1,0 +1,19 @@
+---
+title: v0.8.0
+docs: release notes for Ricochet v0.8.0
+slug: releases/v0.8.0
+tableOfContents: false
+template: splash
+---
+
+**Released: May 18, 2026**
+
+### Features
+
+- **Deployment status API endpoint**: Added a new API endpoint to retrieve the status of individual deployments with updated API route documentation.
+
+### Fixes
+
+- **Restore functionality**: Centralized vendored tool versions and pinned renv lockfile to GitHub source for more reliable restoration of R package environments.
+- **Auto-redeploy improvements**: Fixed automatic redeployment when entrypoint or content-type changes are detected, and resolved Shiny server.R appDir issue.
+- **Scope handling**: Reverted a previous scope reversion to restore correct behavior.

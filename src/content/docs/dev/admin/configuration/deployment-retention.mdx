@@ -1,0 +1,63 @@
+---
+title: Deployment Retention
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Every time content is deployed to ricochet, the source code and dependencies are packaged together into a **bundle**.
+Bundles persist across deployments so ricochet can roll back, redeploy, or inspect past versions.
+
+## How cleanup works
+
+ricochet runs a cleanup process once daily at **05:00 UTC**.
+It evaluates every content item against the configured retention policy and deletes bundles that exceed the defined limits.
+
+<Aside type="note">
+The latest successful deployment is always protected.
+It will never be deleted regardless of policy.
+Pending deployments are also excluded from cleanup.
+</Aside>
+
+If no retention settings are configured, bundles accumulate without limit.
+
+## Configuration Options
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `max_deployments` | Maximum number of bundles to keep per content item | `20` |
+| `max_age_days` | Delete bundles older than this many days | No limit |
+| `max_bundle_size` | Maximum size of a bundle accepted by the `/upload` endpoint | `"100mb"` |
+
+`max_deployments` and `max_age_days` can also be overridden per content item.
+
+<Aside type="note">
+`max_bundle_size` is only respected in `ricochet-config.toml`.
+It cannot be set per content item.
+</Aside>
+
+Set server-wide defaults for all content items in the `[retention]` section of `ricochet-config.toml`:
+
+```toml title="ricochet-config.toml"
+[retention]
+max_deployments = 20
+max_age_days = 90
+max_bundle_size = "100mb"
+```
+
+`max_deployments` and `max_age_days` govern cleanup of existing bundles.
+`max_bundle_size` limits the size of a bundle that is accepted by the `/upload` API endpoint.
+If a bundle is larger than `max_bundle_size` it is rejected by the API.
+
+## Policy resolution
+
+Retention settings can be configured at two levels:
+
+1. **Server-wide**: in `ricochet-config.toml`, under the `[retention]` section. Applies to all content items.
+2. **Per-content**: in the content item's `_ricochet.toml`, under the `[retention]` section. Overrides the server default for that item.
+
+<Aside type="note">
+When both are configured, ricochet applies the **stricter** of the two values.
+A per-content policy can tighten the server default but cannot relax it.
+</Aside>
+
+See [Deployment Retention](/dev/user/managing-content/3-retention-policy/) in the user guide for per-content configuration.

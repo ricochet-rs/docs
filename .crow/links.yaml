@@ -7,7 +7,7 @@ labels:
 
 steps:
   - name: Build
-    image: reg.ricochet.rs/docker.io/oven/bun:1.3-alpine
+    image: reg.ricochet.rs/docker.io/oven/bun:1.4-alpine
     commands:
       - bun install
       - bun astro build

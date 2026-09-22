@@ -4,14 +4,14 @@ title: "Database Recovery"
 
 import { Aside, Steps } from "@astrojs/starlight/components";
 
-Recover a server that will not start because an upgrade hit a foreign key error.
+Recover a SQLite-backed server that will not start because an upgrade hit a foreign key error.
 
 ```text
 Error: while executing migration <timestamp>: error returned from database: (code: 787) FOREIGN KEY constraint failed
 ```
 
 The timestamp changes between releases.
-What stays constant is the code `787` and the phrase `FOREIGN KEY constraint failed`.
+What stays constant is the SQLite error code `787` and the phrase `FOREIGN KEY constraint failed`.
 
 The database holds tables that the installed release does not know about, left behind by a pre-release build that ran against the same file.
 An upgrade that rebuilds a table checks every foreign key in the database when it finishes, and those extra tables fail the check.
@@ -134,12 +134,3 @@ On a host install, stop the service, run the same `sqlite3` commands, then start
     If it is not, restore the backup from step 4 before doing anything else.
 
 </Steps>
-
-## Prevention
-
-Run `ricochet db doctor` before an upgrade and keep the output.
-The check is read-only, and the report is your drop list if the upgrade fails.
-
-Upgrade between release tags only.
-A pre-release build can add tables that never ship, and they stay behind when you move to a release.
-Test a pre-release build against a copy of the database, not the production file.

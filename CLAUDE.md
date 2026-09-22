@@ -52,3 +52,4 @@ It uses Astro starlight.
 
 `just fmt` applies semantic line breaks to `src/content/docs/**/*.mdx`, but `.prettierignore` excludes `**/*.mdx` from prettier.
 Align Markdown tables in `.mdx` pages by hand, since no formatter or lint hook reformats them.
+Stage only the files your change touches after `just fmt`, because it runs `bun install` and rewrites `bun.lock` plus any page `main` left unformatted.

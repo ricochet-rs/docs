@@ -57,17 +57,8 @@ Summary: 2 phantom table(s), 0 missing table(s), 0 table(s) with shape drift
 Add `--format json` to pipe the report into other tooling.
 The same report is served at `GET /api/admin/db/doctor`, and the server writes it to the log at startup whenever the database and the build disagree.
 
-When nothing is running, read the file directly.
-The error message names the table the upgrade was rebuilding, `deployments` in this example:
-
-```sh
-sqlite3 /data/ricochet.sqlite3 "
-SELECT m.name FROM sqlite_master m, pragma_foreign_key_list(m.name) p
-WHERE m.type = 'table' AND p.\"table\" = 'deployments';"
-```
-
-The result lists every table pointing at it.
-Any name the release itself does not use is a leftover to drop.
+This report is the drop list.
+Save it while the server still answers, because a server that has already failed to start cannot produce one.
 
 ## Recover
 
@@ -116,12 +107,17 @@ On a host install, stop the service, run the same `sqlite3` commands, then start
     PRAGMA foreign_keys = ON;
     DROP TABLE IF EXISTS deployment_runtimes;
     DROP TABLE IF EXISTS exec_env_checks;
+
     PRAGMA foreign_key_check;
+
+    SELECT m.name FROM sqlite_master m, pragma_foreign_key_list(m.name) p
+    WHERE m.type = 'table' AND p."table" = 'deployments';
     SQL
     ```
 
     `foreign_key_check` must return nothing.
     If it returns rows, restore the backup and stop here.
+    The second query lists what still points at the rebuilt table, `deployments` in this example, and no dropped name should appear.
 
 5. **Restore the original command and let the upgrade finish.**
 
@@ -140,6 +136,9 @@ On a host install, stop the service, run the same `sqlite3` commands, then start
 </Steps>
 
 ## Prevention
+
+Run `ricochet db doctor` before an upgrade and keep the output.
+The check is read-only, and the report is your drop list if the upgrade fails.
 
 Upgrade between release tags only.
 A pre-release build can add tables that never ship, and they stay behind when you move to a release.

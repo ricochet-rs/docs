@@ -19,6 +19,10 @@ The `email` claim is collected for future SMTP integrations.
 
 Every sign-in sends a PKCE challenge and the matching verifier on the token exchange, so the client registration must permit PKCE.
 If your provider exposes a PKCE setting, set it to `S256`.
+PKCE cannot be turned off.
+
+Because PKCE protects the flow, `client_secret` is optional and ricochet can run as a public client.
+Microsoft Entra group and avatar sync is the exception, it needs the secret to call Microsoft Graph.
 
 ## Configuration
 
@@ -44,7 +48,7 @@ groups_claim = "groups"  # Optional, defaults to "groups"
 | -------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
 | `issuer_url`         | Yes      | Your OIDC provider's issuer URL. Must start with `https://`                                                    |
 | `client_id`          | Yes      | OAuth client ID from your OIDC provider                                                                        |
-| `client_secret`      | Yes      | OAuth client secret from your OIDC provider                                                                    |
+| `client_secret`      | No       | OAuth client secret from your OIDC provider. Omit it to register ricochet as a public client. Microsoft Entra group and avatar sync requires it. |
 | `redirect_url`       | Yes      | Callback URL where users are redirected after authentication. **Must be** `https://your-domain/oauth/callback` |
 | `display_name_claim` | No       | OIDC claim to use for display name. Defaults to `preferred_username`                                           |
 | `groups_claim`       | No       | Name of the OIDC claim that carries the user's group memberships. The claim value may be an array of strings, a single string, or a comma-delimited string. Omit to disable group sync at login. |

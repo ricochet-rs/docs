@@ -12,9 +12,13 @@ The OIDC provider must support:
 
 - **Claims**: `email` and `profile`
 - **Grant Type**: Authorization Code Flow
+- **PKCE**: code challenge with the `S256` method
 
 ricochet uses the subject identifier (`sub`) as the unique user ID.
 The `email` claim is collected for future SMTP integrations.
+
+Every sign-in sends a PKCE challenge and the matching verifier on the token exchange, so the client registration must permit PKCE.
+If your provider exposes a PKCE setting, set it to `S256`.
 
 ## Configuration
 

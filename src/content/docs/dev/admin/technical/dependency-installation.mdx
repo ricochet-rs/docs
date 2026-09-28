@@ -96,7 +96,7 @@ Python content items are restored with `uv`:
 </Steps>
 
 ```bash
-uv sync --python {python_path} --no-python-downloads --frozen
+uv sync --python {python_path} --no-python-downloads --locked
 ```
 
 The following environment variables are set to limit resource usage:
@@ -104,6 +104,24 @@ The following environment variables are set to limit resource usage:
 - `UV_CONCURRENT_DOWNLOADS`: `8`
 - `UV_CONCURRENT_INSTALLS`: `4`
 - `UV_CONCURRENT_BUILDS`: `2`
+
+## Lockfile mismatches
+
+A restore that fails because the lockfile disagrees with the project's declared dependencies ends with the status **Out of sync** instead of **Failure**.
+Network, cache, and process errors still end with **Failure**.
+
+| Language | A mismatch is reported when                                              |
+| -------- | ------------------------------------------------------------------------ |
+| R        | renv reports the project as out of sync during the restore               |
+| Julia    | `Pkg.instantiate()` needs to re-resolve or would rewrite `Manifest.toml` |
+| Python   | `uv sync --locked` finds that `uv.lock` does not match `pyproject.toml`  |
+
+For Julia, ricochet puts the uploaded `Manifest.toml` back before failing the restore.
+
+An R restore that succeeds but logs drift, such as a package that is installed but not recorded in `renv.lock`, still deploys.
+The app and deployment pages then show an **Out of sync** badge that links to the matching lines of the restore log.
+
+To clear a mismatch, the author updates the lockfile in the source project and redeploys.
 
 ## Preflight dependency checks
 

@@ -81,6 +81,23 @@ ricochet login -S https://try.ricochet.rs
 This opens your browser to complete authentication.
 Once authenticated, your credentials are stored locally and used for subsequent commands.
 
+### Remote Sessions
+
+Over SSH, in a dev container, or in a remote editor window, the browser can't hand the key back to the CLI.
+Add `--no-browser` instead:
+
+```bash
+ricochet login -S https://try.ricochet.rs --no-browser
+```
+
+The CLI prints your server's credentials page.
+Create an API key there and paste it at the prompt.
+In a script, pipe the key to stdin instead:
+
+```bash
+echo "$RICOCHET_KEY" | ricochet login -S https://try.ricochet.rs --no-browser
+```
+
 ### Multiple Instances
 
 You can authenticate with multiple ricochet servers.

@@ -138,6 +138,52 @@ The cache volume can be recreated, but doing so makes subsequent deployments res
 The chart disables persistence by default.
 Running the one-line `helm install` command without values creates an ephemeral installation and is not recommended outside testing.
 
+## Encryption keys
+
+Ricochet encrypts environment variables and Git credentials with a keypair stored in `.ricochet.json` on the "`Home`" volume.
+When running in Kubernetes, store these in a Kubernetes Secret so multiple server replicas can share one key.
+
+```sh
+# a scratch directory only your user can read
+keydir=$(mktemp -d)
+# write a fresh keypair into it
+ricochet secrets-init --dir "$keydir"
+# load the private key into the namespace
+kubectl --namespace ricochet create secret generic ricochet-keys \
+  --from-file=.ricochet.json="$keydir/.ricochet.json"
+# remove the on-disk copy now that the Secret holds it
+rm -rf "$keydir"
+```
+
+Mount the Secret and point Ricochet at the mount:
+
+```yaml title="values.yaml"
+extraVolumes:
+  - name: ricochet-keys
+    secret:
+      secretName: ricochet-keys
+extraVolumeMounts:
+  - name: ricochet-keys
+    mountPath: /etc/ricochet/secrets
+    readOnly: true
+env:
+  - name: RICOCHET_SECRETS
+    value: /etc/ricochet/secrets
+```
+
+`RICOCHET_SECRETS` is the path to the directory that holds `.ricochet.json`.
+It sets the `secrets` configuration field, which defaults to `RICOCHET_HOME`.
+A relative path resolves under `RICOCHET_HOME`, so give the mounted Secret an absolute path.
+By default, Ricochet creates these credentials once during initial startup.
+
+<Aside type="caution">
+  Do not run `ricochet secrets-init` for an instance that already holds data.
+  Replacing the keypair makes existing encrypted values unrecoverable.
+</Aside>
+
+An instance that already holds encrypted values refuses to start when the keypair is missing, rather than generating a replacement that would orphan them.
+For the same reason, `secrets-init` refuses to overwrite an existing keypair.
+
 ## Multi-architecture clusters
 
 Ricochet can restore dependencies for both amd64 and arm64 nodes.

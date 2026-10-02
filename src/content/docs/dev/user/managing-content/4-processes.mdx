@@ -8,7 +8,7 @@ The page is available to users with the Developer or Admin role.
 It lists processes of items you own or collaborate on with the Contributor role or higher.
 Select an item's name to open its runtime tab.
 
-![The Processes page listing three app workers and two task invocations, each with its running time, connections, memory, peak memory, CPU and a Stop button](../../../../../assets/screenshots/processes.png)
+![The Processes page listing three app workers and two task invocations, each with its running time, connections, memory, peak memory, CPU in cores with any limit, and a Stop button](../../../../../assets/screenshots/processes.png)
 
 ## What each row shows
 
@@ -18,7 +18,10 @@ Select an item's name to open its runtime tab.
 | Connections | Open connections to an app worker, shown as `-` for task invocations  |
 | Memory      | Memory the process uses now                                           |
 | Peak        | The most memory the process has used since it started                 |
-| CPU         | Share of one CPU core, so a process using two full cores shows `200%` |
+| CPU         | CPU cores in use, beside the item's CPU limit when one applies        |
+
+The CPU limit is the one set in the item's runtime settings.
+It shows only on servers that run content in Docker or Kubernetes, since other servers do not limit CPU.
 
 ## Find a process
 

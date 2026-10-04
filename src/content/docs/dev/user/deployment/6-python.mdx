@@ -17,6 +17,12 @@ Every Python deployment requires two files in the project root:
 
 The version in `.python-version` must satisfy the `requires-python` constraint recorded in `uv.lock`.
 
+A Jupyter notebook also needs `nbconvert` and `ipykernel` in `uv.lock`:
+
+```sh
+uv add --dev nbconvert ipykernel
+```
+
 <Aside type="note">
   `uv.lock` is the only supported dependency lockfile for Python.
   Other tools such as `pip`, `poetry`, and `conda` are not supported.
@@ -61,6 +67,7 @@ Python content items can be deployed as **apps** or **tasks**.
 | -------------- | ----------------------------------------- |
 | `python`       | A Python script with the extension `.py`. |
 | `quarto-py`    | A Quarto document using a Python runtime. Can be served as a [static site](/dev/user/tasks/3-static-sites). |
+| `jupyter`      | A [Jupyter](https://jupyter.org/) notebook with the extension `.ipynb`. Always served as a [static site](/dev/user/tasks/3-static-sites). |
 
 ## How ricochet runs Python content
 

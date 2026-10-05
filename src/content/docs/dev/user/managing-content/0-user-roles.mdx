@@ -23,18 +23,15 @@ Every user has one of three roles that determine their system-wide capabilities.
 ## Default User Role
 
 When new users authenticate for the first time, they are assigned a default role.
-The default role is **Developer**, but you can configure this to meet your organization's needs.
+The default role is **Developer**.
 
 <Aside>
 We do not yet support roles provided from an external identity provider.
 </Aside>
 
-Add the following to your `ricochet-config.toml`:
-
-```toml
-[auth]
-default_role = "consumer"
-```
+On a self-hosted instance you can change the default with `default_role` in `ricochet-config.toml`.
+See [Configuration Overview](/dev/admin/configuration/0-overview/).
+On ricochet Cloud the default is set for you and cannot be changed.
 
 ## Admin
 

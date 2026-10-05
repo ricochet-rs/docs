@@ -35,11 +35,15 @@ renv is restored with the following commands (abbreviated for brevity):
 ```r
 renv::init(bare = TRUE)
 renv::record(sprintf("renv@%s", as.character(packageVersion("renv"))))
+lock <- renv::lockfile_read()
+lock$R$Version <- sprintf("%s.%s", R.version$major, R.version$minor)
+renv::lockfile_write(lock)
 renv::restore(prompt = FALSE)
 renv::activate()
 ```
 
 The vendored renv version is recorded to prevent renv from bootstrapping an out-of-date, incompatible version of itself for the content item.
+The R version that runs the restore is also recorded, so a different R version than the one in `renv.lock` does not mark the project as out of sync.
 
 ### Bootstrapping `{renv}`
 
@@ -78,7 +82,7 @@ Julia content items are restored as follows:
 </Steps>
 
 ```bash
-julia --quiet --history-file=no -e "using Pkg; Pkg.activate(\".\"); Pkg.instantiate()"
+julia --quiet --history-file=no --project=. -e "using Pkg; Pkg.instantiate()"
 ```
 
 The `JULIA_DEPOT_PATH` is stored at `RICOCHET_HOME/.julia`.
@@ -125,7 +129,7 @@ To clear a mismatch, the author updates the lockfile in the source project and r
 
 ## Preflight dependency checks
 
-Before spawning any apps, documents, or scripts, ricochet verifies that the package environment has not drifted.
+Before spawning any apps, documents, or scripts, ricochet verifies that the packages recorded in the lockfile are installed.
 This is done through a preflight dependency check, shown below for each language.
 
 <Tabs>
@@ -136,10 +140,10 @@ if (!requireNamespace("renv", quietly = TRUE)) {
   install.packages("RICOCHET_HOME/.cache/vendor/r/renv.tar.gz", repos = NULL, lib = user_lib)
 }
 renv::load()
-if (renv::status()$synchronized) {
-  quit(status = 0L)
-} else {
-  quit(status = 2L)
+status <- renv::status()
+missing <- setdiff(names(status$lockfile$Packages), names(status$library$Packages))
+if (length(missing)) {
+  stop("Packages recorded in renv.lock are not installed: ", paste(missing, collapse = ", "))
 }
 ```
 </TabItem>
@@ -151,12 +155,12 @@ has_missing = let buf = IOBuffer()
     occursin("are not downloaded", String(take!(buf)))
 end
 
-exit(has_missing ? 0 : 2)
+exit(has_missing ? 2 : 0)
 ```
 </TabItem>
 <TabItem label="Python">
 ```bash
-uv sync --frozen --check --python {python-path}
+uv sync --frozen --check --inexact --python {python-path}
 ```
 </TabItem>
 </Tabs>

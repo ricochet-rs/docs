@@ -1,0 +1,35 @@
+---
+title: Custom Domains
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An instance can moved onto your own domain instead of its default `cloud.ricochet.rs` address.
+
+## Point a domain at an instance
+
+<Steps>
+
+1. Create a CNAME record for the domain, pointing at `cloud.ricochet.rs`.
+
+    ```
+    analysis.example.com.  CNAME  cloud.ricochet.rs.
+    ```
+
+2. Open the instance card, select **Domain**, and enter the domain.
+
+3. Save.
+
+</Steps>
+
+<Aside type="caution">
+Changing the domain changes the address your users and your CLI use.
+Run `ricochet login -S https://<new-domain>` again after the change.
+</Aside>
+
+With an [external OIDC provider](/dev/cloud/instances/4-authentication/), register `https://<new-domain>/oauth/callback` in that provider before changing the domain.
+
+## Choosing a custom *.ricochet.cloud address
+
+You can change the auto-generated `https://<instance-name>-<organization-slug>.cloud.ricochet.rs` address to an arbitrary name of your liking.
+We check internally if this address is still free and then reserve it for your instance.

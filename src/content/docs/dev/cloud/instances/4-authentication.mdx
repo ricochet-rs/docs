@@ -1,0 +1,49 @@
+---
+title: Instance Authentication
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+By default, members sign in to an instance with their Ricochet Cloud account.
+An owner or admin can connect an instance to your own OpenID Connect (OIDC) provider instead, under **Instances**, then **Authentication** on the instance card.
+
+<Aside type="note">
+  This only changes sign-in at the instance URL.
+  You still sign in to the Cloud portal with your Ricochet Cloud account.
+</Aside>
+
+## Connect an OIDC provider
+
+<Steps>
+
+1. Select **External OpenID Connect provider**.
+
+2. Register an application in your identity provider with the authorization code flow, PKCE, and the `openid`, `profile`, and `email` scopes.
+
+    Add the **Redirect URI** shown in the dialog to the application's allowed redirect URIs.
+
+3. Enter the **Issuer URL** and **Client ID**.
+
+4. Enter the **Client secret** for a confidential client, or leave it blank for a public client.
+
+5. Set **Claim mapping** if your tokens use different display name or groups claims.
+
+6. Select **Save authentication**.
+
+</Steps>
+
+The instance restarts to apply the change.
+Once it is **Running** again, test sign-in in a fresh browser session.
+Saving validates the format only, not whether your provider accepts the credentials.
+
+## Who can sign in
+
+With an external provider, instance access in the portal no longer controls sign-in.
+Restrict sign-in through application assignments in your identity provider.
+Inside the instance, [user roles](/dev/user/managing-content/0-user-roles/) and [content permissions](/dev/user/managing-content/1-access-and-permissions/) still apply.
+
+Existing accounts, roles, and content ownership are not migrated when you switch providers.
+
+## Restore managed sign-in
+
+Select **Managed Ricochet sign-in** in the **Authentication** dialog and save.

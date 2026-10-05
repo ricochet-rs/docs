@@ -1,0 +1,34 @@
+---
+title: Create an Instance
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+An instance is a ricochet server that ricochet Cloud runs for you.
+Owners and admins create instances under **Instances**.
+
+<Steps>
+
+1. Select **Create instance**.
+
+2. Enter a name.
+
+3. Confirm the region.
+
+    Instances currently run in `eu-west`.
+    (If this is a blocker for you, please contact us!)
+
+4. Choose **Dynamic** or **Static** updates.
+
+    See [Versions and Upgrades](/dev/cloud/instances/2-versions-and-upgrades/).
+
+5. Create the instance.
+
+</Steps>
+
+Provisioning takes around 1-2 minutes.
+Once the status is **Running** state, **Open application** signs you in to the instance.
+
+The instance answers at `https://<instance-name>-<organization-slug>.cloud.ricochet.rs`.
+You can replace this address with a [custom domain](/dev/cloud/instances/3-custom-domains/) of yours.
+Only the person who created the instance can open it at first.

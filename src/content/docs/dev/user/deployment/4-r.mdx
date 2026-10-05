@@ -75,3 +75,24 @@ You can also install R from [CRAN](https://cran.r-project.org/) or your distribu
 
 Ricochet vendors `renv` at `$RICOCHET_HOME/vendor`.
 When a bundle is deployed, ricochet restores R package dependencies from the `renv.lock` file using the vendored `renv`.
+
+## Out-of-sync lockfile
+
+A deployment shows **Out of sync** when `renv.lock` does not match the packages your project uses.
+Update the lockfile in your project and redeploy:
+
+```r
+# list the packages that differ from renv.lock
+renv::status()
+# record the project library in renv.lock
+renv::snapshot()
+```
+
+The badge appears in one of two situations:
+
+- The restore failed, so the deployment status is **Out of sync** and a task cannot run until you redeploy.
+- The restore succeeded but reported drift, such as a package that is installed but not recorded in `renv.lock`.
+
+In the second case your content runs, and hovering the badge shows the message with a link to the matching lines of the restore log.
+
+A server running a different R version than the one recorded in `renv.lock` does not count as drift.

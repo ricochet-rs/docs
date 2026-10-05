@@ -1,0 +1,47 @@
+---
+import Default from "@astrojs/starlight/components/Footer.astro";
+import Analytics from "./Analytics.astro";
+
+const legal = [
+  { title: "Privacy Policy", href: "https://ricochet.rs/legal/privacy" },
+  { title: "Terms and Conditions", href: "https://ricochet.rs/legal/terms" },
+  { title: "Refund Policy", href: "https://ricochet.rs/legal/refund" },
+];
+---
+
+<Default />
+
+<nav aria-label="Legal">
+  {legal.map((item) => (
+    <a href={item.href}>{item.title}</a>
+  ))}
+  <button type="button" data-consent-reset>
+    Cookie settings
+  </button>
+</nav>
+
+<Analytics />
+
+<style>
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-top: 1.5rem;
+    font-size: var(--sl-text-xs);
+  }
+  a,
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--sl-color-gray-3);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover,
+  button:hover {
+    color: var(--sl-color-white);
+  }
+</style>

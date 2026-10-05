@@ -1,0 +1,200 @@
+---
+// PostHog loads only after a reader accepts, matching ricochet.rs and its privacy policy.
+const privacy = "https://ricochet.rs/legal/privacy";
+const { hasSidebar, toc } = Astro.locals.starlightRoute;
+---
+
+<aside
+  id="consent-banner"
+  hidden
+  aria-labelledby="consent-heading"
+  class:list={{ "has-sidebar": hasSidebar, "has-toc": toc }}
+>
+  <div class="inner">
+    <div class="copy">
+      <h2 id="consent-heading">Cookies</h2>
+      <p>
+        We will <strong>never</strong> share your information. We use cookies to
+        learn which pages are worth keeping and which need fixing. Our{" "}
+        <a href={privacy}>privacy policy</a> has the rest.
+      </p>
+    </div>
+    <div class="actions">
+      <button type="button" data-consent="deny" class="decline">
+        Decline
+      </button>
+      <button type="button" data-consent="grant" class="primary">
+        Accept
+      </button>
+    </div>
+  </div>
+</aside>
+
+<style>
+  aside {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 101;
+    border-top: 1px solid var(--border);
+    background: var(--background);
+    font-family: var(--font-sans);
+  }
+  aside[hidden] {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .has-sidebar {
+      left: var(--sl-sidebar-width);
+    }
+  }
+  @media (min-width: 72rem) {
+    .has-toc {
+      right: var(--toc-width);
+    }
+  }
+  .inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  .copy {
+    max-width: 672px;
+  }
+  h2 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    line-height: 1.625;
+    color: var(--muted-foreground);
+  }
+  strong {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  a {
+    font-weight: 500;
+    color: var(--foreground);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    font: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: var(--shadow-xs);
+    cursor: pointer;
+    transition: all 150ms;
+  }
+  .decline {
+    border-color: var(--border);
+    background: var(--background);
+    color: var(--foreground);
+  }
+  .decline:hover {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+  :global([data-theme="dark"]) .decline {
+    border-color: var(--input);
+    background: color-mix(in oklab, var(--input) 30%, transparent);
+  }
+  :global([data-theme="dark"]) .decline:hover {
+    background: color-mix(in oklab, var(--accent) 50%, transparent);
+  }
+  .primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .primary:hover {
+    background: color-mix(in oklab, var(--primary) 90%, transparent);
+  }
+  @media (min-width: 640px) {
+    .inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  @media (min-width: 1024px) {
+    .inner {
+      padding-inline: 24px;
+    }
+  }
+</style>
+
+<script>
+  const KEY = "ricochet-consent";
+
+  const reporting =
+    import.meta.env.PROD && location.hostname === "docs.ricochet.rs";
+
+  let posthog: typeof import("posthog-js").default | null = null;
+
+  const start = async () => {
+    if (posthog || !reporting) return;
+    try {
+      posthog = (await import("posthog-js")).default;
+    } catch {
+      return;
+    }
+    posthog.init("phc_wgRhE6fJxz0ea4i44fpN0VlwylaolWj6VZFoinIzZOH", {
+      api_host: "https://eu.i.posthog.com",
+      defaults: "2026-05-30",
+    });
+  };
+
+  const wire = () => {
+    const banner = document.getElementById("consent-banner");
+    if (!banner || banner.dataset.wired) return;
+    banner.dataset.wired = "true";
+    // The content column sits beneath both sidebars, so the banner lives on body.
+    document.body.append(banner);
+    banner.hidden = localStorage.getItem(KEY) !== null;
+
+    for (const button of banner.querySelectorAll<HTMLElement>(
+      "[data-consent]",
+    )) {
+      button.addEventListener("click", () => {
+        const granted = button.dataset.consent === "grant";
+        localStorage.setItem(KEY, granted ? "granted" : "denied");
+        banner.hidden = true;
+        if (!granted) posthog?.opt_out_capturing();
+        else if (posthog) posthog.opt_in_capturing();
+        else start();
+      });
+    }
+
+    for (const reset of document.querySelectorAll("[data-consent-reset]")) {
+      reset.addEventListener("click", () => {
+        localStorage.removeItem(KEY);
+        posthog?.opt_out_capturing();
+        banner.hidden = false;
+      });
+    }
+  };
+
+  if (localStorage.getItem(KEY) === "granted") start();
+  wire();
+  document.addEventListener("astro:page-load", wire);
+</script>

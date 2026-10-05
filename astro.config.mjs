@@ -112,6 +112,7 @@ export default defineConfig({
         Pagination: "./src/components/Pagination.astro",
         // Override Header to add release notes icon on mobile
         Header: "./src/components/Header.astro",
+        Footer: "./src/components/Footer.astro",
       },
       // https://expressive-code.com/reference/configuration/
       expressiveCode: {

@@ -1,0 +1,94 @@
+---
+title: v0.24.0
+docs: release notes for Ricochet v0.24.0
+slug: releases/v0.24.0
+tableOfContents: false
+template: splash
+---
+
+**Released: October 7, 2026**
+
+### Features
+
+#### Notebooks and Logs
+- Stream a content log directly by its ID through the API.
+- Stream the starting worker's log on the loading page to monitor startup progress.
+- Create and run Jupyter notebooks for Python projects.
+- View diagnostics for app startup failures on the loading screen when running on Kubernetes.
+
+#### Monitoring and Administration
+- CPU usage is now captured and exposed in the proxy, UI, and Prometheus metrics.
+- A unified process view displays all running processes in one place.
+- A banner appears above every page when your license is approaching expiry.
+
+#### Content and Tasks
+- Retrieve details for a single task invocation by its ID through the API.
+- Content type filters are grouped by language for easier navigation.
+
+### Improvements
+
+#### User Interface
+- Crashed apps now display their last log lines and link to the full runtime log for troubleshooting.
+- The color theme applies before the first paint to eliminate visual flashes.
+- System details are consolidated with interpreter versions shown inline for clarity.
+- List pages are sized to fit the viewport without unnecessary scrolling.
+- The execution environments page uses a single aligned grid layout for better readability.
+- Links work correctly on smaller screens and use list layouts where appropriate.
+
+#### Performance
+- Log streams close immediately when the log ends instead of staying open.
+
+### Fixes
+
+#### Tasks and Scheduling
+- Task overview pages display the next run time from the CronSchedule instead of incorrect values.
+- Cron schedules with five fields are correctly registered after a server restart.
+- Tasks fail immediately with a clear error when Kubernetes refuses to create the pod.
+
+#### Application Startup
+- Each visit to the loading page starts one worker, eliminating race conditions during cold starts.
+- Failed app start attempts no longer block fresh visits to the loading page.
+- The proxy retries failed app starts until the maximum attempt limit is reached.
+
+#### Authentication and Authorization
+- All content read endpoints now require the content read scope to access resources.
+- CLI keys are minted correctly after signing in with OIDC from the `/oauth/authorize` endpoint.
+- User change events are published when an admin changes a user's role.
+- The sign-in flow works before the page finishes hydrating.
+- Entra authentication providers without a client secret are rejected at startup with a clear error.
+
+#### Licensing
+- The system falls back to community edition features immediately when a license expires.
+- The community edition is used when the license fails validation.
+
+#### Content Publishing and Deployment
+- Static content no longer serves source files when the output directory is set to the bundle root.
+- Bundle deployments complete in a single transaction or leave nothing behind if they fail.
+- Scaling and schedule updates are rejected when applied to the wrong content type.
+
+#### R Environment Restoration
+- The renv package is pinned to a specific commit that includes fixes not yet available in the CRAN release.
+- Existing renv cache entries are linked instead of replaced during restoration.
+- Stale workers no longer cancel retried restoration attempts.
+- renv downloads remain private to each container during restoration.
+
+#### Kubernetes Operations
+- Restore jobs are deleted when a restoration is cancelled, including per-architecture jobs.
+- Stale restore jobs are correctly identified even when their names are truncated.
+- The system waits for slow-starting containers to produce logs instead of timing out prematurely.
+
+#### Resource Management and Metrics
+- Request metrics are counted based on content ID instead of slug for accuracy.
+- Cloud applications are weighted by actual request volume and measured memory usage rather than configured limits.
+- The readiness probe verifies database access before marking the service as ready.
+
+#### UI Rendering and Navigation
+- Navigation help links and resource reads render on the server for faster page loads.
+- Page resources are read within the correct boundary to prevent data leaks.
+- Server-side rendering completes properly even after the client disconnects.
+- Tag input is preserved when appending to saved tags.
+- Content item resources refresh on every content event to stay current.
+
+#### System Configuration
+- Host interpreter discovery is skipped when a backend is already configured, improving startup time.
+- Mount discovery is serialized to prevent conflicts when containers fork.

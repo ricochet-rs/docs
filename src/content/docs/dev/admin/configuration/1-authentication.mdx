@@ -154,6 +154,82 @@ exports.onExecutePostLogin = async (event, api) => {
 Set `groups_claim` to the full claim name, including the `https://` namespace.
 Grant a role on content to an Auth0 role name in the collaborators dialog, exactly as it appears in Auth0.
 
+## Keycloak
+
+In your realm, create an **OpenID Connect** client with **Client authentication** and **Standard flow** turned on.
+Add `https://your-ricochet-domain.com/oauth/callback` to **Valid redirect URIs**, then copy the secret from the **Credentials** tab.
+
+```toml
+[auth.oidc]
+issuer_url = "https://keycloak.example.com/realms/{realm}"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+groups_claim = "groups"
+```
+
+Replace `{realm}` with your realm name.
+
+### Groups claim
+
+Keycloak puts no groups in the ID token by default.
+Open the client's **Client scopes** tab, select the `-dedicated` scope, and add a **Group Membership** mapper with **Token Claim Name** set to `groups`.
+Turn off **Full group path** so the claim carries `analysts` rather than `/analysts`.
+
+## ZITADEL
+
+In a ZITADEL project, create a **Web** application with the **Code** authentication method.
+Add `https://your-ricochet-domain.com/oauth/callback` to its **Redirect URIs**, then copy the client ID and secret.
+
+```toml
+[auth.oidc]
+issuer_url = "https://your-instance.zitadel.cloud"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+groups_claim = "groups"
+```
+
+Use the instance domain shown in the ZITADEL console as the issuer URL.
+
+### Groups claim
+
+ZITADEL sends project roles as an object, which ricochet cannot read as groups.
+Add an Action that writes the user's roles into a flat `groups` claim:
+
+```js
+function groups(ctx, api) {
+  if (ctx.v1.user.grants == undefined) {
+    return;
+  }
+  let roles = [];
+  ctx.v1.user.grants.grants.forEach((grant) => {
+    grant.roles.forEach((role) => roles.push(role));
+  });
+  api.v1.claims.setClaim("groups", roles);
+}
+```
+
+Attach the Action to the **Complement Token** flow on the **Pre Userinfo creation** trigger.
+In the application's **Token Settings**, turn on **User Info inside ID Token** so the claim reaches ricochet.
+
+## authentik
+
+Create an application with an **OAuth2/OpenID Provider** whose **Client type** is **Confidential**.
+Add `https://your-ricochet-domain.com/oauth/callback` as a strict **Redirect URI**, then copy the client ID and secret from the provider.
+
+```toml
+[auth.oidc]
+issuer_url = "https://authentik.example.com/application/o/{application-slug}/"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+groups_claim = "groups"
+```
+
+Replace `{application-slug}` with the slug of the authentik application.
+authentik's default `profile` scope already sends the user's group names in the `groups` claim.
+
 ## Requiring Authentication
 
 By default, unauthenticated users can browse the "Explore" page and view public content.

@@ -6,6 +6,7 @@ import { Aside, Steps, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starli
 
 Ricochet lets your apps and APIs identify the user making each request.
 Each request, ricochet injects an `X-Ricochet-User` HTTP header containing a signed [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) with a claim containing that user's information.
+Anonymous visitors to a public item get no header, so treat a missing header as an anonymous visitor.
 
 An app deployed to ricochet can use this JWT to tailor its behavior based on the authenticated user.
 
@@ -20,9 +21,9 @@ The `X-Ricochet-User` token is a JWT whose claims describe the current user:
 | `email`  | User email, if provided by the configured IdP.                                                          |
 | `role`   | User role on the ricochet server, one of: `admin`, `developer`, or `consumer`.                          |
 | `groups` | Array of group IDs the user belongs to.                                                                |
-| `aud`    | Content ID of the item the token was generated for.                                                    |
+| `aud`    | Content ID of the item the token was generated for, never its slug.                                    |
 | `iat`    | Time the token was issued, in UTC.                                                                      |
-| `exp`    | Time the token expires, in UTC.                                                                         |
+| `exp`    | Time the token expires, in UTC, 5 minutes after it was issued.                                          |
 
 <Aside type="note">
   Identity providers and groups are configured by your server administrator.
@@ -33,13 +34,17 @@ The `X-Ricochet-User` token is a JWT whose claims describe the current user:
 Each JWT has an expiry and is issued for a specific content item, stored in the `exp` and `aud` claims respectively.
 Verify the token before you accept it: `aud` must match the `RICOCHET_CONTENT_ID` environment variable, `exp` must not have passed, and the signature must be valid.
 
-Ricochet signs each token and publishes the corresponding public key as a [JSON Web Key Set (JWKS)](https://datatracker.ietf.org/doc/html/rfc7517) at `RICOCHET_HOST/.well-known/jwks.json`.
+Ricochet signs each token with RS256 and publishes the public key as a [JSON Web Key Set (JWKS)](https://datatracker.ietf.org/doc/html/rfc7517) at `/.well-known/jwks.json`.
+The same key is available in PEM format at `/api/v0/public-key`.
+Your app finds the server address in the `RICOCHET_URL` environment variable.
 Ricochet strips any inbound `X-Ricochet-User` header before issuing its own, so clients cannot spoof the token.
+
+The token has no `iss` claim, so do not configure your JWT library to require one.
 
 The verification flow is the same in any language:
 
 <Steps>
-1. Fetch the JWKS from `RICOCHET_HOST/.well-known/jwks.json`.
+1. Fetch the JWKS from `RICOCHET_URL/.well-known/jwks.json`.
 
 2. Read the `X-Ricochet-User` header from the incoming request.
 
@@ -49,6 +54,12 @@ The verification flow is the same in any language:
 
 5. Confirm the token has not expired (`exp`).
 </Steps>
+
+### Shiny apps
+
+A Shiny session reads the header once, from the request that opened the session.
+That token expires 5 minutes later, so verify it when the session starts and keep the claims.
+Verifying it later in the session fails with an expired token.
 
 ## Decoding the token
 
@@ -61,8 +72,7 @@ The examples below use [`jose`](https://r-lib.r-universe.dev/jose) in R and [PyJ
 ```r
 library(jose)
 
-# replace with your ricochet host
-ricochet_url <- "https://try.ricochet.rs"
+ricochet_url <- Sys.getenv("RICOCHET_URL")
 content_id <- Sys.getenv("RICOCHET_CONTENT_ID")
 
 # fetch the public key
@@ -91,8 +101,7 @@ import os
 import jwt
 from jwt import PyJWKClient
 
-# replace with your ricochet host
-ricochet_url = "https://try.ricochet.rs"
+ricochet_url = os.environ["RICOCHET_URL"]
 content_id = os.environ["RICOCHET_CONTENT_ID"]
 
 # fetch the public key

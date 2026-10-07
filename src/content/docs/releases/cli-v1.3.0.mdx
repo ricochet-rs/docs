@@ -1,0 +1,38 @@
+---
+title: CLI v1.3.0
+docs: release notes for Ricochet CLI v1.3.0
+slug: releases/cli-v1.3.0
+tableOfContents: false
+template: splash
+---
+
+**Released: October 7, 2026**
+
+## Features
+
+### Task
+
+- The **ricochet task run** command now waits for task completion when you pass **--wait** instead of returning immediately after submission.
+
+### Deploy
+
+- The **ricochet deploy** command now supports **--dry-run** to preview bundle contents before deployment.
+- Deployment output now includes the names of deployed apps and tasks for easier identification.
+
+### Login
+
+- The **ricochet login** command now supports **--no-browser** for authentication in remote or headless sessions.
+
+### General
+
+- Jupyter notebooks are now supported as deployable artifacts.
+
+## Bug Fixes
+
+### Config
+
+- The CLI now applies the **RICOCHET_API_KEY** environment variable to API requests when the target URL has no configured credentials.
+
+### Build
+
+- macOS builds now correctly use the selected Xcode SDK instead of falling back to defaults.

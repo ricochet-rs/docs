@@ -1,0 +1,49 @@
+---
+title: Runtime Limits
+---
+
+These are the limits your apps and tasks run under on Ricochet Cloud.
+Plan for them before you deploy, because each one stops work rather than slowing it down.
+
+| Limit                  | Value                                    |
+| ---------------------- | ---------------------------------------- |
+| Request duration       | 1 hour per request                       |
+| Idle connection        | Closed after 1 hour without traffic      |
+| Memory per app         | 2 GB by default, up to your Compute Pool |
+| Temporary disk per app | 4 GB                                     |
+| Processes and threads  | 4096 per app                             |
+| Task run time          | 30 minutes                               |
+
+## Requests
+
+A request that has not finished after 1 hour is cut off, and so is a download or event stream that runs longer.
+For longer work, return early and let the client poll for the result.
+
+Your instance answers only over HTTPS.
+A request to `http://` is redirected to the same address over `https://`.
+
+Request headers whose name contains an underscore, such as `X_Api_Key`, are removed before they reach your app.
+Use hyphens instead, as in `X-Api-Key`.
+
+## Memory and disk
+
+An app that uses more memory than its limit is stopped and restarted.
+Raise **Memory Limit** under **Scaling Configuration** in the app's settings, up to the size of your Compute Pool.
+
+Files your app writes outside its own directory, such as in `/tmp`, count against 4 GB of temporary disk.
+An app that fills it is stopped, and the files are gone when it restarts.
+See [Persistent Storage](/dev/user/managing-content/persistent-storage/) for what survives a restart.
+
+## Network
+
+Your apps and tasks can reach any address on the public internet, on any port.
+They can also call your instance at its own address, for example to fetch the keys that verify [the current user](/dev/user/managing-content/1b-detecting-current-user/).
+
+They cannot reach private networks:
+
+- `10.0.0.0/8`, `172.16.0.0/12`, and `192.168.0.0/16`
+- `100.64.0.0/10`, which includes Tailscale addresses
+- IPv6 private addresses in `fc00::/7`
+
+Put a database your app needs on a public address, protected by TLS and a password.
+To call another app on the same instance, use its public address.

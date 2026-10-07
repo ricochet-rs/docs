@@ -18,7 +18,7 @@ steps:
   prettier:
     image: oven/bun:1.4
     commands:
-      - bun install
+      - bun install --frozen-lockfile
       - bun prettier --check .
     depends_on: []
 

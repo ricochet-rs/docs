@@ -116,6 +116,44 @@ When `provider = "entra"` is set, ricochet fetches each user's photo at login fr
   Users with very large group memberships will appear to have no groups until this is implemented.
 </Aside>
 
+## Auth0
+
+In Auth0, create a **Regular Web Application** and add `https://your-ricochet-domain.com/oauth/callback` to its **Allowed Callback URLs**.
+Copy the **Domain**, **Client ID**, and **Client Secret** from the application's **Settings** tab.
+
+```toml
+[auth.oidc]
+issuer_url = "https://{tenant}.auth0.com/"
+client_id = "your_client_id"
+client_secret = "your_client_secret"
+redirect_url = "https://your-ricochet-domain.com/oauth/callback"
+display_name_claim = "name"
+groups_claim = "https://ricochet.example.com/groups"
+```
+
+Replace `https://{tenant}.auth0.com/` with the **Domain** of your application, or with your Auth0 custom domain if users sign in through one.
+
+### Display name
+
+Auth0 does not send `preferred_username` for most connections, so set `display_name_claim` to `name` or `email`.
+
+### Groups claim
+
+Auth0 puts no groups in the ID token.
+To share content with groups, add a post-login Action under **Actions → Triggers → post-login** that copies the user's Auth0 roles into a namespaced claim:
+
+```js
+exports.onExecutePostLogin = async (event, api) => {
+  api.idToken.setCustomClaim(
+    "https://ricochet.example.com/groups",
+    event.authorization?.roles ?? [],
+  );
+};
+```
+
+Set `groups_claim` to the full claim name, including the `https://` namespace.
+Grant a role on content to an Auth0 role name in the collaborators dialog, exactly as it appears in Auth0.
+
 ## Requiring Authentication
 
 By default, unauthenticated users can browse the "Explore" page and view public content.

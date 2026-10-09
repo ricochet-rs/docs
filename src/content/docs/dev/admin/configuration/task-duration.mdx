@@ -1,0 +1,26 @@
+---
+title: Task Duration
+---
+
+ricochet stops a task invocation that runs longer than one hour.
+Raise or lower that limit for every task in the `[tasks]` section of `ricochet-config.toml`, in seconds:
+
+```toml title="ricochet-config.toml"
+[tasks]
+# 6 hours
+max_duration = 21600
+```
+
+Or set it as an environment variable:
+
+```bash
+RICOCHET_TASKS__MAX_DURATION=21600
+```
+
+The limit applies to scheduled invocations and to invocations started by hand, on every execution backend.
+A stopped invocation is marked as cancelled, and its log ends with the limit it reached.
+
+## Per-task limit
+
+A task can set its own limit, which replaces the server limit for that task.
+Set `max_duration` in the [`schedule` section](/dev/user/deployment/2-ricochet-toml/#schedule-settings) of its `_ricochet.toml`, or enter **Maximum duration** in minutes on the task's **Settings** > **Task** tab.

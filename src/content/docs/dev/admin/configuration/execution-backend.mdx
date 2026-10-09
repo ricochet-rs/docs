@@ -137,18 +137,4 @@ image_pull_policy = "IfNotPresent"
 
 The same [`ricochet-exec-env.toml`](#exec-env-config) format applies, and the [official exec-env images](https://github.com/ricochet-rs/exec-envs) work unchanged as Pod images.
 
-### Task time limit
-
-Kubernetes stops a task that runs longer than one hour.
-Set `task_timeout` in seconds to give long tasks more time:
-
-```toml title="ricochet-config.toml"
-[backend]
-engine = "k8s"
-# 6 hours
-task_timeout = 21600
-```
-
-The limit applies to every task on the server, scheduled or run by hand.
-
 See [Kubernetes installation](/dev/admin/installation/3-kubernetes/) for cluster prerequisites, Helm chart values, and PVC sizing guidance.

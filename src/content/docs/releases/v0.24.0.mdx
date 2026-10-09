@@ -1,0 +1,50 @@
+---
+title: v0.24.0
+docs: release notes for Ricochet v0.24.0
+slug: releases/v0.24.0
+tableOfContents: false
+template: splash
+---
+
+**Released: October 7, 2026**
+
+### New Features
+
+- Create and run Jupyter notebooks for Python projects.
+- CPU usage is now captured and exposed in the proxy, UI, and Prometheus metrics.
+- A unified process view displays all running processes in one place.
+- The loading page streams the starting worker's log so you can follow startup progress.
+- On Kubernetes, the loading screen shows diagnostics for app startup failures.
+- A banner appears above every page when your license is approaching expiry.
+
+### Enhancements
+
+- Ricochet will automatically retry a failed app start up to five times.
+- The `read` API key scope is now enforced by all endpoints on the REST API.
+- Crashed apps now display their last log lines and link to the full runtime log.
+- The task overview page now informs of the next schedule run time.
+- Content type filters are now grouped by language.
+- Improved the UI interpreter display at `/environment`.
+- The execution environments page uses a single aligned grid layout.
+- Improved application worker scaling logic.
+- We improved the performance of log streaming.
+- Host interpreter discovery is skipped when a backend is already configured, improving startup time.
+- On Kubernetes, the readiness probe verifies database access before marking the service as ready.
+
+### Bug Fixes
+
+- Fixes a bug where cron schedules with 5 fields were not correctly registered after a server restart.
+- Tasks fail immediately with a clear error when Kubernetes refuses to create the pod.
+- Static content no longer serves source files when the output directory is set to the bundle root.
+- Scaling and schedule updates are rejected when applied to the wrong content type.
+- Ricochet falls back to community edition features immediately when a license expires or fails validation.
+- Entra authentication providers without a client secret are rejected at startup.
+- User change events are published when an admin changes a user's role.
+- Existing `renv` cache entries are linked instead of replaced during restoration.
+- Stale workers no longer cancel retried `renv` restoration attempts.
+- Kubernetes restore jobs are reliably cleaned up when a restoration is cancelled or stale.
+- Ricochet waits for slow-starting containers to produce logs instead of timing out prematurely.
+- Request metrics are counted by content ID instead of slug.
+- Server-side rendering completes properly even after the client disconnects.
+- Tag input is preserved when appending to saved tags.
+- Mount discovery is serialized to prevent conflicts during container creation.

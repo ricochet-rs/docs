@@ -4,8 +4,8 @@ title: The ricochet CLI
 
 import { Tabs, TabItem, Aside, Steps } from "@astrojs/starlight/components";
 
-The ricochet CLI is a Rust-based command-line tool for deploying and managing content on ricochet servers.
-It provides an interactive interface for creating, updating, and monitoring your deployments.
+The ricochet CLI is a Rust-based command-line tool that deploys and manages content on ricochet servers.
+Use its interactive prompts to create, update, and monitor your deployments.
 
 ## Installation
 
@@ -23,7 +23,7 @@ curl.exe -fsSL https://raw.githubusercontent.com/ricochet-rs/cli/main/install.ps
 </TabItem>
 </Tabs>
 
-Verify the installation:
+Check that it works:
 
 ```bash
 ricochet --version
@@ -31,7 +31,7 @@ ricochet --version
 
 ### Homebrew (macOS)
 
-For macOS, we also provide a Homebrew formula:
+On macOS, you can also install with Homebrew:
 
 ```sh
 brew tap ricochet-rs/homebrew-tap
@@ -44,20 +44,20 @@ brew install ricochet
 
 ### Manual Installation
 
-We provide pre-built binaries for macOS, Linux, and Windows.
-Download from:
+Pre-built binaries are available for macOS, Linux, and Windows.
+Download one from:
 
 ```
 https://s3.eu-central-003.backblazeb2.com/ricochet-cli/$VERSION/ricochet-$VERSION-$OS_ARCH.tar.gz
 ```
 
-Available `$OS_ARCH` combinations:
+Use one of these `$OS_ARCH` values:
 
 - `aarch64` (Linux ARM64)
 - `x86_64` (Linux x86)
 - `windows.exe`
 
-After downloading, extract and add to your PATH:
+Extract the archive and move the binary to a folder on your PATH:
 
 ```sh
 tar -xzf ricochet-$VERSION-$OS_ARCH.tar.gz
@@ -65,21 +65,21 @@ mv ricochet-$VERSION-$OS_ARCH/ricochet /usr/local/bin/
 ```
 
 <Aside type="note">
-  On Windows, execute the `.exe` file directly after extracting.
+  On Windows, run the `.exe` file directly after you extract it.
 </Aside>
 
 ## Authentication
 
 ### Logging In
 
-Use the `login` command with the `-S` flag to specify the server URL:
+Run `login` and pass the server URL with the `-S` flag:
 
 ```bash
 ricochet login -S https://try.ricochet.rs
 ```
 
-This opens your browser to complete authentication.
-Once authenticated, your credentials are stored locally and used for subsequent commands.
+Your browser opens so you can sign in.
+The CLI then stores your credentials locally and uses them for later commands.
 
 ### Remote Sessions
 
@@ -100,10 +100,10 @@ echo "$RICOCHET_KEY" | ricochet login -S https://try.ricochet.rs --no-browser
 
 ### Multiple Instances
 
-You can authenticate with multiple ricochet servers.
-Each server's credentials are stored separately, keyed by the server URL.
+You can log in to more than one ricochet server.
+The CLI stores each server's credentials apart, keyed by the server URL.
 
-To switch between servers, specify the `-S` flag with your commands:
+To switch servers, pass the `-S` flag with your command:
 
 ```bash
 # Deploy to production
@@ -114,13 +114,13 @@ ricochet deploy -S https://staging.ricochet.example.com
 ```
 
 <Aside type="tip">
-  If you only work with one server, you can set the `RICOCHET_SERVER`
-  environment variable to avoid passing `-S` with every command.
+  If you only use one server, set the `RICOCHET_SERVER` environment variable.
+  Then you can skip `-S` on every command.
 </Aside>
 
 ### Logging Out
 
-To remove stored credentials for a server:
+To remove the stored credentials for a server:
 
 ```bash
 ricochet logout -S https://try.ricochet.rs
@@ -130,34 +130,34 @@ ricochet logout -S https://try.ricochet.rs
 
 ### Basic Deployment
 
-Navigate to your project directory and run:
+Go to your project folder and run:
 
 ```bash
 ricochet deploy
 ```
 
-If no `_ricochet.toml` file exists, the CLI walks you through an interactive setup:
+If there is no `_ricochet.toml` file, the CLI walks you through an interactive setup:
 
 <Steps>
 
-1. **Choose a language** — R, Julia, or Python
+1. **Choose a language**: R, Julia, or Python
 
-2. **Select content type** — Shiny, Plumber, Quarto, etc.
+2. **Select content type**: Shiny, Plumber, Quarto, and so on
 
-3. **Specify the entrypoint** — The file that starts your app (e.g., `app.R`)
+3. **Specify the entrypoint**: the file that starts your app, such as `app.R`
 
-4. **Name your content** — A display name visible in the ricochet UI
+4. **Name your content**: the name shown in the ricochet UI
 
-5. **Set visibility** — Private, Internal, or External
+5. **Set visibility**: Private, Internal, or External
 
 </Steps>
 
-After completing setup, a `_ricochet.toml` file is created in your project directory.
-See [Using `_ricochet.toml`](/dev/user/deployment/2-ricochet-toml) for configuration details.
+When you finish, the CLI creates a `_ricochet.toml` file in your project folder.
+See [Using `_ricochet.toml`](/dev/user/deployment/2-ricochet-toml) for all settings.
 
 ### Redeploying
 
-Subsequent deployments use the existing `_ricochet.toml` configuration:
+Later deploys reuse the settings in your `_ricochet.toml`:
 
 ```bash
 ricochet deploy

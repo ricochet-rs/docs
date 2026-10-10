@@ -12,28 +12,28 @@ template: splash
 
 #### Database
 
-- Improvements to database query performance.
-- To support high-availability, avatar images are stored in the database instead of on-disk.
+- Database queries are faster.
+- Avatar images now live in the database instead of on disk to support high availability.
 
 #### Deployment
 
-- App instances that run out of memory or otherwise die are removed automatically. This ensures dead processes aren't routed to.
-- Queued deployments are persisted across restarts, and task runs are properly linked to their logs.
+- Ricochet now removes app instances that run out of memory or die, so no traffic goes to dead processes.
+- Queued deployments now survive restarts, and task runs now link to their logs.
 
 ### Enhancements
 
-- The "Explore", "My Apps", and "My Tasks" list views have been redesigned for improved readability.
-- Improved leader election to support multi-instance deployment.
+- The "Explore", "My Apps", and "My Tasks" list views have a new design that is easier to read.
+- Leader election now supports multi-instance deployment.
 ### Fixes
 
 #### Interface
 
-- The Git deployment form now restricts visibility options to those allowed by your current license.
-- Deployment log streams automatically reconnect and continue following running attempts beyond the idle timeout window.
+- The Git deployment form now only shows visibility options your license allows.
+- Deployment log streams now reconnect on their own and keep following running attempts past the idle timeout.
 
 #### Deployment
 
-- Restarting an application no longer triggers a rolling update when the deployment specification has not changed.
+- Restarting an app no longer triggers a rolling update if the deployment spec is unchanged.
 
 #### API
 

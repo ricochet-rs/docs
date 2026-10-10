@@ -22,26 +22,26 @@ template: splash
 
 #### UI
 
-- Ricochet configures the interface timezone from the browser automatically.
+- Ricochet now sets the UI timezone from your browser.
 
 ### Fixes
 
 #### Deployments
 
-- Apps configured with minimum instances are restored automatically when workers stop.
-- Ricochet records why a worker stopped and surfaces that reason to the user.
+- Apps with a minimum instance count now restart on their own when workers stop.
+- Ricochet now records why a worker stopped and shows you the reason.
 - Rootless container-in-container deployments now resolve subordinate user and group IDs correctly.
 
 #### UI
 
-- Environment variable names and values are limited to the size supported by encryption, preventing invalid submissions.
+- Environment variable names and values are now capped at the size encryption supports, which blocks invalid input.
 - File uploads provide clearer progress and feedback.
 
 #### Core
 
-- Read-only commands no longer initialize a new Ricochet instance unexpectedly.
+- Read-only commands no longer set up a new Ricochet instance by surprise.
 - Ricochet resolves its home and content directories consistently across commands.
 
 #### API
 
-- API errors now interpolate their details correctly instead of returning placeholder text.
+- API errors now show their real details instead of placeholder text.

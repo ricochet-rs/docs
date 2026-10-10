@@ -12,7 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/markdoc": "2.0.9",
+    "@astrojs/markdoc": "2.0.10",
     "@astrojs/markdown-remark": "^7.3.1",
     "@astrojs/starlight": "0.42.5",
     "@astrojs/starlight-markdoc": "^0.7.0",
@@ -20,7 +20,7 @@
     "@lorenzo_lewis/starlight-utils": "^0.3.2",
     "@tailwindcss/vite": "^4.3.0",
     "add": "^2.0.6",
-    "astro": "7.3.5",
+    "astro": "7.3.6",
     "astro-markdown-for-agents": "^0.1.1",
     "pagefind": "^1.5.2",
     "posthog-js": "^1.417.2",

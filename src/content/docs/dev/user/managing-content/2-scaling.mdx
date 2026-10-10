@@ -46,6 +46,9 @@ Increasing the maximum number if instances can be useful if the service can expe
 Having many users using the same service can result in resource strain.
 The maximum number of connections to a service can be limited or increased via the `max_connections` setting in the `[serve]` section of the `_ricochet.toml`.
 
+In Shiny and Genie apps, each open browser session counts as one connection.
+In every other service, each request in progress counts as one connection.
+
 When the maximum number of instances is reached, a new instance will be spawned and subsequence connections will be directed to that instance.
 
 ## Spawn threshold

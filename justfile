@@ -28,6 +28,9 @@ fmt: install
     bun run scripts/semantic-breaks.mjs
     bun prettier --write .
 
+# check prose readability against .readability.yml (all pages, or the given files)
+readability *files:
+    bun run scripts/readability.mjs {{ files }}
 
 pr-review pr_num:
     gh pr-review review view -R ricochet-rs/docs --pr {{ pr_num }} | jq

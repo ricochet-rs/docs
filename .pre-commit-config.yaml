@@ -53,6 +53,11 @@ repos:
 
   - repo: local
     hooks:
+      - id: readability
+        name: readability
+        entry: bun run scripts/readability.mjs
+        language: system
+        files: ^src/content/docs/.*\.mdx$
       - id: just-fmt
         name: just fmt
         entry: just fmt

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://readability.adaptive-enforcement-lab.com/latest/schemas/config.json
+# Checked by scripts/readability.mjs in pre-commit and CI.
+---
+thresholds:
+  max_grade: 12
+  max_ari: 13
+  min_ease: 40
+  min_words: 100
+  max_dash_density: 0
+  min_admonitions: -1
+  # Page length depends on how much there is to say, so it is not limited.
+  max_lines: 10000

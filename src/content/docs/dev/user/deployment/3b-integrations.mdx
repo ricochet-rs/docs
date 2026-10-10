@@ -1,0 +1,111 @@
+---
+title: "Integrations"
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+Read secrets from HashiCorp Vault or OpenBao into the environment variables of your apps and tasks.
+Ricochet reads each value when the app or task starts and never stores it.
+
+<Steps>
+
+1. Open **Integrations**, select **New integration**, and pick **HashiCorp Vault / OpenBao**.
+
+2. Enter the Vault address, the AppRole role ID and secret ID, then select **Test connection**.
+
+3. Select **Save**.
+
+4. Open your app or task, go to **Environment Variables**, and select **Add from integration**.
+
+5. Pick the integration, enter the secret path and key, name the environment variable, and select **Add variable**.
+
+</Steps>
+
+Read the variable like any other one, for example `Sys.getenv("DB_PASSWORD")` in R or `os.environ["DB_PASSWORD"]` in Python.
+
+## Connection settings
+
+| Field             | What to enter                                                                |
+| ----------------- | ---------------------------------------------------------------------------- |
+| **Name**          | A name for the integration, unique among yours                               |
+| **Vault address** | The server URL, for example `https://vault.example.com:8200`                 |
+| **Namespace**     | The namespace to log in to, if your Vault Enterprise or OpenBao uses them    |
+| **Role ID**       | The AppRole role ID                                                          |
+| **Secret ID**     | The AppRole secret ID, which Ricochet stores encrypted                       |
+| **AppRole mount** | Where AppRole is enabled, `approle` unless you changed it                    |
+| **KV mount**      | The KV version 2 secrets engine your secrets live in, `secret` by default    |
+
+Ricochet logs in before it saves, so a wrong address or credential fails on the **Integrations** page rather than when your app starts.
+
+To rotate the secret ID, select **Edit**, enter the new one, and select **Save**.
+Leave the field empty to keep the current one.
+
+## Prepare an AppRole
+
+Ask whoever runs your Vault for a role that can read only the secrets your apps and tasks need.
+
+```shell
+# a policy that reads one app's secrets
+vault policy write ricochet-myapp - <<EOF
+path "secret/data/myapp/*" { capabilities = ["read"] }
+EOF
+
+# a role that uses it
+vault write auth/approle/role/ricochet-myapp token_policies=ricochet-myapp token_ttl=5m
+
+# the two values Ricochet asks for
+vault read -field=role_id auth/approle/role/ricochet-myapp/role-id
+vault write -f -field=secret_id auth/approle/role/ricochet-myapp/secret-id
+```
+
+Ricochet logs in every time an app or task starts, so the secret ID must allow unlimited uses.
+It revokes its token as soon as it has read the values, which is why a short `token_ttl` is enough.
+
+## Secret paths
+
+Enter the path relative to the KV mount: `myapp/db` for a secret Vault shows as `secret/myapp/db`.
+The key names one field inside that secret, such as `password`.
+
+Ricochet reads the secret once when you add the variable, so a mistyped path or key fails right away.
+Adding or removing a variable restarts the running instances of an app.
+
+A name comes from one place only.
+A variable you store on the item and one you read from an integration can never share a name, and neither can two integrations.
+
+## Declare secrets in `_ricochet.toml`
+
+List the secrets an item reads next to the rest of its configuration:
+
+```toml
+[[integrations]]
+integration = "Analytics Vault"
+secrets = [
+  { path = "myapp/db", key = "password", env_var = "DB_PASSWORD" },
+  { path = "myapp/db", key = "user", env_var = "DB_USER" },
+]
+```
+
+Every deployment replaces the secrets the file declares, and variables added on the **Environment Variables** tab stay.
+To stop reading one, remove it from the file and deploy again.
+A Git-backed item reads the file on every sync, with the access of the item's owner.
+
+## Share an integration
+
+Select **Access** next to an integration you own.
+
+- Under **People**, add someone as a **User** to let them use the integration, or as an **Owner** to let them manage it too.
+- Under **Apps and tasks**, allow the apps and tasks your users may read the integration into.
+
+Owners read the integration into any app or task they can edit.
+Users read it only into the apps and tasks listed under **Apps and tasks**, and only people who can deploy can be added.
+A user can read any secret the AppRole is allowed to read into those apps and tasks, so share an integration only with people you would give that access.
+
+Revoking an app or task takes effect when it next starts, and its running instances restart.
+An integration always keeps at least one owner.
+
+## When an app does not start
+
+If Vault cannot be reached or refuses the login, the app does not start.
+Its loading page shows **Your app could not start**, and the **Reading secrets from integrations** step names the integration and the reason.
+The failed start does not count toward the app's restart limit, so the next visit tries again.
+Select **Test connection** on the **Integrations** page to check the settings.

@@ -158,3 +158,22 @@ All tasks items can be scheduled by specifying the `cron` field.
 [schedule]
 cron = "0 0 * * *"
 ```
+
+## `integrations` settings
+
+Each optional `[[integrations]]` entry reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
+
+```toml
+[[integrations]]
+integration = "Analytics Vault"
+secrets = [
+  { path = "myapp/db", key = "password", env_var = "DB_PASSWORD" },
+]
+```
+
+| Field         | Description                                                                 |
+| ------------- | --------------------------------------------------------------------------- |
+| `integration` | The integration's name, as shown on the **Integrations** page.              |
+| `secrets`     | One entry per variable: the secret's `path` and `key`, and its `env_var`.   |
+
+Every deployment replaces the secrets the file declares, and a declaration that names a variable the item already has fails the deployment.

@@ -6,6 +6,7 @@ import { Aside, Steps, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starli
 
 Ricochet lets your apps and APIs identify the user making each request.
 Each request, ricochet injects an `X-Ricochet-User` HTTP header containing a signed [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) with a claim containing that user's information.
+Anonymous visitors to a public item get no header.
 
 An app deployed to ricochet can use this JWT to tailor its behavior based on the authenticated user.
 
@@ -20,9 +21,9 @@ The `X-Ricochet-User` token is a JWT whose claims describe the current user:
 | `email`  | User email, if provided by the configured IdP.                                                          |
 | `role`   | User role on the ricochet server, one of: `admin`, `developer`, or `consumer`.                          |
 | `groups` | Array of group IDs the user belongs to.                                                                |
-| `aud`    | Content ID of the item the token was generated for.                                                    |
+| `aud`    | Content ID of the item the token was generated for. This is never the slug.                            |
 | `iat`    | Time the token was issued, in UTC.                                                                      |
-| `exp`    | Time the token expires, in UTC.                                                                         |
+| `exp`    | Time the token expires, in UTC. This is 5 minutes after `iat`.                                         |
 
 <Aside type="note">
   Identity providers and groups are configured by your server administrator.
@@ -30,25 +31,30 @@ The `X-Ricochet-User` token is a JWT whose claims describe the current user:
 </Aside>
 
 ## Verifying the token
-Each JWT has an expiry and is issued for a specific content item, stored in the `exp` and `aud` claims respectively.
-Verify the token before you accept it: `aud` must match the `RICOCHET_CONTENT_ID` environment variable, `exp` must not have passed, and the signature must be valid.
 
-Ricochet signs each token and publishes the corresponding public key as a [JSON Web Key Set (JWKS)](https://datatracker.ietf.org/doc/html/rfc7517) at `RICOCHET_HOST/.well-known/jwks.json`.
-Ricochet strips any inbound `X-Ricochet-User` header before issuing its own, so clients cannot spoof the token.
-
-The verification flow is the same in any language:
+Ricochet sets `RICOCHET_URL` and `RICOCHET_CONTENT_ID` in your app's environment.
+Verify every token before you trust it:
 
 <Steps>
-1. Fetch the JWKS from `RICOCHET_HOST/.well-known/jwks.json`.
+1. Fetch the public key from `RICOCHET_URL/.well-known/jwks.json`.
 
 2. Read the `X-Ricochet-User` header from the incoming request.
 
-3. Decode and verify the token's signature using the public key.
+3. Verify the signature using the RS256 algorithm.
 
-4. Confirm the `aud` claim matches your content's ID, read from the `RICOCHET_CONTENT_ID` environment variable.
+4. Check that `aud` matches the `RICOCHET_CONTENT_ID` environment variable.
 
-5. Confirm the token has not expired (`exp`).
+5. Check that `exp` has not passed.
 </Steps>
+
+The token has no `iss` claim, so do not make your JWT library require one.
+If your library needs the key in PEM format, fetch it from `RICOCHET_URL/api/v0/public-key`.
+Ricochet removes any `X-Ricochet-User` header a client sends, so a client cannot fake the token.
+
+### Shiny apps
+
+Shiny reads the header once, when the session opens.
+The token expires 5 minutes later, so verify it at session start and keep the claims.
 
 ## Decoding the token
 
@@ -61,8 +67,7 @@ The examples below use [`jose`](https://r-lib.r-universe.dev/jose) in R and [PyJ
 ```r
 library(jose)
 
-# replace with your ricochet host
-ricochet_url <- "https://try.ricochet.rs"
+ricochet_url <- Sys.getenv("RICOCHET_URL")
 content_id <- Sys.getenv("RICOCHET_CONTENT_ID")
 
 # fetch the public key
@@ -91,8 +96,7 @@ import os
 import jwt
 from jwt import PyJWKClient
 
-# replace with your ricochet host
-ricochet_url = "https://try.ricochet.rs"
+ricochet_url = os.environ["RICOCHET_URL"]
 content_id = os.environ["RICOCHET_CONTENT_ID"]
 
 # fetch the public key

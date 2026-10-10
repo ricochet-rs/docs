@@ -21,6 +21,16 @@ Set the `RICOCHET_PROMETHEUS_PORT` environment variable to serve metrics on a di
 RICOCHET_PROMETHEUS_PORT=9100
 ```
 
+Metrics listen on `127.0.0.1` only, so a Prometheus server on another machine or pod cannot reach them.
+Set `prometheus_addr` to choose the address and port to listen on.
+
+```toml
+prometheus_addr = "0.0.0.0:6189"
+```
+
+You can set the same value with the `RICOCHET_PROMETHEUS_ADDR` environment variable.
+When `prometheus_addr` is set, it replaces `RICOCHET_PROMETHEUS_PORT`.
+
 Restart ricochet to apply the change.
 
 ## Scrape configuration
@@ -39,6 +49,7 @@ scrape_configs:
 | Metric | Type | Labels | Description |
 | ------ | ---- | ------ | ----------- |
 | `ricochet_requests_total` | Counter | `type`, `content_id`, `status`, `method` | Requests served. |
+| `ricochet_request_duration_seconds` | Histogram | `type`, `content_id` | Time to serve a request. WebSocket connections are not included. |
 | `ricochet_connections_total` | Counter | `type`, `content_id` | Connections opened. |
 | `ricochet_invocations_started_total` | Counter | `content_id` | Invocations started. |
 | `ricochet_invocations_completed_total` | Counter | `content_id`, `status` | Invocations completed. |
@@ -57,3 +68,4 @@ scrape_configs:
 | `ricochet_cpu_cores` | `type`, `content_id` | CPU currently in use, in cores. |
 | `ricochet_longest_active_seconds` | `type`, `content_id` | Age of the longest running process. |
 | `ricochet_last_invocation_timestamp_seconds` | `content_id` | Unix time of the most recent invocation. |
+| `ricochet_build_info` | `version`, `commit` | Always `1`. The labels show which ricochet build is running. |

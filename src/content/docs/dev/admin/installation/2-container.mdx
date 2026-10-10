@@ -144,17 +144,25 @@ docker rm ricochet-init
 
 ## Limitations
 
-Running ricochet in a rootless container prevents item-level memory limits from being enforced.
-This is because the cgroup is read-only in a rootless container.
-When an item is spawned with memory limits, those are silently ignored and a warning trace is emitted.
+### Memory limits
 
-Instead, it is possible to limit th econtainer itself.
+To enforce each item's memory limit, start the container as root:
+
+```sh
+docker run --user 0 ...
+```
+
+In Docker Compose, set `user: "0"` on the service.
+
+The image then makes the container's cgroup writable for ricochet and starts the server as its usual non-root user.
+This needs `--cap-add=SYS_ADMIN`, which the commands above already grant.
+
+Without `--user 0`, items run without a memory limit and the server logs `per-item memory limits are not enforced` at startup.
+To cap memory anyway, limit the whole container:
 
 ```sh
 docker run --memory=32g --memory-swap=32g ...
 ```
-
-To enforce per-item limits, use a [host install](/dev/admin/installation/1-host/) or [Kubernetes](/dev/admin/installation/3-kubernetes/).
 
 ### AppArmor
 

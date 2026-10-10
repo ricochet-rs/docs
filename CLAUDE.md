@@ -52,3 +52,8 @@ It uses Astro starlight.
 
 `just fmt` applies semantic line breaks to `src/content/docs/**/*.mdx`, but `.prettierignore` excludes `**/*.mdx` from prettier.
 Align Markdown tables in `.mdx` pages by hand, since no formatter or lint hook reformats them.
+
+## Readability
+
+Run `just readability <page.mdx>` after editing a page and rewrite until it passes, since the pre-commit hook and CI reject pages that miss the thresholds in `.readability.yml`.
+Fix a failing page with shorter sentences and plainer words, never by deleting facts or loosening `.readability.yml`.

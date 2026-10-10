@@ -8,6 +8,13 @@
       "matchStrings": [
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n.*?:= \"(?<currentValue>.*?)\""
       ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^scripts/readability\\.mjs$/"],
+      "matchStrings": [
+        "// renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n.*?= \"(?<currentValue>.*?)\""
+      ]
     }
   ],
   "packageRules": [

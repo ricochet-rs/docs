@@ -10,19 +10,19 @@ template: splash
 
 ### Security
 
-- Closed potential vulnerabilities in thumbnail serving and tar unbundle operations that could allow unauthorized file access
-- Fixes server-role checking in select API endpoints
-- Added validation for OIDC redirect URIs to prevent any potential redirect attacks
+- Thumbnail serving and tar unbundling no longer risk giving access to files a user should not see.
+- Some API endpoints now check server roles correctly.
+- OIDC redirect URIs are now checked to block redirect attacks.
 
 ### Features
 
-- Ricochet now injects a `X-Ricochet-User` header containing user JWT for downstream services
-- Added ability to configure maximum bundle size limits
+- Ricochet now adds an `X-Ricochet-User` header with the user JWT for downstream services.
+- You can now set a maximum bundle size.
 
 ### Fixes
 
-- List view filter selections now persist across page reloads
-- Listing users on an instance now requires a logged in user
-- Instances that terminate early are eagerly pruned and will not be delegated to
-- Fixed session affinity cookie persistence issues
-- Moved download-log button into log header for better discoverability
+- List view filters now stay set when you reload the page.
+- Listing users on an instance now needs a logged in user.
+- Instances that stop early are now pruned at once and get no more requests.
+- Session affinity cookies now persist as they should.
+- The download-log button is now in the log header, where it is easier to find.

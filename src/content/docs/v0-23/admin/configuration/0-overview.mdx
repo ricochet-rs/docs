@@ -4,14 +4,14 @@ title: Overview
 
 import { Aside, LinkCard, FileTree } from '@astrojs/starlight/components';
 
-ricochet is configured using a `ricochet-config.toml` file.
-The configuration file controls OIDC authentication, the default user role, backend execution, and item storage.
+You configure ricochet with a `ricochet-config.toml` file.
+This file sets OIDC login, the default user role, the execution backend, and item storage.
 
-When using the default ricochet systemd service, the configuration file is located at `/var/lib/ricochet/ricochet-config.toml`.
-If using the ricochet server cli you can specify the config using `ricochet start --config /path/to/ricochet-config.toml`.
+With the default ricochet systemd service, the file lives at `/var/lib/ricochet/ricochet-config.toml`.
+With the ricochet server CLI, pass the file with `ricochet start --config /path/to/ricochet-config.toml`.
 
 <Aside type="tip">
-If no configuration file exists, ricochet will create one automatically on first startup.
+If no config file exists, ricochet creates one the first time it starts.
 </Aside>
 
 ### Example `ricochet-config.toml`
@@ -32,33 +32,35 @@ redirect_url = "http://localhost:6188/oauth/callback"
 
 ## Storage
 
-ricochet requires persistent storage for its database, deployments, and encryption keys.
-We refer to this location as `RICOCHET_HOME`.
+ricochet needs persistent storage for its database, deployments, and encryption keys.
+This location is called `RICOCHET_HOME`.
 
 <FileTree>
 
 - content/ deployment bundles
   - ...
-- .ricochet.json encyption keys
+- .ricochet.json encryption keys
 - .ricochet.pub public rsa key
 - ricochet.sqlite3 ricochet's database
 </FileTree>
 
-The default location of `RICOCHET_HOME` is the current working directory unless specified by the top-level `home` configuration in the `ricochet-config.toml` e.g.
-`home = "/path/to/ricochet/home"` or environment variable.
-In the case of the **systemd service**, the default location is `/var/lib/ricochet/data`.
+By default, `RICOCHET_HOME` is the current working directory.
+To change it, set the top-level `home` key in `ricochet-config.toml`, such as `home = "/path/to/ricochet/home"`.
+You can also set it with an environment variable.
+For the **systemd service**, the default is `/var/lib/ricochet/data`.
 
 <Aside type="tip">
-  When using the standalone binary, it is recommended to set `home` to an absolute path in your `ricochet-config.toml`.
-  This ensures consistent behavior regardless of the directory you launch from.
+  With the standalone binary, set `home` to an absolute path in your `ricochet-config.toml`.
+  ricochet then uses the same home no matter which folder you start it from.
 </Aside>
 
-Alternatively, use the `RICOCHET_HOME` environment variable to specify where ricochet should use the home directory.
+Or set the `RICOCHET_HOME` environment variable to the home path you want.
 
 ## Environment Variables
 
-Environment variables can override TOML settings using the `RICOCHET_` prefix with double underscores (`__`) for nested keys.
-For example to set values from `[auth.oidc]` the following environment variables can be used:
+Environment variables override TOML settings.
+Use the `RICOCHET_` prefix, and use double underscores (`__`) for nested keys.
+For example, these variables set values in `[auth]` and `[auth.oidc]`:
 
 ```bash
 RICOCHET_AUTH__OIDC__CLIENT_SECRET=secret-value
@@ -68,10 +70,10 @@ RICOCHET_AUTH__REQUIRE_AUTHENTICATION=false
 
 ### Configuration Precedence
 
-ricochet uses the below precedence for configuration values:
+ricochet applies config values in this order:
 
-1. Enviroment variables are prioritized over the `ricochet-config.toml`
-2. `ricochet-config.toml` is prioritized over default values
+1. Environment variables win over `ricochet-config.toml`
+2. `ricochet-config.toml` wins over default values
 
 ## Configuration settings
 

@@ -10,16 +10,16 @@ template: splash
 
 ### Features
 
-- **Shiny Python Support**: Added Shiny Python as a new content type and renamed the existing Shiny option to Shiny (R) to distinguish between the two frameworks
+- Shiny Python is a new content type, and the old Shiny option is now Shiny (R) to tell the two apart.
 
 ### Fixes
 
-- **Plumber Default Route**: When no path is specified for Plumber applications, ricochet routes to `/__docs__/`.
-- **Python Discovery**: enabled discovery of python installations not managed by UV
-- **Admin Permissions**: Administrators can now demote other administrators
-- **Julia Data Dependencies**: Set `DATADEPS_ALWAYS_ACCEPT=1` for Julia processes to avoid interactive prompts
-- **Graceful Shutdown**: OTLP tracing now correctly shuts down
+- Plumber apps with no path set now route to `/__docs__/`.
+- Ricochet now finds Python installs that UV does not manage.
+- Admins can now demote other admins.
+- Julia processes now set `DATADEPS_ALWAYS_ACCEPT=1` so they never wait at a prompt.
+- OTLP tracing now shuts down cleanly.
 
 ### Improvements
 
-- **Application Loading**: Prevented duplicate backends when spawning instances, improved the app loading experience, and fixed a memory leak in Kubernetes deployments
+- Apps load more smoothly with no duplicate backends, and Kubernetes deployments no longer leak memory.

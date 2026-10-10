@@ -46,6 +46,27 @@ curl -X PATCH \
   -d "{\"$(encrypt ENV_NAME)\": \"$(encrypt ENV_VALUE)\"}"
 ```
 
+The `encrypt` function above handles names and values up to 190 bytes.
+For a longer value, such as a service account JSON file or a private key, encrypt it with a fresh AES-256-GCM key and send it as `v2:<key>:<sealed>`.
+`<key>` is the AES key encrypted like a short value, and `<sealed>` is the base64 of the 12 byte nonce followed by the AES-GCM output.
+
+```python
+# usage: python encrypt_long.py ricochet.pub service-account.json
+import base64, os, sys
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+public_key = serialization.load_pem_public_key(open(sys.argv[1], "rb").read())
+key = AESGCM.generate_key(bit_length=256)
+nonce = os.urandom(12)
+sealed = nonce + AESGCM(key).encrypt(nonce, open(sys.argv[2], "rb").read(), None)
+oaep = padding.OAEP(mgf=padding.MGF1(hashes.SHA256()), algorithm=hashes.SHA256(), label=None)
+wrapped = public_key.encrypt(key, oaep)
+
+print(f"v2:{base64.b64encode(wrapped).decode()}:{base64.b64encode(sealed).decode()}")
+```
+
 When sending environment variables to the API for any endpoint, they must first be encrypted.
 
 | Method   | Path                                             | Effect                                             |
@@ -66,8 +87,7 @@ Note that it is not possible to retrieve the raw environment variable values thr
 
 ### Limitations
 
-A name or a value may be at most 190 bytes, which is the most a 2048 bit RSA key carries under OAEP with SHA-256.
-Longer strings cannot be encrypted at all.
+A name may be at most 190 bytes and a value at most 64 KiB.
 
 Keys may only consist of ASCII letters, numbers, and underscores.
 

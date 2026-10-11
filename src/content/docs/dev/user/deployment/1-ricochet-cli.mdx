@@ -80,6 +80,7 @@ ricochet login -S https://try.ricochet.rs
 
 This opens your browser to complete authentication.
 Once authenticated, your credentials are stored locally and used for subsequent commands.
+The first server you log in to becomes your default, so later commands work without `-S`.
 
 ### Remote Sessions
 
@@ -103,7 +104,7 @@ echo "$RICOCHET_KEY" | ricochet login -S https://try.ricochet.rs --no-browser
 You can authenticate with multiple ricochet servers.
 Each server's credentials are stored separately, keyed by the server URL.
 
-To switch between servers, specify the `-S` flag with your commands:
+Commands go to your default server unless you pass `-S`:
 
 ```bash
 # Deploy to production
@@ -113,10 +114,8 @@ ricochet deploy -S https://ricochet.example.com
 ricochet deploy -S https://staging.ricochet.example.com
 ```
 
-<Aside type="tip">
-  If you only work with one server, you can set the `RICOCHET_SERVER`
-  environment variable to avoid passing `-S` with every command.
-</Aside>
+To make another server the default, run `ricochet server set-default <NAME>`.
+Run `ricochet server list` to see the names.
 
 ### Logging Out
 

@@ -162,6 +162,18 @@ content_type = "python-service"
 
 ## Julia apps
 
+### Genie
+
+[Genie](https://genieframework.com/) apps, including those built with Stipple or GenieFramework, deploy with the `genie` content type.
+Start the server on the port in the `PORT` environment variable.
+
+```toml
+[content]
+name = "My Genie App"
+entrypoint = "app.jl"
+content_type = "genie"
+```
+
 ### Julia Service
 
 The `julia-service` content type deploys Julia web apps and APIs such as those built with [Dash.jl](https://github.com/plotly/Dash.jl).

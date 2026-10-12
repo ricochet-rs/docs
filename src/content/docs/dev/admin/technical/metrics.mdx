@@ -15,13 +15,8 @@ These metrics are on a separate port than ricochet so that they can be kept on a
 
 ## Configuration
 
-Set the `RICOCHET_PROMETHEUS_PORT` environment variable to serve metrics on a different port.
-
-```bash
-RICOCHET_PROMETHEUS_PORT=9100
-```
-
-Restart ricochet to apply the change.
+Set the metrics address with `metrics` in the [`[network]`](/dev/admin/configuration/network/) section of `ricochet-config.toml`.
+Set it to `0.0.0.0:6189` when Prometheus scrapes from another host.
 
 ## Scrape configuration
 

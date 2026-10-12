@@ -1,0 +1,23 @@
+---
+title: Network
+---
+
+Ricochet listens on the ports below.
+Change them in the `[network]` section of `ricochet-config.toml`.
+Every field is optional.
+
+| Field        | Default          | Description                                              |
+| ------------ | ---------------- | -------------------------------------------------------- |
+| `proxy_port` | `6188`           | Port Ricochet serves on. Point your reverse proxy here.  |
+| `api_port`   | `3000`           | Port for the web interface and API, on `127.0.0.1` only. |
+| `metrics`    | `127.0.0.1:6189` | Address of the Prometheus `/metrics` endpoint.           |
+
+```toml
+[network]
+proxy_port = 8080
+metrics = "0.0.0.0:6189"
+```
+
+Set `metrics` to `0.0.0.0:6189` only when Prometheus scrapes from another host.
+Each field can also be set as an environment variable, such as `RICOCHET_NETWORK__PROXY_PORT=8080`.
+Restart Ricochet to apply a change.

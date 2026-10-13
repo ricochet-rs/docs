@@ -10,6 +10,7 @@ Before inspecting repository files, planning, editing, or running project comman
 6. Read `instructions/global.md`.
 7. Read and follow `skills/development-flow/SKILL.md` for code changes.
 8. Read the applicable language skills according to the repository manifests and files involved.
+9. Read and follow `skills/user-facing-docs/SKILL.md` before writing or editing any documentation.
 
 The shared skills may not appear in the startup skill catalog.
 Read their `SKILL.md` files directly from the shared checkout and follow them for the current session.
@@ -46,6 +47,7 @@ It uses Astro starlight.
 - Whenever possible put actionable code chunks at the top of a documentation page so that it can be action oriented
 - Never stack two or more callouts in a row
 - Be ruthlessly concise
+- Never use middle voice such as "the app deploys" or "the file saves", and name who acts instead: "ricochet deploys your app"
 - Ensure that pages are organized linearly and logically
 - Always order languages R, Julia, Python in tabs, lists, and prose
 - Write every code example in R, Julia, and Python, and never propose dropping a language

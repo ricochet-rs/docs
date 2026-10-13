@@ -49,7 +49,7 @@ It uses Astro starlight.
 - Ensure that pages are organized linearly and logically
 - Always order languages R, Julia, Python in tabs, lists, and prose
 - Write every code example in R, Julia, and Python, and never propose dropping a language
-- Write snippets as a function plus a call, never as a script reading command-line arguments or a made-up file or value
+- Never write a snippet as a CLI tool that reads command-line arguments
 
 ## Formatting
 

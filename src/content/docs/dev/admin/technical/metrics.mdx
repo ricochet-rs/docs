@@ -15,13 +15,8 @@ These metrics are on a separate port than ricochet so that they can be kept on a
 
 ## Configuration
 
-Set the `RICOCHET_PROMETHEUS_PORT` environment variable to serve metrics on a different port.
-
-```bash
-RICOCHET_PROMETHEUS_PORT=9100
-```
-
-Restart ricochet to apply the change.
+Set the metrics address with `metrics` in the [`[network]`](/dev/admin/configuration/network/) section of `ricochet-config.toml`.
+Set it to `0.0.0.0:6189` when Prometheus scrapes from another host.
 
 ## Scrape configuration
 
@@ -45,6 +40,7 @@ scrape_configs:
 | `ricochet_invocation_duration_seconds` | Histogram | `content_id` | Time an invocation took to complete. |
 | `ricochet_app_instances_started_total` | Counter | `content_id` | App instances started. |
 | `ricochet_app_instances_stopped_total` | Counter | `content_id` | App instances stopped. |
+| `ricochet_request_duration_seconds` | Histogram | `type`, `content_id` | Time to serve a request. WebSocket connections are not included. |
 
 ## Gauges
 
@@ -57,3 +53,4 @@ scrape_configs:
 | `ricochet_cpu_cores` | `type`, `content_id` | CPU currently in use, in cores. |
 | `ricochet_longest_active_seconds` | `type`, `content_id` | Age of the longest running process. |
 | `ricochet_last_invocation_timestamp_seconds` | `content_id` | Unix time of the most recent invocation. |
+| `ricochet_build_info` | `version`, `commit` | Always `1`. The labels show which ricochet build is running. |

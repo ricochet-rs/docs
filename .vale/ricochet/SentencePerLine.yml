@@ -1,0 +1,7 @@
+extends: existence
+message: "Put each sentence on its own line."
+level: error
+nonword: true
+scope: raw
+tokens:
+  - '[a-z0-9)`][.?!] +[A-Z`\[]'

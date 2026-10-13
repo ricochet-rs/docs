@@ -1,0 +1,12 @@
+extends: existence
+message: "Describe what happens now, not what changed ('%s')."
+level: warning
+ignorecase: true
+tokens:
+  - no longer
+  - previously
+  - (?:we|it|this|they) used to
+  - anymore
+  - was fixed
+  - fixes a bug
+  - now (?:works|writes|takes|keeps|builds|returns|supports|renders)

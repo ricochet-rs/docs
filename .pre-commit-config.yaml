@@ -58,6 +58,11 @@ repos:
         entry: bun run scripts/readability.mjs
         language: system
         files: ^src/content/docs/.*\.mdx$
+      - id: vale
+        name: vale
+        entry: vale
+        language: system
+        files: ^src/content/docs/.*\.mdx?$
       - id: just-fmt
         name: just fmt
         entry: just fmt

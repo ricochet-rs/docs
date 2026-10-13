@@ -1,0 +1,8 @@
+extends: existence
+message: "Don't name repository internals ('%s'). Say what the reader does or sees."
+level: error
+nonword: true
+scope: raw
+tokens:
+  - '`(?:scripts|\.crow)/[^`]*`'
+  - "`just [a-z-]+`"

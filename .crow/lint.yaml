@@ -28,6 +28,17 @@ steps:
       - bun run scripts/readability.mjs
     depends_on: []
 
+  vale:
+    when:
+      - event: pull_request
+        path: "src/content/docs/**"
+    image: reg.ricochet.rs/docker.io/jdkato/vale:v3.23.0
+    commands:
+      - apk add -q --no-cache jq
+      - vale sync
+      - echo "$${CI_PIPELINE_FILES}" | jq -r '.[] | select(test("^src/content/docs/.*\\.mdx?$"))' | while read -r f; do [ -f "$f" ] && echo "$f"; done | xargs -r vale
+    depends_on: []
+
   commitlint:
     when:
       - event: pull_request

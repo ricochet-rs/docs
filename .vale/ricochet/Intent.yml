@@ -1,0 +1,17 @@
+extends: existence
+message: "Say what happens, not what is intended ('%s')."
+level: error
+ignorecase: true
+tokens:
+  - (?:is|are|was|were) designed (?:to|for)
+  - (?:is|are) intended to
+  - (?:is|are) meant to
+  - aims? to
+  - allows? you to
+  - enables? you to
+  - helps? you
+  - makes? it easy
+  - with ease
+  - to boot
+  - out of the box
+  - under the hood

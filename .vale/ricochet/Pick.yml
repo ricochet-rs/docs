@@ -1,0 +1,6 @@
+extends: existence
+message: "Don't use '%s'. Say 'select' for a UI action, or name what happens."
+level: error
+ignorecase: true
+tokens:
+  - pick(?:s|ed|ing)?

@@ -1,0 +1,6 @@
+extends: occurrence
+message: "Three sentences is a long paragraph. Split it or use a list."
+level: warning
+scope: paragraph
+max: 3
+token: '[.?!](?:\s|$)'

@@ -1,0 +1,11 @@
+extends: existence
+message: "Name the task or the thing, not the article about it ('%s')."
+level: error
+ignorecase: true
+scope: heading
+tokens:
+  - understanding
+  - introduction to
+  - getting started with
+  - a guide to
+  - everything you need to know

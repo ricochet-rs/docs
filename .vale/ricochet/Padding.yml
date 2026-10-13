@@ -1,0 +1,8 @@
+extends: existence
+message: "Use the word readers use instead of '%s'."
+level: error
+ignorecase: true
+tokens:
+  - navigation bar
+  - across the (?:top|bottom)
+  - along the (?:top|bottom|side)

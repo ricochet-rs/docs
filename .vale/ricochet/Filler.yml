@@ -1,0 +1,20 @@
+extends: existence
+message: "Cut '%s'."
+level: error
+ignorecase: true
+tokens:
+  - simply
+  - just
+  - easily
+  - obviously
+  - of course
+  - really
+  - basically
+  - actually
+  - truly
+  - incredibly
+  - extremely
+  - literally
+  - certainly
+  - definitely
+  - clearly

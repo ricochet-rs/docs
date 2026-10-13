@@ -1,0 +1,7 @@
+extends: existence
+message: "Don't use a colon subtitle in a heading."
+level: error
+nonword: true
+scope: heading
+tokens:
+  - ':\s*\S'

@@ -18,6 +18,7 @@ links: build
 
 install:
     bun install
+    vale sync
 
 # lint using prettier
 lint: install

@@ -18,7 +18,7 @@ links: build
 
 install:
     bun install
-    vale sync
+    [ -d .vale/Microsoft ] || vale sync
 
 # lint using prettier
 lint: install

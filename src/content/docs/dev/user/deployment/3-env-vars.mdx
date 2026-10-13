@@ -2,6 +2,8 @@
 title: "Environment Variables"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
 Environment variables are key-value pairs that can be used to customize behavior at runtime.
 They can be set in the `ricochet` UI or through via REST API.
 
@@ -46,6 +48,119 @@ curl -X PATCH \
   -d "{\"$(encrypt ENV_NAME)\": \"$(encrypt ENV_VALUE)\"}"
 ```
 
+The `encrypt` function above handles names and values up to 190 bytes.
+For a longer value, such as a service account key, use one of these functions.
+Each returns the encrypted name and value to send in the JSON body.
+
+<Tabs syncKey="language">
+  <TabItem label="R">
+    ```r
+    encrypt <- function(key, value, host = "https://try.ricochet.rs") {
+      pub_key <- httr2::request(host) |>
+        httr2::req_url_path_append("/api/v0/public-key") |>
+        httr2::req_perform() |>
+        httr2::resp_body_string() |>
+        openssl::read_pubkey()
+
+      # encrypt the key
+      key_encrypted <- b64::encode(
+        openssl::rsa_encrypt(
+          charToRaw(key),
+          pub_key
+        )
+      )
+      # encrypt the value
+      key <- openssl::rand_bytes(32)
+      nonce <- openssl::rand_bytes(12)
+      sealed <- c(nonce, openssl::aes_gcm_encrypt(charToRaw(value), key, nonce))
+      wrapped <- openssl::rsa_encrypt(key, pub_key)
+      value <- sprintf(
+        "v2:%s:%s",
+        openssl::base64_encode(wrapped),
+        openssl::base64_encode(sealed)
+      )
+
+      list(key = key_encrypted, value = value)
+    }
+
+    encrypt("key", "value")
+    ```
+  </TabItem>
+  <TabItem label="Julia">
+    ```julia
+    using HTTP, Base64, Random, OpenSSL_jll
+
+    function rsa_encrypt(data, pem)
+        path, io = mktemp()
+        write(io, pem)
+        close(io)
+        cmd = `$(openssl()) pkeyutl -encrypt -pubin -inkey $path -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256`
+        read(pipeline(IOBuffer(data), cmd))
+    end
+
+    function aes_gcm_encrypt(data, key, nonce)
+        ctx = ccall((:EVP_CIPHER_CTX_new, libcrypto), Ptr{Cvoid}, ())
+        cipher = ccall((:EVP_aes_256_gcm, libcrypto), Ptr{Cvoid}, ())
+        ccall((:EVP_EncryptInit_ex, libcrypto), Cint, (Ptr{Cvoid}, Ptr{Cvoid}, Ptr{Cvoid}, Ptr{UInt8}, Ptr{UInt8}), ctx, cipher, C_NULL, key, nonce)
+        out = Vector{UInt8}(undef, length(data))
+        len = Ref{Cint}()
+        ccall((:EVP_EncryptUpdate, libcrypto), Cint, (Ptr{Cvoid}, Ptr{UInt8}, Ref{Cint}, Ptr{UInt8}, Cint), ctx, out, len, data, length(data))
+        ccall((:EVP_EncryptFinal_ex, libcrypto), Cint, (Ptr{Cvoid}, Ptr{UInt8}, Ref{Cint}), ctx, pointer(out, len[] + 1), len)
+        tag = Vector{UInt8}(undef, 16)
+        # 0x10 is EVP_CTRL_GCM_GET_TAG
+        ccall((:EVP_CIPHER_CTX_ctrl, libcrypto), Cint, (Ptr{Cvoid}, Cint, Cint, Ptr{UInt8}), ctx, 0x10, 16, tag)
+        ccall((:EVP_CIPHER_CTX_free, libcrypto), Cvoid, (Ptr{Cvoid},), ctx)
+        vcat(out, tag)
+    end
+
+    function encrypt(key, value; host = "https://try.ricochet.rs")
+        pem = String(HTTP.get("$host/api/v0/public-key").body)
+
+        # encrypt the key
+        key_encrypted = base64encode(rsa_encrypt(key, pem))
+
+        # encrypt the value
+        aes_key = rand(RandomDevice(), UInt8, 32)
+        nonce = rand(RandomDevice(), UInt8, 12)
+        sealed = vcat(nonce, aes_gcm_encrypt(Vector{UInt8}(value), aes_key, nonce))
+        wrapped = rsa_encrypt(aes_key, pem)
+        value = "v2:$(base64encode(wrapped)):$(base64encode(sealed))"
+
+        Dict("key" => key_encrypted, "value" => value)
+    end
+
+    encrypt("key", "value")
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    import base64, os
+    from urllib.request import urlopen
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+    def encrypt(key, value, host="https://try.ricochet.rs"):
+        pub_key = serialization.load_pem_public_key(urlopen(f"{host}/api/v0/public-key").read())
+        oaep = padding.OAEP(mgf=padding.MGF1(hashes.SHA256()), algorithm=hashes.SHA256(), label=None)
+
+        # encrypt the key
+        key_encrypted = base64.b64encode(pub_key.encrypt(key.encode(), oaep)).decode()
+
+        # encrypt the value
+        aes_key = AESGCM.generate_key(bit_length=256)
+        nonce = os.urandom(12)
+        sealed = nonce + AESGCM(aes_key).encrypt(nonce, value.encode(), None)
+        wrapped = pub_key.encrypt(aes_key, oaep)
+        value = f"v2:{base64.b64encode(wrapped).decode()}:{base64.b64encode(sealed).decode()}"
+
+        return {"key": key_encrypted, "value": value}
+
+    encrypt("key", "value")
+    ```
+  </TabItem>
+</Tabs>
+
 When sending environment variables to the API for any endpoint, they must first be encrypted.
 
 | Method   | Path                                             | Effect                                             |
@@ -66,8 +181,7 @@ Note that it is not possible to retrieve the raw environment variable values thr
 
 ### Limitations
 
-A name or a value may be at most 190 bytes, which is the most a 2048 bit RSA key carries under OAEP with SHA-256.
-Longer strings cannot be encrypted at all.
+A name may be at most 190 bytes and a value at most 64 KiB.
 
 Keys may only consist of ASCII letters, numbers, and underscores.
 

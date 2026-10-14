@@ -47,6 +47,9 @@ It uses Astro starlight.
 - Never stack two or more callouts in a row
 - Be ruthlessly concise
 - Ensure that pages are organized linearly and logically
+- Always order languages R, Julia, Python in tabs, lists, and prose
+- Write every code example in R, Julia, and Python, and never propose dropping a language
+- Never write a snippet as a CLI tool that reads command-line arguments
 
 ## Formatting
 

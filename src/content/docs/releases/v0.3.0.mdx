@@ -10,17 +10,17 @@ template: splash
 
 ### Features
 
-- **Audit Logging**: Security-related operations are now logged for compliance and monitoring purposes
-- **Python Framework Support**: Added content types for Python frameworks
-- **Log Rotation**: Implemented automatic log rotation
-- **OpenTelemetry Integration**: Added observability support through OpenTelemetry
+- Ricochet now writes an audit log of security events for compliance and monitoring.
+- New content types support Python frameworks.
+- Logs now rotate on their own.
+- Ricochet now sends traces and metrics through OpenTelemetry.
 ### Fixes
 
 #### Authentication
 
-- **OAuth Error Handling**: OAuth callback errors now redirect users to the login page instead of showing raw 4xx error responses
-- **Admin Role Assignment**: Fixed issue where the first user created was not automatically assigned the admin role
+- OAuth callback errors now send users back to the login page instead of raw 4xx error pages.
+- The first user now gets the admin role by default.
 
 #### Kubernetes
 
-- **Multi-Architecture Support**: Resolved issues with multi-arch cluster support and added real-time restore logs for better visibility
+- Multi-arch clusters now work, and restore logs show up in real time.

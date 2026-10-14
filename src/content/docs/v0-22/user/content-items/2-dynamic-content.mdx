@@ -5,8 +5,9 @@ title: Dynamic Apps
 import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 
 Apps are content items that stay running to serve requests.
-Unlike [tasks](/v0-22/user/content-items/3-tasks), which execute once and then stop, an app keeps a process alive to handle incoming HTTP traffic — for example a Shiny dashboard, a Plumber API, or a FastAPI service.
-Ricochet automatically manages the lifecycle of app processes, including [scaling](/v0-22/user/managing-content/2-scaling) them up and down based on demand.
+Unlike [tasks](/v0-22/user/content-items/3-tasks), which execute once and then stop, an app keeps a process alive to handle incoming HTTP traffic.
+Examples are a Shiny dashboard, a Plumber API, or a FastAPI service.
+Ricochet manages app processes for you, including [scaling](/v0-22/user/managing-content/2-scaling) them up and down based on demand.
 
 See the [content items overview](/v0-22/user/content-items/1-content-items-overview) for the full list of supported app types.
 
@@ -176,7 +177,8 @@ content_type = "julia-service"
 
 ## Deployment and configuration
 
-See the [deployment guide](/v0-22/user/deployment/1-ricochet-cli) for how to deploy apps using the CLI or via git integration, and the language-specific guides for project requirements:
+See the [deployment guide](/v0-22/user/deployment/1-ricochet-cli) to deploy apps with the CLI or git integration.
+For project requirements, see the guide for your language:
 
 - [R](/v0-22/user/deployment/4-r)
 - [Julia](/v0-22/user/deployment/5-julia)

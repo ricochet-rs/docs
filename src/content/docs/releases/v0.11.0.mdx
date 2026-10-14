@@ -10,14 +10,14 @@ template: splash
 
 ### Features
 
-- **Admin Deployment Management**: Admins can now view all deployments and manually retrigger them from the UI
-- **Avatar Sync**: User avatars are now automatically synced from Microsoft Entra via Graph API
-- **Daemon Control**: Added `ricochet stop` command to gracefully stop daemonized Ricochet instances
+- Admins can now see all deployments and rerun them from the UI.
+- User avatars now sync from Microsoft Entra through the Graph API.
+- The new `ricochet stop` command cleanly stops a daemonized Ricochet instance.
 
 ### Fixes
 
-- **Background Services**: Fixed shutdown handling to ensure all background proxy services respond correctly to termination signals
-- **User Management UI**: Connected user search functionality and role filtering in the admin interface
-- **Log Noise Reduction**: Client SSE disconnects are no longer incorrectly logged as proxy failures
-- **Navigation Stability**: Resolved an intermittent panic that could occur during page navigation in the UI
-- **Pod Recovery**: Fixed issue where pods weren't properly respawned after a successful force-restore operation
+- All background proxy services now stop when they get a stop signal.
+- User search and role filters now work in the admin UI.
+- Client SSE disconnects no longer show up as proxy failures in the logs.
+- The UI no longer panics at times when you move between pages.
+- Pods now respawn after a force-restore succeeds.

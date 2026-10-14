@@ -12,26 +12,26 @@ template: splash
 
 #### UI
 
-- **Navbar quick actions**: The navbar now includes direct links to the release notes and issue tracker, so you can check what changed or report a problem without leaving ricochet.
+- The navbar now links to the release notes and the issue tracker, so you can see what changed or report a problem without leaving ricochet.
 
 ### Fixes
 
 #### Core
 
-- **Rootless container-in-container**: ricochet now supports running inside a rootless container.
-- **Earlier tracing and logging**: Tracing and logging now start as early as possible during ricochet startup, so failures that happen before ricochet is fully started are captured in the logs.
-- **Deleted Content**: Cntent items are now deleted as a background task so that deletion occurrs promptly in the UI.
+- ricochet now runs inside a rootless container.
+- Tracing and logging now start as early as they can, so the logs catch failures that happen before ricochet is fully up.
+- Content items are now deleted in a background task, so the UI shows the delete right away.
 
 #### UI
 
-- **Live view for static sites**: The "View live" action is now shown only when a static site has actually rendered HTML, so the link no longer leads to a missing page.
-- **Tooltips on disabled buttons**: Tooltips now render on disabled buttons, which previously showed no explanation of why an action was unavailable.
+- The "View live" action now shows only when a static site has rendered HTML, so the link no longer leads to a missing page.
+- Disabled buttons now show tooltips that explain why the action is not available.
 
 #### Tasks
 
-- **Recovery without a successful deployment**: Tasks that have never deployed successfully now surface a clear error and a path to recover, instead of leaving you without next steps.
+- Tasks that have never deployed now show a clear error and a way to recover.
 
 #### Misc
 
-- **Process wait status**: Fixes a bug where some exit codes were incorrectly categorized as a successfull run.
-- **newuidmap dependency**: Packages now declare `newuidmap` as a required dependency, preventing installs that are missing it from failing at runtime.
+- Some exit codes no longer count as a successful run by mistake.
+- Packages now list `newuidmap` as a required dependency, so installs without it no longer fail at runtime.

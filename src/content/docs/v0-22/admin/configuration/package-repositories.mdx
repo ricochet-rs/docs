@@ -7,7 +7,7 @@ import { Aside } from "@astrojs/starlight/components";
 R, Python, and Julia rely on external sources for packages.
 Ricochet can override the default package repositories used when restoring the package environment for a content item.
 
-By default, no overrides are applied — the sources defined in `renv.lock`, `uv.lock`, and `Manifest.toml` are used as-is.
+By default, ricochet applies no overrides and uses the sources defined in `renv.lock`, `uv.lock`, and `Manifest.toml` as-is.
 Add a `[repositories]` section to `ricochet-config.toml` to set server-wide defaults.
 
 ## Configuration
@@ -19,11 +19,11 @@ r = { CRAN = "https://cran.rpkgs.com", MY_REPO = "https://my.repo.example.com" }
 python = ["https://pypi.org"]
 ```
 
-| Field              | Description                                                                                                     |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `allow_overrides`  | When `true`, individual content items can define their own package sources in `_ricochet.toml`. Default `true`. |
-| `r`                | A table of named repository URLs. Keys must consist of uppercase letters and underscores only (e.g. `CRAN`, `RSPM`). |
-| `python`           | An array of index URLs passed to `uv sync --index`. Order matters — earlier entries take priority.              |
+| Field             | Description                                                                                                          |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `allow_overrides` | When `true`, individual content items can define their own package sources in `_ricochet.toml`. Default `true`.      |
+| `r`               | A table of named repository URLs. Keys must consist of uppercase letters and underscores only (e.g. `CRAN`, `RSPM`). |
+| `python`          | An array of index URLs passed to `uv sync --index`. Order matters: earlier entries take priority.                    |
 
 <Aside type="note" title="Julia">
 Custom Julia package sources are not yet supported.
@@ -49,4 +49,4 @@ R package repository overrides are passed to `renv` via the `RENV_CONFIG_REPOS_O
 ### Python
 
 Python index overrides are passed as `--index` arguments to `uv sync`.
-The order of URLs in the `python` array matters — earlier entries are checked first.
+The order of URLs in the `python` array matters: `uv` checks earlier entries first.

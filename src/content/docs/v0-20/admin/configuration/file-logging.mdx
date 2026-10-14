@@ -4,19 +4,19 @@ title: File Logging
 
 import { Aside, LinkCard } from '@astrojs/starlight/components';
 
-Ricochet provides configurable file-based logging with automatic rotation and compression.
-Log configuration is managed through the `[logs]` section in `ricochet-config.toml`.
+Ricochet writes logs to files and rotates and compresses them for you.
+You set this up in the `[logs]` section of `ricochet-config.toml`.
 
-If `[logs]` is not configured in `ricochet-config.toml`, ricochet automatically selects sensible defaults based on your installation method:
+If `ricochet-config.toml` has no `[logs]` section, ricochet picks defaults based on how you installed it:
 
-- **Kubernetes backend**: File logging is disabled; logs are sent to stdout for container log aggregation
-- **Host & Container**: File logging is enabled with daily rotation and gzip compression
+- **Kubernetes backend**: File logging is off. Logs go to stdout so your cluster can collect them.
+- **Host & Container**: File logging is on, with daily rotation and gzip compression.
 
 ## Configuration
 
-Add a `[logs]` section to `ricochet-config.toml` to customize logging behavior.
-The following configuration enables hourly log rotation with compression.
-It ensures that no log files older than a week exist and no more than 100 files are retained.
+Add a `[logs]` section to `ricochet-config.toml` to change how ricochet logs.
+This example rotates logs every hour and compresses them.
+It keeps at most 100 files and deletes any file older than a week.
 
 ```toml
 [logs]
@@ -30,50 +30,50 @@ max_age_days = 7
 
 ### Configuration Options
 
-- `level`: Log verbosity level (default: `"info"`)
-  - `"trace"`: Most verbose, includes all debug information
-  - `"debug"`: Detailed diagnostic information
-  - `"info"`: General informational messages (default)
-  - `"warn"`: Warning messages
-  - `"error"`: Least verbose, only error messages
+- `level`: How much detail to log (default: `"info"`)
+  - `"trace"`: Most detail, includes all debug output
+  - `"debug"`: Detailed output for finding problems
+  - `"info"`: General messages (default)
+  - `"warn"`: Warnings
+  - `"error"`: Least detail, errors only
 
-- `file_logging`: Enable or disable file-based logging (default: `true` for non-Kubernetes installations)
+- `file_logging`: Turn file logging on or off (default: `true` for all installs except Kubernetes)
 
-- `rotation`: Log rotation schedule (default: `"daily"`)
+- `rotation`: How often to rotate logs (default: `"daily"`)
   - `"hourly"`: Rotate logs every hour
-  - `"daily"`: Rotate logs daily
-  - `"never"`: Disable rotation (single log file)
+  - `"daily"`: Rotate logs every day
+  - `"never"`: Never rotate (one log file)
 
 - `compress`: Compress rotated logs with gzip (default: `true`)
 
-- `max_files`: Maximum number of rotated log files to keep (default: unlimited)
+- `max_files`: Most rotated log files to keep (default: no limit)
 
-- `max_age_days`: Maximum age in days for rotated log files (default: unlimited)
+- `max_age_days`: Oldest age in days a rotated log file may reach (default: no limit)
 
 ## Logs Location
 
-Log files are stored in `RICOCHET_HOME/logs/` with names based on the rotation schedule:
+Ricochet stores log files in `RICOCHET_HOME/logs/`, named by rotation schedule:
 
 - **Daily rotation**: `ricochet.log-yyyy-MM-dd` (e.g., `ricochet.log-2026-02-21`)
 - **Hourly rotation**: `ricochet.log-yyyy-MM-dd-HH` (e.g., `ricochet.log-2026-02-21-08`)
 - **No rotation**: `ricochet.log`
 
 <Aside type="tip">
-The default `RICOCHET_HOME` location is `/var/lib/ricochet/data` when using the systemd service.
-See the [Configuration Overview](/v0-20/admin/configuration/0-overview/) for details on setting `RICOCHET_HOME`.
+With the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
+See the [Configuration Overview](/v0-20/admin/configuration/0-overview/) to learn how to set `RICOCHET_HOME`.
 </Aside>
 
 ## Log Rotation and Cleanup
 
-When ricochet rotates logs, it performs cleanup in the following order:
+Each time ricochet rotates logs, it cleans up in this order:
 
-1. Delete all log files older than `max_age_days` (if configured)
-2. Delete oldest files beyond the `max_files` limit (if configured)
-3. Compress any uncompressed rotated files with gzip (excluding the current log file)
+1. Delete all log files older than `max_age_days` (if set)
+2. Delete the oldest files beyond the `max_files` limit (if set)
+3. Compress any rotated files that are not yet compressed with gzip (except the current log file)
 
-This ensures old logs are cleaned up before compression runs, minimizing disk usage.
+Old logs are deleted before compression runs, which keeps disk use low.
 
-Consider combining file logging with OpenTelemetry tracing for comprehensive observability:
+Pair file logging with OpenTelemetry tracing to get a full view of what your server does:
 
 <LinkCard
   title="OpenTelemetry Integration"

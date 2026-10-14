@@ -2,31 +2,32 @@
 title: "Environment Variables"
 ---
 
-Environment variables are key-value pairs that can be used to customize behavior at runtime.
-They can be set in the `ricochet` UI or through via REST API.
+Environment variables are key-value pairs that change how your content behaves at runtime.
+You set them in the `ricochet` UI or through the REST API.
 
-During development you may use a `.Renviron` or `.env` file to keep track of secrets.
-These files **should not** be deployed alongside your content item and the `ricochet` cli will not include them in a deployment.
-Note that environment variables are encrypted at rest and only decrypted before starting a process.
+During development you may keep secrets in a `.Renviron` or `.env` file.
+These files **should not** be deployed with your content item, and the `ricochet` CLI leaves them out of a deployment.
+Ricochet encrypts environment variables at rest and decrypts them only before it starts a process.
 
-Any change to an environment variable terminates all existing instances to ensure the new value is honored in future requests.
+Any change to an environment variable stops all running instances, so future requests use the new value.
 
 ## Using the UI
 
-Navigate to your content item and then select the the "Envrionment Variables" tab.
-This is where environment variables can be added or removed.
+Open your content item and select the "Environment Variables" tab.
+Here you can add or remove environment variables.
 
 The `Key` is the name of the environment variable.
-`Value` is the value of the environment variable.
+`Value` is its value.
 
 Press "+ Add Variable" to save the environment variable.
 
-The new environment variables will be available to any new processes.
+New processes get the new environment variables.
 
 ## Using the REST API
 
-To ensure that no values are ever sent in plain text, both names and values of environment variables need to be encrypted before being sent to the API endpoint.
-Encrypting values is done by fetching the server's public key, using it to RSA encrypt values, then using the resultant values in the JSON body.
+No value is ever sent in plain text.
+You must encrypt both the names and the values before you send them to the API.
+To do this, fetch the server's public key, RSA encrypt each name and value with it, and put the results in the JSON body.
 
 ```shell
 # fetch the server's public key
@@ -46,7 +47,7 @@ curl -X PATCH \
   -d "{\"$(encrypt ENV_NAME)\": \"$(encrypt ENV_VALUE)\"}"
 ```
 
-When sending environment variables to the API for any endpoint, they must first be encrypted.
+Every endpoint expects encrypted environment variables.
 
 | Method   | Path                                             | Effect                                             |
 | -------- | ------------------------------------------------ | -------------------------------------------------- |
@@ -55,7 +56,8 @@ When sending environment variables to the API for any endpoint, they must first 
 | `PUT`    | [`/api/v0/content/{id}/env-vars`][put]           | Replace the whole set and delete anything not sent |
 | `DELETE` | [`/api/v0/content/{id}/env-vars/{name}`][delete] | Remove one variable                                |
 
-Note that it is not possible to retrieve the raw environment variable values through the API—only the names of the keys via the GET endpoint.
+You cannot read the raw values through the API.
+The `GET` endpoint returns only the names of the keys.
 
 ### API reference
 
@@ -66,7 +68,8 @@ Note that it is not possible to retrieve the raw environment variable values thr
 
 ### Limitations
 
-A name or a value may be at most 190 bytes, which is the most a 2048 bit RSA key carries under OAEP with SHA-256.
+A name or a value may be at most 190 bytes.
+This is the most a 2048 bit RSA key carries under OAEP with SHA-256.
 Longer strings cannot be encrypted at all.
 
 Keys may only consist of ASCII letters, numbers, and underscores.
@@ -77,5 +80,5 @@ Changing environment variables requires an API key with the content settings sco
 
 ## Accessing environment variables
 
-To access environment variables in R, use `Sys.getenv("KEY_NAME")`.
-Or in Julia, access them via the built in dictionary `ENV["KEY_NAME"]`
+To read an environment variable in R, use `Sys.getenv("KEY_NAME")`.
+In Julia, use the built-in dictionary `ENV["KEY_NAME"]`.

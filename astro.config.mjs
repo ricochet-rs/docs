@@ -140,7 +140,13 @@ export default defineConfig({
           ],
         }),
         starlightThemeNova({
-          nav: [{ label: "Release Notes", href: "/releases/" }],
+          nav: [
+            { label: "Release Notes", href: "/releases/" },
+            {
+              label: "API Reference",
+              href: "https://try.ricochet.rs/api/docs",
+            },
+          ],
         }),
         starlightLinksValidator({
           errorOnRelativeLinks: false,

@@ -1,0 +1,10 @@
+extends: existence
+message: "Cut the '%s' opener and lead with the action."
+level: error
+ignorecase: true
+tokens:
+  - in this (?:guide|article|page|tutorial|section|vignette)
+  - this (?:guide|article|tutorial|vignette) (?:will )?(?:show|walk|explain|cover)s?
+  - in summary
+  - to summari[sz]e
+  - in conclusion

@@ -1,0 +1,7 @@
+extends: existence
+message: "Put each sentence on its own line."
+level: error
+nonword: true
+scope: raw
+tokens:
+  - '(?m)(?<!^\s*\d*)(?<!^\s*\|.*)(?<!^\s*(?:#|//).*)[a-z0-9)`]\**[.?!]\**_* \**[A-Z`\[]'

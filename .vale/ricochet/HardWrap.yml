@@ -1,0 +1,7 @@
+extends: existence
+message: "Don't hard-wrap a sentence across lines."
+level: warning
+nonword: true
+scope: raw
+tokens:
+  - ' [a-z]*[a-z,]\n {0,2}[a-z]+ [a-z]'

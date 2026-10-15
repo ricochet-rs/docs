@@ -1,0 +1,18 @@
+extends: existence
+message: "Don't describe software as a physical object ('%s'). Say what the reader does or gets."
+level: error
+ignorecase: true
+tokens:
+  - on top of
+  - underneath
+  - (?:sit|sits|sitting|sat) (?:on|in|under|beside|behind|above|below|between|inside|next to|alongside|after|before)
+  - (?:live|lives|living) (?:in|on|inside|under|beside|alongside)
+  - (?:land|lands|landed|landing) (?:in|on)
+  - wir(?:e|es|ed|ing)
+  - (?:reach|reaches|reached|reaching) (?:every|each|all)
+  - (?:hold|holds|holding|held) (?:your|the|its|their|every|what|only|both)
+  - (?:own|owns) (?:the|its|their)
+  - (?:drive|drives|driving) (?:the|every|its)
+  - (?:power|powers|powering) (?:the|every|its)
+  - (?:share|shares) them
+  - hid(?:e|es|ing) behind

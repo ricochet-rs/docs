@@ -1,0 +1,46 @@
+extends: existence
+message: "Cut '%s'. Say what happens instead."
+level: error
+ignorecase: true
+tokens:
+  - seamless(?:ly)?
+  - robust
+  - leverag(?:e|es|ed|ing)
+  - unlock(?:s|ed|ing)?
+  - supercharg(?:e|es|ed|ing)
+  - delv(?:e|es|ed|ing)
+  - game-changer
+  - beautiful(?:ly)?
+  - stunning
+  - powerful
+  - elegant(?:ly)?
+  - intuitive(?:ly)?
+  - effortless(?:ly)?
+  - wonderful(?:ly)?
+  - amazing
+  - awesome
+  - delightful
+  - great
+  - magic(?:al|ally)?
+  - blazing(?:ly)?
+  - first-class
+  - battle-tested
+  - production-ready
+  - state-of-the-art
+  - cutting-edge
+  - best-in-class
+  - world-class
+  - comprehensive
+  - streamlin(?:e|es|ed|ing)
+  - empower(?:s|ed|ing)?
+  - elevat(?:e|es|ed|ing)
+  - harness(?:es|ed|ing)?
+  - unleash(?:es|ed|ing)?
+  - revolutioni[sz](?:e|es|ed|ing)
+  - tapestry
+  - landscape
+  - realm
+  - testament
+  - pivotal
+  - crucial(?:ly)?
+  - carr(?:y|ies|ying|ied)

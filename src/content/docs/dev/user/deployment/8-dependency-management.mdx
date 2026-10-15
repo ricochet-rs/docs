@@ -54,7 +54,8 @@ This avoids masking from the PVC path in Kubernetes.
 
 1. ricochet reads the requested R version from the `renv.lock` file and finds the closest matching version of R on the host.
 
-2. For that R version, ricochet checks whether renv is installed at `RICOCHET_HOME/r/{major}.{minor}`. On the Kubernetes backend, it checks `RICOCHET_HOME/r/{major}.{minor}/{os}/{arch}/`.
+2. For that R version, ricochet checks whether renv is installed at `RICOCHET_HOME/r/{major}.{minor}`.
+  On the Kubernetes backend, it checks `RICOCHET_HOME/r/{major}.{minor}/{os}/{arch}/`.
 
 3. If renv is not yet installed, ricochet installs it while holding a lock, ensuring no other R process contends for the same installation location.
 
@@ -182,13 +183,17 @@ Versions are selected in the following order:
 
 <Steps>
 
-1. **Exact match.** If the requested version is available, it is used.
+1. **Exact match.**
+  If the requested version is available, it is used.
 
-2. **Nearest within the same major.minor release.** Otherwise, the highest available version that is at or below the requested version.
+2. **Nearest within the same major.minor release.**
+  Otherwise, the highest available version that is at or below the requested version.
 
-3. **Nearest available.** If none qualify, the closest available version.
+3. **Nearest available.**
+  If none qualify, the closest available version.
 
-4. **Newer major requested.** If the requested version's major is ahead of everything available, the largest available version is used.
+4. **Newer major requested.**
+  If the requested version's major is ahead of everything available, the largest available version is used.
 
 </Steps>
 

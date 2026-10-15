@@ -60,10 +60,14 @@ saveRDS(model, "output/model.rds")
 
 ## Best Practices
 
-1. **Avoid storing large datasets in bundles.** Use external data sources or object storage for large files.
+1. **Avoid storing large datasets in bundles.**
+  Use external data sources or object storage for large files.
 
-2. **Use environment variables for connection strings.** This keeps secrets out of your deployed code and lets each environment use its own settings.
+2. **Use environment variables for connection strings.**
+  This keeps secrets out of your deployed code and lets each environment use its own settings.
 
-3. **Design for statelessness.** Runtime files persist, but apps that do not rely on local files scale and redeploy more smoothly.
+3. **Design for statelessness.**
+  Runtime files persist, but apps that do not rely on local files scale and redeploy more smoothly.
 
-4. **Clean up temporary files.** If your app creates temporary files, delete them so unused data does not pile up.
+4. **Clean up temporary files.**
+  If your app creates temporary files, delete them so unused data does not pile up.

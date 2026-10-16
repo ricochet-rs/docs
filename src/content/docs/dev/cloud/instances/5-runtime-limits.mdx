@@ -17,30 +17,29 @@ Set **CPU Limit** and **Memory Limit** for each app in its **Scaling Configurati
 
 ## Requests
 
-A request that has not finished after 1 hour is cut off, and so is a download or event stream that runs longer.
+Ricochet cancels any request that runs longer than 1 hour.
 For longer work, return early and let the client poll for the result.
 
-Your instance answers only over HTTPS.
-A request to `http://` is redirected to the same address over `https://`.
+Ricochet Cloud instances communicate only over `https://`.
 
-Request headers whose name contains an underscore, such as `X_Api_Key`, are removed before they reach your app.
+Ricochet removes request headers that contain an underscore, such as `X_Api_Key`, before they reach your app.
 Use hyphens instead, as in `X-Api-Key`.
 
 ## Memory and disk
 
-An app that uses more memory than its limit is stopped and restarted.
+Ricochet stops and restarts an app that uses more memory than its limit.
 Raise **Memory Limit** under **Scaling Configuration** in the app's settings, up to the size of your Compute Pool.
 
 Your app gets 4 GB of temporary disk for files it writes outside its own directory, such as in `/tmp`.
-An app that fills it is stopped, and the files are gone when it restarts.
-See [Persistent Storage](/dev/user/managing-content/persistent-storage/) for what survives a restart.
+Ricochet stops an app that fills it and restarts the app without those files.
+See [Persistent Storage](/latest/user/managing-content/persistent-storage/) for what survives a restart.
 
 ## Network
 
-Your apps and tasks can reach any address on the public internet, on any port.
-They can also call your instance at its own address, for example to fetch the keys that verify [the current user](/dev/user/managing-content/1b-detecting-current-user/).
+Ricochet lets your apps and tasks reach any address on the public internet, on any port.
+This includes your own instance, for example to fetch the keys that verify [the current user](/dev/user/managing-content/1b-detecting-current-user/).
 
-They cannot reach private networks:
+Ricochet blocks them from private networks:
 
 - `10.0.0.0/8`, `172.16.0.0/12`, and `192.168.0.0/16`
 - `100.64.0.0/10`, which includes Tailscale addresses

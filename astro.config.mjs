@@ -22,7 +22,7 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     markdoc(),
-    markdownForAgents(),
+    markdownForAgents({ markdownDir: "." }),
     latestVersionRedirectsIntegration("src/content/docs"),
     starlight({
       title: "ricochet",

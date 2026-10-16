@@ -2,8 +2,9 @@
 title: Runtime Limits
 ---
 
-These are the limits your apps and tasks run under on Ricochet Cloud.
-Plan for them before you deploy, because each one stops work rather than slowing it down.
+Ricochet Cloud limits the resources your organization and each of its apps can use.
+Reserve apps and a Compute Pool of memory for your organization under **Settings** > **Resources**.
+Set **CPU Limit** and **Memory Limit** for each app in its **Scaling Configuration**.
 
 | Limit                  | Value                                    |
 | ---------------------- | ---------------------------------------- |
@@ -30,7 +31,7 @@ Use hyphens instead, as in `X-Api-Key`.
 An app that uses more memory than its limit is stopped and restarted.
 Raise **Memory Limit** under **Scaling Configuration** in the app's settings, up to the size of your Compute Pool.
 
-Files your app writes outside its own directory, such as in `/tmp`, count against 4 GB of temporary disk.
+Your app gets 4 GB of temporary disk for files it writes outside its own directory, such as in `/tmp`.
 An app that fills it is stopped, and the files are gone when it restarts.
 See [Persistent Storage](/dev/user/managing-content/persistent-storage/) for what survives a restart.
 
@@ -45,5 +46,5 @@ They cannot reach private networks:
 - `100.64.0.0/10`, which includes Tailscale addresses
 - IPv6 private addresses in `fc00::/7`
 
-Put a database your app needs on a public address, protected by TLS and a password.
+Put a database your app needs on a public address, and protect it with TLS and a password.
 To call another app on the same instance, use its public address.

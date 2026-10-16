@@ -62,3 +62,14 @@ Align Markdown tables in `.mdx` pages by hand, since no formatter or lint hook r
 
 Run `just readability <page.mdx>` after editing a page and rewrite until it passes, since the pre-commit hook and CI reject pages that miss the thresholds in `.readability.yml`.
 Fix a failing page with shorter sentences and plainer words, never by deleting facts or loosening `.readability.yml`.
+
+## Agent discovery
+
+`@ricochet-rs/agent-discovery` (from `ricochet-rs/skills`) writes `robots.txt`, the `.md` twins, `llms.txt`, `openapi.json`, and `/.well-known/*` at build time, so never add them to `public/` or `src/pages/`.
+BunnyCDN serves the site from B2 and cannot read a `_headers` file, so mirror any change to `discoveryHeaders()` or `agentLinkHeader()` in the package by hand in these pull zone edge rules:
+
+- `https://docs.ricochet.rs/` and `https://docs.ricochet.rs/index.html` set `Link` to the value `agentLinkHeader("/index.md")` returns.
+- `https://docs.ricochet.rs/.well-known/api-catalog` sets `Content-Type: application/linkset+json`.
+- `https://docs.ricochet.rs/.well-known/ai-catalog.json` sets `Content-Type: application/json` and `Access-Control-Allow-Origin: *`.
+- `*.md` sets `Content-Type: text/markdown; charset=utf-8`.
+- `Accept` matching `*text/markdown*` on `*/` or `*/index.html` overrides the origin URL to `https://ricochet-docs.s3.eu-central-003.backblazeb2.com%{Url.Directory}index.md` and sets `Content-Type: text/markdown; charset=utf-8`.

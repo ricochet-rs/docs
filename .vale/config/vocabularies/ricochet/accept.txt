@@ -60,6 +60,7 @@ Streamlit
 subcommands?
 syscalls
 [Ss]ystemd
+Tailscale
 unbundle
 unprefixed
 URIs

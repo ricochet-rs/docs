@@ -1,0 +1,410 @@
+---
+title: Host
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Install `ricochet-server` on a single host from a native Linux package or a standalone binary.
+
+## Supported platforms
+
+| Distribution          | Architecture | Package format |
+| --------------------- | :----------- | :------------- |
+| Debian / Ubuntu       | amd64, arm64 | `.deb`         |
+| AlmaLinux / RHEL / EL | x86_64, aarch64 | `.rpm`      |
+| Other Linux           | x86_64, aarch64 | `.tar.gz`   |
+| macOS                 | Apple Silicon | `.tar.gz`      |
+| Windows               | x86_64, arm64 | `.zip`         |
+
+## Install the package
+
+`ricochet-server` packages are published to S3 buckets.
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    ARCH=$(dpkg --print-architecture)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_${ARCH}.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_${ARCH}.deb
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    ARCH=$(uname -m)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
+    ```
+  </TabItem>
+  <TabItem label="Standalone binary">
+    For Linux systems without official support, use the statically linked binary for x86_64 or aarch64.
+
+    <Aside type="note">
+      The standalone binary does not include a systemd service.
+      Manage the process yourself or write your own service file.
+    </Aside>
+
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    # For x86_64
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-x86_64.tar.gz
+
+    # Or for aarch64
+    # curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64.tar.gz
+
+    # Extract and install as ricochet
+    tar -xzf ricochet-${VERSION#v}-*.tar.gz
+    chmod +x ricochet-server
+    sudo mv ricochet-server /usr/local/bin/ricochet
+    ```
+
+  </TabItem>
+</Tabs>
+
+The `.deb` and `.rpm` packages install the `ricochet` binary and a `ricochet-server.service` systemd unit.
+
+## Configure
+
+The `.rpm` and `.deb` packages read the config file at `/var/lib/ricochet/ricochet-config.toml`.
+Create or edit this file and set up at least OIDC authentication:
+
+```toml title="/var/lib/ricochet/ricochet-config.toml"
+[auth.oidc]
+issuer_url = "https://your-idp.example.com/"
+client_id = "your-client-id"
+client_secret = "your-client-secret"
+redirect_url = "https://your-ricochet-host.example.com/oauth/callback"
+```
+
+Set strict permissions on the config file:
+
+```sh
+sudo chmod 0600 /var/lib/ricochet/ricochet-config.toml
+sudo chown root:root /var/lib/ricochet/ricochet-config.toml
+```
+
+<Aside type="caution">
+  The config file contains your OIDC client secret.
+  Limit read access to suit your setup.
+</Aside>
+
+## Start the service
+
+<Steps>
+1. Reload systemd to load the new unit file:
+
+    ```sh
+    sudo systemctl daemon-reload
+    ```
+
+2. Enable and start the service:
+
+    ```sh
+    sudo systemctl enable --now ricochet-server.service
+    ```
+
+3. Verify the service is running:
+
+    ```sh
+    sudo systemctl status ricochet-server.service
+    ```
+</Steps>
+
+`ricochet-server` listens on port **6188** by default.
+
+## Using the standalone binary
+
+The standalone binary runs either in the foreground or as a background daemon.
+
+### Linux prerequisites
+
+Complete these steps only for the standalone binary, since the `.deb` and `.rpm` packages handle them for you.
+
+Install `newuidmap` and `newgidmap`:
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    sudo apt update
+    sudo apt install uidmap
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    sudo dnf install shadow-utils-subid
+    ```
+  </TabItem>
+</Tabs>
+
+Give the account that runs ricochet at least 65,536 subordinate user and group IDs.
+This example sets up `root`, the account the packaged systemd service uses.
+Pick an unused range if `/etc/subuid` or `/etc/subgid` already assigns `100000-165535`:
+
+```sh
+sudo usermod --add-subuids 100000-165535 root
+sudo usermod --add-subgids 100000-165535 root
+```
+
+On Ubuntu 23.10 and later, create and load an AppArmor profile that lets ricochet create unprivileged user namespaces:
+
+```sh
+sudo ricochet setup-apparmor
+```
+
+Check that user namespaces, subordinate ID mappings, and AppArmor are set up for the account that runs ricochet:
+
+```sh
+sudo ricochet check-security
+```
+
+### Foreground mode
+
+By default, `ricochet start` runs in the foreground and prints logs to stdout and stderr:
+
+```sh
+ricochet start --config /path/to/ricochet-config.toml
+```
+
+The `--config` flag sets the path to your `ricochet-config.toml`.
+Without it, ricochet looks for `ricochet-config.toml` in the current working directory, so always pass an explicit path.
+
+<Aside type="tip">
+  Set `home` to an absolute path in your `ricochet-config.toml`.
+  This sets where ricochet stores its database, content bundles, and logs.
+  If you omit it, it defaults to the working directory at start time.
+</Aside>
+
+### Daemon mode
+
+The `.rpm` and `.deb` packages run ricochet through systemd, and they are the better choice for production.
+With the standalone binary, pass `--daemon` to keep ricochet running in the background after your terminal or SSH session ends:
+
+```sh
+ricochet start --config /path/to/ricochet-config.toml --daemon
+```
+
+<Aside type="note">
+  The `--daemon` flag works only on Unix-like systems.
+</Aside>
+
+As a daemon, ricochet writes these files under `RICOCHET_HOME`:
+
+| File | Purpose |
+| --- | --- |
+| `ricochet.pid` | Process ID of the running daemon |
+| `ricochet.stdout` | Standard output from the process |
+| `ricochet.err` | Standard error from the process |
+
+`ricochet.stdout` and `ricochet.err` hold raw output, such as startup errors, panics, and anything printed before logging starts.
+For structured log files, configure `[logs]` in your `ricochet-config.toml` as described in [File Logging](/latest/admin/configuration/file-logging/).
+
+### Stopping the daemon
+
+Use `ricochet stop` to shut down a daemon cleanly:
+
+```sh
+ricochet stop --config /path/to/ricochet-config.toml
+```
+
+Pass `ricochet stop` the same `--config` path you gave `ricochet start`, so it finds the right `ricochet.pid` file.
+
+## Upgrade
+
+To upgrade, download the new package and install it over the old one.
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    ARCH=$(dpkg --print-architecture)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server_${VERSION#v}-1_${ARCH}.deb
+    sudo apt install ./ricochet-server_${VERSION#v}-1_${ARCH}.deb
+    sudo systemctl restart ricochet-server.service
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+    ARCH=$(uname -m)
+    curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
+    sudo dnf install ./ricochet-server-${VERSION#v}-1.el10.${ARCH}.rpm
+    sudo systemctl restart ricochet-server.service
+    ```
+
+    <Aside type="note">
+      Use `dnf install` rather than `dnf upgrade`, because it handles new installs, upgrades, and downgrades.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+## macOS
+
+On macOS, `ricochet-server` is a standalone binary for Apple Silicon only, with no Intel support.
+
+Download and install the latest release:
+
+```sh
+VERSION=$(curl -s https://ricochet.rs/releases.json | grep -o '"latest": *"[^"]*"' | grep -o 'v[0-9.]*')
+curl -fLO https://s3.eu-central-003.backblazeb2.com/ricochet-server/${VERSION#v}/ricochet-${VERSION#v}-aarch64-macos.tar.gz
+tar -xzf ricochet-${VERSION#v}-aarch64-macos.tar.gz
+chmod +x ricochet-server
+sudo mv ricochet-server /usr/local/bin/ricochet-server
+```
+
+Keep the `ricochet-server` name so the server does not shadow the [`ricochet` CLI](/latest/user/deployment/1-ricochet-cli/), which often lives on the same machine.
+
+Create a config file as described in [Configure](#configure), set `home` to an absolute writable path, and start the server in the foreground:
+
+```sh
+ricochet-server start --config /path/to/ricochet-config.toml
+```
+
+The macOS binary ships without a service definition or vendored language tools.
+Install `uv`, `juliaup`, and `renv` yourself when you need those runtimes.
+
+## Windows
+
+On Windows, `ricochet-server` is a standalone executable for x86_64 and arm64.
+Run these commands in PowerShell, and replace `x86_64` with `aarch64` on arm64:
+
+```powershell
+$Version = (Invoke-RestMethod https://ricochet.rs/releases.json).latest.TrimStart("v")
+Invoke-WebRequest "https://s3.eu-central-003.backblazeb2.com/ricochet-server/$Version/ricochet-$Version-x86_64-windows.zip" -OutFile "ricochet-$Version-x86_64-windows.zip"
+Expand-Archive "ricochet-$Version-x86_64-windows.zip" -DestinationPath . -Force
+New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\Programs\Ricochet" | Out-Null
+Move-Item .\ricochet-server.exe "$env:LOCALAPPDATA\Programs\Ricochet\ricochet-server.exe" -Force
+```
+
+Keep the `ricochet-server.exe` name so the server does not shadow the [`ricochet` CLI](/latest/user/deployment/1-ricochet-cli/), which often lives on the same machine.
+
+Add `%LOCALAPPDATA%\Programs\Ricochet` to your user `PATH`, then create a config file as described in [Configure](#configure).
+Set `home` to an absolute writable Windows path, and start the server in the foreground:
+
+```powershell
+ricochet-server start --config C:\path\to\ricochet-config.toml
+```
+
+Windows does not support `ricochet-server start --daemon` or `ricochet-server stop`.
+Stop the foreground server with Ctrl+C, or run it under a Windows service manager.
+The Windows binary ships without vendored language tools.
+
+## Data science interpreters
+
+Ricochet runs without any interpreters, but to deploy R, Python, or Julia content you must install that interpreter on the host.
+Container and Kubernetes deployments bundle their own interpreters and skip this step.
+
+### Vendored dependencies
+
+The `.deb` and `.rpm` packages bundle these tools, so ricochet manages language environments without system-wide versions:
+
+| Tool | Vendor path | Purpose |
+| --- | --- | --- |
+| [uv](https://docs.astral.sh/uv/) | `RICOCHET_HOME/vendor/py/uv` | Python package management, running Python content, and Python version discovery |
+| [juliaup](https://github.com/JuliaLang/juliaup) | `RICOCHET_HOME/vendor/jl/juliaup` | Managing Julia environments and Julia version discovery |
+| [renv](https://rstudio.github.io/renv/) | `RICOCHET_HOME/vendor/r/renv` | R package environment restoration |
+
+With the systemd service, `RICOCHET_HOME` defaults to `/var/lib/ricochet/data`.
+See the [storage configuration](/latest/admin/configuration/0-overview/#storage) for details.
+
+<Aside type="note">
+The standalone binary ships without vendored dependencies.
+Install `uv`, `juliaup`, and `renv` yourself if you use it.
+</Aside>
+
+### Python
+
+For Python content, Ricochet finds the Python installs on the host.
+Install Python with [uv](https://docs.astral.sh/uv/) to manage multiple Python versions.
+
+```sh
+uv python install <version>
+```
+
+### R
+
+Install R with [rig](https://github.com/r-lib/rig):
+
+```sh
+rig add <version>
+```
+
+You can also install R from [CRAN](https://cran.r-project.org/) or your distribution's package manager.
+For many R versions side by side, `rig` is the most flexible option.
+
+### Julia
+
+For Julia content, Ricochet uses `juliaup` to find installed Julia channels.
+Julia **must** be installed with [juliaup](https://github.com/JuliaLang/juliaup), since other installs are not supported.
+
+```sh
+juliaup add <version>
+```
+
+### Ansible
+
+If you use Ansible, the [devxy.data_science_core](https://galaxy.ansible.com/ui/repo/published/devxy/data_science_core/) collection has roles that install R, Python, and their system dependencies:
+
+```sh
+ansible-galaxy collection install devxy.data_science_core
+```
+
+```yaml
+roles:
+  - role: devxy.data_science_core.r
+  - role: devxy.data_science_core.python
+```
+
+### System libraries
+
+The interpreters may need extra system libraries to compile packages at runtime.
+Install this recommended baseline:
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    sudo apt install \
+      libgit2-dev libxml2-dev libharfbuzz-dev libfreetype-dev libfontconfig-dev \
+      libgdal-dev libproj-dev libgeos-dev libjq-dev libmagick++-dev \
+      libnetcdf-dev libfribidi-dev jags libglpk-dev libpng-dev \
+      libsecret-1-dev poppler-utils libreadline-dev unixodbc-dev \
+      default-jdk-headless libicu-dev libudunits2-dev libsodium-dev \
+      zlib1g-dev libglu1-mesa-dev libcairo2-dev git freetds-common \
+      libv8-dev librsvg2-dev libsqlite3-dev libpq-dev libgmp3-dev libmpfr-dev
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    sudo dnf install \
+      libgit2-devel libxml2-devel harfbuzz-devel freetype-devel fontconfig-devel \
+      gdal-devel proj-devel geos-devel jq-devel ImageMagick-c++-devel \
+      netcdf-devel fribidi-devel glpk-devel libpng-devel \
+      libsecret-devel poppler-utils readline-devel unixODBC-devel \
+      java-21-openjdk-headless libicu-devel udunits2-devel libsodium-devel \
+      zlib-devel mesa-libGLU-devel cairo-devel git freetds \
+      librsvg2-devel sqlite-devel libpq-devel gmp-devel mpfr-devel
+    ```
+  </TabItem>
+</Tabs>
+
+## Uninstall
+
+<Tabs>
+  <TabItem label="Debian / Ubuntu">
+    ```sh
+    sudo systemctl stop ricochet-server.service
+    sudo systemctl disable ricochet-server.service
+    sudo apt purge ricochet-server
+    ```
+  </TabItem>
+  <TabItem label="RHEL / AlmaLinux">
+    ```sh
+    sudo systemctl stop ricochet-server.service
+    sudo systemctl disable ricochet-server.service
+    sudo dnf remove ricochet-server
+    ```
+  </TabItem>
+</Tabs>
+
+Uninstalling keeps the config file at `/var/lib/ricochet/ricochet-config.toml`.
+Delete it by hand if you no longer need it.

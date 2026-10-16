@@ -14,13 +14,12 @@ import {
   listVersions,
   versionsToPrune,
   setCurrentLabel,
-  prependVersionEntry,
+  insertVersionAfterLatest,
+  setLatestRelease,
   removeVersionEntries,
   addLycheeExclude,
   removeLycheeExcludes,
-  updateRootRedirect,
-  updateVersionIndex,
-  rewriteDevLinks,
+  rewriteVersionLinks,
   releaseDocsVersion,
 } from "./release-docs-version.mjs";
 
@@ -38,7 +37,14 @@ test("parseTag handles plain, v-prefixed and pre-release tags", () => {
 });
 
 test("listVersions sorts descending and ignores non-version names", () => {
-  const v = listVersions(["v0-2", "dev", "v0-10", "releases", "v0-9"]);
+  const v = listVersions([
+    "v0-2",
+    "dev",
+    "latest",
+    "v0-10",
+    "releases",
+    "v0-9",
+  ]);
   expect(v.map((x) => x.slug)).toEqual(["v0-10", "v0-9", "v0-2"]);
 });
 
@@ -64,21 +70,34 @@ test("setCurrentLabel swaps only the current label", () => {
   );
 });
 
-test("prependVersionEntry adds, fills empty array, and is idempotent", () => {
+test("insertVersionAfterLatest inserts after latest and is idempotent", () => {
   expect(
-    prependVersionEntry(
-      `versions: [{ slug: "v0-9", label: "0.9" }]`,
-      "v0-10",
-      "0.10",
+    insertVersionAfterLatest(
+      `versions: [{ slug: "latest", label: "0.10" }, { slug: "v0-8", label: "0.8" }]`,
+      "v0-9",
+      "0.9",
     ),
   ).toBe(
-    `versions: [{ slug: "v0-10", label: "0.10" }, { slug: "v0-9", label: "0.9" }]`,
+    `versions: [{ slug: "latest", label: "0.10" }, { slug: "v0-9", label: "0.9" }, { slug: "v0-8", label: "0.8" }]`,
   );
-  expect(prependVersionEntry(`versions: []`, "v0-10", "0.10")).toBe(
-    `versions: [{ slug: "v0-10", label: "0.10" }]`,
+  expect(
+    insertVersionAfterLatest(
+      `versions: [{ slug: "latest", label: "0.10" }]`,
+      "v0-9",
+      "0.9",
+    ),
+  ).toBe(
+    `versions: [{ slug: "latest", label: "0.10" }, { slug: "v0-9", label: "0.9" },]`,
   );
-  const existing = `versions: [{ slug: "v0-10", label: "0.10" }]`;
-  expect(prependVersionEntry(existing, "v0-10", "0.10")).toBe(existing);
+  const existing = `versions: [{ slug: "latest", label: "0.10" }, { slug: "v0-9", label: "0.9" }]`;
+  expect(insertVersionAfterLatest(existing, "v0-9", "0.9")).toBe(existing);
+});
+
+test("setLatestRelease updates the latest label and redirect release", () => {
+  const src = `latestVersionRedirectsIntegration("src/content/docs", "v0-9"),\n{ slug: "latest", label: "0.9" },`;
+  expect(setLatestRelease(src, "v0-10", "0.10")).toBe(
+    `latestVersionRedirectsIntegration("src/content/docs", "v0-10"),\n{ slug: "latest", label: "0.10" },`,
+  );
 });
 
 test("removeVersionEntries drops matching entries, multiline-safe", () => {
@@ -111,26 +130,19 @@ test("lychee exclude add is idempotent and remove is targeted", () => {
   expect(removed).toContain("v0-10");
 });
 
-test("updateRootRedirect rewrites both the meta refresh and the link", () => {
-  const src = 'content: "0; url=/v0-9/"\nRedirecting to [docs](/v0-9/)...';
-  const out = updateRootRedirect(src, "v0-10");
-  expect(out).toBe(
-    'content: "0; url=/v0-10/"\nRedirecting to [docs](/v0-10/)...',
-  );
-});
-
-test("updateVersionIndex rewrites slug and paths copied from dev", () => {
-  const src = 'slug: "dev"\nsee [x](/dev/user/quickstart/)';
-  expect(updateVersionIndex(src, "v0-10")).toBe(
-    'slug: "v0-10"\nsee [x](/v0-10/user/quickstart/)',
-  );
-});
-
-test("rewriteDevLinks repoints absolute /dev/ links, leaving others alone", () => {
+test("rewriteVersionLinks repoints site-root links, leaving others alone", () => {
   const src =
     'href="/dev/admin/configuration/otel/"\nsee [x](/dev/user/quickstart/)\nkeep /v0-9/user/ and the word dev';
-  expect(rewriteDevLinks(src, "v0-10")).toBe(
-    'href="/v0-10/admin/configuration/otel/"\nsee [x](/v0-10/user/quickstart/)\nkeep /v0-9/user/ and the word dev',
+  expect(rewriteVersionLinks(src, "dev", "latest")).toBe(
+    'href="/latest/admin/configuration/otel/"\nsee [x](/latest/user/quickstart/)\nkeep /v0-9/user/ and the word dev',
+  );
+});
+
+test("rewriteVersionLinks leaves paths inside external URLs alone", () => {
+  const src =
+    "[Jaeger](https://www.jaegertracing.io/docs/latest/getting-started/) and [otel](/latest/admin/otel/)";
+  expect(rewriteVersionLinks(src, "latest", "v0-9")).toBe(
+    "[Jaeger](https://www.jaegertracing.io/docs/latest/getting-started/) and [otel](/v0-9/admin/otel/)",
   );
 });
 
@@ -147,29 +159,34 @@ function makeRepo() {
     join(docs, "dev", "admin", "page.mdx"),
     "See [otel](/dev/admin/otel/) for details.\n",
   );
-  for (let minor = 1; minor <= 9; minor++) {
+  mkdirSync(join(docs, "latest", "admin"), { recursive: true });
+  writeFileSync(join(versions, "latest.json"), '{ "sidebar": ["latest"] }\n');
+  writeFileSync(join(docs, "latest", "index.mdx"), "link /latest/x/\n");
+  writeFileSync(
+    join(docs, "latest", "admin", "page.mdx"),
+    "See [otel](/latest/admin/otel/) and [Jaeger](https://www.jaegertracing.io/docs/latest/).\n",
+  );
+  for (let minor = 1; minor <= 8; minor++) {
     const slug = `v0-${minor}`;
     mkdirSync(join(docs, slug), { recursive: true });
-    writeFileSync(join(docs, slug, "index.mdx"), `slug: "${slug}"\n`);
+    writeFileSync(join(docs, slug, "index.mdx"), `link /${slug}/x/\n`);
     writeFileSync(join(versions, `${slug}.json`), '{ "sidebar": [] }\n');
   }
-  writeFileSync(
-    join(docs, "index.mdx"),
-    'content: "0; url=/v0-9/"\n[docs](/v0-9/)\n',
-  );
+  const rootIndex = 'content: "0; url=/latest/"\n[docs](/latest/)\n';
+  writeFileSync(join(docs, "index.mdx"), rootIndex);
   const versionsLine = Array.from(
-    { length: 9 },
-    (_, i) => `{ slug: "v0-${9 - i}", label: "0.${9 - i}" }`,
+    { length: 8 },
+    (_, i) => `{ slug: "v0-${8 - i}", label: "0.${8 - i}" }`,
   ).join(", ");
   writeFileSync(
     join(root, "astro.config.mjs"),
-    `current: { label: "0.9 (latest)", redirect: "root" },\nversions: [${versionsLine}, { slug: "dev", label: "dev" }],\n`,
+    `latestVersionRedirectsIntegration("src/content/docs", "v0-9"),\ncurrent: { label: "0.9 (latest)", redirect: "root" },\nversions: [{ slug: "latest", label: "0.9" }, ${versionsLine}, { slug: "dev", label: "dev" }],\n`,
   );
   writeFileSync(
     join(root, "lychee.toml"),
     "exclude = [\n" +
       Array.from(
-        { length: 9 },
+        { length: 8 },
         (_, i) => `    "https://docs.ricochet.rs/v0-${i + 1}/.*",`,
       ).join("\n") +
       "\n]\n",
@@ -178,12 +195,13 @@ function makeRepo() {
     root,
     docs,
     versions,
+    rootIndex,
     cleanup: () => rmSync(root, { recursive: true, force: true }),
   };
 }
 
-test("releaseDocsVersion creates v0-10 and prunes down to newest 5 + dev", () => {
-  const { root, docs, versions, cleanup } = makeRepo();
+test("releaseDocsVersion freezes latest, rebuilds it from dev, and keeps 4 frozen", () => {
+  const { root, docs, versions, rootIndex, cleanup } = makeRepo();
   try {
     const result = releaseDocsVersion(root, "v0.10.0");
     expect(result.created).toBe(true);
@@ -196,20 +214,28 @@ test("releaseDocsVersion creates v0-10 and prunes down to newest 5 + dev", () =>
       "v0-5",
     ]);
 
-    // New version exists and was rewritten from dev.
-    expect(existsSync(join(docs, "v0-10", "index.mdx"))).toBe(true);
-    expect(readFileSync(join(docs, "v0-10", "index.mdx"), "utf8")).toContain(
-      'slug: "v0-10"',
+    // The previous latest is frozen as v0-9, with links repointed at itself.
+    expect(readFileSync(join(docs, "v0-9", "index.mdx"), "utf8")).toBe(
+      "link /v0-9/x/\n",
     );
-    expect(existsSync(join(versions, "v0-10.json"))).toBe(true);
-
-    // Deep content links copied from dev are repointed at the new version.
-    expect(readFileSync(join(docs, "v0-10", "admin", "page.mdx"), "utf8")).toBe(
-      "See [otel](/v0-10/admin/otel/) for details.\n",
+    expect(readFileSync(join(docs, "v0-9", "admin", "page.mdx"), "utf8")).toBe(
+      "See [otel](/v0-9/admin/otel/) and [Jaeger](https://www.jaegertracing.io/docs/latest/).\n",
+    );
+    expect(readFileSync(join(versions, "v0-9.json"), "utf8")).toBe(
+      '{ "sidebar": ["latest"] }\n',
     );
 
-    // Kept: v0-6..v0-10 + dev. Pruned: v0-1..v0-5.
-    for (const minor of [6, 7, 8, 9, 10]) {
+    // Latest is rebuilt from dev, with links repointed at latest.
+    expect(
+      readFileSync(join(docs, "latest", "admin", "page.mdx"), "utf8"),
+    ).toBe("See [otel](/latest/admin/otel/) for details.\n");
+    expect(readFileSync(join(versions, "latest.json"), "utf8")).toBe(
+      '{ "sidebar": [] }\n',
+    );
+    expect(existsSync(join(docs, "v0-10"))).toBe(false);
+
+    // Kept: latest + v0-6..v0-9 + dev. Pruned: v0-1..v0-5.
+    for (const minor of [6, 7, 8, 9]) {
       expect(existsSync(join(docs, `v0-${minor}`))).toBe(true);
     }
     for (const minor of [1, 2, 3, 4, 5]) {
@@ -220,30 +246,49 @@ test("releaseDocsVersion creates v0-10 and prunes down to newest 5 + dev", () =>
 
     const astro = readFileSync(join(root, "astro.config.mjs"), "utf8");
     expect(astro).toContain('current: { label: "0.10 (latest)"');
-    expect(astro).toContain('slug: "v0-10"');
+    expect(astro).toContain(
+      '{ slug: "latest", label: "0.10" }, { slug: "v0-9", label: "0.9" },',
+    );
+    expect(astro).toContain(
+      'latestVersionRedirectsIntegration("src/content/docs", "v0-10")',
+    );
     expect(astro).toContain('slug: "dev"');
+    expect(astro).not.toContain('slug: "v0-10"');
     expect(astro).not.toContain('slug: "v0-1"');
     expect(astro).not.toContain('slug: "v0-5"');
 
     const lychee = readFileSync(join(root, "lychee.toml"), "utf8");
-    expect(lychee).toContain("v0-10");
+    expect(lychee).toContain("v0-9/");
+    expect(lychee).not.toContain("v0-10");
     expect(lychee).not.toContain("v0-1/");
     expect(lychee).not.toContain("v0-5/");
 
-    expect(readFileSync(join(docs, "index.mdx"), "utf8")).toContain(
-      "url=/v0-10/",
-    );
+    expect(readFileSync(join(docs, "index.mdx"), "utf8")).toBe(rootIndex);
   } finally {
     cleanup();
   }
 });
 
-test("releaseDocsVersion is a no-op on patch releases", () => {
-  const { root, cleanup } = makeRepo();
+test("releaseDocsVersion is a no-op on patch releases of latest", () => {
+  const { root, docs, cleanup } = makeRepo();
   try {
     const result = releaseDocsVersion(root, "v0.9.7");
     expect(result.created).toBe(false);
     expect(result.pruned).toEqual([]);
+    expect(existsSync(join(docs, "v0-9"))).toBe(false);
+  } finally {
+    cleanup();
+  }
+});
+
+test("releaseDocsVersion is a no-op on patch releases of a frozen version", () => {
+  const { root, cleanup } = makeRepo();
+  try {
+    const result = releaseDocsVersion(root, "v0.8.3");
+    expect(result.created).toBe(false);
+    expect(readFileSync(join(root, "astro.config.mjs"), "utf8")).toContain(
+      'current: { label: "0.9 (latest)"',
+    );
   } finally {
     cleanup();
   }

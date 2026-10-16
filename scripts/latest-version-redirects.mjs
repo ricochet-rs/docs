@@ -2,29 +2,7 @@ import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, relative, sep } from "node:path";
 
-const VERSION_REGEX = /^v(\d+)-(\d+)$/;
-
-export function findLatestVersion(contentDir) {
-  const entries = readdirSync(contentDir, { withFileTypes: true });
-  const versions = [];
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    const match = entry.name.match(VERSION_REGEX);
-    if (!match) continue;
-    versions.push({
-      name: entry.name,
-      major: parseInt(match[1], 10),
-      minor: parseInt(match[2], 10),
-    });
-  }
-  if (versions.length === 0) {
-    throw new Error(
-      `No version directories matching /^v\\d+-\\d+$/ under ${contentDir}`,
-    );
-  }
-  versions.sort((a, b) => b.major - a.major || b.minor - a.minor);
-  return versions[0].name;
-}
+const LATEST = "latest";
 
 function* walkPages(dir, baseDir = dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -37,16 +15,25 @@ function* walkPages(dir, baseDir = dir) {
   }
 }
 
-export function generateLatestVersionRedirects(contentDir) {
-  const latest = findLatestVersion(contentDir);
-  const versionDir = join(contentDir, latest);
+// `latestRelease` is the version slug, such as `v0-24`, that `latest/` holds.
+export function generateLatestVersionRedirects(contentDir, latestRelease) {
+  if (existsSync(join(contentDir, latestRelease))) {
+    throw new Error(
+      `${latestRelease} has its own content directory, so it is not the release in ${LATEST}/`,
+    );
+  }
+  const versionDir = join(contentDir, LATEST);
   const redirects = {};
   for (const rel of walkPages(versionDir)) {
     const noExt = rel.replace(/\.mdx?$/, "");
-    if (noExt === "index") continue;
+    if (noExt === "index") {
+      redirects[`/${latestRelease}`] = `/${LATEST}/`;
+      continue;
+    }
     const path = noExt.endsWith("/index")
       ? noExt.slice(0, -"/index".length)
       : noExt;
+    redirects[`/${latestRelease}/${path}`] = `/${LATEST}/${path}/`;
     const topSegment = path.split("/")[0];
     if (
       existsSync(join(contentDir, topSegment)) ||
@@ -55,7 +42,7 @@ export function generateLatestVersionRedirects(contentDir) {
     ) {
       continue;
     }
-    redirects[`/${path}`] = `/${latest}/${path}/`;
+    redirects[`/${path}`] = `/${LATEST}/${path}/`;
   }
   return redirects;
 }
@@ -77,13 +64,16 @@ function renderRedirectHtml(destination) {
 `;
 }
 
-export function latestVersionRedirectsIntegration(contentDir) {
+export function latestVersionRedirectsIntegration(contentDir, latestRelease) {
   return {
     name: "latest-version-redirects",
     hooks: {
       "astro:build:done": ({ dir }) => {
         const distDir = fileURLToPath(dir);
-        const redirects = generateLatestVersionRedirects(contentDir);
+        const redirects = generateLatestVersionRedirects(
+          contentDir,
+          latestRelease,
+        );
         for (const [source, destination] of Object.entries(redirects)) {
           // Skip when the destination wasn't built (e.g. draft pages) — a
           // redirect stub pointing at a missing page would 404 in production.

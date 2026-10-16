@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import sitemap from "@astrojs/sitemap";
 import { agentDiscovery } from "@ricochet-rs/agent-discovery";
 import starlightThemeNova from "starlight-theme-nova";
 import tailwindcss from "@tailwindcss/vite";
@@ -10,15 +11,10 @@ import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
-import {
-  findLatestVersion,
-  latestVersionRedirectsIntegration,
-} from "./scripts/latest-version-redirects.mjs";
+import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
 import rehypeMermaid from "rehype-mermaid";
 import rehypeFigure from "rehype-figure";
 import rehypeTrailingSlash from "./scripts/rehype-trailing-slash.mjs";
-
-const latest = findLatestVersion("src/content/docs");
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,16 +28,15 @@ export default defineConfig({
       twinPath: "index",
       strip: ["footer", ".expressive-code .copy", ".expressive-code .sr-only"],
       robots: { extraRules: ["Disallow: /pagefind/"] },
-      llmsInclude: (path) =>
-        path.startsWith(`/${latest}/`) || !/^\/(v\d+-\d+|dev)\//.test(path),
+      llmsInclude: (path) => !/^\/(v\d+-\d+|dev)\//.test(path),
       llms: {
         title: "ricochet documentation",
         summary:
           "Deploy and run R, Julia, and Python apps, APIs, reports, and scripts with ricochet.",
         sections: [
-          { heading: "User guide", prefix: `/${latest}/user/` },
-          { heading: "Admin guide", prefix: `/${latest}/admin/` },
-          { heading: "ricochet Cloud", prefix: `/${latest}/cloud/` },
+          { heading: "User guide", prefix: "/latest/user/" },
+          { heading: "Admin guide", prefix: "/latest/admin/" },
+          { heading: "ricochet Cloud", prefix: "/latest/cloud/" },
           { heading: "Releases", prefix: "/releases/" },
         ],
         optional: [
@@ -58,7 +53,11 @@ export default defineConfig({
         ],
       },
     }),
-    latestVersionRedirectsIntegration("src/content/docs"),
+    latestVersionRedirectsIntegration("src/content/docs", "v0-24"),
+    // Only `/latest/` and unversioned pages go in the sitemap, since old releases and dev point search engines at `/latest/`
+    sitemap({
+      filter: (page) => !/^\/(v\d+-\d+|dev)\//.test(new URL(page).pathname),
+    }),
     starlight({
       title: "ricochet",
       customCss: [
@@ -166,7 +165,7 @@ export default defineConfig({
         starlightVersions({
           current: { label: "0.24 (latest)", redirect: "root" },
           versions: [
-            { slug: "v0-24", label: "0.24" },
+            { slug: "latest", label: "0.24" },
             { slug: "v0-23", label: "0.23" },
             { slug: "v0-22", label: "0.22" },
             { slug: "v0-21", label: "0.21" },
@@ -213,6 +212,7 @@ export default defineConfig({
       editLink: {
         baseUrl: "https://github.com/ricochet-rs/docs/edit/main/",
       },
+      routeMiddleware: "./src/routeData.ts",
       // Sidebar for root (version selector page only)
       // Versioned docs use their own sidebar configs in src/content/versions/
       sidebar: [],

@@ -30,27 +30,25 @@ steps:
       - event: [pull_request, pull_request_closed]
 
   - name: "Upload to S3"
-    image: reg.ricochet.rs/docker.io/woodpeckerci/plugin-s3:1.5.5
-    settings:
-      acl: ""
-      bucket: ricochet-docs
-      region: eu-central-003
-      endpoint: https://s3.eu-central-003.backblazeb2.com
-      access_key:
+    image: reg.ricochet.rs/docker.io/rclone/rclone:1.71
+    environment:
+      RCLONE_CONFIG_B2_TYPE: s3
+      RCLONE_CONFIG_B2_PROVIDER: Other
+      RCLONE_CONFIG_B2_REGION: eu-central-003
+      RCLONE_CONFIG_B2_ENDPOINT: https://s3.eu-central-003.backblazeb2.com
+      RCLONE_CONFIG_B2_FORCE_PATH_STYLE: "true"
+      RCLONE_CONFIG_B2_ACCESS_KEY_ID:
         from_secret:
           integration: 1
           path: backblaze/tokens/cicd
           key: keyID
-      secret_key:
+      RCLONE_CONFIG_B2_SECRET_ACCESS_KEY:
         from_secret:
           integration: 1
           path: backblaze/tokens/cicd
           key: applicationKey
-      source: dist/**/*
-      strip_prefix: dist/
-      overwrite: true
-      retry_count: 3
-      path_style: true
+    commands:
+      - rclone copy dist/ b2:ricochet-docs --checksum --transfers 16 --fast-list --retries 3
     when:
       - event: manual
       - event: push

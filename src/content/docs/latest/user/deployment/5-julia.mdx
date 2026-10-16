@@ -1,0 +1,70 @@
+---
+title: Julia
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+This page covers what you need to deploy Julia content to ricochet and how ricochet runs it.
+
+## Project requirements
+
+Every Julia deployment needs a `Manifest.toml` file in the project root.
+Julia's built-in package manager (`Pkg`) writes this lockfile.
+It records each package your project uses and its version.
+
+<Aside type="note">
+  `Manifest.toml` is the only supported dependency lockfile for Julia.
+</Aside>
+
+### Example `_ricochet.toml`
+
+```toml
+[content]
+name = "My Dash.jl App"
+entrypoint = "app.jl"
+access_type = "external"
+content_type = "julia-service"
+
+[language]
+name = "julia"
+packages = "Manifest.toml"
+
+[serve]
+min_instances = 0
+max_instances = 5
+```
+
+## Supported content types
+
+You can deploy Julia content items as **apps** or **tasks**.
+
+### Apps
+
+| `Content Type`  | Description                                                                                  |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| `julia-service` | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
+
+### Tasks
+
+| `Content Type` | Description                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------- |
+| `julia`        | A Julia script.                                                                                                 |
+| `quarto-jl`    | A Quarto document using a Julia runtime. Can be served as a [static site](/latest/user/tasks/3-static-sites).      |
+
+## How ricochet runs Julia content
+
+### Julia version discovery
+
+You **must** install Julia with [`juliaup`](https://github.com/JuliaLang/juliaup).
+Ricochet supports only Julia versions that juliaup manages.
+Ricochet vendors `juliaup` at `$RICOCHET_HOME/vendor`.
+
+```sh
+juliaup add <version>
+```
+
+When ricochet gets a deployment, it uses `juliaup` to find the installed Julia channels and picks the right version.
+
+### Environment restoration
+
+When you deploy a bundle, ricochet uses Julia's built-in package manager to install the packages listed in `Manifest.toml`.

@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import sitemap from "@astrojs/sitemap";
 import markdownForAgents from "astro-markdown-for-agents";
 import starlightThemeNova from "starlight-theme-nova";
 import tailwindcss from "@tailwindcss/vite";
@@ -23,7 +24,11 @@ export default defineConfig({
   integrations: [
     markdoc(),
     markdownForAgents({ markdownDir: "." }),
-    latestVersionRedirectsIntegration("src/content/docs"),
+    latestVersionRedirectsIntegration("src/content/docs", "v0-24"),
+    // Only `/latest/` and unversioned pages go in the sitemap, since old releases and dev point search engines at `/latest/`
+    sitemap({
+      filter: (page) => !/^\/(v\d+-\d+|dev)\//.test(new URL(page).pathname),
+    }),
     starlight({
       title: "ricochet",
       customCss: [
@@ -131,7 +136,7 @@ export default defineConfig({
         starlightVersions({
           current: { label: "0.24 (latest)", redirect: "root" },
           versions: [
-            { slug: "v0-24", label: "0.24" },
+            { slug: "latest", label: "0.24" },
             { slug: "v0-23", label: "0.23" },
             { slug: "v0-22", label: "0.22" },
             { slug: "v0-21", label: "0.21" },
@@ -178,6 +183,7 @@ export default defineConfig({
       editLink: {
         baseUrl: "https://github.com/ricochet-rs/docs/edit/main/",
       },
+      routeMiddleware: "./src/routeData.ts",
       // Sidebar for root (version selector page only)
       // Versioned docs use their own sidebar configs in src/content/versions/
       sidebar: [],

@@ -1,6 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/astro
 # Edit at https://www.toptal.com/developers/gitignore?templates=astro
-.claude/
+.claude/*
+!.claude/settings.json
 
 ### Astro ###
 # Gitignore template for Astro projects
@@ -25,3 +26,7 @@ Cargo.lock
 
 dist/
 .lycheecache
+
+.vale/*
+!.vale/ricochet/
+!.vale/config/

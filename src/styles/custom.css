@@ -49,7 +49,7 @@ sidebar labels both still fit, and the content column gains the difference. */
 /* Size each sidebar tab to its own label rather than to an equal share of the
 sidebar, then centre the row. Equal columns padded the short labels with empty
 space and still left "Self-Hosted" too narrow, so it broke at its hyphen. */
-.tablist-wrapper [role="tablist"] {
+starlight-multi-sidebar-tabs .tablist-wrapper [role="tablist"] {
   grid-auto-columns: max-content;
   justify-content: center;
   padding-inline: 0;
@@ -58,7 +58,11 @@ space and still left "Self-Hosted" too narrow, so it broke at its hyphen. */
 /* Space the tabs with their own padding rather than a gap between them, so the
 hover and active backgrounds reach the neighbouring tab instead of hugging the
 text. */
-.tablist-wrapper [role="tablist"] > .tab > [role="tab"] {
+starlight-multi-sidebar-tabs
+  .tablist-wrapper
+  [role="tablist"]
+  > .tab
+  > [role="tab"] {
   padding-inline: 0.5rem;
   white-space: nowrap;
 }

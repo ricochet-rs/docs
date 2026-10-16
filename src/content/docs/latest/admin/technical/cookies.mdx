@@ -1,0 +1,19 @@
+---
+title: "Cookie Usage"
+---
+
+Ricochet uses a small number of cookies that it needs to work.
+They only serve features the user asked for, such as login, sessions, app routing, and interface settings.
+
+## Cookies used by Ricochet
+
+| Purpose                | Description                                                                                             | Required |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- | :------: |
+| OAuth security         | Guards the OAuth login flow. It checks each login request and blocks cross-site request forgery (CSRF). |    Yes   |
+| Authentication session | Keeps the user logged in between requests.                                                              |    Yes   |
+| Application affinity   | Sends a user's requests to the same app instance each time when load balancing is on.                   |    Yes   |
+| Theme preference       | Stores the theme the user picked (for example, light or dark mode).                                     |    Yes   |
+
+## Third-party services
+
+Ricochet does **not** use cookies for ads, behavior tracking, cross-site tracking, or marketing.

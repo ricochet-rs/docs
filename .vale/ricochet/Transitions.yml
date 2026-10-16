@@ -1,0 +1,20 @@
+extends: existence
+message: "Cut the '%s' transition. Start with the point."
+level: warning
+ignorecase: true
+tokens:
+  - furthermore
+  - moreover
+  - in addition
+  - that said
+  - ultimately
+  - at its core
+  - when it comes to
+  - it(?:'s| is) worth noting
+  - note that
+  - importantly
+  - notably
+  - in other words
+  - think of it as
+  - here's the thing
+  - whether you're

@@ -4,12 +4,12 @@ title: Quarto
 
 import { Aside } from "@astrojs/starlight/components";
 
-This page covers the requirements and internals of deploying Quarto content to ricochet.
+This page covers what you need to deploy Quarto content to ricochet and how ricochet runs it.
 
 ## Project requirements
 
-Quarto content items share the same dependency requirements as their underlying language runtime.
-Refer to the relevant language page for details:
+Quarto content items need the same dependency files as the language they run on.
+See the page for that language for details:
 
 | Language | Required files | Reference |
 | -------- | -------------- | --------- |
@@ -37,7 +37,7 @@ output_dir = "_docs"
 
 ## Supported content types
 
-Quarto content items can be deployed as **apps** or **tasks**.
+You can deploy Quarto content items as **apps** or **tasks**.
 
 ### Apps
 
@@ -55,8 +55,8 @@ Quarto content items can be deployed as **apps** or **tasks**.
 
 ## Serving rendered output as a static site
 
-Quarto content items do not automatically serve their rendered output.
-To expose the rendered HTML, add a `[static]` section to your `_ricochet.toml`:
+Quarto content items do not serve their rendered output by default.
+To serve the rendered HTML, add a `[static]` section to your `_ricochet.toml`:
 
 ```toml
 [static]
@@ -64,28 +64,28 @@ index = "index.html"
 output_dir = "_docs"
 ```
 
-The site will be available at `/static/{item-id}`.
-See the [Static Sites](/v0-20/user/tasks/3-static-sites/) page for full configuration details.
+The site is then available at `/static/{item-id}`.
+See the [Static Sites](/v0-20/user/tasks/3-static-sites/) page for all settings.
 
 ## How ricochet runs Quarto content
 
 ### Quarto discovery
 
-Ricochet locates the Quarto binary on the host in the following order:
+Ricochet looks for the Quarto binary on the host in this order:
 
-1. **`PATH`** — if `quarto` is found on the system `PATH`, it is used directly.
-2. **`/opt/quarto`** — checked as a standard installation location.
-3. **`/opt/quarto-{version}`** — broader search under `/opt/` for versioned Quarto installations.
+1. **`PATH`**: if `quarto` is on the system `PATH`, ricochet uses it.
+2. **`/opt/quarto`**: the standard install location.
+3. **`/opt/quarto-{version}`**: a wider search under `/opt/` for Quarto installs with a version in the name.
 
 <Aside type="caution">
-  Ricochet does not support pinning Quarto versions per content item or running multiple Quarto versions simultaneously.
+  You cannot pin a Quarto version per content item or run more than one Quarto version at the same time.
   Quarto version pinning is on the roadmap.
 </Aside>
 
 ### Quarto sites and project entrypoints
 
-When the entrypoint is `_quarto.yml`, ricochet renders the parent directory rather than the file itself.
-This supports Quarto projects such as websites and books.
+When the entrypoint is `_quarto.yml`, ricochet renders the parent directory instead of the file itself.
+This lets you deploy Quarto projects such as websites and books.
 
 ### Running `quarto-r`
 
@@ -95,7 +95,7 @@ Ricochet runs:
 quarto render <entrypoint>
 ```
 
-The `QUARTO_R` environment variable is set to the R binary discovered via [R version discovery](../4-r#r-version-discovery).
+Ricochet sets the `QUARTO_R` environment variable to the R binary it finds through [R version discovery](../4-r#r-version-discovery).
 
 ### Running `quarto-r-shiny`
 
@@ -105,7 +105,7 @@ Ricochet runs:
 quarto serve <entrypoint>
 ```
 
-The `QUARTO_R` environment variable is set to the R binary discovered via [R version discovery](../4-r#r-version-discovery).
+Ricochet sets the `QUARTO_R` environment variable to the R binary it finds through [R version discovery](../4-r#r-version-discovery).
 
 ### Running `quarto-jl`
 
@@ -115,7 +115,7 @@ Ricochet runs:
 quarto render <entrypoint>
 ```
 
-The `QUARTO_JULIA` environment variable is set to the Julia binary discovered via [Julia version discovery](../5-julia#julia-version-discovery).
+Ricochet sets the `QUARTO_JULIA` environment variable to the Julia binary it finds through [Julia version discovery](../5-julia#julia-version-discovery).
 
 ### Running `quarto-py`
 
@@ -125,10 +125,11 @@ Ricochet runs:
 quarto render <entrypoint>
 ```
 
-Python version matching follows the same rules as other Python content, using `.python-version` and the environment restored by `uv sync`.
-See [Python deployment](../6-python#python-version-discovery) for details on version discovery and environment restoration.
+Ricochet picks the Python version the same way as for other Python content.
+It uses `.python-version` and the environment that `uv sync` restores.
+See [Python deployment](../6-python#python-version-discovery) for how ricochet finds Python and restores the environment.
 
-Ricochet points Quarto at the restored virtual environment by setting the following environment variables:
+Ricochet points Quarto at the restored virtual environment with these environment variables:
 
 | Variable         | Value                          |
 | ---------------- | ------------------------------ |
@@ -137,4 +138,4 @@ Ricochet points Quarto at the restored virtual environment by setting the follow
 | `UV_PYTHON`      | Path to the matched system Python binary |
 | `PYTHONUNBUFFERED` | `1`                          |
 
-The virtual environment's `bin/` directory is also prepended to `PATH`.
+Ricochet also adds the virtual environment's `bin/` directory to the start of `PATH`.

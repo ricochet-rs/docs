@@ -1,0 +1,7 @@
+extends: existence
+message: "Don't write usage like '%s'. Name the argument in prose, or cut it."
+level: error
+nonword: true
+scope: raw
+tokens:
+  - '[A-Za-z_.]+\([a-z_.]+ ?= ?\)'

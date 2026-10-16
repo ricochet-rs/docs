@@ -36,7 +36,7 @@ repos:
     hooks:
       - id: markdownlint
   - repo: https://github.com/sirosen/texthooks
-    rev: 0.7.1
+    rev: 1.0.0
     hooks:
       - id: fix-smartquotes
       - id: fix-ligatures
@@ -47,12 +47,22 @@ repos:
       - id: editorconfig-checker
 
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.9.9
+    rev: v3.9.10
     hooks:
       - id: prettier
 
   - repo: local
     hooks:
+      - id: readability
+        name: readability
+        entry: bun run scripts/readability.mjs
+        language: system
+        files: ^src/content/docs/.*\.mdx$
+      - id: vale
+        name: vale
+        entry: vale
+        language: system
+        files: ^src/content/docs/.*\.mdx?$
       - id: just-fmt
         name: just fmt
         entry: just fmt

@@ -1,7 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
-import markdownForAgents from "astro-markdown-for-agents";
+import sitemap from "@astrojs/sitemap";
+import { agentDiscovery } from "@ricochet-rs/agent-discovery";
 import starlightThemeNova from "starlight-theme-nova";
 import tailwindcss from "@tailwindcss/vite";
 // https://docs.astro.build/en/guides/integrations-guide/markdoc //
@@ -22,8 +23,41 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     markdoc(),
-    markdownForAgents(),
-    latestVersionRedirectsIntegration("src/content/docs"),
+    agentDiscovery({
+      siteTitle: "ricochet",
+      twinPath: "index",
+      strip: ["footer", ".expressive-code .copy", ".expressive-code .sr-only"],
+      robots: { extraRules: ["Disallow: /pagefind/"] },
+      llmsInclude: (path) => !/^\/(v\d+-\d+|dev)\//.test(path),
+      llms: {
+        title: "ricochet documentation",
+        summary:
+          "Deploy and run R, Julia, and Python apps, APIs, reports, and scripts with ricochet.",
+        sections: [
+          { heading: "User guide", prefix: "/latest/user/" },
+          { heading: "Admin guide", prefix: "/latest/admin/" },
+          { heading: "ricochet Cloud", prefix: "/latest/cloud/" },
+          { heading: "Releases", prefix: "/releases/" },
+        ],
+        optional: [
+          {
+            title: "Website",
+            href: "https://ricochet.rs",
+            description: "the product site",
+          },
+          {
+            title: "API reference",
+            href: "https://try.ricochet.rs/api/docs",
+            description: "the REST API reference",
+          },
+        ],
+      },
+    }),
+    latestVersionRedirectsIntegration("src/content/docs", "v0-24"),
+    // Only `/latest/` and unversioned pages go in the sitemap, since old releases and dev point search engines at `/latest/`
+    sitemap({
+      filter: (page) => !/^\/(v\d+-\d+|dev)\//.test(new URL(page).pathname),
+    }),
     starlight({
       title: "ricochet",
       customCss: [
@@ -131,7 +165,7 @@ export default defineConfig({
         starlightVersions({
           current: { label: "0.24 (latest)", redirect: "root" },
           versions: [
-            { slug: "v0-24", label: "0.24" },
+            { slug: "latest", label: "0.24" },
             { slug: "v0-23", label: "0.23" },
             { slug: "v0-22", label: "0.22" },
             { slug: "v0-21", label: "0.21" },
@@ -140,7 +174,13 @@ export default defineConfig({
           ],
         }),
         starlightThemeNova({
-          nav: [{ label: "Release Notes", href: "/releases/" }],
+          nav: [
+            { label: "Release Notes", href: "/releases/" },
+            {
+              label: "API Reference",
+              href: "https://try.ricochet.rs/api/docs",
+            },
+          ],
         }),
         starlightLinksValidator({
           errorOnRelativeLinks: false,
@@ -172,6 +212,7 @@ export default defineConfig({
       editLink: {
         baseUrl: "https://github.com/ricochet-rs/docs/edit/main/",
       },
+      routeMiddleware: "./src/routeData.ts",
       // Sidebar for root (version selector page only)
       // Versioned docs use their own sidebar configs in src/content/versions/
       sidebar: [],

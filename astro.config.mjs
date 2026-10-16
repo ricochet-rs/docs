@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
-import markdownForAgents from "astro-markdown-for-agents";
+import { agentDiscovery } from "@ricochet-rs/agent-discovery";
 import starlightThemeNova from "starlight-theme-nova";
 import tailwindcss from "@tailwindcss/vite";
 // https://docs.astro.build/en/guides/integrations-guide/markdoc //
@@ -10,10 +10,15 @@ import starlightLinksValidator from "starlight-links-validator";
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightScrollToTop from "starlight-scroll-to-top";
 import starlightVersions from "starlight-versions";
-import { latestVersionRedirectsIntegration } from "./scripts/latest-version-redirects.mjs";
+import {
+  findLatestVersion,
+  latestVersionRedirectsIntegration,
+} from "./scripts/latest-version-redirects.mjs";
 import rehypeMermaid from "rehype-mermaid";
 import rehypeFigure from "rehype-figure";
 import rehypeTrailingSlash from "./scripts/rehype-trailing-slash.mjs";
+
+const latest = findLatestVersion("src/content/docs");
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,7 +27,37 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     markdoc(),
-    markdownForAgents({ markdownDir: "." }),
+    agentDiscovery({
+      siteTitle: "ricochet",
+      twinPath: "index",
+      strip: ["footer", ".expressive-code .copy", ".expressive-code .sr-only"],
+      robots: { extraRules: ["Disallow: /pagefind/"] },
+      llmsInclude: (path) =>
+        path.startsWith(`/${latest}/`) || !/^\/(v\d+-\d+|dev)\//.test(path),
+      llms: {
+        title: "ricochet documentation",
+        summary:
+          "Deploy and run R, Julia, and Python apps, APIs, reports, and scripts with ricochet.",
+        sections: [
+          { heading: "User guide", prefix: `/${latest}/user/` },
+          { heading: "Admin guide", prefix: `/${latest}/admin/` },
+          { heading: "ricochet Cloud", prefix: `/${latest}/cloud/` },
+          { heading: "Releases", prefix: "/releases/" },
+        ],
+        optional: [
+          {
+            title: "Website",
+            href: "https://ricochet.rs",
+            description: "the product site",
+          },
+          {
+            title: "API reference",
+            href: "https://try.ricochet.rs/api/docs",
+            description: "the REST API reference",
+          },
+        ],
+      },
+    }),
     latestVersionRedirectsIntegration("src/content/docs"),
     starlight({
       title: "ricochet",

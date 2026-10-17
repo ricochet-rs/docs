@@ -102,10 +102,10 @@ Turn it on in the app registration under *Token configuration → Add groups cla
   Users with that many groups appear to have no groups until ricochet supports this.
 </Aside>
 
-Pick *Group ID* (the default) or *sAMAccountName*, based on what your tenant supports.
+Select *Group ID* (the default) or *sAMAccountName*, based on what your tenant supports.
 
 <Aside type="caution">
-  Entra sends **group object IDs (GUIDs)** for cloud-only groups, even when you pick the `sAMAccountName` format.
+  Entra sends **group object IDs (GUIDs)** for cloud-only groups, even when you select the `sAMAccountName` format.
   Entra fills `sAMAccountName` only for groups synced from on-premises Active Directory through Entra Connect.
   If you created your groups in Entra, the `groups` claim holds a GUID such as `a3f2c1e8-...`.
   With `provider = "entra"` set, ricochet turns these GUIDs into display names through Microsoft Graph.

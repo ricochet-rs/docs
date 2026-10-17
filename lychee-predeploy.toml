@@ -16,4 +16,9 @@ exclude = [
     "https://docs\\.ricochet\\.rs/releases/(cli-)?v[\\d.]+/.*",
     # Versioned documentation self-references won't resolve until deployed
     "https://docs\\.ricochet\\.rs/v\\d+-\\d+/.*",
+    # Hashed asset self-references in the .md twins won't resolve until deployed
+    "https://docs\\.ricochet\\.rs/_astro/.*",
 ]
+
+# llms-full.txt is plain text, so lychee extracts placeholder URLs from its code examples
+exclude_path = ["dist/llms-full\\.txt"]

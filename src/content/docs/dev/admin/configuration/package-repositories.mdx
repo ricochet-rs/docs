@@ -36,7 +36,7 @@ How package sources are resolved depends on the `[repositories]` configuration:
 
 | Server `[repositories]` set? | `allow_overrides` | Behavior                                                                                      |
 | ---------------------------- | ----------------- | --------------------------------------------------------------------------------------------- |
-| No                      | —                 | Lock file sources are used. Items may set their own overrides.                                |
+| No                      | Any               | Lock file sources are used. Items may set their own overrides.                                |
 | Yes                     | `false`           | Server repositories are enforced for all items. Item-level overrides are ignored.             |
 | Yes                     | `true`            | Server repositories are merged with item-level overrides. Item sources take precedence on conflict. |
 

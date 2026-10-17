@@ -153,8 +153,12 @@ Custom Julia package sources are not yet supported.
 ## `schedule` settings
 
 All tasks items can be scheduled by specifying the `cron` field.
+Set `max_duration` in seconds to stop an invocation that runs longer than that.
+Without it, the server limit applies, which is one hour by default.
 
 ```toml
 [schedule]
 cron = "0 0 * * *"
+# 2 hours
+max_duration = 7200
 ```

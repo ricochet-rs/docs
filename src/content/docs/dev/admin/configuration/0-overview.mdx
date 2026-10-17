@@ -38,7 +38,7 @@ This location is called `RICOCHET_HOME`.
 <FileTree>
 
 - content/ deployment bundles
-  - ...
+  - App contents
 - .ricochet.json encryption keys
 - .ricochet.pub public rsa key
 - ricochet.sqlite3 ricochet's database
@@ -46,7 +46,7 @@ This location is called `RICOCHET_HOME`.
 
 By default, `RICOCHET_HOME` is the current working directory.
 To change it, set the top-level `home` key in `ricochet-config.toml`, such as `home = "/path/to/ricochet/home"`.
-You can also set it with an environment variable.
+You can also set it with the `RICOCHET_HOME` environment variable.
 For the **systemd service**, the default is `/var/lib/ricochet/data`.
 
 <Aside type="tip">

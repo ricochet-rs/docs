@@ -62,7 +62,7 @@ repos:
         name: vale
         entry: vale
         language: system
-        files: ^src/content/docs/.*\.mdx?$
+        files: ^src/content/docs/(dev|latest)/.*\.mdx?$
       - id: just-fmt
         name: just fmt
         entry: just fmt

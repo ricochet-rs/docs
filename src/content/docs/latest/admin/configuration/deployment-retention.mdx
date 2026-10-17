@@ -52,8 +52,10 @@ If a bundle is larger than `max_bundle_size` it is rejected by the API.
 
 Retention settings can be configured at two levels:
 
-1. **Server-wide**: in `ricochet-config.toml`, under the `[retention]` section. Applies to all content items.
-2. **Per-content**: in the content item's `_ricochet.toml`, under the `[retention]` section. Overrides the server default for that item.
+1. **Server-wide**: in `ricochet-config.toml`, under the `[retention]` section.
+  Applies to all content items.
+2. **Per-content**: in the content item's `_ricochet.toml`, under the `[retention]` section.
+  Overrides the server default for that item.
 
 <Aside type="note">
 When both are configured, ricochet applies the **stricter** of the two values.

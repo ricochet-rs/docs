@@ -9,7 +9,8 @@ You set this up in the `[logs]` section of `ricochet-config.toml`.
 
 If `ricochet-config.toml` has no `[logs]` section, ricochet uses defaults based on how you installed it:
 
-- **Kubernetes backend**: File logging is off. Logs go to stdout so your cluster can collect them.
+- **Kubernetes backend**: File logging is off.
+  Logs go to stdout so your cluster can collect them.
 - **Host & Container**: File logging is on, with daily rotation and gzip compression.
 
 ## Configuration

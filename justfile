@@ -20,9 +20,10 @@ install:
     bun install
     [ -d .vale/Microsoft ] || vale sync
 
-# lint using prettier
+# lint using prettier, and vale on the dev and latest docs
 lint: install
     bun prettier --check .
+    vale src/content/docs/dev src/content/docs/latest
 
 # fix lints using prettier and format prose (semantic line breaks)
 fmt: install

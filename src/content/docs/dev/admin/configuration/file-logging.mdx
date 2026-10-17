@@ -7,7 +7,7 @@ import { Aside, LinkCard } from '@astrojs/starlight/components';
 Ricochet writes logs to files and rotates and compresses them for you.
 You set this up in the `[logs]` section of `ricochet-config.toml`.
 
-If `ricochet-config.toml` has no `[logs]` section, ricochet picks defaults based on how you installed it:
+If `ricochet-config.toml` has no `[logs]` section, ricochet uses defaults based on how you installed it:
 
 - **Kubernetes backend**: File logging is off. Logs go to stdout so your cluster can collect them.
 - **Host & Container**: File logging is on, with daily rotation and gzip compression.

@@ -72,7 +72,7 @@ If the value does not match an image name in the config, ricochet treats it as a
 ### Exec-env config
 
 The exec-env config TOML maps image names to concrete container images and declares the language runtimes inside each image.
-Content items pick an image via their `exec_env` setting.
+Content items select an image via their `exec_env` setting.
 ricochet falls back to `default_image` when none is set.
 
 The example below references the [official ricochet exec-env images](https://github.com/ricochet-rs/exec-envs).

@@ -139,7 +139,7 @@ Install `newuidmap` and `newgidmap`:
 
 Give the account that runs ricochet at least 65,536 subordinate user and group IDs.
 This example sets up `root`, the account the packaged systemd service uses.
-Pick an unused range if `/etc/subuid` or `/etc/subgid` already assigns `100000-165535`:
+Choose an unused range if `/etc/subuid` or `/etc/subgid` already assigns `100000-165535`:
 
 ```sh
 sudo usermod --add-subuids 100000-165535 root

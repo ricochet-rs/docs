@@ -4,4 +4,4 @@ level: warning
 nonword: true
 scope: raw
 tokens:
-  - ' [a-z]*[a-z,]\n {0,2}[a-z]+ [a-z]'
+  - '(?m)(?<=^\s*(?:[-*]\s+|\d+\.\s+)?(?:[A-Z*_\[`]|ricochet\b).*) [a-z]*[a-z,]\n {0,2}[a-z]+ [a-z]'

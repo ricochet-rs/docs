@@ -68,7 +68,7 @@ docker run -d \
   reg.ricochet.rs/ricochet/ricochet-server:${VERSION#v}-ubuntu
 ```
 
-Docker Compose can alos be used:
+Docker Compose can also be used:
 
 ```yaml title="compose.yml"
 services:
@@ -148,7 +148,7 @@ Running ricochet in a rootless container prevents item-level memory limits from 
 This is because the cgroup is read-only in a rootless container.
 When an item is spawned with memory limits, those are silently ignored and a warning trace is emitted.
 
-Instead, it is possible to limit th econtainer itself.
+Instead, it is possible to limit the container itself.
 
 ```sh
 docker run --memory=32g --memory-swap=32g ...

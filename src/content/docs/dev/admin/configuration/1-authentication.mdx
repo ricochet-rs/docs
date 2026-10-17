@@ -187,7 +187,7 @@ Replace `{realm}` with your realm name.
 
 Keycloak puts no groups in the ID token by default.
 Open the client's **Client scopes** tab, select the `-dedicated` scope, and add a **Group Membership** mapper with **Token Claim Name** set to `groups`.
-Turn off **Full group path** so the claim carries `analysts` rather than `/analysts`.
+Turn off **Full group path** so Keycloak sends `analysts` rather than `/analysts`.
 
 ## ZITADEL
 

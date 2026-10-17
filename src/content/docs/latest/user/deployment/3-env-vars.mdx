@@ -68,9 +68,9 @@ The `GET` endpoint returns only the names of the keys.
 
 ### Limitations
 
-A name or a value may be at most 190 bytes.
-This is the most a 2048 bit RSA key carries under OAEP with SHA-256.
-Longer strings cannot be encrypted at all.
+190 bytes is the largest a name or value can be.
+This is the most a 2048-bit RSA key can encrypt with OAEP and SHA-256.
+You can't encrypt a longer string.
 
 Keys may only consist of ASCII letters, numbers, and underscores.
 

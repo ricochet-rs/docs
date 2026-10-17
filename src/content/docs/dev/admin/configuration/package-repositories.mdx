@@ -19,11 +19,11 @@ r = { CRAN = "https://cran.rpkgs.com", MY_REPO = "https://my.repo.example.com" }
 python = ["https://pypi.org"]
 ```
 
-| Field             | Description                                                                                                          |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `allow_overrides` | When `true`, individual content items can define their own package sources in `_ricochet.toml`. Default `true`.      |
-| `r`               | A table of named repository URLs. Keys must consist of uppercase letters and underscores only (e.g. `CRAN`, `RSPM`). |
-| `python`          | An array of index URLs passed to `uv sync --index`. Order matters: earlier entries take priority.                    |
+| Field             | Description                                                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `allow_overrides` | When `true`, individual content items can define their own package sources in `_ricochet.toml`. Default `true`.              |
+| `r`               | A table of named repository URLs. Keys must consist of uppercase letters and underscores only (for example, `CRAN`, `RSPM`). |
+| `python`          | An array of index URLs passed to `uv sync --index`. Order matters: earlier entries take priority.                            |
 
 <Aside type="note" title="Julia">
 Custom Julia package sources are not yet supported.

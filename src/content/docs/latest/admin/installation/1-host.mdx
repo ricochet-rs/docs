@@ -252,7 +252,7 @@ chmod +x ricochet-server
 sudo mv ricochet-server /usr/local/bin/ricochet-server
 ```
 
-Keep the `ricochet-server` name so the server does not shadow the [`ricochet` CLI](/latest/user/deployment/1-ricochet-cli/), which often lives on the same machine.
+Keep the `ricochet-server` name so the server does not shadow the [`ricochet` CLI](/latest/user/deployment/1-ricochet-cli/), which you often install on the same machine.
 
 Create a config file as described in [Configure](#configure), set `home` to an absolute writable path, and start the server in the foreground:
 
@@ -276,7 +276,7 @@ New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\Programs\Ricochet" | Out-
 Move-Item .\ricochet-server.exe "$env:LOCALAPPDATA\Programs\Ricochet\ricochet-server.exe" -Force
 ```
 
-Keep the `ricochet-server.exe` name so the server does not shadow the [`ricochet` CLI](/latest/user/deployment/1-ricochet-cli/), which often lives on the same machine.
+Keep the `ricochet-server.exe` name so the server does not shadow the [`ricochet` CLI](/latest/user/deployment/1-ricochet-cli/), which you often install on the same machine.
 
 Add `%LOCALAPPDATA%\Programs\Ricochet` to your user `PATH`, then create a config file as described in [Configure](#configure).
 Set `home` to an absolute writable Windows path, and start the server in the foreground:

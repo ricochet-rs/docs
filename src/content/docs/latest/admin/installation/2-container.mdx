@@ -129,7 +129,7 @@ Note that we recommend dropping every default capability and adding only what is
 ## Required volumes
 
 Mount a named volume at `/var/lib/ricochet/data`.
-It holds the database, deployment bundles, encryption keys, file logs, the package caches under `.cache`, and the configuration file.
+Ricochet stores the database, deployment bundles, encryption keys, file logs, the package caches under `.cache`, and the configuration file in this volume.
 Prefer a **named volume** over a bind mount.
 Docker populates an empty named volume from the image, so the vendored `uv` and `juliaup` binaries under `data/vendor/` and the default `ricochet-config.toml` are carried over.
 

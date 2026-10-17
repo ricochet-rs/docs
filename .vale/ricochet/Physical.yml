@@ -1,5 +1,5 @@
 extends: existence
-message: "Don't describe software as a physical object ('%s'). Say what the reader does or gets."
+message: "Middle voice: don't describe software as a physical object ('%s'). Name who acts, such as Ricochet or you."
 level: error
 ignorecase: true
 tokens:

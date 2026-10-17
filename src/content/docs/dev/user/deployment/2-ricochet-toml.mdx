@@ -58,7 +58,7 @@ The content ID is tracked in the `id` field.
 
 ## `static` settings
 
-Some items such as R Markdown or Quarto may create static html websites.
+Some items such as R Markdown or Quarto may create static HTML websites.
 The `[static]` content settings can be used to specify which directory should be served from your content item.
 
 | Field        | Description                                                   |
@@ -85,7 +85,7 @@ The following settings can be set:
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `min_instances`      | The minimum number instances to always be available for a service.                                                                                                                                                                                |
 | `max_instances`      | The maximum number of instances that a content item can spawn.                                                                                                                                                                                    |
-| `spawn_threshold`    | The percent of the number of active connections divided by the maxinum number of instances. When this number is reached, a new instance is spawned.                                                                                               |
+| `spawn_threshold`    | The percent of the number of active connections divided by the maximum number of instances. When this number is reached, a new instance is spawned.                                                                                               |
 | `max_connections`    | This is the maximum number of connections that a single service can handle. When this number is reached, a new instance is spawned. However, if `max_instances` is reached an all instances are at `max_connections`, then this field is ignored. |
 | `max_connection_age` | The maximum age (in seconds) of a connection before it is closed. If not set, instances will be terminated when there are no more connections to instance.                                                                                        |
 

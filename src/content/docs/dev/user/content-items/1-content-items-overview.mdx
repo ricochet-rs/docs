@@ -2,8 +2,10 @@
 title: Overview
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
 `ricochet` deploys R, Julia, and Python content.
-Each content item is either an [**App**](/dev/user/content-items/2-dynamic-content) or a [**Task**](/dev/user/content-items/3-tasks).
+Each content item is either an [**App**](/dev/user/content-items/2-apps) or a [**Task**](/dev/user/content-items/3-tasks).
 
 An **App** stays running to serve requests: web apps, APIs, and interactive dashboards.
 
@@ -14,7 +16,8 @@ Some tasks, such as R Markdown and Quarto documents or websites, can be served a
 
 Ricochet supports the content types below.
 
-## R
+<Tabs syncKey="lang">
+<TabItem label="R">
 
 | Content Type         | Category | Description                                                                    |
 | -------------------- | -------- | ------------------------------------------------------------------------------ |
@@ -29,7 +32,18 @@ Ricochet supports the content types below.
 | `rmd`                | Task     | An [R Markdown](https://rmarkdown.rstudio.com/) document.                     |
 | `quarto-r`           | Task     | A [Quarto](https://quarto.org/) document using an R runtime.                  |
 
-## Python
+</TabItem>
+<TabItem label="Julia">
+
+| Content Type     | Category | Description                                                                                                                 |
+| ---------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `genie`          | App      | A web app developed using [Genie](https://genieframework.com/).                                                             |
+| `julia-service`  | App      | A web app or API built with [HTTP.jl](https://github.com/JuliaWeb/HTTP.jl) or [Dash.jl](https://github.com/plotly/Dash.jl). |
+| `julia`          | Task     | A Julia script.                                                                                                             |
+| `quarto-jl`      | Task     | A [Quarto](https://quarto.org/) document using a Julia runtime.                                                             |
+
+</TabItem>
+<TabItem label="Python">
 
 | Content Type     | Category | Description                                                                                                          |
 | ---------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -43,11 +57,5 @@ Ricochet supports the content types below.
 | `quarto-py`      | Task     | A [Quarto](https://quarto.org/) document using a Python runtime.                                                     |
 | `jupyter`        | Task     | A [Jupyter](https://jupyter.org/) notebook with the extension `.ipynb`.                                              |
 
-## Julia
-
-| Content Type     | Category | Description                                                                                                                 |
-| ---------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `genie`          | App      | A web app developed using [Genie](https://genieframework.com/).                                                             |
-| `julia-service`  | App      | A web app or API built with [HTTP.jl](https://github.com/JuliaWeb/HTTP.jl) or [Dash.jl](https://github.com/plotly/Dash.jl). |
-| `julia`          | Task     | A Julia script.                                                                                                             |
-| `quarto-jl`      | Task     | A [Quarto](https://quarto.org/) document using a Julia runtime.                                                             |
+</TabItem>
+</Tabs>

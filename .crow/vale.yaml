@@ -8,7 +8,7 @@ labels:
 
 steps:
   vale:
-    image: reg.ricochet.rs/docker.io/jdkato/vale:v3.23.0
+    image: reg.ricochet.rs/docker.io/jdkato/vale:v3.24.0
     commands:
       - apk add -q --no-cache jq
       - vale sync

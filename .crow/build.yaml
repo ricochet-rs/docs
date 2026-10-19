@@ -30,7 +30,7 @@ steps:
       - event: [pull_request, pull_request_closed]
 
   - name: "Upload to S3"
-    image: reg.ricochet.rs/docker.io/rclone/rclone:1.71
+    image: reg.ricochet.rs/docker.io/rclone/rclone:1.75
     environment:
       RCLONE_CONFIG_B2_TYPE: s3
       RCLONE_CONFIG_B2_PROVIDER: Other

@@ -1,0 +1,47 @@
+---
+title: AI Assistants
+---
+
+Connect Claude Code or another Model Context Protocol (MCP) client to ricochet so your assistant can list the items you can access.
+
+```bash
+claude mcp add --transport http ricochet https://ricochet.example.com/api/v0/mcp --header "Authorization: Key rico_..."
+```
+
+Replace the host with your server's address and `rico_...` with an API key.
+
+## Create a key
+
+1. Open **Credentials** in the sidebar.
+2. Select **Create API Key**.
+3. Keep **List and read items** ticked under **API Key permissions**.
+
+The assistant sees what the key's owner sees: the items you own or collaborate on, with your role on each.
+An admin can ask for every item on the server.
+
+## Other clients
+
+Any client that connects over HTTP and sends custom headers works.
+Point it at `/api/v0/mcp` on your server and send the key in the `Authorization` header.
+For a client configured through an `mcp.json` file, such as Cursor:
+
+```json
+{
+  "mcpServers": {
+    "ricochet": {
+      "url": "https://ricochet.example.com/api/v0/mcp",
+      "headers": { "Authorization": "Key rico_..." }
+    }
+  }
+}
+```
+
+Clients that only sign in through a browser, such as Claude Desktop custom connectors, cannot connect yet.
+
+## When it fails
+
+The server answers 403 with the reason when it refuses a key.
+
+- "Invalid API key" or "Expired API key": create a new key.
+- "This account is locked": ask an admin to restore your access.
+- A key without **List and read items** is refused too, so create one with it ticked.

@@ -17,13 +17,13 @@ On Ricochet Cloud, the host is your [instance's address](/dev/cloud/quickstart/)
 2. Select **Create API Key**.
 3. Keep **List and read items** ticked under **API Key permissions**.
 
-The assistant sees what the key's owner sees: the items you own or collaborate on, with your role on each.
-An admin can ask for every item on the server.
+The assistant's capabilities are limited to the API key's scopes.
+As such, an admin can access every item on the server.
 
 ## Other clients
 
-Any client that connects over HTTP and sends custom headers works.
-Point it at `/api/v0/mcp` on your server and send the key in the `Authorization` header.
+Any client that can send custom HTTP headers can use the MCP server.
+Ensure that the `/api/v0/mcp` route is used and the key is sent in the `Authorization` header with the value `Key {api_key}`.
 For a client configured through an `mcp.json` file, such as Cursor:
 
 ```json

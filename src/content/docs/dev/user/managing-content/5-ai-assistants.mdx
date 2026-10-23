@@ -1,0 +1,50 @@
+---
+title: AI Assistants
+---
+
+Connect Claude Code or another Model Context Protocol (MCP) client to ricochet so your assistant can list the items you can access.
+
+```bash
+claude mcp add --transport http ricochet https://ricochet.example.com/api/v0/mcp --header "Authorization: Key rico_..."
+```
+
+Replace the host with your server's address and `rico_...` with an API key.
+On Ricochet Cloud, the host is your [instance's address](/dev/cloud/quickstart/), such as `prod-acme-corp.cloud.ricochet.rs`.
+
+## Create a key
+
+1. Open **Credentials** in the sidebar.
+2. Select **Create API Key**.
+3. Keep **List and read items** ticked under **API Key permissions**.
+
+The assistant's capabilities are limited to the API key's scopes.
+As such, an admin can access every item on the server.
+
+## Other clients
+
+Any client that can send custom HTTP headers can use the MCP server.
+Ensure that the `/api/v0/mcp` route is used and the key is sent in the `Authorization` header with the value `Key {api_key}`.
+For a client configured through an `mcp.json` file, such as Cursor:
+
+```json
+{
+  "mcpServers": {
+    "ricochet": {
+      "url": "https://ricochet.example.com/api/v0/mcp",
+      "headers": { "Authorization": "Key rico_..." }
+    }
+  }
+}
+```
+
+In claude.ai and Claude Desktop, add a custom connector with **No sign-in** and set the `authorization` request header to `Key rico_...`.
+Claude offers **Request headers** to some organizations only, and on a Team or Enterprise plan every member then uses that one key.
+ChatGPT requires a browser sign-in and cannot connect yet.
+
+## When it fails
+
+The server answers 403 with the reason when it refuses a key.
+
+- "Invalid API key" or "Expired API key": create a new key.
+- "This account is locked": ask an admin to restore your access.
+- A key without **List and read items** is refused too, so create one with it ticked.

@@ -9,6 +9,7 @@ claude mcp add --transport http ricochet https://ricochet.example.com/api/v0/mcp
 ```
 
 Replace the host with your server's address and `rico_...` with an API key.
+On Ricochet Cloud, the host is your [instance's address](/dev/cloud/quickstart/), such as `prod-acme-corp.cloud.ricochet.rs`.
 
 ## Create a key
 
@@ -36,7 +37,9 @@ For a client configured through an `mcp.json` file, such as Cursor:
 }
 ```
 
-Clients that only sign in through a browser, such as Claude Desktop custom connectors, cannot connect yet.
+In claude.ai and Claude Desktop, add a custom connector with **No sign-in** and set the `authorization` request header to `Key rico_...`.
+Claude offers **Request headers** to some organizations only, and on a Team or Enterprise plan every member then uses that one key.
+ChatGPT requires a browser sign-in and cannot connect yet.
 
 ## When it fails
 

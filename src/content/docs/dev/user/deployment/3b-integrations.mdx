@@ -72,9 +72,9 @@ Adding or removing a variable restarts the running instances of an app.
 A name comes from one place only.
 A variable you store on the item and one you read from an integration can never share a name, and neither can two integrations.
 
-## Declare secrets in `_ricochet.toml`
+## Secrets in `_ricochet.toml`
 
-List the secrets an item reads next to the rest of its configuration:
+`ricochet app toml` lists every secret an item reads, including the ones added on the **Environment Variables** tab:
 
 ```toml
 [[integrations]]
@@ -85,9 +85,15 @@ secrets = [
 ]
 ```
 
-Every deployment replaces the secrets the file declares, and variables added on the **Environment Variables** tab stay.
-To stop reading one, remove it from the file and deploy again.
-A Git-backed item reads the file on every sync, with the access of the item's owner.
+To read another secret, add it to the file and run `ricochet app settings update`.
+Listing a variable the item already reads points it at the new path and key.
+Removing a line from the file does not stop the item reading it: remove the variable on the **Environment Variables** tab instead.
+
+The file only ever holds where a secret lives, never its value.
+Ricochet reads each listed secret once before it saves anything, so a wrong name, path or key changes nothing.
+
+The first deployment of a new app or task reads the secrets its file lists.
+Later deployments and Git syncs leave them alone, like the rest of the file's settings.
 
 ## Share an integration
 

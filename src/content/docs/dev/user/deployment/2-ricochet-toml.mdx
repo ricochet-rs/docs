@@ -176,4 +176,5 @@ secrets = [
 | `integration` | The integration's name, as shown on the **Integrations** page.              |
 | `secrets`     | One entry per variable: the secret's `path` and `key`, and its `env_var`.   |
 
-Every deployment replaces the secrets the file declares, and a declaration that names a variable the item already has fails the deployment.
+The first deployment of a new item reads these secrets.
+Afterwards, `ricochet app settings update` adds the ones you list or repoints a variable the item already reads, and never removes one.

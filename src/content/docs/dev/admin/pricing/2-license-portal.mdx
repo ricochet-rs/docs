@@ -2,24 +2,39 @@
 title: License Portal
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+Buy, change, and cancel your ricochet license at [licensing.ricochet.rs](https://licensing.ricochet.rs).
 
-<Aside type="caution" title="Under Development">
-  The license portal is still under development.
-  For licensing inquiries, please email [contact@ricochet.rs](mailto:contact@ricochet.rs).
-</Aside>
+## Create an Account
 
-The license portal at [licensing.ricochet.rs](https://licensing.ricochet.rs) provides a self-service dashboard for managing your Ricochet licenses.
+1. Open [licensing.ricochet.rs](https://licensing.ricochet.rs) and select **Sign in with SSO**.
+2. Select **Create an account**, or sign in with GitHub, Microsoft, or Google.
+3. Confirm your email address with the code you receive.
+4. Set up an authenticator app as your second factor.
 
-## Features
+## Buy a License
 
-In the portal you can:
+1. Select **Purchase License**.
+2. Select a term, the number of apps, and any capabilities you need.
+3. Enter a license name, such as the domain of your ricochet server.
+4. Select **Credit card** to pay now, or **Manual invoice** to receive an invoice for bank transfer.
+5. Copy the license key from the license page and [activate it](/dev/admin/pricing/3-activate-license/).
 
-- Purchase or renew licenses
-- Update or change your current license tier
-- View current usage and machine allocation
-- Check license expiration dates
+Prices are in US dollars, and you can pay in your local currency at checkout.
 
-## Getting Access
+## Add Apps or Capabilities
 
-You can either sign up to the license portal manually or wait until an account has been created for you (this is done automatically after a purchase).
+Select **Change features** below a license, set the new app count or capabilities, and select **Calculate price**.
+You pay the prorated amount for the rest of your term now, and your renewal date stays the same.
+
+To remove apps or capabilities, email [contact@ricochet.rs](mailto:contact@ricochet.rs).
+
+## Manage Billing
+
+Select **Manage subscription** below a license to open the billing portal.
+There you update your payment method, download invoices, and cancel.
+
+## Cancel
+
+Select **Cancel subscription** in the billing portal.
+Your license stays active until the end of the paid term, and the license portal shows the date it ends.
+After that date, your server runs as the [Community Edition](/dev/admin/pricing/5-community-edition/).

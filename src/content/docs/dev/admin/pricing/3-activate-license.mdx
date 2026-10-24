@@ -1,0 +1,40 @@
+---
+title: Activate a License
+---
+
+Add your license key to the server configuration and restart ricochet.
+
+```toml
+[license]
+key = "XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-V3"
+```
+
+You can set the key as an environment variable instead:
+
+```sh
+RICOCHET_LICENSE__KEY=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-V3
+```
+
+ricochet reads the key when it starts and checks it with the license server every hour.
+Each key activates one ricochet instance.
+
+## Offline Installs
+
+A server without internet access uses a license file instead of a key.
+
+1. Open the license in the [license portal](/dev/admin/pricing/2-license-portal/) and select **Download License File**.
+2. Enter the machine fingerprint of the server that will use the file.
+3. Copy the file to the server and point `file` at it:
+
+```toml
+[license]
+file = "license.lic"
+```
+
+A relative path is resolved under `RICOCHET_HOME`.
+The file only works on the machine whose fingerprint it was issued for.
+
+## When a License Ends
+
+When a license expires or its subscription is canceled, ricochet keeps running as the [Community Edition](/dev/admin/pricing/5-community-edition/).
+Features and limits beyond the Community Edition stop applying within the hour.

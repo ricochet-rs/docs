@@ -22,7 +22,7 @@
     "@ricochet-rs/agent-discovery": "github:ricochet-rs/skills",
     "@tailwindcss/vite": "^4.3.0",
     "add": "^2.0.6",
-    "astro": "7.4.0",
+    "astro": "7.4.1",
     "pagefind": "^1.5.2",
     "posthog-js": "^1.417.2",
     "rehype-figure": "^1.0.1",

@@ -14,15 +14,15 @@ In Claude Code, run `/mcp`, select **ricochet**, and select **Authenticate**.
 
 ## Sign in
 
-Your assistant opens ricochet in your browser.
+You sign in to ricochet from your browser.
 
 1. Sign in if ricochet asks you to.
 2. Check the app name and the address ricochet sends you back to.
 3. Select **Allow**.
 
 The assistant sees what you see: the items you own or collaborate on, with your role on each.
-An admin can ask for every item on the server.
-The connection lasts as long as the assistant uses it at least once every 30 days.
+If you're an admin, your assistant can list every item on the server.
+ricochet keeps your assistant signed in as long as it uses ricochet at least once every 30 days.
 
 ## Disconnect an app
 
@@ -34,7 +34,7 @@ The app is signed out at once and must ask you again before it can use ricochet.
 
 ## Other clients
 
-Point any client that signs in with OAuth at `/api/v0/mcp` on your server.
+In any other client, add `/api/v0/mcp` on your server and sign in with OAuth.
 
 - In claude.ai and Claude Desktop, add a custom connector with the address and keep the default sign-in.
 - In ChatGPT, add a connector with the address and choose OAuth.
@@ -58,7 +58,7 @@ A script or a client without browser sign-in can send an API key instead.
 2. Select **Create API Key**.
 3. Keep **List and read items** ticked under **API Key permissions**.
 
-The assistant's capabilities are limited to the API key's scopes.
+ricochet limits your assistant to the key's permissions.
 Send the key in the `Authorization` header with the value `Key {api_key}`:
 
 ```bash
@@ -70,4 +70,4 @@ claude mcp add --transport http ricochet https://ricochet.example.com/api/v0/mcp
 - "This app is not registered with this server": remove the connection in your assistant and add it again.
 - "Invalid API key" or "Expired API key": create a new key.
 - "This account is locked": ask an admin to restore your access.
-- A key without **List and read items** is refused, so create one with it ticked.
+- ricochet refuses a key without **List and read items**, so create one with it ticked.

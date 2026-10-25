@@ -21,6 +21,7 @@ Each key activates one ricochet instance.
 ## Offline Installs
 
 A server without internet access uses a license file instead of a key.
+License files need the air-gapped add-on, which you can add when you buy the license or later under **Change features**.
 
 1. Open the license in the [license portal](/dev/admin/pricing/2-license-portal/) and select **Download License File**.
 2. Enter the [machine fingerprint](#find-the-machine-fingerprint) of the server that will use the file.
@@ -70,6 +71,13 @@ kubectl get namespace kube-system -o jsonpath='{.metadata.uid}'
 ```
 
 On Kubernetes, one fingerprint covers the whole cluster, so ricochet keeps its license when pods move between nodes.
+
+## App and Task Limits
+
+A license covers the number of apps and tasks you bought.
+Once they are all in use, deploying a new app or task fails with a message that names the limit.
+Redeploying existing content keeps working.
+To raise a limit, open the license in the [license portal](/dev/admin/pricing/2-license-portal/) and select **Change features**.
 
 ## When a License Ends
 

@@ -23,7 +23,7 @@ Each key activates one ricochet instance.
 A server without internet access uses a license file instead of a key.
 
 1. Open the license in the [license portal](/dev/admin/pricing/2-license-portal/) and select **Download License File**.
-2. Enter the machine fingerprint of the server that will use the file.
+2. Enter the [machine fingerprint](#find-the-machine-fingerprint) of the server that will use the file.
 3. Copy the file to the server and point `file` at it:
 
 ```toml
@@ -33,6 +33,43 @@ file = "license.lic"
 
 A relative path is resolved under `RICOCHET_HOME`.
 The file only works on the machine whose fingerprint it was issued for.
+
+### Find the Machine Fingerprint
+
+ricochet logs its fingerprint every time it starts:
+
+```text
+INFO Machine identity fingerprint=Host("4c4c4544004c3510804bb7c04f383732")
+```
+
+Copy the value in quotes.
+To read it before ricochet runs on the server, use the command for its platform.
+
+Linux:
+
+```sh
+cat /etc/machine-id
+```
+
+macOS:
+
+```sh
+ioreg -rd1 -c IOPlatformExpertDevice | awk -F'"' '/IOPlatformUUID/ {print $4}'
+```
+
+Windows (PowerShell):
+
+```powershell
+(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Cryptography').MachineGuid
+```
+
+Kubernetes:
+
+```sh
+kubectl get namespace kube-system -o jsonpath='{.metadata.uid}'
+```
+
+On Kubernetes, one fingerprint covers the whole cluster, so ricochet keeps its license when pods move between nodes.
 
 ## When a License Ends
 

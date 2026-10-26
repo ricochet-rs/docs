@@ -38,7 +38,8 @@ Ricochet supports the content types below.
 | `streamlit`      | App      | A data app developed using [Streamlit](https://streamlit.io/).                                                       |
 | `dash`           | App      | A data app developed using [Dash](https://dash.plotly.com/).                                                         |
 | `shiny-py`       | App      | A web app developed using [Shiny for Python](https://shiny.posit.co/py/).                                            |
-| `python-service` | App      | A generic Python web app or API. Must bind to `PORT`.                                                                |
+| `python-service` | App      | A generic Python web app or API. Must bind to `HOST` and `PORT`.                                                     |
+| `python-app`     | App      | A Python app built on websockets, such as [Panel](https://panel.holoviz.org/). Must bind to `HOST` and `PORT`.       |
 | `python`         | Task     | A Python script with the extension `.py`.                                                                            |
 | `quarto-py`      | Task     | A [Quarto](https://quarto.org/) document using a Python runtime.                                                     |
 | `jupyter`        | Task     | A [Jupyter](https://jupyter.org/) notebook with the extension `.ipynb`.                                              |

@@ -82,7 +82,8 @@ The `serverless-r` content type lets you deploy plain R functions as a REST API 
 ### R Service
 
 The `r-service` content type is a generic option for R web apps or APIs that don't fit the other categories.
-Your entrypoint script is run directly and must bind to the port specified by the `PORT` environment variable.
+ricochet runs your entrypoint script directly.
+Start your server on the host and port in the `HOST` and `PORT` environment variables.
 
 ```toml
 [content]
@@ -152,13 +153,27 @@ content_type = "shiny-py"
 ### Python Service
 
 The `python-service` content type is a generic option for Python web apps or APIs.
-Your entrypoint script is run directly and must bind to the port specified by the `PORT` environment variable.
+ricochet runs your entrypoint script directly.
+Start your server on the host and port in the `HOST` and `PORT` environment variables.
 
 ```toml
 [content]
 name = "Custom Python App"
 entrypoint = "app.py"
 content_type = "python-service"
+```
+
+### Python App
+
+Use the `python-app` content type for interactive Python web apps that keep a live connection to each browser, such as [Panel](https://panel.holoviz.org/).
+ricochet runs your entrypoint script directly and counts each open browser session as one [connection](/dev/user/managing-content/2-scaling#maximum-number-of-connections).
+Start your server on the host and port in the `HOST` and `PORT` environment variables.
+
+```toml
+[content]
+name = "My Panel App"
+entrypoint = "app.py"
+content_type = "python-app"
 ```
 
 ## Julia apps
@@ -178,7 +193,7 @@ content_type = "genie"
 ### Julia Service
 
 The `julia-service` content type deploys Julia web apps and APIs built with [HTTP.jl](https://github.com/JuliaWeb/HTTP.jl) or [Dash.jl](https://github.com/plotly/Dash.jl), for example.
-Your entrypoint script must bind to the port specified by the `PORT` environment variable.
+Start your server on the host and port in the `HOST` and `PORT` environment variables.
 
 ```toml
 [content]

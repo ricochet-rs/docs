@@ -161,20 +161,27 @@ cron = "0 0 * * *"
 
 ## `integrations` settings
 
-Each optional `[[integrations]]` entry reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
+Each optional entry reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
+List a HashiCorp Vault or OpenBao integration under `[[integrations.vault]]` and an Azure Key Vault integration under `[[integrations.azure_key_vault]]`.
 
 ```toml
-[[integrations]]
+[[integrations.vault]]
 integration = "Analytics Vault"
 secrets = [
   { path = "myapp/db", key = "password", env_var = "DB_PASSWORD" },
 ]
+
+[[integrations.azure_key_vault]]
+integration = "Analytics Key Vault"
+secrets = [
+  { name = "smtp-password", env_var = "SMTP_PASSWORD" },
+]
 ```
 
-| Field         | Description                                                                 |
-| ------------- | --------------------------------------------------------------------------- |
-| `integration` | The integration's name, as shown on the **Integrations** page.              |
-| `secrets`     | One entry per variable: the secret's `path` and `key`, and its `env_var`.   |
+| Field         | Description                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------- |
+| `integration` | The integration's name, as shown on the **Integrations** page.                                                |
+| `secrets`     | One entry per variable: the secret's `path` and `key` in Vault, or its `name` in Azure Key Vault, and its `env_var`. |
 
 The first deployment of a new item reads these secrets.
 Afterwards, `ricochet app settings update` adds the ones you list or repoints a variable the item already reads, and never removes one.

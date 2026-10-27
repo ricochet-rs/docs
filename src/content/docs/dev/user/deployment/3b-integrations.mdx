@@ -4,20 +4,20 @@ title: "Integrations"
 
 import { Steps } from "@astrojs/starlight/components";
 
-Read secrets from HashiCorp Vault or OpenBao into the environment variables of your apps and tasks.
+Read secrets from HashiCorp Vault, OpenBao or Azure Key Vault into the environment variables of your apps and tasks.
 Ricochet reads each value when the app or task starts and never stores it.
 
 <Steps>
 
-1. Open **Integrations**, select **New integration**, and pick **HashiCorp Vault / OpenBao**.
+1. Open **Integrations**, select **New integration**, and pick **HashiCorp Vault / OpenBao** or **Azure Key Vault** as the **Secret store**.
 
-2. Enter the Vault address, the AppRole role ID and secret ID, then select **Test connection**.
+2. Enter the [Vault](#connection-settings) or [Azure Key Vault](#azure-key-vault) settings, then select **Test connection**.
 
 3. Select **Save**.
 
 4. Open your app or task, go to **Environment Variables**, and select **Add from integration**.
 
-5. Pick the integration, enter the secret path and key, name the environment variable, and select **Add variable**.
+5. Pick the integration, enter the secret path and key, or the secret name for Azure Key Vault, name the environment variable, and select **Add variable**.
 
 </Steps>
 
@@ -39,6 +39,7 @@ Ricochet logs in before it saves, so a wrong address or credential fails on the 
 
 To rotate the secret ID, select **Edit**, enter the new one, and select **Save**.
 Leave the field empty to keep the current one.
+When you change the address or turn on **Skip TLS verification**, enter the secret ID again, because Ricochet never sends a stored one to new settings.
 
 ## Prepare an AppRole
 
@@ -61,6 +62,49 @@ vault write -f -field=secret_id auth/approle/role/ricochet-myapp/secret-id
 Ricochet logs in every time an app or task starts, so the secret ID must allow unlimited uses.
 It revokes its token as soon as it has read the values, which is why a short `token_ttl` is enough.
 
+## Azure Key Vault
+
+Ricochet signs in to Microsoft Entra ID as a service principal with a client secret, then reads each secret's latest version.
+
+| Field              | What to enter                                                                     |
+| ------------------ | --------------------------------------------------------------------------------- |
+| **Name**           | A name for the integration, unique among yours                                    |
+| **Vault URL**      | The **Vault URI** on the key vault's **Overview** page, such as `https://my-vault.vault.azure.net` |
+| **Tenant ID**      | The **Directory (tenant) ID** of the app registration                             |
+| **Client ID**      | The **Application (client) ID** of the app registration                           |
+| **Client secret**  | The value of one of its client secrets, which Ricochet stores encrypted           |
+| **Authority host** | Only outside the global Azure cloud, such as `https://login.microsoftonline.us`   |
+
+**Test connection** passes when Ricochet can sign in and is allowed to read secrets from the vault, even if the vault holds none yet.
+To rotate the client secret, select **Edit**, enter the new value, and select **Save**.
+When you change the vault URL or the authority host, enter the client secret again.
+
+### Prepare a service principal
+
+Ask whoever runs your Azure subscription for an app registration that can read only the secrets your apps and tasks need.
+
+```shell
+# an app registration with a client secret, printing the tenant ID, client ID and secret
+az ad sp create-for-rbac --name ricochet-myapp
+
+# let it read secrets in one key vault
+az role assignment create \
+  --assignee <client-id> \
+  --role "Key Vault Secrets User" \
+  --scope "$(az keyvault show --name my-vault --query id --output tsv)"
+```
+
+A vault that uses access policies instead of Azure RBAC needs the **Get** secret permission for the app.
+
+A client secret expires on the date Azure shows next to it.
+Add a new one in Azure before then, and enter it on the **Integrations** page.
+
+### Secret names
+
+Enter the secret's name, such as `db-password`, which has letters, digits and dashes.
+Ricochet reads the latest version each time the app or task starts, so a new version reaches your app on its next start.
+A key vault secret holds one value, so it takes no key.
+
 ## Secret paths
 
 Enter the path relative to the KV mount: `myapp/db` for a secret Vault shows as `secret/myapp/db`.
@@ -77,11 +121,17 @@ A variable you store on the item and one you read from an integration can never 
 `ricochet app toml` lists every secret an item reads, including the ones added on the **Environment Variables** tab:
 
 ```toml
-[[integrations]]
+[[integrations.vault]]
 integration = "Analytics Vault"
 secrets = [
   { path = "myapp/db", key = "password", env_var = "DB_PASSWORD" },
   { path = "myapp/db", key = "user", env_var = "DB_USER" },
+]
+
+[[integrations.azure_key_vault]]
+integration = "Analytics Key Vault"
+secrets = [
+  { name = "smtp-password", env_var = "SMTP_PASSWORD" },
 ]
 ```
 
@@ -104,14 +154,14 @@ Select **Access** next to an integration you own.
 
 Owners read the integration into any app or task they can edit.
 Users read it only into the apps and tasks listed under **Apps and tasks**, and only people who can deploy can be added.
-A user can read any secret the AppRole is allowed to read into those apps and tasks, so share an integration only with people you would give that access.
+A user can read any secret the AppRole or service principal is allowed to read into those apps and tasks, so share an integration only with people you would give that access.
 
 Revoking an app or task takes effect when it next starts, and its running instances restart.
 An integration always keeps at least one owner.
 
 ## When an app does not start
 
-If Vault cannot be reached or refuses the login, the app does not start.
+If the secret store cannot be reached or refuses the sign-in, the app does not start.
 Its loading page shows **Your app could not start**, and the **Reading secrets from integrations** step names the integration and the reason.
 The failed start does not count toward the app's restart limit, so the next visit tries again.
 Select **Test connection** on the **Integrations** page to check the settings.

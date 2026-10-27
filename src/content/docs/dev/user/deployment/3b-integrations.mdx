@@ -17,7 +17,8 @@ Ricochet reads each value when the app or task starts and never stores it.
 
 4. Open your app or task, go to **Environment Variables**, and select **Add from integration**.
 
-5. Pick the integration, enter the secret path and key, or the secret name for Azure Key Vault, name the environment variable, and select **Add variable**.
+5. Pick the integration and enter the **Secret path** and **Key**, or the **Secret name** for Azure Key Vault.
+   Name the **Environment variable** and select **Add variable**.
 
 </Steps>
 
@@ -39,7 +40,7 @@ Ricochet logs in before it saves, so a wrong address or credential fails on the 
 
 To rotate the secret ID, select **Edit**, enter the new one, and select **Save**.
 Leave the field empty to keep the current one.
-When you change the address or turn on **Skip TLS verification**, enter the secret ID again, because Ricochet never sends a stored one to new settings.
+When you change the address or **Skip TLS verification**, enter the secret ID again, because Ricochet never sends a stored one to new settings.
 
 ## Prepare an AppRole
 
@@ -66,18 +67,23 @@ It revokes its token as soon as it has read the values, which is why a short `to
 
 Ricochet signs in to Microsoft Entra ID as a service principal with a client secret, then reads each secret's latest version.
 
-| Field              | What to enter                                                                     |
-| ------------------ | --------------------------------------------------------------------------------- |
-| **Name**           | A name for the integration, unique among yours                                    |
-| **Vault URL**      | The **Vault URI** on the key vault's **Overview** page, such as `https://my-vault.vault.azure.net` |
-| **Tenant ID**      | The **Directory (tenant) ID** of the app registration                             |
-| **Client ID**      | The **Application (client) ID** of the app registration                           |
-| **Client secret**  | The value of one of its client secrets, which Ricochet stores encrypted           |
-| **Authority host** | Only outside the global Azure cloud, such as `https://login.microsoftonline.us`   |
+| Field              | What to enter                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| **Name**           | A name for the integration, unique among yours                                                     |
+| **Vault URI**      | The **Vault URI** on the key vault's **Overview** page, such as `https://my-vault.vault.azure.net` |
+| **Tenant ID**      | The **Directory (tenant) ID** of the app registration                                              |
+| **Client ID**      | The **Application (client) ID** of the app registration                                            |
+| **Client secret**  | The **Value** of a client secret, not its **Secret ID**, which Ricochet stores encrypted           |
+| **Authority host** | Only outside the global Azure cloud, such as `https://login.microsoftonline.us`                    |
 
-**Test connection** passes when Ricochet can sign in and is allowed to read secrets from the vault, even if the vault holds none yet.
+Azure shows a client secret's value only once, when you create it.
+
+Ricochet signs in before it saves, so a wrong URI or credential fails on the **Integrations** page rather than when your app starts.
+**Test connection** passes when Ricochet can sign in and read secrets from the vault, even if the vault holds none yet.
+A new role assignment can take a few minutes to apply, so if **Test connection** fails right after setup, wait and try again.
+
 To rotate the client secret, select **Edit**, enter the new value, and select **Save**.
-When you change the vault URL or the authority host, enter the client secret again.
+When you change the vault URI or the authority host, enter the client secret again.
 
 ### Prepare a service principal
 
@@ -87,23 +93,37 @@ Ask whoever runs your Azure subscription for an app registration that can read o
 # an app registration with a client secret, printing the tenant ID, client ID and secret
 az ad sp create-for-rbac --name ricochet-myapp
 
-# let it read secrets in one key vault
+# let it read every secret in one key vault
 az role assignment create \
   --assignee <client-id> \
   --role "Key Vault Secrets User" \
   --scope "$(az keyvault show --name my-vault --query id --output tsv)"
 ```
 
-A vault that uses access policies instead of Azure RBAC needs the **Get** secret permission for the app.
+To let it read one secret only, append `/secrets/<name>` to the scope.
 
-A client secret expires on the date Azure shows next to it.
-Add a new one in Azure before then, and enter it on the **Integrations** page.
+A vault that uses access policies instead of Azure RBAC needs the **Get** secret permission instead:
+
+```shell
+az keyvault set-policy --name my-vault --spn <client-id> --secret-permissions get
+```
+
+The client secret from `create-for-rbac` expires after one year unless you pass `--years`.
+Add a new one before then, and enter it on the **Integrations** page:
+
+```shell
+az ad app credential reset --id <client-id> --append
+```
 
 ### Secret names
 
-Enter the secret's name, such as `db-password`, which has letters, digits and dashes.
-Ricochet reads the latest version each time the app or task starts, so a new version reaches your app on its next start.
+Enter the secret's name, such as `db-password`.
+A secret name has 1 to 127 letters, digits and dashes.
 A key vault secret holds one value, so it takes no key.
+
+Ricochet reads the latest version each time the app or task starts, so a new version reaches your app on its next start.
+Keep the latest version enabled, because Ricochet cannot read a disabled one.
+Ricochet reads the secret once when you add the variable, so a mistyped name fails right away.
 
 ## Secret paths
 
@@ -136,11 +156,11 @@ secrets = [
 ```
 
 To read another secret, add it to the file and run `ricochet app settings update`.
-Listing a variable the item already reads points it at the new path and key.
+Listing a variable the item already reads points it at the new secret.
 Removing a line from the file does not stop the item reading it: remove the variable on the **Environment Variables** tab instead.
 
 The file only ever holds where a secret lives, never its value.
-Ricochet reads each listed secret once before it saves anything, so a wrong name, path or key changes nothing.
+Ricochet reads each listed secret once before it saves anything, so a wrong integration, path, key or secret name changes nothing.
 
 The first deployment of a new app or task reads the secrets its file lists.
 Later deployments and Git syncs leave them alone, like the rest of the file's settings.
@@ -161,7 +181,7 @@ An integration always keeps at least one owner.
 
 ## When an app does not start
 
-If the secret store cannot be reached or refuses the sign-in, the app does not start.
+If the secret store cannot be reached, refuses the sign-in, or a secret is missing or not readable, the app does not start.
 Its loading page shows **Your app could not start**, and the **Reading secrets from integrations** step names the integration and the reason.
 The failed start does not count toward the app's restart limit, so the next visit tries again.
 Select **Test connection** on the **Integrations** page to check the settings.

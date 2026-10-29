@@ -1,0 +1,32 @@
+---
+title: Download Limit
+---
+
+ricochet limits each download from the [**Files** tab](/dev/user/managing-content/persistent-storage/#browse-and-download-files) to 200 MiB.
+Raise or lower that limit in the `[security]` section of `ricochet-config.toml`:
+
+```toml title="ricochet-config.toml"
+[security]
+download_limit = "1 GiB"
+```
+
+Or set it as an environment variable:
+
+```bash
+RICOCHET_SECURITY__DOWNLOAD_LIMIT="1 GiB"
+```
+
+Write the limit in `MiB` or `GiB`.
+ricochet reads `MB` and `GB` as powers of 1,000, so `"200MB"` sets a limit of 190.7 MiB.
+ricochet checks a folder download against the limit before it compresses the folder.
+
+## Turn off downloads
+
+Set the limit to `0` to turn off downloads for everyone:
+
+```toml title="ricochet-config.toml"
+[security]
+download_limit = 0
+```
+
+People with the Contributor role or higher can still browse an item's files in the **Files** tab.

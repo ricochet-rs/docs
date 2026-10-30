@@ -188,4 +188,4 @@ secrets = [
 | `secrets`     | One entry per variable: the secret's `path` and `key` in Vault, or its `name` in Azure Key Vault, and its `env_var`. |
 
 Ricochet reads these secrets when you first deploy a new item.
-After that, when you run `ricochet app settings update`, Ricochet adds the ones you list and repoints the variables the item already has, but never removes one.
+After that, when you run `ricochet app settings update`, Ricochet adds the ones you list and points the variables the item already has at their new secrets, but never removes one.

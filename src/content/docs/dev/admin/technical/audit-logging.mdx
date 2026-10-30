@@ -77,7 +77,7 @@ Admin overrides have a visual indicator on the **Audit Log** page so you can qui
 
 | Authority                | Description                                                                         |
 | ------------------------ | ----------------------------------------------------------------------------------- |
-| `direct`                 | The actor held the item-level permission for this action                            |
+| `direct`                 | The actor had the item-level permission for this action                             |
 | `global_admin_override`  | The actor held no item-level role and acted on their server-wide Admin role instead |
 
 ## Actors
@@ -106,7 +106,7 @@ Authentication events cover user login, logout, and account provisioning.
 | `login_succeeded` | `"login_succeeded"`                                   | A login completed successfully                     |
 | `logout`          | `"logout"`                                            | A user session was terminated                      |
 | `login_failed`    | `{ "login_failed": { "reason": "..." } }`             | A login attempt failed                             |
-| `session_created` | `{ "session_created": { "session_id": "..." } }`      | A session was established for a signed-in user     |
+| `session_created` | `{ "session_created": { "session": "..." } }`         | A session was established for a signed-in user     |
 | `first_admin`     | `{ "first_admin": { "user_id": "..." } }`             | The first user was automatically promoted to Admin |
 
 ### API keys
@@ -122,30 +122,46 @@ API key events are recorded when keys are created or deleted.
 
 Access control events track permission changes and denied requests.
 
-| Event           | Example                                                                                   | Description                                          |
-| --------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `role_changed`  | `{ "role_changed": { "target_user_id": "...", "old_role": "...", "new_role": "..." } }`   | A user's system role was changed                     |
-| `acl_granted`   | `{ "acl_granted": { "id": "...", "target_user_id": "...", "role": "..." } }`              | A user was granted access to a content item          |
-| `acl_revoked`   | `{ "acl_revoked": { "id": "...", "target_user_id": "..." } }`                             | A user's access to a content item was revoked        |
-| `access_denied` | `{ "access_denied": { "resource": { ... } } }`                                            | A request was denied due to insufficient permissions |
+| Event                    | Example                                                                                                      | Description                                          |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| `role_changed`           | `{ "role_changed": { "target_user_id": "...", "old_role": "...", "new_role": "..." } }`                      | A user's system role was changed                     |
+| `acl_granted`            | `{ "acl_granted": { "id": "...", "target_user_id": "...", "role": "..." } }`                                 | A user was granted access to a content item          |
+| `acl_revoked`            | `{ "acl_revoked": { "id": "...", "target_user_id": "..." } }`                                                | A user's access to a content item was revoked        |
+| `acl_role_changed`       | `{ "acl_role_changed": { "id": "...", "target_user_id": "...", "old_role": "...", "new_role": "..." } }`     | A user's role on a content item was changed          |
+| `acl_group_granted`      | `{ "acl_group_granted": { "id": "...", "target_group": "...", "role": "..." } }`                             | An OIDC group was granted access to a content item   |
+| `acl_group_revoked`      | `{ "acl_group_revoked": { "id": "...", "target_group": "..." } }`                                            | An OIDC group's access to a content item was revoked |
+| `acl_group_role_changed` | `{ "acl_group_role_changed": { "id": "...", "target_group": "...", "old_role": "...", "new_role": "..." } }` | An OIDC group's role on a content item was changed   |
+| `access_denied`          | `{ "access_denied": { "resource": { ... } } }`                                                               | A request was denied due to insufficient permissions |
+
+### User accounts
+
+User account events are recorded when an admin locks, unlocks, or deletes an account.
+
+| Event           | Example                                                         | Description                                                      |
+| --------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `user_locked`   | `{ "user_locked": { "id": "..." } }`                            | A user account was locked by an admin                            |
+| `user_unlocked` | `{ "user_unlocked": { "id": "..." } }`                          | A locked user account was unlocked by an admin                   |
+| `user_deleted`  | `{ "user_deleted": { "id": "...", "deleted_items": ["..."] } }` | A user account and the content it owned were deleted by an admin |
 
 ### Content
 
 Content events are recorded whenever content is deployed, modified, invoked, or removed.
 
-| Event                    | Example                                                                                 | Description                                               |
-| ------------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                               | Content was deployed                                      |
-| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                                | Content was deleted                                       |
-| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                                | A content item was invoked                                |
-| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                               | Environment variables for a content item were updated     |
-| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                         | Scaling configuration for a content item was changed      |
-| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                               | A content item's schedule was changed                     |
-| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }`   | A content item's visibility was changed                   |
-| `instance_started`       | `{ "instance_started": { "id": "...", "instance_id": "..." } }`                         | A worker was started to serve a content item              |
-| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                               | A running app instance was stopped                        |
-| `bundle_deleted`         | `{ "bundle_deleted": { "id": "...", "deployment_id": "..." } }`                         | A deployment bundle was removed by the retention reaper   |
-| `git_fetched`            | `{ "git_fetched": { "id": "...", "commit": "...", "previous_commit": "..." } }`         | A git-backed item was polled and its upstream commit read |
+| Event                    | Example                                                                               | Description                                               |
+| ------------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `content_deployed`       | `{ "content_deployed": { "id": "..." } }`                                             | Content was deployed                                      |
+| `content_deleted`        | `{ "content_deleted": { "id": "..." } }`                                              | Content was deleted                                       |
+| `content_invoked`        | `{ "content_invoked": { "id": "..." } }`                                              | A content item was invoked                                |
+| `env_vars_updated`       | `{ "env_vars_updated": { "id": "..." } }`                                             | Environment variables for a content item were updated     |
+| `scaling_config_changed` | `{ "scaling_config_changed": { "id": "..." } }`                                       | Scaling configuration for a content item was changed      |
+| `schedule_changed`       | `{ "schedule_changed": { "id": "..." } }`                                             | A content item's schedule was changed                     |
+| `visibility_changed`     | `{ "visibility_changed": { "id": "...", "old_access": "...", "new_access": "..." } }` | A content item's visibility was changed                   |
+| `instance_started`       | `{ "instance_started": { "id": "...", "instance_id": "..." } }`                       | A worker was started to serve a content item              |
+| `instance_stopped`       | `{ "instance_stopped": { "id": "..." } }`                                             | A running app instance was stopped                        |
+| `bundle_deleted`         | `{ "bundle_deleted": { "id": "...", "deployment_id": "..." } }`                       | A deployment bundle was removed by the retention reaper   |
+| `git_fetched`            | `{ "git_fetched": { "id": "...", "commit": "...", "previous_commit": "..." } }`       | A git-backed item was polled and its upstream commit read |
+| `deployment_retried`     | `{ "deployment_retried": { "deployment_id": "..." } }`                                | A failed deployment was retried as a new deployment       |
+| `restore_cancelled`      | `{ "restore_cancelled": { "deployment_id": "..." } }`                                 | A running dependency restore was cancelled                |
 
 An `instance_started` record names whoever's request caused the worker to start.
 Requests to an already-running worker are not audited.
@@ -159,6 +175,16 @@ Git credential events are recorded when credentials used for content deployment 
 | ------------------------ | ---------------------------------------------------- | ----------------------------- |
 | `git_credential_created` | `{ "git_credential_created": { "id": "..." } }`      | A git credential was created  |
 | `git_credential_deleted` | `{ "git_credential_deleted": { "id": "..." } }`      | A git credential was deleted  |
+
+### Server administration
+
+Server administration events are recorded when an admin clears a cache or changes the server favicon.
+
+| Event                    | Example                                                  | Description                                          |
+| ------------------------ | -------------------------------------------------------- | ---------------------------------------------------- |
+| `cache_cleared`          | `{ "cache_cleared": { "label": "...", "path": "..." } }` | A cache directory was cleared by an admin            |
+| `server_favicon_added`   | `"server_favicon_added"`                                 | The server favicon was added or replaced by an admin |
+| `server_favicon_removed` | `"server_favicon_removed"`                               | The server favicon was removed by an admin           |
 
 ### Audit log modifications
 
@@ -185,5 +211,4 @@ The `access_denied` event includes a `resource` field identifying what was being
 | `exec_env` | `{ "exec_env": { "id": "..." } }`    | An execution environment |
 | `user`     | `{ "user": { "id": "..." } }`        | A user account           |
 
-The `id` field is `null` when the resource ID is not available (e.g.
-listing operations).
+The `id` field is `null` when the resource ID is not available (for example, listing operations).

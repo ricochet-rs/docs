@@ -5,7 +5,7 @@ title: Deploy from Git
 import { Aside, Steps } from "@astrojs/starlight/components";
 
 Deploy an app or task directly from a public or private Git repository.
-The repository must contain a valid [`_ricochet.toml`](/dev/user/deployment/2-ricochet-toml/) file.
+Ricochet fills in the settings from the repository's [`_ricochet.toml`](/dev/user/deployment/2-ricochet-toml/) when it has one.
 
 ## Add a credential for a private repository
 
@@ -36,19 +36,30 @@ Skip this section when deploying a public repository.
 
 1. Open **Deploy** in ricochet.
 
-2. Enter the **Git Repository URL**.
+2. Enter the **Repository URL**.
 
-3. Select **Public** for a public repository or choose the saved **Git Credential** for a private repository.
+3. Under **Credential**, keep **Public** for a public repository or choose the saved credential for a private repository.
 
 4. Select the **Branch** to deploy.
 
 5. If the project is in a subdirectory, enter its repository-relative **Path**.
 
-6. Continue to **Configure** and review the settings loaded from `_ricochet.toml`.
+6. Check the **Settings** loaded from `_ricochet.toml`, or fill them in if the repository has none:
 
-7. Continue through **Packages** and **Review**, then select **Deploy**.
+    - **Name**, **Type**, and **Entrypoint**.
+    - **Visibility**: **Private**, **Internal**, or **External**.
+      **Private** needs a license.
+    - **Serve as a static site** for a report or notebook that renders to HTML.
+
+7. To install packages from somewhere other than the server defaults, open **Package repositories**.
+
+8. Select **Deploy**.
 
 </Steps>
 
-Ricochet clones the selected revision and starts the deployment.
-Open the deployment from the resulting content item to monitor its logs and status.
+A check mark appears in **Entrypoint** and **Packages file** when Ricochet finds them in the repository.
+You can select **Deploy** once both are found.
+
+If another app or task already uses the ID in `_ricochet.toml`, select **Use new ID** to deploy this one separately.
+
+Ricochet clones the selected revision and opens the new item's overview, where you can monitor the deployment.

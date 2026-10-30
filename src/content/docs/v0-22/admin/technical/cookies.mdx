@@ -2,18 +2,18 @@
 title: "Cookie Usage"
 ---
 
-Ricochet uses a small number of cookies that are required for the normal operation of the application.
-These cookies are used exclusively to provide functionality that has been explicitly requested by the user, such as authentication, session management, application routing, and user interface preferences.
+Ricochet uses a small number of cookies that it needs to work.
+They only serve features the user asked for, such as login, sessions, app routing, and interface settings.
 
 ## Cookies used by Ricochet
 
-| Purpose                | Description                                                                                                                   | Required |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- | :------: |
-| OAuth security         | Protects the OAuth authentication flow by validating authorization requests and preventing cross-site request forgery (CSRF). |    Yes   |
-| Authentication session | Persists the authenticated user session between requests.                                                                     |    Yes   |
-| Application affinity   | Ensures requests from a user are consistently routed to the same application instance when load balancing is enabled.         |    Yes   |
-| Theme preference       | Stores the user's selected interface theme (for example, light or dark mode).                                                 |    Yes   |
+| Purpose                | Description                                                                                             | Required |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- | :------: |
+| OAuth security         | Guards the OAuth login flow. It checks each login request and blocks cross-site request forgery (CSRF). |    Yes   |
+| Authentication session | Keeps the user logged in between requests.                                                              |    Yes   |
+| Application affinity   | Sends a user's requests to the same app instance each time when load balancing is on.                   |    Yes   |
+| Theme preference       | Stores the theme the user picked (for example, light or dark mode).                                     |    Yes   |
 
 ## Third-party services
 
-Ricochet does **not** use cookies for advertising, behavioral tracking, cross-site tracking, or marketing purposes.
+Ricochet does **not** use cookies for ads, behavior tracking, cross-site tracking, or marketing.

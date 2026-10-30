@@ -2,7 +2,7 @@
 title: Scaling
 ---
 
-Services that are deployed to ricochet such as [`{plumber}`](http://rplumber.io/) APIs, [Shiny](https://shiny.posit.co/r/) apps, or [Ambiorix](https://ambiorix.dev/docs/getting-started/) apps, dynamically auto-scale.
+Ricochet automatically scales the apps you deploy based on demand.
 
 You can control how the application scales via the scaling settings in the ricochet web UI, or via the `[serve]` settings in the `_ricochet.toml` file.
 The following settings are made available:
@@ -39,12 +39,15 @@ Note that this can also negatively impact the ricochet server by increasing reso
 By default, each service can spawn up to 5 instances.
 The ceiling can be raised by specifying the maximum instances in the ricochet web UI or in the `_ricochet.toml`.
 
-Increasing the maximum number if instances can be useful if the service can experience large spikes in usage or the services are computationally intensive and easily strained.
+Raise the maximum number of instances if your service gets large spikes in usage or does heavy computation.
 
 ## Maximum number of connections
 
 Having many users using the same service can result in resource strain.
 The maximum number of connections to a service can be limited or increased via the `max_connections` setting in the `[serve]` section of the `_ricochet.toml`.
+
+In Shiny, Genie, and `python-app` apps, ricochet counts each open browser session as one connection.
+In every other service, ricochet counts each request in progress as one connection.
 
 When the maximum number of instances is reached, a new instance will be spawned and subsequence connections will be directed to that instance.
 

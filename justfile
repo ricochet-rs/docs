@@ -18,16 +18,21 @@ links: build
 
 install:
     bun install
+    [ -d .vale/Microsoft ] || vale sync
 
-# lint using prettier
+# lint using prettier, and vale on the dev and latest docs
 lint: install
     bun prettier --check .
+    vale src/content/docs/dev src/content/docs/latest
 
 # fix lints using prettier and format prose (semantic line breaks)
 fmt: install
     bun run scripts/semantic-breaks.mjs
     bun prettier --write .
 
+# check prose readability against .readability.yml (all pages, or the given files)
+readability *files:
+    bun run scripts/readability.mjs {{ files }}
 
 pr-review pr_num:
     gh pr-review review view -R ricochet-rs/docs --pr {{ pr_num }} | jq

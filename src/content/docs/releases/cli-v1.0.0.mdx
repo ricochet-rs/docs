@@ -10,14 +10,14 @@ template: splash
 
 ### Breaking Changes
 
-- **Reorganized CLI commands**: The CLI command structure has been reorganized for better usability and clarity. Please review the updated command list with `ricochet --help` to familiarize yourself with the new structure.
+- CLI commands have a new, clearer layout, and `ricochet --help` lists them all.
 
 ### Features
 
-- **Environment variables on deploy**: You can now set environment variables during deployment using the `--env` flag, making it easier to configure your applications at deploy time.
-- **Dry-run for self-updates**: Added `--dry-run` option to the `self update` command, allowing you to preview available updates without actually installing them.
-- **Configuration file support**: You can now update app and task settings directly from a `_ricochet.toml` configuration file, streamlining your deployment workflow.
+- You can now set environment variables at deploy time with the `--env` flag to configure your apps.
+- The `self update` command has a new `--dry-run` option that shows available updates without installing them.
+- You can now update app and task settings from a `_ricochet.toml` file to simplify your deploy workflow.
 
 ### Fixes
 
-- **API compatibility**: Updated to work with the latest version of ricochet-core, ensuring compatibility with recent API changes.
+- The CLI now works with the latest ricochet-core version and its recent API changes.

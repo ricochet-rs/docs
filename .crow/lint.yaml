@@ -18,8 +18,14 @@ steps:
   prettier:
     image: oven/bun:1.4
     commands:
-      - bun install
+      - bun install --frozen-lockfile
       - bun prettier --check .
+    depends_on: []
+
+  readability:
+    image: oven/bun:1.4
+    commands:
+      - bun run scripts/readability.mjs
     depends_on: []
 
   commitlint:

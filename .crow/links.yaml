@@ -9,7 +9,7 @@ steps:
   - name: Build
     image: reg.ricochet.rs/docker.io/oven/bun:1.4-alpine
     commands:
-      - bun install
+      - bun install --frozen-lockfile
       - bun astro build
 
   # Pre-deploy check validates internal links in dist/ before deployment.

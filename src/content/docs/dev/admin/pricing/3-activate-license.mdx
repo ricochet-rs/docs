@@ -1,0 +1,85 @@
+---
+title: Activate a License
+---
+
+Add your license key to the server configuration and restart ricochet.
+
+```toml
+[license]
+key = "XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-V3"
+```
+
+You can set the key as an environment variable instead:
+
+```sh
+RICOCHET_LICENSE__KEY=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-V3
+```
+
+ricochet reads the key when it starts and checks it with the license server every hour.
+Each key activates one ricochet instance.
+
+## Offline Installs
+
+A server without internet access uses a license file instead of a key.
+License files need the air-gapped add-on, which you can add when you buy the license or later under **Change features**.
+
+1. Open the license in the [license portal](/dev/admin/pricing/2-license-portal/) and select **Download License File**.
+2. Enter the [machine fingerprint](#find-the-machine-fingerprint) of the server that will use the file.
+3. Copy the file to the server and point `file` at it:
+
+```toml
+[license]
+file = "license.lic"
+```
+
+A relative path is resolved under `RICOCHET_HOME`.
+The file only works on the machine whose fingerprint it was issued for.
+
+### Find the Machine Fingerprint
+
+ricochet logs its fingerprint every time it starts:
+
+```text
+INFO Machine identity fingerprint=Host("4c4c4544004c3510804bb7c04f383732")
+```
+
+Copy the value in quotes.
+To read it before ricochet runs on the server, use the command for its platform.
+
+Linux:
+
+```sh
+cat /etc/machine-id
+```
+
+macOS:
+
+```sh
+ioreg -rd1 -c IOPlatformExpertDevice | awk -F'"' '/IOPlatformUUID/ {print $4}'
+```
+
+Windows (PowerShell):
+
+```powershell
+(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Cryptography').MachineGuid
+```
+
+Kubernetes:
+
+```sh
+kubectl get namespace kube-system -o jsonpath='{.metadata.uid}'
+```
+
+On Kubernetes, one fingerprint covers the whole cluster, so ricochet keeps its license when pods move between nodes.
+
+## App and Task Limits
+
+A license covers the number of apps and tasks you bought.
+Once they are all in use, deploying a new app or task fails with a message that names the limit.
+Redeploying existing content keeps working.
+To raise a limit, open the license in the [license portal](/dev/admin/pricing/2-license-portal/) and select **Change features**.
+
+## When a License Ends
+
+When a license expires or its subscription is canceled, ricochet keeps running as the [Community Edition](/dev/admin/pricing/5-community-edition/).
+Features and limits beyond the Community Edition stop applying within the hour.

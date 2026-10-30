@@ -10,18 +10,18 @@ template: splash
 
 ### Features
 
-- **Preflight Dependency Checks**: Automatically checks dependencies before operations and supports auto-restore functionality to ensure system readiness
-- **Bundle Retention Policy**: Configure how long bundles are kept in storage with customizable retention policies
-- **Julia and Python Support**: Added execution environment support for Julia and Python programming languages
-- **OpenShift Compatibility**: Containers now run as non-root users with support for OpenShift's arbitrary UID assignment for enhanced security
-- **Unified Credentials Management**: API keys and Git credentials are now managed together in a single, streamlined credentials page
+- Preflight checks now test dependencies before each operation and can restore them on their own.
+- A bundle retention policy sets how long bundles stay in storage.
+- Execution environments now work for Julia and Python.
+- Containers now run as non-root users and accept the random UIDs that OpenShift assigns.
+- One credentials page now holds both API keys and Git credentials.
 
 ### Features (Kubernetes)
 
-- **Execution Environment Drift Detection**: Automatically detects when Kubernetes execution environments drift from their expected configuration
+- Ricochet now spots when a Kubernetes execution environment drifts from its set config.
 
 ### Fixes
 
-- **Database Migration Handling**: Improved migration state reconciliation and error reporting during application startup
-- **Systemd Installation**: Fixed issue where the Ricochet home directory was being recursively changed during systemd setup, improving installation performance
-- **UI Hydration**: Resolved script loading issues and eliminated hydration warnings in the user interface
+- Startup now handles database migration state better and reports errors more clearly.
+- Systemd setup no longer changes the whole Ricochet home folder, so installs run faster.
+- Scripts now load as they should, and the UI no longer shows hydration warnings.

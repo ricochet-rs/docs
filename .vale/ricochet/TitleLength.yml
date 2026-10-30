@@ -1,0 +1,7 @@
+extends: existence
+message: "Keep titles to 40 characters or fewer (30 is the target)."
+level: error
+nonword: true
+scope: heading.h1
+tokens:
+  - "^.{41,}$"

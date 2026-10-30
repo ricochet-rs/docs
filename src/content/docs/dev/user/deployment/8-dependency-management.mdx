@@ -20,8 +20,7 @@ Deploying a content item to ricochet follows the same lifecycle regardless of la
 
 <Aside type="note">
   ricochet makes no guarantee that an app is free of bugs or errors.
-  It only
-  guarantees that the specified dependencies can be installed.
+  It only guarantees that the specified dependencies can be installed.
 </Aside>
 
 ## R
@@ -54,7 +53,8 @@ This avoids masking from the PVC path in Kubernetes.
 
 1. ricochet reads the requested R version from the `renv.lock` file and finds the closest matching version of R on the host.
 
-2. For that R version, ricochet checks whether renv is installed at `RICOCHET_HOME/r/{major}.{minor}`. On the Kubernetes backend, it checks `RICOCHET_HOME/r/{major}.{minor}/{os}/{arch}/`.
+2. For that R version, ricochet checks whether renv is installed at `RICOCHET_HOME/r/{major}.{minor}`.
+  On the Kubernetes backend, it checks `RICOCHET_HOME/r/{major}.{minor}/{os}/{arch}/`.
 
 3. If renv is not yet installed, ricochet installs it while holding a lock, ensuring no other R process contends for the same installation location.
 
@@ -182,19 +182,21 @@ Versions are selected in the following order:
 
 <Steps>
 
-1. **Exact match.** If the requested version is available, it is used.
+1. **Exact match.**
+  If the requested version is available, it is used.
 
-2. **Nearest within the same major.minor release.** Otherwise, the highest available version that is at or below the requested version.
+2. **Nearest within the same major.minor release.**
+  Otherwise, the highest available version that is at or below the requested version.
 
-3. **Nearest available.** If none qualify, the closest available version.
+3. **Nearest available.**
+  If none qualify, the closest available version.
 
-4. **Newer major requested.** If the requested version's major is ahead of everything available, the largest available version is used.
+4. **Newer major requested.**
+  If the requested version's major is ahead of everything available, the largest available version is used.
 
 </Steps>
 
 <Aside type="note">
-  Python additionally honors the `requires-python` constraint in your
-  `uv.lock`.
-  Incompatible versions are filtered out before matching, and the
-  version in your `.python-version` file must satisfy that constraint.
+  Python additionally honors the `requires-python` constraint in your `uv.lock`.
+  Incompatible versions are filtered out before matching, and the version in your `.python-version` file must satisfy that constraint.
 </Aside>

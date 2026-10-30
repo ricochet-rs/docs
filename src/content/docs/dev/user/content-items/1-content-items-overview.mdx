@@ -2,17 +2,17 @@
 title: Overview
 ---
 
-`ricochet` supports deploying R, Julia, and Python based content.
-Content items are categorized as either an [**App**](/dev/user/content-items/2-dynamic-content) or a [**Task**](/dev/user/content-items/3-tasks).
+`ricochet` deploys R, Julia, and Python content.
+Each content item is either an [**App**](/dev/user/content-items/2-dynamic-content) or a [**Task**](/dev/user/content-items/3-tasks).
 
-An **App** stays running to serve requests: web applications, APIs, and interactive dashboards.
+An **App** stays running to serve requests: web apps, APIs, and interactive dashboards.
 
-A **Task** executes once and then stops: scripts, reports, and document renders.
+A **Task** runs once and then stops: scripts, reports, and document renders.
 
-All tasks can be [scheduled](/dev/user/tasks/2-scheduling) (or [invoked via API](/dev/user/tasks/1-invoke)).
-A subset of tasks can be served as a [**static html** website](/dev/user/tasks/3-static-sites)—for example R Markdown and Quarto documents or websites.
+You can [schedule](/dev/user/tasks/2-scheduling) any task (or [invoke it via API](/dev/user/tasks/1-invoke)).
+Some tasks, such as R Markdown and Quarto documents or websites, can be served as a [**static HTML** website](/dev/user/tasks/3-static-sites).
 
-The content types supported by ricochet are listed below.
+Ricochet supports the content types below.
 
 ## R
 
@@ -38,15 +38,17 @@ The content types supported by ricochet are listed below.
 | `streamlit`      | App      | A data app developed using [Streamlit](https://streamlit.io/).                                                       |
 | `dash`           | App      | A data app developed using [Dash](https://dash.plotly.com/).                                                         |
 | `shiny-py`       | App      | A web app developed using [Shiny for Python](https://shiny.posit.co/py/).                                            |
-| `python-service` | App      | A generic Python web app or API. Must bind to `PORT`.                                                                |
+| `python-service` | App      | A generic Python web app or API. Must bind to `HOST` and `PORT`.                                                     |
+| `python-app`     | App      | An interactive Python web app, such as [Panel](https://panel.holoviz.org/). Must bind to `HOST` and `PORT`.          |
 | `python`         | Task     | A Python script with the extension `.py`.                                                                            |
 | `quarto-py`      | Task     | A [Quarto](https://quarto.org/) document using a Python runtime.                                                     |
 | `jupyter`        | Task     | A [Jupyter](https://jupyter.org/) notebook with the extension `.ipynb`.                                              |
 
 ## Julia
 
-| Content Type     | Category | Description                                                                                  |
-| ---------------- | -------- | -------------------------------------------------------------------------------------------- |
-| `julia-service`  | App      | A web app or API using a Julia runtime such as [Dash.jl](https://github.com/plotly/Dash.jl). |
-| `julia`          | Task     | A Julia script.                                                                              |
-| `quarto-jl`      | Task     | A [Quarto](https://quarto.org/) document using a Julia runtime.                              |
+| Content Type     | Category | Description                                                                                                                 |
+| ---------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `genie`          | App      | A web app developed using [Genie](https://genieframework.com/).                                                             |
+| `julia-service`  | App      | A web app or API built with [HTTP.jl](https://github.com/JuliaWeb/HTTP.jl) or [Dash.jl](https://github.com/plotly/Dash.jl). |
+| `julia`          | Task     | A Julia script.                                                                                                             |
+| `quarto-jl`      | Task     | A [Quarto](https://quarto.org/) document using a Julia runtime.                                                             |

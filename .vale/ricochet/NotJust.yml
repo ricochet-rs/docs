@@ -1,0 +1,7 @@
+extends: existence
+message: "Avoid 'not just x, it is y'. State what it is."
+level: error
+ignorecase: true
+tokens:
+  - "(?:is|it's|isn't) not (?:just|only|merely)"
+  - "isn't (?:just|only|merely)"

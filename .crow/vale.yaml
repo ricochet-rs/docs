@@ -1,0 +1,15 @@
+when:
+  - event: pull_request
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+    path: "src/content/docs/**"
+
+labels:
+  type: static
+
+steps:
+  vale:
+    image: reg.ricochet.rs/docker.io/jdkato/vale:v3.24.0
+    commands:
+      - apk add -q --no-cache jq
+      - vale sync
+      - echo "$${CI_PIPELINE_FILES}" | jq -r '.[] | select(test("^src/content/docs/.*\\.mdx?$"))' | while read -r f; do [ -f "$f" ] && echo "$f"; done | xargs -r vale

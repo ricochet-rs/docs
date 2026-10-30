@@ -1,0 +1,72 @@
+---
+title: Persistent Storage
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Ricochet uses persistent storage to keep your deployed content and its packages available when apps restart, update, or scale.
+
+## How It Works
+
+When you deploy content to ricochet, it uses two types of persistent storage:
+
+### Content Storage
+
+Ricochet stores deployed bundles in a shared content volume.
+Each deployment gets its own separate directory that holds:
+
+- Application code and files
+- Rendered output (for static content like Quarto or R Markdown)
+- Any files the application creates at runtime
+
+On Kubernetes, each app instance mounts only its own content directory.
+This keeps content items apart from each other.
+
+### Package Cache
+
+Ricochet stores all installed packages (R, Python, Julia) in a shared cache volume.
+All deployed content shares this cache, which means:
+
+- Each package version is installed only once
+- Later deployments that use the same packages start faster
+- Apps with the same dependencies share the cached packages
+
+## Runtime File Access
+
+At runtime, your app can read and write files in its content directory.
+This lets it:
+
+- Write temporary files while it runs
+- Create output files (logs, reports, data exports)
+- Change files in the content directory
+
+<Aside type="caution">
+  Files written at runtime survive app restarts, but the next deployment overwrites them.
+  Use external storage (databases, object storage) for data that must survive a redeploy.
+</Aside>
+
+## Working Directory
+
+When your app runs, its working directory is the content directory.
+Relative paths in your code start from this directory, the same as during local development.
+In R:
+
+```r
+# These paths work as expected
+read.csv("data/input.csv")
+saveRDS(model, "output/model.rds")
+```
+
+## Best Practices
+
+1. **Avoid storing large datasets in bundles.**
+  Use external data sources or object storage for large files.
+
+2. **Use environment variables for connection strings.**
+  This keeps secrets out of your deployed code and lets each environment use its own settings.
+
+3. **Design for statelessness.**
+  Runtime files persist, but apps that do not rely on local files scale and redeploy more smoothly.
+
+4. **Clean up temporary files.**
+  If your app creates temporary files, delete them so unused data does not pile up.

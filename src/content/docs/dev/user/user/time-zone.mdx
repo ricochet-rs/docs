@@ -10,7 +10,7 @@ Log timestamps are rendered in your own time zone, detected from your browser.
 
 1. Open **Profile** from the user menu.
 
-2. Pick a zone from the **Time Zone** list, or press **Detect** to read it from this browser.
+2. Select a zone from the **Time Zone** list, or press **Detect** to read it from this browser.
 
 </Steps>
 
@@ -22,15 +22,15 @@ Precedence, highest first:
 
 | Source | Behavior |
 | --- | --- |
-| Profile setting | The zone you picked, kept in a `timezone` cookie for a year. |
-| Browser | The zone your browser reports, used until you pick one. |
+| Profile setting | The zone you selected, kept in a `timezone` cookie for a year. |
+| Browser | The zone your browser reports, used until you select one. |
 | `UTC` | Used when the browser reports no zone. |
 
 Only an explicit choice is stored.
 A zone that was merely detected is never written to the cookie, so opening ricochet from another location detects afresh instead of staying pinned to a stale one.
 
 <Aside type="note">
-The choice lives in a browser cookie rather than in your account, so another browser or device starts from its own detected zone.
+Ricochet stores the choice in a browser cookie rather than in your account, so another browser or device starts from its own detected zone.
 </Aside>
 
 ## What the zone affects

@@ -10,22 +10,22 @@ template: splash
 
 ### Features
 
-- **Server-Sent Events**: Added deployment SSE support and improved content SSE functionality.
-- **Content Thumbnails**: New API endpoint for retrieving content thumbnails.
-- **User Avatars**: Added support for user avatars with Gravatar/Libravatar integration, custom upload, and OIDC picture sync.
-- **Public Profiles**: Enhanced explore page cards and added public user profile pages.
-- **Environment Variables**: Content environment variables are now passed to the restore process.
+- Deployments now stream server-sent events (SSE), and content SSE works better.
+- A new API endpoint returns content thumbnails.
+- Users can now set an avatar from Gravatar/Libravatar, a custom upload, or OIDC picture sync.
+- Each user now has a public profile page, and explore page cards look better.
+- The restore process now gets the content's environment variables.
 
 ### Improvements
 
-- **Profile Layout**: Improved user profile page layout and design.
-- **Sidebar**: Reduced expanded sidebar width for better space utilization.
-- **Log Panels**: Standardized panel width for tasks and application logs.
+- The user profile page has a cleaner layout and design.
+- The expanded sidebar is now narrower to save space.
+- Task and app log panels now share one width.
 
 ### Fixes
 
-- **Quarto Support**: Ricochet no longer relies on Quarto existing on `PATH`.
-- **Python Environments**: Python path discovery is now not limited to only UV managed python installations.
-- **Deployments**: All running instances are now terminated when environment variables are added or deleted.
-- **Kubernetes**: Fixed a bug where Kubernetes deployments were not properly deleted.
-- **Error Handling**: Return proper 400 error code when deployment is missing packages file, plus added `.python-version` file checking.
+- Ricochet no longer needs Quarto on `PATH`.
+- Ricochet now finds Python installs that UV does not manage.
+- Adding or deleting environment variables now stops all running instances.
+- Deleting a Kubernetes deployment now removes it fully.
+- A deployment with no packages file now returns a 400 error, and Ricochet checks the `.python-version` file.

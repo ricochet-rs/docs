@@ -1,0 +1,7 @@
+extends: existence
+message: "Avoid the 'no x, no y, just z' flourish."
+level: error
+ignorecase: true
+nonword: true
+tokens:
+  - '\bno \w+, no \w+'

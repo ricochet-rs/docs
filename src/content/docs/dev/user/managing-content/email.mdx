@@ -21,7 +21,7 @@ ricochet puts the end of the log in each one, with a link to the whole log.
 ricochet sends success email to everyone who can open the task.
 You write it in three fields:
 
-- **Subject**: ricochet replaces `{name}` and `{date}` with the task's name and the run's date. When you leave it empty, ricochet uses `{name} for {date}`.
+- **Subject**: ricochet replaces `{name}` and `{date}` with the task's name and the run's date, and uses `{name} for {date}` when you leave it empty.
 - **Message**: you write plain text or Markdown.
 - **Attachments**: you list one path or glob pattern per line, inside the run's output:
 
@@ -32,7 +32,7 @@ data/*.csv
 
 ricochet attaches up to 20 MiB in total.
 Past that, ricochet attaches none of the files and says so in the email.
-ricochet never attaches a file or folder whose name starts with a dot, such as `.env`.
+ricochet never attaches a hidden file or folder, such as `.env`.
 
 ## Apps
 
@@ -47,4 +47,5 @@ You can change your own row there too.
 
 - When you have access of your own and through a group, ricochet follows your own row.
 - ricochet sends you failure email through a group only when that group can edit the item.
-- To cut down email from every item, open your profile and select an option under **Email**. ricochet then sends you only the email that both your profile and the item allow.
+- To cut down email from every item, open your profile and select an option under **Email**.
+  ricochet then sends you only the email that both your profile and the item allow.

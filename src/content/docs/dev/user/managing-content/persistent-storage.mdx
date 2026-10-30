@@ -2,71 +2,50 @@
 title: Persistent Storage
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
-Ricochet uses persistent storage to keep your deployed content and its packages available when apps restart, update, or scale.
+Ricochet isolates each deployment from the one before it.
+To keep files across deployments, or to share them between your app's workers, save them in the `./persistent` directory.
 
-## How It Works
+Ricochet puts `./persistent` at the root of your bundle in every deployment, and keeps what you save there until you delete the app or task.
+Treat `./persistent` like any other folder:
 
-When you deploy content to ricochet, it uses two types of persistent storage:
+<Tabs syncKey="language">
+  <TabItem label="R">
+    ```r
+    # save a model, then read it back after a restart or redeploy
+    saveRDS(model, "persistent/model.rds")
+    model <- readRDS("persistent/model.rds")
+    ```
+  </TabItem>
+  <TabItem label="Julia">
+    ```julia
+    using Serialization
 
-### Content Storage
+    # save a model, then read it back after a restart or redeploy
+    serialize("persistent/model.jls", model)
+    model = deserialize("persistent/model.jls")
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    import pickle
 
-Ricochet stores deployed bundles in a shared content volume.
-Each deployment gets its own separate directory that holds:
+    # save a model, then read it back after a restart or redeploy
+    with open("persistent/model.pkl", "wb") as f:
+        pickle.dump(model, f)
+    with open("persistent/model.pkl", "rb") as f:
+        model = pickle.load(f)
+    ```
+  </TabItem>
+</Tabs>
 
-- Application code and files
-- Rendered output (for static content like Quarto or R Markdown)
-- Any files the application creates at runtime
+## Ship Files With a Deployment
 
-On Kubernetes, each app instance mounts only its own content directory.
-This keeps content items apart from each other.
+To start with data, put a `persistent/` folder in your bundle.
+When you deploy, ricochet copies its files into `persistent/` and keeps any file already there with the same name.
 
-### Package Cache
+## Package Cache
 
-Ricochet stores all installed packages (R, Python, Julia) in a shared cache volume.
-All deployed content shares this cache, which means:
-
-- Each package version is installed only once
-- Later deployments that use the same packages start faster
-- Apps with the same dependencies share the cached packages
-
-## Runtime File Access
-
-At runtime, your app can read and write files in its content directory.
-This lets it:
-
-- Write temporary files while it runs
-- Create output files (logs, reports, data exports)
-- Change files in the content directory
-
-<Aside type="caution">
-  Files written at runtime survive app restarts, but the next deployment overwrites them.
-  Use external storage (databases, object storage) for data that must survive a redeploy.
-</Aside>
-
-## Working Directory
-
-When your app runs, its working directory is the content directory.
-Relative paths in your code start from this directory, the same as during local development.
-In R:
-
-```r
-# These paths work as expected
-read.csv("data/input.csv")
-saveRDS(model, "output/model.rds")
-```
-
-## Best Practices
-
-1. **Avoid storing large datasets in bundles.**
-  Use external data sources or object storage for large files.
-
-2. **Use environment variables for connection strings.**
-  This keeps secrets out of your deployed code and lets each environment use its own settings.
-
-3. **Design for statelessness.**
-  Runtime files persist, but apps that do not rely on local files scale and redeploy more smoothly.
-
-4. **Clean up temporary files.**
-  If your app creates temporary files, delete them so unused data does not pile up.
+Ricochet installs each version of an R, Julia or Python package once, then reuses it for every app and task that needs it.
+So you wait less on later deployments.

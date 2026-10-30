@@ -22,7 +22,7 @@ ricochet sends the test to the email address on your account.
 | Key                    | Default        | What you set                                                                              |
 | ---------------------- | -------------- | ----------------------------------------------------------------------------------------- |
 | `host`                 |                | The mail server's hostname or IP address, with no scheme or port, such as `[2001:db8::1]` |
-| `port`                 | 587, 465 or 25 | The mail server's port. ricochet picks the default from `tls`                             |
+| `port`                 | 587, 465 or 25 | The mail server's port. ricochet sets the default from `tls`                              |
 | `tls`                  | `"starttls"`   | `"starttls"`, `"tls"`, or `"none"` for a relay on a trusted network                       |
 | `username`, `password` |                | The account ricochet signs in with. Leave both out for a server with no sign-in           |
 | `from`                 |                | The sender on every email, such as `ricochet <ricochet@example.com>`                      |

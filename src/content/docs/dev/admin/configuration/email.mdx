@@ -30,26 +30,6 @@ ricochet sends the test to the email address on your account.
 
 You can set any key as an environment variable instead, such as `RICOCHET_SMTP__PASSWORD`.
 
-## Keep the password in Vault
-
-ricochet can read the username and password from HashiCorp Vault or OpenBao, so you never write the password in the config file.
-
-1. Add a Vault [integration](/dev/user/deployment/3b-integrations/) on the **Integrations** page.
-2. Store a secret in its KV version 2 mount with `username` and `password` keys.
-3. Put the integration's ID and the secret's path in `[smtp.vault]`, and leave `username` and `password` out of `[smtp]`:
-
-```toml title="ricochet-config.toml"
-[smtp]
-host = "smtp.example.com"
-from = "ricochet <ricochet@example.com>"
-
-[smtp.vault]
-integration = "01KFBPYV4GK173SBJR9Y7S0DQP"
-path = "ricochet/smtp"
-```
-
-ricochet reads the secret for every email, so it uses a new password from the next email on.
-
 ## When an email does not arrive
 
 - When the mail server refuses the test, ricochet shows you the server's reason.

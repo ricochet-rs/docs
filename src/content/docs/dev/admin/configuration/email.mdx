@@ -1,0 +1,57 @@
+---
+title: Email
+---
+
+ricochet emails editors when it cannot deploy or run their item.
+It also emails everyone who can open a task after a good run, when the task's editors ask for that.
+Point ricochet at your mail server in the `[smtp]` section of `ricochet-config.toml`:
+
+```toml title="ricochet-config.toml"
+[smtp]
+host = "smtp.example.com"
+username = "ricochet"
+password = "..."
+from = "ricochet <ricochet@example.com>"
+```
+
+Restart ricochet, open **Server Settings** > **Email**, and select **Send me a test**.
+ricochet sends the test to the email address on your account.
+
+## Options
+
+| Key                    | Default        | What you set                                                                              |
+| ---------------------- | -------------- | ----------------------------------------------------------------------------------------- |
+| `host`                 |                | The mail server's hostname or IP address, with no scheme or port, such as `[2001:db8::1]` |
+| `port`                 | 587, 465 or 25 | The mail server's port. ricochet picks the default from `tls`                             |
+| `tls`                  | `"starttls"`   | `"starttls"`, `"tls"`, or `"none"` for a relay on a trusted network                       |
+| `username`, `password` |                | The account ricochet signs in with. Leave both out for a server with no sign-in           |
+| `from`                 |                | The sender on every email, such as `ricochet <ricochet@example.com>`                      |
+| `reply_to`             | the sender     | The address people reply to                                                               |
+
+You can set any key as an environment variable instead, such as `RICOCHET_SMTP__PASSWORD`.
+
+## Keep the password in Vault
+
+ricochet can read the username and password from HashiCorp Vault or OpenBao, so you never write the password in the config file.
+
+1. Add a Vault [integration](/dev/user/deployment/3b-integrations/) on the **Integrations** page.
+2. Store a secret in its KV version 2 mount with `username` and `password` keys.
+3. Put the integration's ID and the secret's path in `[smtp.vault]`, and leave `username` and `password` out of `[smtp]`:
+
+```toml title="ricochet-config.toml"
+[smtp]
+host = "smtp.example.com"
+from = "ricochet <ricochet@example.com>"
+
+[smtp.vault]
+integration = "01KFBPYV4GK173SBJR9Y7S0DQP"
+path = "ricochet/smtp"
+```
+
+ricochet reads the secret for every email, so it uses a new password from the next email on.
+
+## When an email does not arrive
+
+- When the mail server refuses the test, ricochet shows you the server's reason.
+- ricochet tries a failed email four more times over half an hour, then gives up.
+- People can turn their own email off in their account settings.

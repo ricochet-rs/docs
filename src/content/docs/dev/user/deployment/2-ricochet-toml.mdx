@@ -180,8 +180,8 @@ secrets = [
 
 | Field         | Description                                                                                                          |
 | ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `integration` | The integration's name, as shown on the **Integrations** page.                                                       |
+| `integration` | The integration's name on the **Integrations** page.                                                                 |
 | `secrets`     | One entry per variable: the secret's `path` and `key` in Vault, or its `name` in Azure Key Vault, and its `env_var`. |
 
-The first deployment of a new item reads these secrets.
-Afterwards, `ricochet app settings update` adds the ones you list or repoints a variable the item already reads, and never removes one.
+Ricochet reads these secrets when you first deploy a new item.
+After that, when you run `ricochet app settings update`, Ricochet adds the ones you list and repoints the variables the item already has, but never removes one.

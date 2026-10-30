@@ -31,6 +31,26 @@ Owners and admins can invite people and change roles.
 An admin can administer members and other admins, but never an owner.
 An organization must always keep at least one owner, so the last owner cannot be demoted or removed.
 
+## Instance access
+
+Owners and admins can sign in to every instance in the organization.
+A member can sign in to an instance only after an owner or admin grants access to it.
+
+<Steps>
+
+1. Go to **Instances** and open the instance.
+
+2. Select the **Access** tab.
+
+3. Turn on **Can view** for each member who should sign in.
+
+</Steps>
+
+Turn off **Can view** to stop a member from signing in to the instance.
+They stay in the organization and can still open the portal and every other instance they have access to.
+
+If you connect the instance to your own OIDC or SAML provider, you choose who can sign in from that provider, and Ricochet hides the **Can view** column.
+
 ## Invite a member
 
 <Steps>

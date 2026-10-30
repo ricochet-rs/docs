@@ -161,7 +161,7 @@ cron = "0 0 * * *"
 
 ## `integrations` settings
 
-Each optional entry reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
+For each optional entry, Ricochet reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
 List a HashiCorp Vault or OpenBao integration under `[[integrations.vault]]` and an Azure Key Vault integration under `[[integrations.azure_key_vault]]`.
 
 ```toml

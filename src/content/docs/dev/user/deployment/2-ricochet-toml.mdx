@@ -165,7 +165,7 @@ max_duration = 7200
 
 ## `integrations` settings
 
-For each optional entry, Ricochet reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
+For each optional entry, ricochet reads secrets from one of your [integrations](/dev/user/deployment/3b-integrations) into environment variables.
 List a HashiCorp Vault or OpenBao integration under `[[integrations.vault]]` and an Azure Key Vault integration under `[[integrations.azure_key_vault]]`.
 
 ```toml
@@ -188,4 +188,4 @@ secrets = [
 | `secrets`     | One entry per variable: the secret's `path` and `key` in Vault, or its `name` in Azure Key Vault, and its `env_var`. |
 
 Ricochet reads these secrets when you first deploy a new item.
-After that, when you run `ricochet app settings update`, Ricochet adds the ones you list and points the variables the item already has at their new secrets, but never removes one.
+After that, when you run `ricochet app settings update`, ricochet adds the ones you list and points the variables the item already has at their new secrets, but never removes one.

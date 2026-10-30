@@ -4,7 +4,11 @@ title: Persistent Storage
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 
-Save files to `./persistent` from your code, and ricochet keeps them across restarts and redeploys.
+Ricochet isolates each deployment from the one before it.
+To keep files across deployments, or to share them between your app's workers, save them in the `./persistent` directory.
+
+Ricochet puts `./persistent` at the root of your bundle in every deployment, and keeps what you save there until you delete the app or task.
+Treat `./persistent` like any other folder:
 
 <Tabs syncKey="language">
   <TabItem label="R">
@@ -36,44 +40,10 @@ Save files to `./persistent` from your code, and ricochet keeps them across rest
   </TabItem>
 </Tabs>
 
-## The `persistent/` Folder
-
-Ricochet gives every app and task its own `persistent/` folder.
-Ricochet runs your code in its bundle directory and links `./persistent` there to that folder.
-
-- Ricochet keeps `persistent/` when your app restarts and when you deploy a new version.
-- When ricochet runs several instances of your app, ricochet gives them all the same `persistent/` folder.
-- When you delete the app or task, ricochet deletes its `persistent/` folder too.
-
-Ricochet starts each deployment from a fresh copy of your bundle.
-So you lose anything you wrote outside `persistent/` when you deploy again.
-
 ## Ship Files With a Deployment
 
 To start with data, put a `persistent/` folder in your bundle.
 When you deploy, ricochet copies its files into `persistent/` and keeps any file already there with the same name.
-
-## Browse and Download Files
-
-Open your app or task and select **Files** to see what's in `persistent/`.
-You need the Contributor role or higher.
-
-- Sort by name, type, size or modified time, and filter by name.
-- Select a file to see its size and last change, and to copy its path for your code.
-
-With the Editor role or higher, you can also download:
-
-- one file, as it is
-- a folder, or all of `persistent/` with **Download all**, as a `.tar.gz`
-- the files that match your filter, as one `.tar.gz`
-
-Ricochet limits each download to 200 MiB by default, counted before compression.
-Your admin can [change that limit or turn off downloads](/dev/admin/configuration/download-limit/).
-For a larger folder, download its files one at a time.
-Ricochet records every download in the audit log.
-
-Ricochet lists symlinks in `persistent/` but never follows them.
-If you replace `persistent/` itself with a symlink, ricochet refuses to open it.
 
 ## Package Cache
 

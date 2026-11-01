@@ -5,9 +5,16 @@ when:
 labels:
   type: static
 
+cache:
+  - key: 'bun-alpine-v1-{{ arch }}-{{ checksum "bun.lock" }}'
+    restore_keys: ["bun-alpine-v1-{{ arch }}-"]
+    paths: [.cache/bun]
+
 steps:
   - name: Build
     image: reg.ricochet.rs/docker.io/oven/bun:1.4-alpine
+    environment:
+      BUN_INSTALL_CACHE_DIR: ${CI_WORKSPACE}/.cache/bun
     commands:
       - bun install --frozen-lockfile
       - bun astro build

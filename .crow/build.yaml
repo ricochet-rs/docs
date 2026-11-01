@@ -10,9 +10,16 @@ labels:
 depends_on:
   - lint
 
+cache:
+  - key: 'bun-v1-{{ arch }}-{{ checksum "bun.lock" }}'
+    restore_keys: ["bun-v1-{{ arch }}-"]
+    paths: [.cache/bun]
+
 steps:
   - name: Build
     image: reg.ricochet.rs/docker.io/oven/bun:1.4
+    environment:
+      BUN_INSTALL_CACHE_DIR: ${CI_WORKSPACE}/.cache/bun
     commands:
       - bun install --frozen-lockfile
       - bun astro build

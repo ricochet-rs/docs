@@ -5,7 +5,7 @@ title: Persistent Storage
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 Ricochet isolates each deployment from the one before it.
-To keep files across deployments, or to share them between your app's workers, save them in the `./persistent` directory.
+To keep files across deployments, or to let your app's workers use the same files, save them in the `./persistent` directory.
 
 Ricochet puts `./persistent` at the root of your bundle in every deployment, and keeps what you save there until you delete the app or task.
 Treat `./persistent` like any other folder:
@@ -40,10 +40,48 @@ Treat `./persistent` like any other folder:
   </TabItem>
 </Tabs>
 
+## Run It Locally
+
+On your own machine, `persistent/` exists only once you create it.
+Create it at the start of your code so the same code runs locally and on ricochet:
+
+<Tabs syncKey="language">
+  <TabItem label="R">
+    ```r
+    dir.create("persistent", showWarnings = FALSE)
+    ```
+  </TabItem>
+  <TabItem label="Julia">
+    ```julia
+    mkpath("persistent")
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    from pathlib import Path
+
+    Path("persistent").mkdir(exist_ok=True)
+    ```
+  </TabItem>
+</Tabs>
+
+## Entrypoint in a Folder
+
+Ricochet starts your code in the root of your bundle, where `persistent/` lives.
+Shiny, Quarto and R Markdown switch to the folder of your entrypoint before they run your code.
+If your entrypoint is `app/app.R` or `reports/index.qmd`, save to `../persistent/` instead, with one `../` for each folder level.
+
 ## Ship Files With a Deployment
 
 To start with data, put a `persistent/` folder in your bundle.
 When you deploy, ricochet copies its files into `persistent/` and keeps any file already there with the same name.
+
+If you only use a local `persistent/` folder for testing, leave it out of the bundle in `_ricochet.toml`:
+
+```toml
+[content]
+exclude = ["persistent/**"]
+```
 
 ## Package Cache
 

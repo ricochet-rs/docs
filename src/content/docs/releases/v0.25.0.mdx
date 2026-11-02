@@ -10,44 +10,58 @@ template: splash
 
 ### Features
 
-- Added email notification support
-  - Failure notifications are sent for failed deployments and task runs.
-  - On successful task runs custom emails can be delivered with attachments up to 20mb.
-  - Email bodies can be customized using markdown.
-  - A new API scope for account settings was added to control user-level email preferences.
-  - Configure your email provider via the `[smtp]` configuration, see the [docs](/dev/admin/configuration/email/).
-- Added secret store integrations for HashiCorp Vault and Azure Key Vault.
-- An MCP server is added to the ricochet REST API at `/api/v0/mcp`
-  - The MCP server can list content items, deployments, view logs, and view settings.
-- Added the `genie` content type for Genie.jl apps.
-- Added the `python-app` content type for Python web apps such as Panel.
-- Task runs now have a configurable maximum duration, which defaults to one hour.
+- Adds support for email notifications for deployments and task runs.
+  - Configure the `[smtp]` section in your `ricochet-config.toml` to enable it.
+    See the [docs](/dev/admin/configuration/email/).
+  - Email alerts can be customized via markdown
+  - Add up to 20mb of attachments to the email
+  - User can specify email delivery preferences per-item or account wide
+  - A new API key scope was added to support changing user preferences
+- Adds support for Secret Store integrations.
+  - Support for Azure Key Vault, HashiCorp Vault, and OpenBao
+  - Secrets from an integration can be added to an item's environment variables
+  - Integration secrets can be added to the `_ricochet.toml` upon deployment and update via the REST API.
+    See the [docs](/latest/user/deployment/3b-integrations/#secrets-in-_ricochettoml) for more
+- The REST API now includes a Model Context Protocol (MCP) server at `/api/v0/mcp`
+  - The MCP server can list your content items, deployments, read logs, settings, and more.
+  - See the [docs](/latest/user/managing-content/5-ai-assistants/) for how to connect your AI assistant
+- Adds support for streaming any log by its ID via the REST API.
+  - `GET /api/v0/content/logs/{ulid}` streams the contents of the log
+  - The log can be from a deployment, a task invocation, or an app's worker
+- Adds a new `python-app` content type to support websocket-based python applications such as Panel.
+- Deploy Genie.jl using the new `genie` content type
+- Tasks now have a configurable maximum duration (default 60m)
 
 ### Enhancements
 
 - Environment variable values are no longer limited to 190 bytes.
-- A deployment's restore state and logs are now available from the API.
-- The metrics address is now configurable.
-- Added a build info metric that includes the running version.
-- On Kubernetes, resource changes are now applied without restarting the app, and new instances are ready sooner.
+- Adds support for following a deployment's restore progress and logs via the REST API.
+  - `GET /api/v0/content/deployments/{ulid}` now returns a `restore_state` field (queued, running, or cancelling)
+  - `GET /api/v0/content/deployments/{ulid}/logs` lists a deployment's log IDs
+- Improves Prometheus metrics.
+  - The metrics address is now configurable
+  - A new build info metric reports the running version
+- Improves apps on Kubernetes.
+  - Apps are ready faster after they start
+  - Resource changes are applied without a restart
 
 ### UI
 
-- Redesigned the deployment history table.
-- Server settings are now organized into tabs.
-- Item tabs are now hidden based on the user's role.
-- Breadcrumbs now appear on narrow screens.
+- Redesigns the deployment history table.
+- Organizes server settings into tabs.
+- Hides item tabs based on the user's role.
+- Shows breadcrumbs on narrow screens.
 
 ### Bug fixes
 
-- Resolved several security issues.
-- Resolved a bug where Authorization headers were stripped unconditionally.
-- Resolved a bug where idle WebSocket connections closed before the app's inactivity timeout.
-- Resolved a bug where an expired session caused an error instead of signing the user out.
-- Resolved a bug where a broken app restarted in a loop.
-- Resolved bugs where Shiny apps with a root-level `server.R`, plumber2 apps that use absolute paths, and Genie apps failed to start.
-- Resolved a bug where deployments were marked out-of-sync incorrectly.
-- Improved the reliability of R, Julia, and Python package installs.
-- Resolved a bug where memory limits were not always enforced.
+- Includes several security fixes.
+- Authorization headers are no longer stripped unconditionally.
+- Idle WebSocket connections now stay open until the app's inactivity timeout.
+- Users with an expired session are now signed out instead of seeing an error.
+- Broken apps no longer get stuck in a restart loop.
+- Fixed startup failures for Shiny apps with a root-level `server.R`, plumber2 apps that use absolute paths, and Genie apps.
+- Deployments are no longer marked out-of-sync incorrectly.
+- Package installs for R, Julia, and Python are now more reliable.
+- Memory limits are now enforced consistently.
 - A slug that matches another item's ID is now rejected.
 - Sign-in errors now include the reason the identity provider rejected the sign-in.

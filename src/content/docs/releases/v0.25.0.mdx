@@ -10,101 +10,42 @@ template: splash
 
 ### Features
 
-#### Email notifications
-
-- Ricochet sends email through the mail server you configure in the `[smtp]` section.
-- Get an email when a deployment or run fails, or when a run succeeds.
-- Choose which email address each collaborator and your own account receive notifications at, and edit an item's notification email in its settings.
-- Manage email settings from the API with the new account settings scope for API keys.
-
-#### Integrations
-
-- Read environment variables from HashiCorp Vault.
-- Read environment variables from Azure Key Vault, and connect a Key Vault integration from the UI.
-- Share an integration and choose which apps can read it.
-- Declare the integration secrets an item needs in `_ricochet.toml`.
-
-#### Assistant connections
-
-- Connect Model Context Protocol (MCP) clients to Ricochet and sign them in with OAuth.
-- MCP clients can list content items, an item's deployments and running instances, and a deployment's restore logs, and read an item's `_ricochet.toml`.
-- Choose an MCP app's scopes when you connect it, and see your connected MCP apps on your profile.
-
-#### Content and deployments
-
-- Deploy Python web apps with the new `python-app` content type, which counts WebSocket sessions.
-- Deploy Genie apps with the new `genie` content type, which counts only WebSocket connections.
-- Set a maximum duration after which Ricochet stops a task run.
-- The deployment history table has a new layout, and the API lists the logs that belong to a deployment.
-- The deployment API response includes the deployment's restore state.
-- Set the address Ricochet serves metrics on, and read the running version from a build info metric.
+- Get email notifications for your deployments and task runs.
+  - Find out by email when a deployment or task run fails.
+  - Email a custom message with up to 20 MiB of attachments after a task run succeeds.
+  - Write your messages in Markdown.
+  - Manage your email preferences through the API with the new account settings scope.
+  - Configure your email provider in the [`[smtp]` section](/dev/admin/configuration/email/).
+- Read your apps' and tasks' environment variables from HashiCorp Vault or Azure Key Vault.
+- Connect your AI assistant to the new Ricochet Model Context Protocol (MCP) server at `/api/v0/mcp`.
+  - Ask your assistant to list your content items and deployments, or read their logs and settings.
+- Deploy Genie.jl apps with the new `genie` content type.
+- Deploy Python web apps, such as Panel, with the new `python-app` content type.
+- Admins can cap how long a task run lasts, and the default is one hour.
 
 ### Enhancements
 
-- Server configuration settings are organized into tabs.
-- An item hides the tabs that your role on it does not allow.
-- Environment variable values are no longer limited to 190 bytes.
-- The Git deployment form has a new design.
+- Store environment variable values longer than 190 bytes.
+- Check a deployment's restore status and list its logs through the API.
+- Admins can choose the metrics address and see the running version in the metrics.
+- On Kubernetes, change an app's resources without restarting it, and get new instances up faster.
 
-### Fixes
+### UI
 
-#### Security
+- Browse deployment history in a redesigned table.
+- Find server settings grouped into tabs.
+- See only the item tabs your role allows.
+- Navigate with breadcrumbs on narrow screens.
 
-- Ricochet no longer forwards its own session cookie to apps.
-- App pods on Kubernetes no longer receive a service account token.
-- Apps that run directly on the host accept connections only from the same machine.
-- The loading page checks access before it starts an app.
-- README content on an item's overview is sanitized before it is displayed.
-- Server settings hide every query parameter value and a username shown without a password.
+### Bug fixes
 
-#### Apps
-
-- An app's own `Authorization` header reaches the app.
-- Idle WebSockets stay open for the app's inactivity timeout.
-- A stale session cookie is treated as signed out instead of causing an error.
-- Root-level Shiny apps with a `server.R` file run from the bundle root.
-- `plumber2` apps can use absolute paths.
-- Apps that use `_server.yml` and Genie apps listen on all interfaces.
-- `QUARTO_PATH` is always set when content starts.
-- The `quarto-r-shiny` content type is recognized everywhere.
-- A broken app no longer restarts in a loop when its redeploy is refused, and a new deployment resets its crash count.
-- Deleting an app stops its workers and removes its Kubernetes Deployment.
-- A static item without HTML output explains why it has no page.
-
-#### Kubernetes
-
-- Apps scale on the sessions of every Ricochet replica.
-- App pods are marked ready within a second of starting.
-- Resource and strategy changes apply to the running Deployment.
-- A running Deployment scales without starting the app again.
-- A new deployment rolls out to a Deployment that Ricochet was not tracking.
-- A stalled restore ends with a failure instead of waiting forever.
-- A task's Job stops when the task fails to start.
-- Each architecture gets its own `uv` environment.
-
-#### Resources and limits
-
-- Memory limits apply when Ricochet itself runs in a container, and memory-capped containers cannot use swap.
-- Task runs follow the item's memory limit.
-- The runtime log shows a worker's memory as one labelled badge.
-- Container builds that run longer than two minutes are stopped.
-- Connection counts stay accurate when a request is retried.
-- Serve settings limits apply on every save, and updated settings take effect without a restart.
-
-#### Dependency restores
-
-- Restores for several architectures activate `renv` correctly in each one.
-- `renv` caches are shared across Alpine patch releases.
-- A restore keeps stored variables when Vault is unreachable.
-- R content no longer reports a false out-of-sync error.
-- The Julia dependency check reads the bundle's own project.
-- Python discovery accepts prerelease interpreters and skips free-threaded and debug builds.
-- Restore logs end only after the restore status is final.
-
-#### Interface and deployment
-
-- Breadcrumbs appear on narrow screens.
-- A slug that matches another item's ID is rejected.
-- A failed Git deployment removes its bundle.
-- Signing in explains why the identity provider rejected you.
-- The container image keeps its bundled `uv` and `juliaup` outside the data volume.
+- Upgrade soon to get several security fixes.
+- Use your app's own `Authorization` header, such as a bearer token, behind Ricochet.
+- Your users stay connected over idle WebSockets until your app's inactivity timeout.
+- Sign in again after your session expires, instead of seeing an error.
+- Ricochet no longer restarts a broken app in a loop.
+- Deploy Shiny apps with a root-level `server.R`, plumber2 apps that use absolute paths, and Genie apps without startup errors.
+- Deploy R, Julia, and Python content with fewer package install failures and no false out-of-sync errors.
+- Ricochet now applies your memory limits to every app and task run.
+- You can no longer give an item a slug that matches another item's ID.
+- See why your identity provider rejected your sign-in.

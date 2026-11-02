@@ -8,36 +8,23 @@ template: splash
 
 **Released: November 2, 2026**
 
-## Deployment
+## Features
 
-The **deploy** command streams progress events when you use **-F json**, and reports restore phases when you combine **-F json** with **--follow**.
+- The CLI supports the `python-app` content type from Ricochet v0.25.0.
+- `ricochet app settings update` and `ricochet task settings update` send the secret store integrations in your `_ricochet.toml`, a Ricochet v0.25.0 feature.
+- `ricochet log <log-id>` streams the contents of a log by ID.
+- `ricochet log --deployment <id>` streams a deployment's logs.
+- `ricochet deploy --follow` streams the deployment's logs while it deploys.
+- `ricochet task invoke --follow` streams the run's logs until it finishes.
 
-The **log** command reads a deployment's restore logs when you pass **--deployment**.
+## Enhancements
 
-You can now follow deployment logs as they stream from the server.
-
-## Tasks
-
-The **task invoke** command accepts a **--follow** flag to stream task execution updates.
-
-When you use **task invoke --follow -F json**, the command now ends with the finished run instead of terminating early.
-
-## Initialization
-
-The **init** command accepts flags for every prompt, so you can run it without a terminal.
-
-## Logging
-
-The CLI now supports log streaming.
-
-## Settings
-
-Settings updates now send integrations alongside the updated configuration.
+- The CLI supports the `genie` content type for Genie.jl apps.
+- `ricochet deploy -F json` and `ricochet task invoke --follow -F json` write one JSON record per line, each with an `event` key.
+- `ricochet init` now has the `--content-type`, `--entrypoint`, `--name`, and `--access-type` flags, so it skips every prompt when you pass all four.
+- `ricochet task schedule` checks your cron expression with the server's rules before it sends the schedule.
 
 ## Bug fixes
 
-The **schedule** command validates cron expressions using the server's `CronSchedule` parser instead of a local validator.
-
-The **login** command picks a free name for the server instead of overwriting an existing saved server.
-
-The **--debug** flag now enables tracing output.
+- The `--debug` flag now prints tracing output.
+- `ricochet login` picks a free server name instead of overwriting a saved server with the same name.

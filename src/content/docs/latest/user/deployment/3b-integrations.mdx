@@ -1,0 +1,189 @@
+---
+title: "Integrations"
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+Read secrets from HashiCorp Vault, OpenBao or Azure Key Vault into the environment variables of your apps and tasks.
+Ricochet reads each value when it starts your app or runs your task, and never stores it.
+
+<Steps>
+
+1. Open **Integrations**, select **New integration**, and choose **HashiCorp Vault / OpenBao** or **Azure Key Vault** as the **Secret store**.
+
+2. Enter the [Vault](#connection-settings) or [Azure Key Vault](#azure-key-vault) settings, then select **Test connection**.
+
+3. Select **Save**.
+
+4. Open your app or task, go to **Environment Variables**, and select **Add from integration**.
+
+5. Select the integration and enter the **Secret path** and **Key**, or the **Secret name** for Azure Key Vault.
+
+6. Name the **Environment variable** and select **Add variable**.
+
+</Steps>
+
+Read the variable like any other one, for example `Sys.getenv("DB_PASSWORD")` in R or `os.environ["DB_PASSWORD"]` in Python.
+
+## Connection settings
+
+| Field             | What to enter                                                                |
+| ----------------- | ---------------------------------------------------------------------------- |
+| **Name**          | A name for the integration, unique among yours                               |
+| **Vault address** | The server URL, for example `https://vault.example.com:8200`                 |
+| **Namespace**     | The namespace to log in to, if you use them in Vault Enterprise or OpenBao   |
+| **Role ID**       | The AppRole role ID                                                          |
+| **Secret ID**     | The AppRole secret ID, which ricochet stores encrypted                       |
+| **AppRole mount** | Where you enabled AppRole, `approle` unless you changed it                   |
+| **KV mount**      | The KV version 2 secrets engine with your secrets, `secret` by default       |
+
+Ricochet logs in before it saves, so it reports a wrong address or credential on the **Integrations** page rather than when it starts your app.
+
+To rotate the secret ID, select **Edit**, enter the new one, and select **Save**.
+Leave the field empty to keep the current one.
+When you change the address or **Skip TLS verification**, enter the secret ID again, because ricochet never sends a stored one to new settings.
+
+## Prepare an AppRole
+
+Ask whoever runs your Vault for a role with read access to only the secrets you need.
+
+```shell
+# let ricochet read one app's secrets
+vault policy write ricochet-myapp - <<EOF
+path "secret/data/myapp/*" { capabilities = ["read"] }
+EOF
+
+# create a role with that policy
+vault write auth/approle/role/ricochet-myapp token_policies=ricochet-myapp token_ttl=5m
+
+# print the two values ricochet asks for
+vault read -field=role_id auth/approle/role/ricochet-myapp/role-id
+vault write -f -field=secret_id auth/approle/role/ricochet-myapp/secret-id
+```
+
+Ricochet logs in each time it starts an app or runs a task, so create the secret ID without a use limit.
+It revokes its token as soon as it has read the values, which is why a short `token_ttl` is enough.
+
+## Azure Key Vault
+
+Ricochet signs in to Microsoft Entra ID as a service principal with a client secret, then reads each secret's latest version.
+
+| Field              | What to enter                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| **Name**           | A name for the integration, unique among yours                                                     |
+| **Vault URI**      | The **Vault URI** on the key vault's **Overview** page, such as `https://my-vault.vault.azure.net` |
+| **Tenant ID**      | The **Directory (tenant) ID** of the app registration                                              |
+| **Client ID**      | The **Application (client) ID** of the app registration                                            |
+| **Client secret**  | The **Value** of a client secret, not its **Secret ID**, which ricochet stores encrypted           |
+| **Authority host** | Only outside the global Azure cloud, such as `https://login.microsoftonline.us`                    |
+
+You see a client secret's value only once, when you create it in Azure.
+
+Ricochet signs in before it saves, so it reports a wrong URI or credential on the **Integrations** page rather than when it starts your app.
+When you select **Test connection**, ricochet checks that it can sign in and read secrets from the vault, even before you add any.
+If ricochet cannot read secrets right after setup, wait a few minutes for Azure to apply the new role assignment, then try again.
+
+To rotate the client secret, select **Edit**, enter the new value, and select **Save**.
+When you change the vault URI or the authority host, enter the client secret again.
+
+### Prepare a service principal
+
+Ask whoever runs your Azure subscription for an app registration with read access to only the secrets you need.
+
+```shell
+# create an app registration with a client secret and print its tenant ID, client ID and secret
+az ad sp create-for-rbac --name ricochet-myapp
+
+# let it read every secret in one key vault
+az role assignment create \
+  --assignee <client-id> \
+  --role "Key Vault Secrets User" \
+  --scope "$(az keyvault show --name my-vault --query id --output tsv)"
+```
+
+To let it read one secret only, append `/secrets/<name>` to the scope.
+
+If you set up your vault with access policies instead of Azure RBAC, grant the **Get** secret permission instead:
+
+```shell
+az keyvault set-policy --name my-vault --spn <client-id> --secret-permissions get
+```
+
+The client secret from `create-for-rbac` is valid for one year unless you pass `--years`.
+Add a new one before then, and enter it on the **Integrations** page:
+
+```shell
+az ad app credential reset --id <client-id> --append
+```
+
+### Secret names
+
+Enter the secret's name, such as `db-password`.
+Ricochet accepts a name of 1 to 127 letters, digits and dashes.
+Ricochet reads the whole secret into the variable, so you enter no key.
+
+Ricochet reads the latest version each time it starts your app or runs your task, so it uses a new version from the next start.
+Keep the latest version enabled, because ricochet cannot read a disabled one.
+Ricochet reads the secret once when you add the variable, so it reports a mistyped name right away.
+
+## Secret paths
+
+Enter the path relative to the KV mount: `myapp/db` for a secret you see in Vault as `secret/myapp/db`.
+For the key, enter one field inside that secret, such as `password`.
+
+Ricochet reads the secret once when you add the variable, so it reports a mistyped path or key right away.
+When you add or remove a variable, ricochet restarts the app's running instances.
+
+Give each variable name only one source.
+You cannot store a variable on the item and read one from an integration under the same name, or read one name from two integrations.
+
+## Secrets in `_ricochet.toml`
+
+Run `ricochet app toml` to list every secret ricochet reads into an item, including the ones you added on the **Environment Variables** tab:
+
+```toml
+[[integrations.vault]]
+integration = "Analytics Vault"
+secrets = [
+  { path = "myapp/db", key = "password", env_var = "DB_PASSWORD" },
+  { path = "myapp/db", key = "user", env_var = "DB_USER" },
+]
+
+[[integrations.azure_key_vault]]
+integration = "Analytics Key Vault"
+secrets = [
+  { name = "smtp-password", env_var = "SMTP_PASSWORD" },
+]
+```
+
+To read another secret, add it to the file and run `ricochet app settings update`.
+When you list a variable the item already has, ricochet points it at the new secret.
+If you remove a line from the file, ricochet keeps reading that secret into the item.
+Remove the variable on the **Environment Variables** tab instead.
+
+Ricochet never puts a secret's value in the file, only where to find it.
+Ricochet reads each listed secret once before it saves anything, so it saves nothing when an integration, path, key or secret name is wrong.
+
+Ricochet reads the secrets in the file when you first deploy an app or task.
+It ignores them on later deployments and Git syncs, like the rest of the file's settings.
+
+## Share an integration
+
+Select **Access** next to an integration you own.
+
+- Under **People**, add someone as a **User** to let them use the integration, or as an **Owner** to let them manage it too.
+- Under **Apps and tasks**, allow the apps and tasks your users may read the integration into.
+
+Owners read the integration into any app or task they can edit.
+Users read it only into the apps and tasks under **Apps and tasks**, and you can add only people who can deploy.
+A user can read any secret within the AppRole's or service principal's permissions into those apps and tasks, so share an integration only with people you would give that access.
+
+When you revoke an app or task, ricochet applies the change the next time it starts the item, and restarts its running instances.
+You cannot remove an integration's last owner.
+
+## When ricochet cannot start an app
+
+If ricochet cannot reach the secret store, sign in, or read a secret, it does not start the app.
+Ricochet shows **Your app could not start** on the app's loading page, with the integration and the reason under the **Reading environment variables** step.
+Ricochet does not count the failed start toward the app's restart limit, and tries again on the next visit.
+Select **Test connection** on the **Integrations** page to check the settings.

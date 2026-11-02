@@ -80,6 +80,7 @@ ricochet login -S https://try.ricochet.rs
 
 Your browser opens so you can sign in.
 The CLI then stores your credentials locally and uses them for later commands.
+The first server you log in to becomes your default, so later commands work without `-S`.
 
 ### Remote Sessions
 
@@ -103,7 +104,7 @@ echo "$RICOCHET_KEY" | ricochet login -S https://try.ricochet.rs --no-browser
 You can log in to more than one ricochet server.
 The CLI stores each server's credentials apart, keyed by the server URL.
 
-To switch servers, pass the `-S` flag with your command:
+Commands go to your default server unless you pass `-S`:
 
 ```bash
 # Deploy to production
@@ -113,10 +114,8 @@ ricochet deploy -S https://ricochet.example.com
 ricochet deploy -S https://staging.ricochet.example.com
 ```
 
-<Aside type="tip">
-  If you only use one server, set the `RICOCHET_SERVER` environment variable.
-  Then you can skip `-S` on every command.
-</Aside>
+To make another server the default, run `ricochet server set-default <NAME>`.
+Run `ricochet server list` to see the names.
 
 ### Logging Out
 

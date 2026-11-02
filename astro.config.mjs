@@ -53,7 +53,7 @@ export default defineConfig({
         ],
       },
     }),
-    latestVersionRedirectsIntegration("src/content/docs", "v0-24"),
+    latestVersionRedirectsIntegration("src/content/docs", "v0-25"),
     // Only `/latest/` and unversioned pages go in the sitemap, since old releases and dev point search engines at `/latest/`
     sitemap({
       filter: (page) => !/^\/(v\d+-\d+|dev)\//.test(new URL(page).pathname),
@@ -163,13 +163,13 @@ export default defineConfig({
       // https://github.com/ocavue/starlight-theme-nova
       plugins: [
         starlightVersions({
-          current: { label: "0.24 (latest)", redirect: "root" },
+          current: { label: "0.25 (latest)", redirect: "root" },
           versions: [
-            { slug: "latest", label: "0.24" },
+            { slug: "latest", label: "0.25" },
+            { slug: "v0-24", label: "0.24" },
             { slug: "v0-23", label: "0.23" },
             { slug: "v0-22", label: "0.22" },
             { slug: "v0-21", label: "0.21" },
-            { slug: "v0-20", label: "0.20" },
             { slug: "dev", label: "dev" },
           ],
         }),

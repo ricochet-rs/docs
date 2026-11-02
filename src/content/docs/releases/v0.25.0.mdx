@@ -10,42 +10,44 @@ template: splash
 
 ### Features
 
-- Get email notifications for your deployments and task runs.
-  - Find out by email when a deployment or task run fails.
-  - Email a custom message with up to 20 MiB of attachments after a task run succeeds.
-  - Write your messages in Markdown.
-  - Manage your email preferences through the API with the new account settings scope.
-  - Configure your email provider in the [`[smtp]` section](/dev/admin/configuration/email/).
-- Read your apps' and tasks' environment variables from HashiCorp Vault or Azure Key Vault.
-- Connect your AI assistant to the new Ricochet Model Context Protocol (MCP) server at `/api/v0/mcp`.
-  - Ask your assistant to list your content items and deployments, or read their logs and settings.
-- Deploy Genie.jl apps with the new `genie` content type.
-- Deploy Python web apps, such as Panel, with the new `python-app` content type.
-- Admins can cap how long a task run lasts, and the default is one hour.
+- Added email notification support
+  - Failure notifications are sent for failed deployments and task runs.
+  - On successful task runs custom emails can be delivered with attachments up to 20mb.
+  - Email bodies can be customized using markdown.
+  - A new API scope for account settings was added to control user-level email preferences.
+  - Configure your email provider via the `[smtp]` configuration, see the [docs](/dev/admin/configuration/email/).
+- Added secret store integrations for HashiCorp Vault and Azure Key Vault.
+- An MCP server is added to the ricochet REST API at `/api/v0/mcp`
+  - The MCP server can list content items, deployments, view logs, and view settings.
+- Added the `genie` content type for Genie.jl apps.
+- Added the `python-app` content type for Python web apps such as Panel.
+- Task runs now have a configurable maximum duration, which defaults to one hour.
 
 ### Enhancements
 
-- Store environment variable values longer than 190 bytes.
-- Check a deployment's restore status and list its logs through the API.
-- Admins can choose the metrics address and see the running version in the metrics.
-- On Kubernetes, change an app's resources without restarting it, and get new instances up faster.
+- Environment variable values are no longer limited to 190 bytes.
+- A deployment's restore state and logs are now available from the API.
+- The metrics address is now configurable.
+- Added a build info metric that includes the running version.
+- On Kubernetes, resource changes are now applied without restarting the app, and new instances are ready sooner.
 
 ### UI
 
-- Browse deployment history in a redesigned table.
-- Find server settings grouped into tabs.
-- See only the item tabs your role allows.
-- Navigate with breadcrumbs on narrow screens.
+- Redesigned the deployment history table.
+- Server settings are now organized into tabs.
+- Item tabs are now hidden based on the user's role.
+- Breadcrumbs now appear on narrow screens.
 
 ### Bug fixes
 
-- Upgrade soon to get several security fixes.
-- Use your app's own `Authorization` header, such as a bearer token, behind Ricochet.
-- Your users stay connected over idle WebSockets until your app's inactivity timeout.
-- Sign in again after your session expires, instead of seeing an error.
-- Ricochet no longer restarts a broken app in a loop.
-- Deploy Shiny apps with a root-level `server.R`, plumber2 apps that use absolute paths, and Genie apps without startup errors.
-- Deploy R, Julia, and Python content with fewer package install failures and no false out-of-sync errors.
-- Ricochet now applies your memory limits to every app and task run.
-- You can no longer give an item a slug that matches another item's ID.
-- See why your identity provider rejected your sign-in.
+- Resolved several security issues.
+- Resolved a bug where Authorization headers were stripped unconditionally.
+- Resolved a bug where idle WebSocket connections closed before the app's inactivity timeout.
+- Resolved a bug where an expired session caused an error instead of signing the user out.
+- Resolved a bug where a broken app restarted in a loop.
+- Resolved bugs where Shiny apps with a root-level `server.R`, plumber2 apps that use absolute paths, and Genie apps failed to start.
+- Resolved a bug where deployments were marked out-of-sync incorrectly.
+- Improved the reliability of R, Julia, and Python package installs.
+- Resolved a bug where memory limits were not always enforced.
+- A slug that matches another item's ID is now rejected.
+- Sign-in errors now include the reason the identity provider rejected the sign-in.

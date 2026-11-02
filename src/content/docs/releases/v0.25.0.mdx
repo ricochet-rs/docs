@@ -38,14 +38,12 @@ template: splash
 - The deployment history table has a new layout, and the API lists the logs that belong to a deployment.
 - The deployment API response includes the deployment's restore state.
 - Set the address Ricochet serves metrics on, and read the running version from a build info metric.
-- Each license includes a task trial, and Ricochet stops tasks beyond what the license covers.
 
 ### Enhancements
 
 - Server configuration settings are organized into tabs.
 - An item hides the tabs that your role on it does not allow.
 - Environment variable values are no longer limited to 190 bytes.
-- Apps can compress responses other than pages.
 - The Git deployment form has a new design.
 
 ### Fixes
@@ -64,8 +62,6 @@ template: splash
 - An app's own `Authorization` header reaches the app.
 - Idle WebSockets stay open for the app's inactivity timeout.
 - A stale session cookie is treated as signed out instead of causing an error.
-- Only opening a page shows the loading page, and Ricochet asks other requests to a starting app to retry.
-- Asset requests reach the same worker as the page that loaded them.
 - Root-level Shiny apps with a `server.R` file run from the bundle root.
 - `plumber2` apps can use absolute paths.
 - Apps that use `_server.yml` and Genie apps listen on all interfaces.
@@ -93,12 +89,10 @@ template: splash
 - The runtime log shows a worker's memory as one labelled badge.
 - Container builds that run longer than two minutes are stopped.
 - Connection counts stay accurate when a request is retried.
-- License limits on apps, tasks, content, and developers hold when several changes happen at once.
 - Serve settings limits apply on every save, and updated settings take effect without a restart.
 
 #### Dependency restores
 
-- The `renv` watchdog that held processes and memory is removed.
 - Restores for several architectures activate `renv` correctly in each one.
 - `renv` caches are shared across Alpine patch releases.
 - A restore keeps stored variables when Vault is unreachable.
@@ -111,9 +105,6 @@ template: splash
 
 - Breadcrumbs appear on narrow screens.
 - A slug that matches another item's ID is rejected.
-- The CLI hint on the Git deployment form matches the form.
 - A failed Git deployment removes its bundle.
 - Signing in explains why the identity provider rejected you.
-- Ricochet shows each slider's value beside the slider, and setting rows stack on smaller screens.
-- The deployment limit alert no longer wraps one word per line.
 - The container image keeps its bundled `uv` and `juliaup` outside the data volume.

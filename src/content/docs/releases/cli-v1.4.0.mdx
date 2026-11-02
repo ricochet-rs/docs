@@ -1,0 +1,30 @@
+---
+title: CLI v1.4.0
+docs: release notes for Ricochet CLI v1.4.0
+slug: releases/cli-v1.4.0
+tableOfContents: false
+template: splash
+---
+
+**Released: November 2, 2026**
+
+## Features
+
+- The CLI supports the `python-app` content type from Ricochet v0.25.0.
+- `ricochet app settings update` and `ricochet task settings update` send the secret store integrations in your `_ricochet.toml`, a Ricochet v0.25.0 feature.
+- `ricochet log <log-id>` streams the contents of a log by ID.
+- `ricochet log --deployment <id>` streams a deployment's logs.
+- `ricochet deploy --follow` streams the deployment's logs while it deploys.
+- `ricochet task invoke --follow` streams the run's logs until it finishes.
+
+## Enhancements
+
+- The CLI supports the `genie` content type for Genie.jl apps.
+- `ricochet deploy -F json` and `ricochet task invoke --follow -F json` write one JSON record per line, each with an `event` key.
+- `ricochet init` now has the `--content-type`, `--entrypoint`, `--name`, and `--access-type` flags, so it skips every prompt when you pass all four.
+- `ricochet task schedule` checks your cron expression with the server's rules before it sends the schedule.
+
+## Bug fixes
+
+- The `--debug` flag now prints tracing output.
+- `ricochet login` saves the server under a new name instead of overwriting a saved server with the same name.

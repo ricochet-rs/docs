@@ -1,0 +1,43 @@
+---
+title: CLI v1.4.0
+docs: release notes for Ricochet CLI v1.4.0
+slug: releases/cli-v1.4.0
+tableOfContents: false
+template: splash
+---
+
+**Released: November 2, 2026**
+
+## Deployment
+
+The **deploy** command streams progress events when you use **-F json**, and reports restore phases when you combine **-F json** with **--follow**.
+
+The **log** command reads a deployment's restore logs when you pass **--deployment**.
+
+You can now follow deployment logs as they stream from the server.
+
+## Tasks
+
+The **task invoke** command accepts a **--follow** flag to stream task execution updates.
+
+When you use **task invoke --follow -F json**, the command now ends with the finished run instead of terminating early.
+
+## Initialization
+
+The **init** command accepts flags for every prompt, so you can run it without a terminal.
+
+## Logging
+
+The CLI now supports log streaming.
+
+## Settings
+
+Settings updates now send integrations alongside the updated configuration.
+
+## Bug fixes
+
+The **schedule** command validates cron expressions using the server's `CronSchedule` parser instead of a local validator.
+
+The **login** command picks a free name for the server instead of overwriting an existing saved server.
+
+The **--debug** flag now enables tracing output.

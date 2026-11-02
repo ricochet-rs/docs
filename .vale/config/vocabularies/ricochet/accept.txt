@@ -98,6 +98,7 @@ SMTP
 SSO
 TLS
 (?i)TOML
+UI
 ULID
 UTC
 [Vv]endored

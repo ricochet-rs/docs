@@ -1,0 +1,119 @@
+---
+title: v0.25.0
+docs: release notes for Ricochet v0.25.0
+slug: releases/v0.25.0
+tableOfContents: false
+template: splash
+---
+
+**Released: November 2, 2026**
+
+### Features
+
+#### Email notifications
+
+- Ricochet sends email through the mail server you configure in the `[smtp]` section.
+- Get an email when a deployment or run fails, or when a run succeeds.
+- Choose which email address each collaborator and your own account receive notifications at, and edit an item's notification email in its settings.
+- Manage email settings from the API with the new account settings scope for API keys.
+
+#### Integrations
+
+- Read environment variables from HashiCorp Vault.
+- Read environment variables from Azure Key Vault, and connect a Key Vault integration from the UI.
+- Share an integration and choose which apps can read it.
+- Declare the integration secrets an item needs in `_ricochet.toml`.
+
+#### Assistant connections
+
+- Connect Model Context Protocol (MCP) clients to Ricochet and sign them in with OAuth.
+- MCP clients can list content items, an item's deployments and running instances, and a deployment's restore logs, and read an item's `_ricochet.toml`.
+- Choose an MCP app's scopes when you connect it, and see your connected MCP apps on your profile.
+
+#### Content and deployments
+
+- Deploy Python web apps with the new `python-app` content type, which counts WebSocket sessions.
+- Deploy Genie apps with the new `genie` content type, which counts only WebSocket connections.
+- Set a maximum duration after which Ricochet stops a task run.
+- The deployment history table has a new layout, and the API lists the logs that belong to a deployment.
+- The deployment API response includes the deployment's restore state.
+- Set the address Ricochet serves metrics on, and read the running version from a build info metric.
+- Each license includes a task trial, and Ricochet stops tasks beyond what the license covers.
+
+### Enhancements
+
+- Server configuration settings are organized into tabs.
+- An item hides the tabs that your role on it does not allow.
+- Environment variable values are no longer limited to 190 bytes.
+- Apps can compress responses other than pages.
+- The Git deployment form has a new design.
+
+### Fixes
+
+#### Security
+
+- Ricochet no longer forwards its own session cookie to apps.
+- App pods on Kubernetes no longer receive a service account token.
+- Apps that run directly on the host accept connections only from the same machine.
+- The loading page checks access before it starts an app.
+- README content on an item's overview is sanitized before it is displayed.
+- Server settings hide every query parameter value and a username shown without a password.
+
+#### Apps
+
+- An app's own `Authorization` header reaches the app.
+- Idle WebSockets stay open for the app's inactivity timeout.
+- A stale session cookie is treated as signed out instead of causing an error.
+- Only opening a page shows the loading page, and Ricochet asks other requests to a starting app to retry.
+- Asset requests reach the same worker as the page that loaded them.
+- Root-level Shiny apps with a `server.R` file run from the bundle root.
+- `plumber2` apps can use absolute paths.
+- Apps that use `_server.yml` and Genie apps listen on all interfaces.
+- `QUARTO_PATH` is always set when content starts.
+- The `quarto-r-shiny` content type is recognized everywhere.
+- A broken app no longer restarts in a loop when its redeploy is refused, and a new deployment resets its crash count.
+- Deleting an app stops its workers and removes its Kubernetes Deployment.
+- A static item without HTML output explains why it has no page.
+
+#### Kubernetes
+
+- Apps scale on the sessions of every Ricochet replica.
+- App pods are marked ready within a second of starting.
+- Resource and strategy changes apply to the running Deployment.
+- A running Deployment scales without starting the app again.
+- A new deployment rolls out to a Deployment that Ricochet was not tracking.
+- A stalled restore ends with a failure instead of waiting forever.
+- A task's Job stops when the task fails to start.
+- Each architecture gets its own `uv` environment.
+
+#### Resources and limits
+
+- Memory limits apply when Ricochet itself runs in a container, and memory-capped containers cannot use swap.
+- Task runs follow the item's memory limit.
+- The runtime log shows a worker's memory as one labelled badge.
+- Container builds that run longer than two minutes are stopped.
+- Connection counts stay accurate when a request is retried.
+- License limits on apps, tasks, content, and developers hold when several changes happen at once.
+- Serve settings limits apply on every save, and updated settings take effect without a restart.
+
+#### Dependency restores
+
+- The `renv` watchdog that held processes and memory is removed.
+- Restores for several architectures activate `renv` correctly in each one.
+- `renv` caches are shared across Alpine patch releases.
+- A restore keeps stored variables when Vault is unreachable.
+- R content no longer reports a false out-of-sync error.
+- The Julia dependency check reads the bundle's own project.
+- Python discovery accepts prerelease interpreters and skips free-threaded and debug builds.
+- Restore logs end only after the restore status is final.
+
+#### Interface and deployment
+
+- Breadcrumbs appear on narrow screens.
+- A slug that matches another item's ID is rejected.
+- The CLI hint on the Git deployment form matches the form.
+- A failed Git deployment removes its bundle.
+- Signing in explains why the identity provider rejected you.
+- Ricochet shows each slider's value beside the slider, and setting rows stack on smaller screens.
+- The deployment limit alert no longer wraps one word per line.
+- The container image keeps its bundled `uv` and `juliaup` outside the data volume.

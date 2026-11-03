@@ -10,9 +10,7 @@ template: splash
 
 ### Features
 
-- The environment variable `RICOCHET_URL` is now set automatically to the ricochet server host url.
-  This can be defined by the `url` field in the `ricochet-config.toml`.
-  Otherwise, it is inferred from incoming requests.
+- Ricochet sets `RICOCHET_URL` in every app to the server URL from the `url` field in `ricochet-config.toml`, or from incoming requests when that field is empty.
 - Audit logs can now be exported from the UI.
 - Increased the number of events that are included in the audit log as well as improving recording of the actor in the audit logs.
 - Audit logs are now configured for 365 day retention and can be adjusted via the `ricochet-config.toml`

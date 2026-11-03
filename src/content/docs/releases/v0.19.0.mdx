@@ -9,10 +9,10 @@ template: splash
 **Released: September 2, 2026**
 
 ### Features
-- Prometheus metrics are exposed at `/metrics` on port 6189 capturing request information for both tasks and apps. See the [docs](https://docs.ricochet.rs/v0-19/admin/technical/metrics/index.html) for more.
+- Ricochet exposes Prometheus metrics with request information for tasks and apps at `/metrics` on port 6189, as the [docs](https://docs.ricochet.rs/v0-19/admin/technical/metrics/index.html) describe.
 
 #### Explore page
-- The explore page has been reworked to be more easily navigable.
+- The explore page has been reworked to be easier to navigate.
 
 #### Apps and tasks
 - Copy the app URL directly from the overview page.
@@ -24,8 +24,7 @@ template: splash
 
 ### Fixes
 
-- Python execution-environment configurations now have an optional `uv` field to specify the path to the `uv` binary.
-  This defaults to `/usr/lib/uv` to match the provided [exec-envs](https://github.com/ricochet-rs/exec-envs).
+- Python execution-environment configurations now have an optional `uv` field for the path to the `uv` binary, which defaults to `/usr/lib/uv` to match the provided [exec-envs](https://github.com/ricochet-rs/exec-envs).
 - Mobile layouts display content more consistently.
 - When matching versions, a newer minor version is always used rather than the previous distance based metrics.
 - Navigation quick links collapse properly and breadcrumbs no longer wrap unexpectedly.

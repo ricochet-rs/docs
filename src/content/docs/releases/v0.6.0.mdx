@@ -14,7 +14,7 @@ template: splash
 - A bundle retention policy sets how long bundles stay in storage.
 - Execution environments now work for Julia and Python.
 - Containers now run as non-root users and accept the random UIDs that OpenShift assigns.
-- One credentials page now holds both API keys and Git credentials.
+- API keys and Git credentials now share one credentials page.
 
 ### Features (Kubernetes)
 
@@ -22,6 +22,6 @@ template: splash
 
 ### Fixes
 
-- Startup now handles database migration state better and reports errors more clearly.
+- Startup now handles database migration state better and reports clearer errors.
 - Systemd setup no longer changes the whole Ricochet home folder, so installs run faster.
 - Scripts now load as they should, and the UI no longer shows hydration warnings.

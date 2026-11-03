@@ -22,4 +22,4 @@ template: splash
 #### Deployment
 
 - Entrypoints defined in `_server.yml` are now properly validated before deployment.
-- Clean process exits no longer incorrectly report a memory kill error when the process does not own the cgroup.
+- Clean process exits no longer incorrectly report a memory kill error when the cgroup belongs to another process.

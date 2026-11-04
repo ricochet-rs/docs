@@ -73,3 +73,7 @@ BunnyCDN serves the site from B2 and cannot read a `_headers` file, so mirror an
 - `https://docs.ricochet.rs/.well-known/ai-catalog.json` sets `Content-Type: application/json` and `Access-Control-Allow-Origin: *`.
 - `*.md` sets `Content-Type: text/markdown; charset=utf-8`.
 - `Accept` matching `*text/markdown*` on `*/` or `*/index.html` overrides the origin URL to `https://ricochet-docs.s3.eu-central-003.backblazeb2.com%{Url.Directory}index.md` and sets `Content-Type: text/markdown; charset=utf-8`.
+
+## Social previews
+
+`src/pages/og/[...route].ts` renders every page's social card from its frontmatter `title` and `description`, so give every new page a `description:` key, since Starlight silently ignores misnamed keys such as `docs:` and the link preview then shows no summary.

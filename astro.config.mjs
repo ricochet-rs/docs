@@ -60,6 +60,9 @@ export default defineConfig({
     }),
     starlight({
       title: "ricochet",
+      // Fallback `description` and `og:description` for pages without their own
+      description:
+        "Deploy and run R, Julia, and Python apps, APIs, reports, and scripts with ricochet.",
       customCss: [
         "./src/styles/theme.css",
         "./src/styles/starlight-mappings.css",
@@ -105,6 +108,23 @@ export default defineConfig({
         // sizes: "96x96",
         // },
         // },
+        // Site-wide social card, which `src/routeData.ts` replaces with each page's generated card
+        {
+          tag: "meta",
+          attrs: {
+            property: "og:image",
+            content: "https://docs.ricochet.rs/og.png",
+          },
+        },
+        { tag: "meta", attrs: { property: "og:image:width", content: "1200" } },
+        { tag: "meta", attrs: { property: "og:image:height", content: "630" } },
+        {
+          tag: "meta",
+          attrs: {
+            name: "twitter:image",
+            content: "https://docs.ricochet.rs/og.png",
+          },
+        },
         {
           tag: "link",
           attrs: {

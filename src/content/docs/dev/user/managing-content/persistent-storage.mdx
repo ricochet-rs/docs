@@ -83,6 +83,18 @@ If you only use a local `persistent/` folder for testing, leave it out of the bu
 exclude = ["persistent/**"]
 ```
 
+## See Your Files
+
+Open your app or task and select **Files**:
+
+- **Deployment** lists the files in one bundle, and you can select an earlier deployment in the list.
+- **Persistent** lists the files in `./persistent`.
+
+You need the Contributor role to see these files and the Editor role to download them.
+
+**Deployment** leaves out package environments such as `renv/` and `.venv/`.
+It also marks `.env` and `.Renviron` files as hidden and leaves them out of every download, because they may contain secrets.
+
 ## Package Cache
 
 Ricochet installs each version of an R, Julia or Python package once, then reuses it for every app and task that needs it.

@@ -23,6 +23,8 @@
     "@tailwindcss/vite": "^4.3.0",
     "add": "^2.0.6",
     "astro": "7.4.4",
+    "astro-og-canvas": "^0.13.3",
+    "canvaskit-wasm": "^0.42.0",
     "pagefind": "^1.5.2",
     "posthog-js": "^1.417.2",
     "rehype-figure": "^1.0.1",

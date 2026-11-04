@@ -12,6 +12,7 @@ The following settings are made available:
 - `spawn_threshold`
 - `max_connections`
 - `max_connection_age`
+- `drain_timeout`
 
 See the section in `_ricochet.toml` for how to set these values.
 See the example:
@@ -62,3 +63,14 @@ When the spawn threshold is reached, **a new instance is spawned**.
 
 However, if the maximum number of instances has been reached, new connections are delegated to the application with the least number of active connections.
 Additionally, if all instances are at capacity, the spawn threshold is ignored.
+
+## New versions
+
+When you deploy a new version of a running app, your users stay connected.
+Ricochet starts the new version first and sends new visitors to it once it is ready.
+
+- Anyone with the app open stays on the old version until they reload the page.
+- The old version stops when its last session ends, or after `drain_timeout` seconds (3600 by default).
+- If the new version fails to start, the old version keeps serving.
+
+On Kubernetes, Ricochet replaces the old pods once the new ones are ready, so `drain_timeout` does not apply and open sessions close within about a minute.

@@ -21,6 +21,8 @@ Pending deployments are also excluded from cleanup.
 If you set no retention settings, ricochet keeps 5 bundles per content item.
 Set `max_deployments` to keep more.
 
+Failed, timed-out, and cancelled deployments have their own limit of `max_deployments`, so a run of failed attempts never removes a version that worked.
+
 ## Configuration Options
 
 | Setting | Description | Default |

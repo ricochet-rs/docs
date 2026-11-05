@@ -263,6 +263,18 @@ ricochet-server start --config /path/to/ricochet-config.toml
 The macOS binary ships without a service definition or vendored language tools.
 Install `uv`, `juliaup`, and `renv` yourself when you need those runtimes.
 
+### Sandbox
+
+On macOS, the server and your content always run in a sandbox that protects your user account.
+
+- Content reads and writes inside `home` and temporary folders.
+- Content cannot read other files in `/Users` or `/Volumes`, including `~/Library/R` and `~/.Renviron`.
+- Content cannot write anywhere else, including your user folder.
+- `HOME` points to the `home` folder inside your configured `home`.
+
+Keep data paths such as a SQLite database inside `home`, because the server cannot reach them elsewhere.
+Install `ricochet-server` outside `home`, because content can write to that folder.
+
 ## Windows
 
 On Windows, `ricochet-server` is a standalone executable for x86_64 and arm64.

@@ -135,12 +135,12 @@ Access control events track permission changes and denied requests.
 
 ### User accounts
 
-User account events are recorded when an admin locks, unlocks, or deletes an account.
+User account events are recorded when an admin locks an account, removes a lock, or deletes an account.
 
 | Event           | Example                                                         | Description                                                      |
 | --------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `user_locked`   | `{ "user_locked": { "id": "..." } }`                            | A user account was locked by an admin                            |
-| `user_unlocked` | `{ "user_unlocked": { "id": "..." } }`                          | A locked user account was unlocked by an admin                   |
+| `user_unlocked` | `{ "user_unlocked": { "id": "..." } }`                          | An admin removed the lock on a user account                   |
 | `user_deleted`  | `{ "user_deleted": { "id": "...", "deleted_items": ["..."] } }` | A user account and the content it owned were deleted by an admin |
 
 ### Content
@@ -189,14 +189,11 @@ Server administration events are recorded when an admin clears a cache or change
 ### Announcements
 
 Announcement events are recorded when an admin changes an announcement.
-ricochet records `announcement_pinned` whether the admin selected **Pin** or saved a time frame.
 
 | Event                   | Example                                                                          | Description                       |
 | ----------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
-| `announcement_created`  | `{ "announcement_created": { "id": "...", "title": "...", "window": { ... } } }` | An admin wrote an announcement    |
-| `announcement_updated`  | `{ "announcement_updated": { "id": "...", "title": "...", "window": { ... } } }` | An admin changed an announcement  |
-| `announcement_pinned`   | `{ "announcement_pinned": { "id": "..." } }`                                     | An admin pinned an announcement   |
-| `announcement_unpinned` | `{ "announcement_unpinned": { "id": "..." } }`                                   | An admin unpinned an announcement |
+| `announcement_created`  | `{ "announcement_created": { "id": "...", "title": "...", "color": "warning", "window": { ... } } }` | An admin wrote an announcement    |
+| `announcement_updated`  | `{ "announcement_updated": { "id": "...", "title": "...", "color": "warning", "window": { ... } } }` | An admin changed an announcement  |
 | `announcement_deleted`  | `{ "announcement_deleted": { "id": "..." } }`                                    | An admin deleted an announcement  |
 
 The `window` field holds `visible_from` and `visible_until` in seconds since the Unix epoch, or `null` for no limit.

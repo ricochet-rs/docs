@@ -186,6 +186,21 @@ Server administration events are recorded when an admin clears a cache or change
 | `server_favicon_added`   | `"server_favicon_added"`                                 | The server favicon was added or replaced by an admin |
 | `server_favicon_removed` | `"server_favicon_removed"`                               | The server favicon was removed by an admin           |
 
+### Announcements
+
+Announcement events are recorded when an admin changes an announcement.
+ricochet records `announcement_pinned` whether the admin selected **Pin** or saved a time frame.
+
+| Event                   | Example                                                                          | Description                       |
+| ----------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
+| `announcement_created`  | `{ "announcement_created": { "id": "...", "title": "...", "window": { ... } } }` | An admin wrote an announcement    |
+| `announcement_updated`  | `{ "announcement_updated": { "id": "...", "title": "...", "window": { ... } } }` | An admin changed an announcement  |
+| `announcement_pinned`   | `{ "announcement_pinned": { "id": "..." } }`                                     | An admin pinned an announcement   |
+| `announcement_unpinned` | `{ "announcement_unpinned": { "id": "..." } }`                                   | An admin unpinned an announcement |
+| `announcement_deleted`  | `{ "announcement_deleted": { "id": "..." } }`                                    | An admin deleted an announcement  |
+
+The `window` field holds `visible_from` and `visible_until` in seconds since the Unix epoch, or `null` for no limit.
+
 ### Audit log modifications
 
 Reading and expiring the log are themselves audited.
@@ -204,11 +219,12 @@ Both are served gzipped from `GET /api/audit/export?format=csv|json`.
 
 The `access_denied` event includes a `resource` field identifying what was being accessed.
 
-| Resource   | Example                              | Description              |
-| ---------- | ------------------------------------ | ------------------------ |
-| `api_key`  | `"api_key"`                          | An API key               |
-| `content`  | `{ "content": { "id": "..." } }`     | A content item           |
-| `exec_env` | `{ "exec_env": { "id": "..." } }`    | An execution environment |
-| `user`     | `{ "user": { "id": "..." } }`        | A user account           |
+| Resource       | Example                               | Description              |
+| -------------- | ------------------------------------- | ------------------------ |
+| `announcement` | `{ "announcement": { "id": "..." } }` | An announcement          |
+| `api_key`      | `"api_key"`                           | An API key               |
+| `content`      | `{ "content": { "id": "..." } }`      | A content item           |
+| `exec_env`     | `{ "exec_env": { "id": "..." } }`     | An execution environment |
+| `user`         | `{ "user": { "id": "..." } }`         | A user account           |
 
 The `id` field is `null` when the resource ID is not available (for example, listing operations).

@@ -1,0 +1,44 @@
+---
+title: Announcements
+description: Show a notice to everyone who visits your ricochet instance, for as long as you need it.
+---
+
+Show a notice below the top bar on every ricochet page, for everyone who visits, including people who are not signed in.
+You need the admin role.
+
+1. Open **Server Settings** and select **Announcements**.
+2. Select **New announcement** and enter a title and a message.
+3. Select **Save**.
+4. Select **Pin** to show the announcement.
+
+Nobody can dismiss a pinned announcement.
+Select **Unpin** to hide it and keep it for later.
+Your apps do not show announcements, because ricochet shows them only on its own pages.
+
+## Limit the time
+
+To show an announcement for a limited time, set **Show until**.
+The announcement starts now unless you change **Show from**.
+ricochet pins an announcement when you save a new or changed time frame, so you can skip the **Pin** button.
+
+**Show from** and **Show until** use your ricochet time zone.
+If you keep the default **Show from** and leave **Show until** empty, ricochet saves the announcement without pinning it.
+When you edit only the text of an unpinned announcement, it stays unpinned.
+
+## Status
+
+| Status       | What it means                              |
+| ------------ | ------------------------------------------ |
+| `Not pinned` | Nobody sees the announcement               |
+| `Scheduled`  | Pinned, and the time frame has not started |
+| `Showing`    | Everyone sees the announcement             |
+| `Ended`      | Pinned, and the time frame is over         |
+
+To take an announcement down early, select **Unpin**.
+People with a page already open see a change within a minute.
+
+## Limits
+
+- A title can have 120 characters and a message 1000.
+- ricochet shows your text exactly as you type it. It does not support links or formatting.
+- A tall stack of announcements scrolls inside the banner, which takes up to a quarter of the window.

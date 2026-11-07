@@ -87,13 +87,14 @@ exclude = ["persistent/**"]
 
 Open your app or task and select **Files**:
 
-- **Deployment** lists the files in one bundle, and you can select an earlier deployment in the list.
+- **Deployment** lists the files in one deployment.
+  It opens on your newest successful deployment, and **Bundle** switches to another one.
 - **Persistent** lists the files in `./persistent`.
 
 You need the Contributor role to see these files and the Editor role to download them.
 
-**Deployment** leaves out package environments such as `renv/` and `.venv/`.
-It also marks `.env` and `.Renviron` files as hidden and leaves them out of every download, because they may contain secrets.
+**Deployment** leaves out `persistent/` and package environments such as `renv/` and `.venv/`.
+It lists `.env`, `.env.*` and `.Renviron` files as hidden, and you can't download them, because they may contain secrets.
 
 ## Package Cache
 

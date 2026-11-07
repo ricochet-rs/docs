@@ -8,6 +8,8 @@ import { Aside, Steps } from "@astrojs/starlight/components";
 The Ricochet.rs extension lets you deploy, run tasks, and check your `_ricochet.toml` without leaving VS Code or Positron.
 It runs the [ricochet CLI](/latest/user/deployment/1-ricochet-cli/) for you, so install the CLI first.
 
+![The Ricochet view in VS Code creating a _ricochet.toml for an R script, flagging an invalid access_type, completing the allowed values, deploying the item, and running it as a task whose output opens in the Output panel](../../../../../assets/screenshots/vscode-extension-flow.gif)
+
 ## Install
 
 <Steps>
@@ -47,12 +49,16 @@ If the folder has no `_ricochet.toml`, select **Create \_ricochet.toml** to sele
 
 The extension shows how many files it bundled, then offers to open the deployed item in your browser.
 
+![VS Code after a deploy, with the Project view showing the item's type, entrypoint and access, the Bundle view listing the three files sent, the Deployments view showing the new deployment as pending, and a notification that offers Open and Show Log](../../../../../assets/screenshots/vscode-extension-deploy.png)
+
 ## What else you can do
 
 - Fix `_ricochet.toml` mistakes while you type, since the editor checks it with the same rules as the server and completes every key and value.
 - See every file a deploy would upload in the **Bundle** view, and why the others are left out.
 - Start a task with **Run Task Now** and read what it printed with **Show Output**.
 - Follow an item's history in the **Deployments** view and open any deployment in the browser.
+
+![A _ricochet.toml open in VS Code with access_type set to public, underlined as an error, and a hover that lists private, internal, and external as the allowed values](../../../../../assets/screenshots/vscode-extension-diagnostic.png)
 
 ## Settings
 

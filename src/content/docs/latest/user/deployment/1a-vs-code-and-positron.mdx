@@ -4,11 +4,13 @@ description: Deploy and manage ricochet content from VS Code or Positron with th
 ---
 
 import { Aside, Steps } from "@astrojs/starlight/components";
+import demoVideo from "../../../../../assets/videos/vscode-extension-demo.mp4";
+import demoPoster from "../../../../../assets/videos/vscode-extension-demo-poster.png";
 
 The Ricochet.rs extension lets you deploy, run tasks, and check your `_ricochet.toml` without leaving VS Code or Positron.
 It runs the [ricochet CLI](/latest/user/deployment/1-ricochet-cli/) for you, so install the CLI first.
 
-![A 13-step walkthrough in VS Code: create a _ricochet.toml for an R script, catch an invalid access_type while typing, complete the allowed values, deploy the item, and run it as a task whose output opens in the Output panel](../../../../../assets/screenshots/vscode-extension-flow.gif)
+<video src={demoVideo} poster={demoPoster.src} controls muted loop playsinline preload="metadata" style={{ width: "100%", height: "auto" }} aria-label="A 13-step walkthrough in VS Code: create a _ricochet.toml for an R script, catch an invalid access_type while typing, complete the allowed values, deploy the item, and run it as a task whose output opens in the Output panel"></video>
 
 ## Install
 

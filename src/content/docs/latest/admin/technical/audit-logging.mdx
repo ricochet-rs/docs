@@ -135,6 +135,8 @@ Access control events track permission changes and denied requests.
 
 ### User accounts
 
+{/* vale ricochet.Hype = NO */}
+
 User account events are recorded when an admin locks, unlocks, or deletes an account.
 
 | Event           | Example                                                         | Description                                                      |
@@ -142,6 +144,8 @@ User account events are recorded when an admin locks, unlocks, or deletes an acc
 | `user_locked`   | `{ "user_locked": { "id": "..." } }`                            | A user account was locked by an admin                            |
 | `user_unlocked` | `{ "user_unlocked": { "id": "..." } }`                          | A locked user account was unlocked by an admin                   |
 | `user_deleted`  | `{ "user_deleted": { "id": "...", "deleted_items": ["..."] } }` | A user account and the content it owned were deleted by an admin |
+
+{/* vale ricochet.Hype = YES */}
 
 ### Content
 

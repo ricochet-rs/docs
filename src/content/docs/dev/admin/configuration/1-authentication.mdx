@@ -98,7 +98,7 @@ Replace `{tenant-id}` with your Azure tenant ID.
 At every sign-in, ricochet reads the user's groups from Microsoft Graph, including groups they belong to through a nested group.
 You do not need to add a `groups` claim to the token, and the 200-group limit on that claim does not apply.
 
-ricochet stores each group's name and description, so you can pick the group by name in the collaborators dialog.
+ricochet stores each group's name and description, so you can select the group by name in the collaborators dialog.
 The dialog lists a group only after at least one of its members has signed in to ricochet.
 ricochet removes a group once none of its members uses ricochet and no content item is shared with it.
 

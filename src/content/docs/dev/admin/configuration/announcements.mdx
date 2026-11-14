@@ -1,0 +1,45 @@
+---
+title: Announcements
+description: Show a notice to everyone who visits your ricochet instance, for as long as you need it.
+---
+
+Show a notice below the top bar on every ricochet page, for everyone who visits, including people who are not signed in.
+You need the admin role.
+
+1. Open **Server Settings** and select **Announcements**.
+2. Select **New announcement** and enter a title and a message.
+3. Choose a **Background**.
+4. Select **Save**.
+
+The announcement shows as soon as you save it, and nobody can dismiss it.
+Your apps do not show announcements, because ricochet shows them only on its own pages.
+
+## Format the message
+
+The message supports Markdown: bold, italics, strikethrough, code, links, and lists.
+Links can use `http`, `https` or `mailto`.
+ricochet shows raw HTML as text and leaves out images and headings.
+The title is always plain text.
+
+## Limit the time
+
+**Show from** starts at the current time, and **Show until** starts empty.
+Set **Show until** to end the announcement at a chosen time, or move **Show from** to schedule it.
+Without an end time, the announcement shows until you delete it.
+Both times use your ricochet time zone.
+
+## Status
+
+| Status      | What it means                                       |
+| ----------- | --------------------------------------------------- |
+| `Scheduled` | The time frame has not started                      |
+| `Showing`   | Everyone sees the announcement                      |
+| `Ended`     | The time frame is over, and ricochet keeps the text |
+
+To take an announcement down early, select **Delete**, or select **Edit** and set **Show until** to the current time to keep it.
+People with a page already open see a change within a minute.
+
+## Limits
+
+- A title can have 120 characters and a message 1000.
+- A tall stack of announcements scrolls inside the banner, which takes up to a quarter of the window.

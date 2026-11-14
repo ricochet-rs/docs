@@ -1,0 +1,81 @@
+---
+title: VS Code and Positron
+description: Deploy and manage ricochet content from VS Code or Positron with the Ricochet.rs extension.
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import demoVideo from "../../../../../assets/videos/vscode-extension-demo.mp4";
+import demoPoster from "../../../../../assets/videos/vscode-extension-demo-poster.png";
+
+The Ricochet.rs extension lets you deploy, run tasks, and check your `_ricochet.toml` without leaving VS Code or Positron.
+It runs the [ricochet CLI](/latest/user/deployment/1-ricochet-cli/) for you, so install the CLI first.
+
+<video src={demoVideo} poster={demoPoster.src} controls muted loop playsinline preload="metadata" style={{ width: "100%", height: "auto" }} aria-label="A 13-step walkthrough in VS Code: create a _ricochet.toml for an R script, catch an invalid access_type while typing, complete the allowed values, deploy the item, and run it as a task whose output opens in the Output panel"></video>
+
+The video deploys an R script as a task.
+Apps such as Shiny, Genie, or FastAPI deploy the same way, and only the run steps are specific to tasks.
+
+## Install
+
+<Steps>
+
+1. Install the [ricochet CLI](/latest/user/deployment/1-ricochet-cli/#installation), version 1.4.0 or newer.
+
+2. Open the **Extensions** view in your editor.
+
+3. Search for **Ricochet.rs** and select **Install**.
+
+</Steps>
+
+VS Code installs it from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ricochet.ricochet-rs).
+Positron, Cursor, and other editors install it from [Open VSX](https://open-vsx.org/extension/ricochet/ricochet-rs).
+
+<Aside type="tip">
+  Run `ricochet self update` when the extension reports an older CLI.
+</Aside>
+
+## Sign in
+
+<Steps>
+
+1. Open the **Ricochet** view in the activity bar.
+
+2. Select **Add Server** in the **Servers** view and enter your server URL.
+
+3. Select **Login** and paste an API key.
+    The prompt has a button that opens the server page where you create one.
+
+</Steps>
+
+## Deploy
+
+Open a folder that holds a `_ricochet.toml`, then select **Deploy** in the **Project** view.
+If the folder has no `_ricochet.toml`, select **Create \_ricochet.toml** to select an entrypoint and write one.
+
+The extension shows how many files it bundled, then offers to open the deployed item in your browser.
+
+![VS Code after a deploy, with the Project view showing the item's type, entrypoint and access, the Bundle view listing the three files sent, the Deployments view showing the new deployment as pending, and a notification that offers Open and Show Log](../../../../../assets/screenshots/vscode-extension-deploy.png)
+
+## What else you can do
+
+- Fix `_ricochet.toml` mistakes while you type, since the editor checks it with the same rules as the server and completes every key and value.
+- See every file a deploy would upload in the **Bundle** view, and why the others are left out.
+- Start a task with **Run Task Now** and read what it printed with **Show Output**.
+- Follow an item's history in the **Deployments** view and open any deployment in the browser.
+
+![A _ricochet.toml open in VS Code with access_type set to public, underlined as an error, and a hover that lists private, internal, and external as the allowed values](../../../../../assets/screenshots/vscode-extension-diagnostic.png)
+
+## Settings
+
+| Setting                       | Default | Purpose                                                                     |
+| ----------------------------- | ------- | --------------------------------------------------------------------------- |
+| `ricochet.cli.path`           | `""`    | Path to the `ricochet` executable. Empty searches your `PATH` first.        |
+| `ricochet.server`             | `""`    | Server name or URL to deploy to. Empty uses the CLI's default server.       |
+| `ricochet.deploy.confirm`     | `true`  | Ask before each deploy.                                                     |
+| `ricochet.validation.enabled` | `true`  | Show `_ricochet.toml` problems in the editor.                               |
+
+## Troubleshooting
+
+- If the extension cannot find the CLI, set `ricochet.cli.path` to the full path of the `ricochet` executable.
+- If a deploy fails because your key is missing or expired, select **Sign In** on the error and paste a new API key.
+- Run **Ricochet: Show Log** from the Command Palette to read the CLI's full output.

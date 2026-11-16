@@ -23,7 +23,7 @@ steps:
     depends_on: []
 
   prettier:
-    image: oven/bun:1.4
+    image: reg.ricochet.rs/docker.io/oven/bun:1.4
     environment:
       BUN_INSTALL_CACHE_DIR: ${CI_WORKSPACE}/.cache/bun
     commands:
@@ -32,12 +32,13 @@ steps:
     depends_on: []
 
   readability:
-    image: oven/bun:1.4
+    image: reg.ricochet.rs/docker.io/oven/bun:1.4
     commands:
       - bun run scripts/readability.mjs
     depends_on: []
 
   commitlint:
+    depends_on: []
     when:
       - event: pull_request
       - event: pull_request_edited

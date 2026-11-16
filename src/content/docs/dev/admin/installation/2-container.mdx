@@ -31,7 +31,7 @@ reg.ricochet.rs/ricochet/ricochet-server:<major>-ubuntu
 ```
 
 We recommend pinning to a full version tag in production environments.
-Note that there is no `latest` tag.
+There is no `latest` tag.
 
 ## Quickstart
 
@@ -96,7 +96,7 @@ volumes:
   ricochet-data:
 ```
 
-Note that ricochet runs on port `6188`.
+ricochet runs on port `6188`.
 
 <Aside type="caution" title="Avoid using --privileged">
   Running with `--privileged` also works and is the shortest path, but it hands the container full access to the host.
@@ -109,7 +109,7 @@ Ricochet itself runs [Open Container Initiative](https://opencontainers.org/)-co
 Doing so from inside of an already unprivileged container needs a wider capability set than what is provided by default.
 
 The required capabilities and security options are documented below.
-Note that we recommend dropping every default capability and adding only what is needed.
+We recommend dropping every default capability and adding only what is needed.
 
 | Option                                  | Required               | Purpose                                                                                                                                                                                        |
 | ---------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

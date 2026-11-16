@@ -1,0 +1,16 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "404",
+    description: "The page you are looking for does not exist.",
+    template: "splash",
+    editUrl: false,
+    pagefind: false,
+    hero: {
+      tagline: Astro.locals.t("404.text"),
+    },
+  }}
+/>

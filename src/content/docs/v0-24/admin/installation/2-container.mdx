@@ -160,7 +160,7 @@ To enforce per-item limits, use a [host install](/v0-24/admin/installation/1-hos
 Ubuntu 23.10 and newer restrict unprivileged user namespaces through AppArmor, which the rootless content containers need.
 When installed via the `.deb` or `.rpm` file the below apparmor profile is created.
 
-```title="/etc/apparmor.d/ricochet"
+```text title="/etc/apparmor.d/ricochet"
 # AppArmor profile for ricochet rootless containers
 # This profile grants userns permission required by Ubuntu 23.10+ for
 # unprivileged user namespace creation.

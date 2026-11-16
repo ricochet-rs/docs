@@ -60,6 +60,8 @@ export default defineConfig({
     }),
     starlight({
       title: "ricochet",
+      // `src/pages/404.astro` renders the 404 page instead
+      disable404Route: true,
       // Fallback `description` and `og:description` for pages without their own
       description:
         "Deploy and run R, Julia, and Python apps, APIs, reports, and scripts with ricochet.",
@@ -151,13 +153,8 @@ export default defineConfig({
         // },
       ],
       components: {
-        // Override the `ThemeSelect` component from the Nova theme
-        ThemeSelect: "./src/components/ThemeSelect.astro",
         ThemeProvider: "./src/components/ThemeProvider.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
-        // Override Banner and PageTitle to remove version outdated warnings
-        Banner: "./src/components/Banner.astro",
-        PageTitle: "./src/components/PageTitle.astro",
         // Override ToC to wrap long titles
         TableOfContents: "./src/components/TableOfContents.astro",
         // Override Sidebar to render backticks as code
@@ -174,6 +171,8 @@ export default defineConfig({
         // https://expressive-code.com/reference/style-overrides/
         useStarlightDarkModeSwitch: true,
         useStarlightUiThemeColors: false,
+        // Shiki ships no grammar for these, so render them as plain text
+        shiki: { langAlias: { caddy: "txt", haproxy: "txt" } },
         styleOverrides: {
           borderRadius: "0",
           codePaddingBlock: "0.8rem",
@@ -193,6 +192,24 @@ export default defineConfig({
             { slug: "dev", label: "dev" },
           ],
         }),
+        // Registered after `starlight-versions` so it does not warn about overrides it would otherwise replace
+        {
+          name: "ricochet-version-overrides",
+          hooks: {
+            "config:setup"({ config, updateConfig }) {
+              updateConfig({
+                components: {
+                  ...config.components,
+                  // Override the `ThemeSelect` component from the Nova theme
+                  ThemeSelect: "./src/components/ThemeSelect.astro",
+                  // Override Banner and PageTitle to remove version outdated warnings
+                  Banner: "./src/components/Banner.astro",
+                  PageTitle: "./src/components/PageTitle.astro",
+                },
+              });
+            },
+          },
+        },
         starlightThemeNova({
           nav: [
             { label: "Release Notes", href: "/releases/" },

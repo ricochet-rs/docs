@@ -1,0 +1,39 @@
+---
+title: v0.26.0
+docs: release notes for Ricochet v0.26.0
+description: File browser, improved log interface, and deployment improved rollouts.
+slug: releases/v0.26.0
+tableOfContents: false
+template: splash
+---
+
+**Released: November 17, 2026**
+
+### Features
+
+- Browse deployment and persistent files for any item in the new **Files** tab.
+
+### Enhancements
+
+- Improved rollout of deployment workers as to prevent disconnected user sessions
+- Filter app log lines to show only entries matching your search criteria.
+- App deployment logs appear in the **Logs** tab alongside runtime logs.
+- Apps, tasks, and deployment log viewers have the same capabilities and layout.
+- Ricochet retains the five most recent deployments per content item by default.
+
+### Fixes
+
+#### Server
+
+- FastAPI apps start correctly when the entrypoint is located in a subdirectory.
+- Entra groups and profile photos are now read using the signed-in user's token instead of a service account.
+- R projects with an renv configuration that fails to load now fail during restore rather than at runtime.
+- Docker and Podman deployments now run successfully from start to finish.
+- Python content automatically deletes stale virtual environments to free up space.
+- Fixed bug pertaining to content isolation
+
+#### UI
+
+- Log entries from later invocations always appear in the correct order, superseding earlier entries.
+- Users with the Consumer role can no longer read runtime logs for apps they don't own.
+- Email settings are hidden when no SMTP mail server is configured.

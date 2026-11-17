@@ -1,0 +1,70 @@
+{
+  "sidebar": [
+    {
+      "label": "Usage",
+      "items": [
+        "user/quickstart",
+        {
+          "label": "Content Items",
+          "autogenerate": { "directory": "user/content-items" }
+        },
+        {
+          "label": "Deployment",
+          "autogenerate": { "directory": "user/deployment" }
+        },
+        {
+          "label": "Tasks",
+          "autogenerate": { "directory": "user/tasks" }
+        },
+        {
+          "label": "Managing Content",
+          "autogenerate": { "directory": "user/managing-content" }
+        },
+        {
+          "label": "User",
+          "autogenerate": { "directory": "user/user" }
+        }
+      ]
+    },
+    {
+      "label": "Self-Hosted",
+      "items": [
+        {
+          "label": "Installation",
+          "autogenerate": { "directory": "admin/installation" }
+        },
+        {
+          "label": "Configuration",
+          "autogenerate": { "directory": "admin/configuration" }
+        },
+        {
+          "label": "Pricing",
+          "autogenerate": { "directory": "admin/pricing" }
+        },
+        {
+          "label": "Technical Details",
+          "autogenerate": { "directory": "admin/technical" }
+        }
+      ]
+    },
+    {
+      "label": "Cloud",
+      "items": [
+        "cloud/quickstart",
+        {
+          "label": "Organizations",
+          "autogenerate": { "directory": "cloud/organizations" }
+        },
+        {
+          "label": "Instances",
+          "autogenerate": { "directory": "cloud/instances" }
+        },
+        {
+          "label": "Billing",
+          "autogenerate": { "directory": "cloud/billing" }
+        },
+        "cloud/audit-log"
+      ]
+    }
+  ]
+}

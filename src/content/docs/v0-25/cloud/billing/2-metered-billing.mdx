@@ -1,0 +1,41 @@
+---
+title: Metered Billing
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+You pay by the hour for the following:
+
+- **Apps**: how many apps you can publish.
+- **Tasks**: how many tasks you can manage.
+- **Compute**: CPU and Memory available to running apps and tasks, in CPU hours and whole GB.
+
+Instances are free and unlimited.
+
+## Change your resources
+
+<Steps>
+
+1. Open **Billing** and select **Change resources**.
+
+2. Set the number of apps and the size of the Compute Pool.
+
+3. Apply.
+
+</Steps>
+
+Increases take effect immediately.
+Decreases take effect at the next full hour.
+Each hour is billed at the highest value it reached.
+
+The **Billing** page shows the app-hours and GB-hours used so far this month.
+
+## Sizing the Compute Pool
+
+A running app uses roughly 0.8 GB.
+Idle apps release their memory, so size the pool for the apps that run at the same time.
+
+## Limits
+
+You can select up to 150 apps and 128 GB yourself.
+Contact us if you need more.

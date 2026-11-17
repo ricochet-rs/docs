@@ -57,7 +57,7 @@ cache_path = "/var/lib/ricochet/data/.cache"
 | `engine`               | yes      | Must be `"container"`.                                                                                                     |
 | `default_image`        | no       | An image name from the `ricochet-exec-env.toml` to be used as a default when no `exec-env` is specified.                   |
 | `exec_env_config_path` | yes      | Path to the exec-env config TOML. Absolute, or relative to `RICOCHET_HOME`.                                                 |
-| `content_path`         | yes      | Path that is bind-mounted into every spawned container. Must contain ricochet's deployment bundles.                        |
+| `content_path`         | yes      | Host folder with ricochet's deployment bundles. Each container sees only its own item's bundle and `persistent` folder.    |
 | `cache_path`           | yes      | Path bind-mounted into every spawned container. Stores R, Julia, and Python package caches shared across content.           |
 | `proxy_host`           | no       | Hostname ricochet's reverse proxy uses to reach spawned content containers. Defaults to `localhost`.                        |
 
@@ -97,12 +97,14 @@ r = [
 ]
 
 [image.python-default]
-image = "docker.io/ricochetrs/python-ubuntu:3.13"
+image = "docker.io/ricochetrs/python-ubuntu:2026-11-resolute"
 os = "ubuntu-26.04"
 arch = ["linux/amd64", "linux/arm64"]
-description = "Default Python 3.13 environment (Ubuntu)"
+description = "Default Python environment (Ubuntu)"
 python = [
-  { version = "3.13", bin = "/usr/local/bin/python3" },
+  { version = "3.14", bin = "/usr/local/bin/python3.14" },
+  { version = "3.13", bin = "/usr/local/bin/python3.13" },
+  { version = "3.12", bin = "/usr/local/bin/python3.12" },
 ]
 ```
 
@@ -113,6 +115,13 @@ ricochet uses these to match a content item's required version against an availa
 
 ricochet-server talks to the daemon over its local socket.
 The user running ricochet-server needs read and write access to that socket, typically by being a member of the `docker` group.
+
+Run one ricochet-server per daemon.
+Each running worker of an app is a container named `ricochet-service-*`, and ricochet-server removes every container with that name when it starts.
+Apps start again on their next request.
+
+Containers run as the same user as ricochet-server, so ricochet-server can delete the files they write.
+On a rootless daemon, containers run as `root`, which the daemon maps to your own account.
 
 <Aside type="note" title="Remote daemons are not supported">
   ricochet only talks to a daemon on the same host as ricochet-server.

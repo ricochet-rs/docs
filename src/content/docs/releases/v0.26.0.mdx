@@ -1,0 +1,44 @@
+---
+title: v0.26.0
+docs: release notes for Ricochet v0.26.0
+slug: releases/v0.26.0
+tableOfContents: false
+template: splash
+---
+
+**Released: November 17, 2026**
+
+### Features
+
+#### Logs and monitoring
+- Task and deployment logs now have the same search and layout features as app logs.
+- App deployment logs appear in the **Logs** tab alongside runtime logs.
+- Filter app log lines to show only entries matching your search criteria.
+- Log entries from later invocations always appear in the correct order, superseding earlier entries.
+
+#### Files and deployments
+- Browse deployment and persistent files for any item in the new **Files** tab.
+- Ricochet retains the five most recent deployments per content item by default.
+
+#### Authentication
+- Entra groups and profile photos are now read using the signed-in user's token instead of a service account.
+
+### Fixes
+
+#### Deployment and runtime
+- Deployments roll out to users without disconnecting active sessions.
+- FastAPI apps start correctly when the entrypoint is located in a subdirectory.
+- R projects with an renv configuration that fails to load now fail during restore rather than at runtime.
+- Docker and Podman deployments now run successfully from start to finish.
+- Python content automatically deletes stale virtual environments to free up space.
+- Python projects using **uv.lock** are now recognized as having a package file.
+
+#### Security and isolation
+- Each content item's jobs, containers, and bindings now mount or bind only that item's own content folder, preventing access to other items' files.
+- Users with the Consumer role can no longer read runtime logs for apps they don't own.
+
+#### User interface
+- Deployment form errors appear only after you leave a field, reducing visual noise while typing.
+- Sub-tabs now use the full width of the screen on mobile phones.
+- Email settings are hidden when no SMTP mail server is configured.
+- User commands now run correctly on instances that store data in Postgres.

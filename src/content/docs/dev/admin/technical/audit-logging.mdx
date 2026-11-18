@@ -196,8 +196,8 @@ Announcement events are recorded when an admin changes an announcement.
 
 | Event                   | Example                                                                          | Description                       |
 | ----------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
-| `announcement_created`  | `{ "announcement_created": { "id": "...", "title": "...", "color": "warning", "window": { ... } } }` | An admin wrote an announcement    |
-| `announcement_updated`  | `{ "announcement_updated": { "id": "...", "title": "...", "color": "warning", "window": { ... } } }` | An admin changed an announcement  |
+| `announcement_created`  | `{ "announcement_created": { "id": "...", "title": "...", "banner_type": "warning", "window": { ... } } }` | An admin wrote an announcement    |
+| `announcement_updated`  | `{ "announcement_updated": { "id": "...", "title": "...", "banner_type": "warning", "window": { ... } } }` | An admin changed an announcement  |
 | `announcement_deleted`  | `{ "announcement_deleted": { "id": "..." } }`                                    | An admin deleted an announcement  |
 
 The `window` field holds `visible_from` and `visible_until` in seconds since the Unix epoch, or `null` for no limit.

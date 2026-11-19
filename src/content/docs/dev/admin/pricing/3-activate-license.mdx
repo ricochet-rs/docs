@@ -2,7 +2,18 @@
 title: Activate a License
 ---
 
-Add your license key to the server configuration and restart ricochet.
+Open **Server Settings**, select **License**, paste your license key and save it.
+ricochet checks the key with the license server before it saves it.
+The tab shows whether the license is active and when it expires.
+Once you save the key, ricochet shows only its last four characters.
+
+To use a different key, paste it and save it.
+ricochet frees the activation of the old key.
+To return to the Community Edition, select **Remove license key**.
+
+## Server Configuration
+
+You can add the key to the server configuration instead and restart ricochet.
 
 ```toml
 [license]
@@ -15,6 +26,7 @@ You can set the key as an environment variable instead:
 RICOCHET_LICENSE__KEY=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-V3
 ```
 
+A key in the server configuration wins over a key saved in **Server Settings**, and you cannot change it on the **License** tab.
 ricochet reads the key when it starts and checks it with the license server every hour.
 Each key activates one ricochet instance.
 

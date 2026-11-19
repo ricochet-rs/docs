@@ -8,14 +8,11 @@ template: splash
 
 **Released: November 18, 2026**
 
-## New features
+## Features
 
-The CLI now includes a `ricochet mcp` subcommand that exposes Ricochet functionality to AI assistants through the Model Context Protocol.
+- `ricochet mcp` lets AI assistants deploy and manage your Ricochet content through the Model Context Protocol.
+- `ricochet lsp` shows `_ricochet.toml` errors in your editor as you type, in any editor that supports the Language Server Protocol.
 
-The CLI now includes a `ricochet lsp` subcommand that provides real-time diagnostics for `_ricochet.toml` configuration files in editors that support the Language Server Protocol.
+## Bug fixes
 
-## Fixes
-
-The `ricochet deploy` command now correctly validates Git repository URLs and accepts folder-style URLs.
-
-The CLI now builds on Rust 1.100.
+- `ricochet deploy` checks the form of a Git repository URL and accepts URLs that point to a folder.

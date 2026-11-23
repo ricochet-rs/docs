@@ -117,6 +117,23 @@ ricochet deploy -S https://staging.ricochet.example.com
 To make another server the default, run `ricochet server set-default <NAME>`.
 Run `ricochet server list` to see the names.
 
+### Behind a Proxy
+
+The CLI uses the proxy in `HTTPS_PROXY`, `ALL_PROXY` and `NO_PROXY`.
+On macOS and Windows it also uses the proxy from your system settings.
+
+To use a proxy for one server only, add the server with `--proxy`:
+
+```bash
+ricochet server add production https://ricochet.example.com \
+  --proxy socks5h://127.0.0.1:1055 \
+  --no-proxy localhost
+```
+
+The proxy URL can start with `http`, `https`, `socks5` or `socks5h`.
+A proxy set with `--proxy` wins over the environment variables.
+Run `ricochet login --debug` to see which proxy the CLI used.
+
 ### Logging Out
 
 To remove the stored credentials for a server:

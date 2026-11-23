@@ -21,3 +21,43 @@ metrics = "127.0.0.1:6189"
 Set `metrics` to `0.0.0.0:6189` when Prometheus scrapes from another host.
 Override any field with an environment variable, such as `RICOCHET_NETWORK__PROXY_PORT=8080`.
 Restart Ricochet to apply a change.
+
+## Outbound Proxy
+
+Send Ricochet's outbound HTTP traffic through a forward proxy:
+
+```toml
+[network.proxy]
+url = "http://proxy.internal:3128"
+no_proxy = ["localhost", "127.0.0.1", ".internal"]
+```
+
+| Field      | Description                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
+| `url`      | Proxy URL starting with `http` or `https`. It can hold a user name and password.     |
+| `no_proxy` | Hosts Ricochet reaches directly, such as `example.com`, `.internal` or `10.0.0.0/8`. |
+
+Ricochet sends these through the proxy:
+
+- Sign-in requests to your identity provider
+- Git clones and fetches
+- Requests to Vault, OpenBao and Azure Key Vault
+- License checks
+- Package installs and outbound requests from your deployed content
+
+Your content gets the proxy as `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY` and `NO_PROXY`, in upper and lower case.
+To give one item a different proxy, set any of these variables on that item.
+Ricochet then passes none of its own.
+
+Ricochet already uses the proxy in its own `HTTPS_PROXY` and `NO_PROXY` variables.
+Set `[network.proxy]` so your content gets the same proxy.
+
+:::note
+Ricochet reaches the OpenTelemetry collector and the mail server directly.
+It also fetches the client documents of MCP clients directly, so it can block private addresses.
+:::
+
+On Kubernetes, anyone who can read a content pod can see its proxy URL.
+Use a proxy without a password there, or one that allows only Ricochet's pods.
+
+Set the fields with environment variables, such as `RICOCHET_NETWORK__PROXY__URL` and `RICOCHET_NETWORK__PROXY__NO_PROXY="localhost,.internal"`.

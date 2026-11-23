@@ -57,7 +57,4 @@ Ricochet reaches the OpenTelemetry collector and the mail server directly.
 It also fetches the client documents of MCP clients directly, so it can block private addresses.
 :::
 
-On Kubernetes, anyone who can read a content pod can see its proxy URL.
-Use a proxy without a password there, or one that allows only Ricochet's pods.
-
 Set the fields with environment variables, such as `RICOCHET_NETWORK__PROXY__URL` and `RICOCHET_NETWORK__PROXY__NO_PROXY="localhost,.internal"`.

@@ -8,12 +8,16 @@ Because ricochet uses your own identity provider, it can be integrated within yo
 This page documents how to login and logout of the identity provider from an app.
 To understand how to detect the signed in user see [Detecting the Current User](/dev/user/content-items/4-detecting-current-user/).
 
+## Handling Sign-in
+
 Ricochet reserves the `/signin` path for each application to be used to integrate with your identity provider.
 The `/signin` path provides an optional `?next=` query parameter which defines where to navigate after a successful sign in.
 
+To login, create a button in your app that navigates to the `/signin` url of your ricochet instance.
+Set the url to `{RICOCHET_URL}{RICOCHET_APP_PATH}/signin?next={RICOCHET_APP_PATH}`.
+
 Use this, with the `RICOCHET_APP_PATH` environment variable which provides the full path of the application on the server (e.g. `/app/{slug-or-content-id}`).
 Additionally, the `RICOCHET_URL` environment variable can be used for a complete authentication flow inside of your own apps.
-Additionally, the `/logout` path can be used to sign users out as well.
 
 <Tabs syncKey="lang">
 <TabItem label="R">
@@ -61,6 +65,15 @@ sign_out_url = f"{ricochet_url}/logout?next={next_path}"
 
 </TabItem>
 </Tabs>
+
+## Handling Logout
+
+Additionally, the `/logout` path can be used to sign users out as well.
+
+`{RICOCHET_URL}/logout?next=<path>`
+
+Ricochet ends the session and redirects to `next`, or to the home page without one.
+Ricochet signs people out only from links on your ricochet server, and never signs them out of your identity provider.
 
 Have questions?
 [Start a discussion](https://github.com/orgs/ricochet-rs/discussions/new/choose) on GitHub.

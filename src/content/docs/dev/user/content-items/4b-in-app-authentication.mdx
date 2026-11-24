@@ -2,6 +2,8 @@
 title: In-App Authentication
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
 Because ricochet uses your own identity provider, it can be integrated within your own applications.
 This page documents how to login and logout of the identity provider from an app.
 To understand how to detect the signed in user see [Detecting the Current User](/dev/user/content-items/4-detecting-current-user/).
@@ -12,3 +14,53 @@ The `/signin` path provides an optional `?next=` query parameter which defines w
 Use this, with the `RICOCHET_APP_PATH` environment variable which provides the full path of the application on the server (e.g. `/app/{slug-or-content-id}`).
 Additionally, the `RICOCHET_URL` environment variable can be used for a complete authentication flow inside of your own apps.
 Additionally, the `/logout` path can be used to sign users out as well.
+
+<Tabs syncKey="lang">
+<TabItem label="R">
+
+```r
+app_path <- Sys.getenv("RICOCHET_APP_PATH")
+ricochet_url <- Sys.getenv("RICOCHET_URL")
+
+next_path <- URLencode(app_path, reserved = TRUE)
+
+sign_in_url <- paste0(ricochet_url, app_path, "/signin?next=", next_path)
+sign_out_url <- paste0(ricochet_url, "/logout?next=", next_path)
+```
+
+</TabItem>
+<TabItem label="Julia">
+
+```julia
+using HTTP
+
+app_path = ENV["RICOCHET_APP_PATH"]
+ricochet_url = ENV["RICOCHET_URL"]
+
+next_path = HTTP.escapeuri(app_path)
+
+sign_in_url = "$(ricochet_url)$(app_path)/signin?next=$(next_path)"
+sign_out_url = "$(ricochet_url)/logout?next=$(next_path)"
+```
+
+</TabItem>
+<TabItem label="Python">
+
+```python
+import os
+from urllib.parse import quote
+
+app_path = os.environ["RICOCHET_APP_PATH"]
+ricochet_url = os.environ["RICOCHET_URL"]
+
+next_path = quote(app_path, safe="")
+
+sign_in_url = f"{ricochet_url}{app_path}/signin?next={next_path}"
+sign_out_url = f"{ricochet_url}/logout?next={next_path}"
+```
+
+</TabItem>
+</Tabs>
+
+Have questions?
+[Start a discussion](https://github.com/orgs/ricochet-rs/discussions/new/choose) on GitHub.

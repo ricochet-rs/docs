@@ -1,0 +1,74 @@
+---
+title: In-App Authentication
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Ricochet hooks into your own identity provider.
+Use this page to integrate ricochet's authentication within your app.
+See [Detecting the Current User](/dev/user/content-items/4-detecting-current-user/) to understand how to use the authorized user.
+
+Use the `RICOCHET_APP_PATH` environment variable to get the current path, and `RICOCHET_URL` to get your ricochet server:
+
+<Tabs syncKey="lang">
+<TabItem label="R">
+
+```r
+app_path <- Sys.getenv("RICOCHET_APP_PATH")
+ricochet_url <- Sys.getenv("RICOCHET_URL")
+
+next_path <- URLencode(app_path, reserved = TRUE)
+
+sign_in_url <- paste0(ricochet_url, app_path, "/signin?next=", next_path)
+sign_out_url <- paste0(ricochet_url, "/logout?next=", next_path)
+```
+
+</TabItem>
+<TabItem label="Julia">
+
+```julia
+using HTTP
+
+app_path = ENV["RICOCHET_APP_PATH"]
+ricochet_url = ENV["RICOCHET_URL"]
+
+next_path = HTTP.escapeuri(app_path)
+
+sign_in_url = "$(ricochet_url)$(app_path)/signin?next=$(next_path)"
+sign_out_url = "$(ricochet_url)/logout?next=$(next_path)"
+```
+
+</TabItem>
+<TabItem label="Python">
+
+```python
+import os
+from urllib.parse import quote
+
+app_path = os.environ["RICOCHET_APP_PATH"]
+ricochet_url = os.environ["RICOCHET_URL"]
+
+next_path = quote(app_path, safe="")
+
+sign_in_url = f"{ricochet_url}{app_path}/signin?next={next_path}"
+sign_out_url = f"{ricochet_url}/logout?next={next_path}"
+```
+
+</TabItem>
+</Tabs>
+
+## Logging in
+
+To log in, create a button in your app that navigates to the `/signin` URL of your app on your ricochet instance.
+Use the `next` parameter to choose where ricochet sends the user after they log in.
+Set the URL to `{RICOCHET_URL}{RICOCHET_APP_PATH}/signin?next={RICOCHET_APP_PATH}`.
+
+## Logging out
+
+`{RICOCHET_URL}/logout?next=<path>`
+
+Ricochet ends the session and redirects to `next`, or to the home page without one.
+Ricochet signs people out only from links on your ricochet server, and never signs them out of your identity provider.
+
+Have questions?
+[Start a discussion](https://github.com/orgs/ricochet-rs/discussions/new/choose) on GitHub.

@@ -14,16 +14,19 @@ Ricochet reserves the `/signin` path for each application to be used to integrat
 The `/signin` path provides an optional `?next=` query parameter which defines where to navigate after a successful sign in.
 
 To login, create a button in your app that navigates to the `/signin` url of your ricochet instance.
-Set the url to `{RICOCHET_URL}{RICOCHET_APP_PATH}/signin?next={RICOCHET_APP_PATH}`.
+Set the url to `{RICOCHET_URL}/app/{slug}/signin?next=/app/{slug}`.
 
-Use this, with the `RICOCHET_APP_PATH` environment variable which provides the full path of the application on the server (e.g. `/app/{slug-or-content-id}`).
+Use the `RICOCHET_CONTENT_SLUG` environment variable for `{slug}`.
+If your app has no slug, use `RICOCHET_CONTENT_ID` instead.
+Ricochet sets these variables when your app starts, so restart your app after you change its slug.
 Additionally, the `RICOCHET_URL` environment variable can be used for a complete authentication flow inside of your own apps.
 
 <Tabs syncKey="lang">
 <TabItem label="R">
 
 ```r
-app_path <- Sys.getenv("RICOCHET_APP_PATH")
+slug <- Sys.getenv("RICOCHET_CONTENT_SLUG", Sys.getenv("RICOCHET_CONTENT_ID"))
+app_path <- paste0("/app/", slug)
 ricochet_url <- Sys.getenv("RICOCHET_URL")
 
 next_path <- URLencode(app_path, reserved = TRUE)
@@ -38,7 +41,8 @@ sign_out_url <- paste0(ricochet_url, "/logout?next=", next_path)
 ```julia
 using HTTP
 
-app_path = ENV["RICOCHET_APP_PATH"]
+slug = get(ENV, "RICOCHET_CONTENT_SLUG", ENV["RICOCHET_CONTENT_ID"])
+app_path = "/app/$(slug)"
 ricochet_url = ENV["RICOCHET_URL"]
 
 next_path = HTTP.escapeuri(app_path)
@@ -54,7 +58,8 @@ sign_out_url = "$(ricochet_url)/logout?next=$(next_path)"
 import os
 from urllib.parse import quote
 
-app_path = os.environ["RICOCHET_APP_PATH"]
+slug = os.environ.get("RICOCHET_CONTENT_SLUG") or os.environ["RICOCHET_CONTENT_ID"]
+app_path = f"/app/{slug}"
 ricochet_url = os.environ["RICOCHET_URL"]
 
 next_path = quote(app_path, safe="")
